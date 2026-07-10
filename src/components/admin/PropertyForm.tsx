@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AMENITIES, AMENITY_LABELS, PROPERTY_TYPES, type Property } from "@/lib/properties";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 
 export type PropertyFormValues = {
   name: string;
@@ -144,26 +145,6 @@ export function PropertyForm({
             value={v.country}
             onChange={(e) => set("country", e.target.value.toUpperCase())}
             maxLength={3}
-            className="mt-1 w-full rounded border px-2 py-1"
-          />
-        </label>
-        <label className="text-sm">
-          Platuma (lat)
-          <input
-            type="number"
-            step="any"
-            value={v.lat ?? ""}
-            onChange={(e) => set("lat", e.target.value === "" ? null : Number(e.target.value))}
-            className="mt-1 w-full rounded border px-2 py-1"
-          />
-        </label>
-        <label className="text-sm">
-          Ilguma (lng)
-          <input
-            type="number"
-            step="any"
-            value={v.lng ?? ""}
-            onChange={(e) => set("lng", e.target.value === "" ? null : Number(e.target.value))}
             className="mt-1 w-full rounded border px-2 py-1"
           />
         </label>
@@ -381,44 +362,14 @@ export function PropertyForm({
       </section>
 
       <section className="rounded-lg border p-4">
-        <h3 className="mb-2 text-sm font-semibold">Nuotraukos (URL adresai)</h3>
-        <label className="block text-sm">
-          Viršelio nuotrauka
-          <input
-            value={v.coverImageUrl}
-            onChange={(e) => set("coverImageUrl", e.target.value)}
-            className="mt-1 w-full rounded border px-2 py-1 text-sm"
-          />
-        </label>
-        <div className="mt-2 space-y-2">
-          {v.imageUrls.map((url, i) => (
-            <div key={i} className="flex gap-2">
-              <input
-                value={url}
-                onChange={(e) => {
-                  const next = [...v.imageUrls];
-                  next[i] = e.target.value;
-                  set("imageUrls", next);
-                }}
-                className="flex-1 rounded border px-2 py-1 text-sm"
-              />
-              <button
-                type="button"
-                onClick={() => set("imageUrls", v.imageUrls.filter((_, x) => x !== i))}
-                className="text-destructive"
-              >
-                ×
-              </button>
-            </div>
-          ))}
-          <button
-            type="button"
-            className="text-sm text-primary underline"
-            onClick={() => set("imageUrls", [...v.imageUrls, ""])}
-          >
-            + Pridėti nuotrauką
-          </button>
-        </div>
+        <ImageUploader
+          cover={v.coverImageUrl}
+          images={v.imageUrls}
+          onChange={({ cover, images }) =>
+            setV((s) => ({ ...s, coverImageUrl: cover, imageUrls: images }))
+          }
+          folder="properties"
+        />
       </section>
 
       <button
