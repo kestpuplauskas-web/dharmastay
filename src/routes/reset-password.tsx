@@ -76,7 +76,7 @@ function ResetPasswordPage() {
             </form>
           )}
           <div className="text-center">
-            <Link to="/login" className="text-xs text-muted-foreground hover:underline">← Į prisijungimą</Link>
+            <Link to="/auth" className="text-xs text-muted-foreground hover:underline">← Į prisijungimą</Link>
           </div>
         </CardContent>
       </Card>
