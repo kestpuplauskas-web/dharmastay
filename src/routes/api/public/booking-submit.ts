@@ -131,7 +131,7 @@ export const Route = createFileRoute("/api/public/booking-submit")({
             payment_option: paymentOption,
             payment_status: "unpaid",
             payment_amount: paymentAmount,
-            payment_provider: "swedbank_pi_v3",
+            payment_provider: "manual_transfer",
             bic: d.bic,
             expires_at: expiresAt,
           })
@@ -150,7 +150,6 @@ export const Route = createFileRoute("/api/public/booking-submit")({
           paymentAmount: Number(inserted.payment_amount ?? paymentAmount),
           paymentOption,
           expiresAt: inserted.expires_at,
-          redirectUrl: `/api/public/payment/initiate?bookingId=${encodeURIComponent(inserted.id)}&bic=${encodeURIComponent(d.bic)}`,
         });
       },
     },
