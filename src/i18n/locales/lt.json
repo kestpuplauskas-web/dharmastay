@@ -1,0 +1,264 @@
+{
+  "nav": {
+    "cars": "Automobiliai",
+    "offers": "Specialūs pasiūlymai",
+    "news": "Naujienos",
+    "faq": "Sąlygos (D.U.K.)",
+    "about": "Apie mus",
+    "contact": "Kontaktai",
+    "menu": "Meniu"
+  },
+  "common": {
+    "back": "Atgal",
+    "close": "Uždaryti",
+    "submit": "Pateikti",
+    "loading": "Kraunama...",
+    "day": "diena",
+    "days_few": "dienos",
+    "days_many": "dienų",
+    "from": "nuo",
+    "perDay": "/ dienai",
+    "total": "Iš viso",
+    "selectCity": "Pasirinkite miestą",
+    "selectDate": "Pasirinkite datą",
+    "date": "Data"
+  },
+  "hero": {
+    "badge": "Jokių paslėptų mokesčių",
+    "title1": "Trumpalaikė ir ilgalaikė automobilių nuoma Klaipėdoje",
+    "title2": "Nuomokis automobilį lengvai, rezervacija per 2 minutes",
+    "subtitle": "Pasirink paėmimo vietą ir datas — mes parodysime tik tuos automobilius, kurie tikrai laisvi tavo laikui.",
+    "pickupLocation": "Paėmimo vieta",
+    "dateFrom": "Data nuo",
+    "dateTo": "Data iki",
+    "search": "Ieškoti automobilio"
+  },
+  "cars": {
+    "availableTitle": "Laisvi automobiliai",
+    "ourTitle": "Mūsų automobiliai",
+    "found": "Rasta {{count}} automobilių {{days}} d. laikotarpiui ({{from}} – {{to}})",
+    "selectDatesHint": "Suveskite datas, kad pamatytumėte tik laisvus automobilius.",
+    "noneAvailable": "Pasirinktomis datomis laisvų automobilių nėra.",
+    "tryAnother": "Pabandykite kitą laikotarpį.",
+    "seats_short": "viet.",
+    "auto": "Automatinė",
+    "manual": "Mech",
+    "totalDays": "Viso ({{days}} d.)",
+    "reserve": "Rezervuoti",
+    "view": "Peržiūrėti"
+  },
+  "why": {
+    "title": "Kodėl rinktis Rentivo?",
+    "insurance": { "title": "KASKO ir Civilinis draudimas", "text": "Visi nuomojami automobiliai yra apdrausti privalomuoju transporto priemonių valdytojų civilinės atsakomybės draudimu (TPVCA).\n\nPageidaujant galima pasirinkti KASKO draudimo apsaugą su 0 Eur išskaita." },
+    "prices": { "title": "Skaidrios kainos", "text": "Jokių paslėptų mokesčių. Matote galutinę kainą iškart." },
+    "support": { "title": "24/7 pagalba", "text": "Pagalba kelyje ir pakaitinis automobilis gedimo ar avarijos atveju." }
+  },
+  "footer": {
+    "rights": "© {{year}} Rentivo. Visos teisės saugomos.",
+    "whatsapp": "WhatsApp",
+    "call": "Skambinti",
+    "privacyPolicy": "Privatumo politika",
+    "termsOfService": "Paslaugų teikimo taisyklės"
+  },
+  "legal": {
+    "backHome": "← Grįžti į pagrindinį",
+    "termsTitle": "Paslaugų teikimo taisyklės",
+    "privacyTitle": "Privatumo politika",
+    "loading": "Kraunama...",
+    "termsPreparing": "Paslaugų teikimo taisyklės ruošiamos. Prašome užsukti vėliau.",
+    "privacyPreparing": "Privatumo politika ruošiama. Prašome užsukti vėliau."
+  },
+  "detail": {
+    "mainSpecs": "Pagrindiniai parametrai",
+    "year": "Metai",
+    "transmission": "Pavarų dėžė",
+    "fuel": "Kuro rūšis",
+    "consumption": "Sąnaudos",
+    "mileage": "Kilometražas",
+    "seats": "Sėdimos vietos",
+    "equipment": "Automobilio komplektacija",
+    "pricePerDayHint": "orientacinė kaina / dienai",
+    "pickup": "Paėmimo vieta",
+    "return": "Grąžinimo vieta",
+    "from": "Laikas Nuo",
+    "to": "Laikas Iki",
+    "addons": "Papildomos paslaugos",
+    "addonsSubtitle": "Kelionės nuomos šalies teritorijoje ir užsienyje",
+    "perDayShort": " / diena",
+    "perDayQty": " / diena / vnt.",
+    "addonsTotal": "Paslaugų suma",
+    "rateLine": "Tarifas ({{label}})",
+    "pickupFee": "Paėmimo vieta ({{name}})",
+    "returnFee": "Grąžinimo vieta ({{name}})",
+    "reserveBtn": "Rezervuoti",
+    "selectLocationDates": "Pasirinkite pristatymo ir grąžinimo datas nuo iki.",
+    "selectLocation": "Pasirinkite paėmimo vietą",
+    "selectDates": "Pasirinkite nuomos datas",
+    "addonItems": {
+      "clean": "Automobilio valymas po nuomos",
+      "roadside": "Pagalba kelyje",
+      "fullprotect": "Pilnas apsaugos paketas, išskaita nėra taikoma",
+      "seat15_36": "Kėdutė vaikams (15–36 kg)",
+      "seat9_25": "Kėdutė vaikams (9–25 kg)",
+      "seat0_13": "Kūdikio kėdutė (0–13 kg)"
+    },
+    "priceList": "Nuomos kainininkas",
+    "priceListHint": "Kuo ilgesnis nuomos laikotarpis, tuo mažesnė kaina už dieną.",
+    "yourChoice": "Jūsų pasirinkimas ({{days}} d.)",
+    "carNotFound": "Automobilis nerastas",
+    "backHome": "Grįžti į pagrindinį",
+    "errorTitle": "Įvyko klaida"
+  },
+  "booking": {
+    "title": "Rezervacijos duomenys",
+    "subtitle": "Užpildykite kontaktinę informaciją rezervacijai užbaigti.",
+    "firstName": "Vardas",
+    "lastName": "Pavardė",
+    "phone": "Telefono numeris",
+    "email": "El. paštas",
+    "country": "Šalis",
+    "address": "Adresas",
+    "city": "Miestas",
+    "message": "Jūsų žinutė (nebūtinas)",
+    "messagePlaceholder": "Galite palikti papildomą informaciją apie jūsų užsakymą.",
+    "agree": "Sutinku su nuomos sutarties sąlygomis ir privatumo politika",
+    "agreePrefix": "Sutinku su",
+    "agreeLink": "nuomos sutarties sąlygomis",
+    "agreeAnd": "ir",
+    "agreeLinkPrivacy": "privatumo politika",
+    "submit": "Pateikti",
+    "successTitle": "Ačiū!",
+    "successText": "Jūsų rezervacija sėkminga. Su Jumis susisieksime artimiausiomis darbo valandomis.",
+    "addressPlaceholder": "Gatvė, namo nr.",
+    "paymentMethod": "Mokėjimo būdas",
+    "payFull": "Sumokėti visą sumą",
+    "deposit": "Avansas ({{pct}}%)",
+    "depositNote": "{{amount}} dabar · likutis atsiimant",
+    "selectBank": "Pasirinkite banką",
+    "paymentInfo": "Paspaudę „Rezervuoti“ būsite nukreipti į pasirinkto banko mokėjimo puslapį. Rezervacija bus patvirtinta tik gavus mokėjimą.",
+    "redirecting": "Nukreipiama į banką…",
+    "submitPay": "Rezervuoti ir apmokėti · {{amount}}",
+    "termsNotPublished": "Sutartis dar nepaskelbta.",
+    "privacyNotPublished": "Privatumo politika dar nepaskelbta.",
+    "confirmAgree": "Patvirtinkite sutikimą su sąlygomis",
+    "checkFields": "Patikrinkite pažymėtus laukus",
+    "invalidEmail": "Šio el. pašto negalime patvirtinti, įveskite kitą",
+    "submitFailed": "Nepavyko išsiųsti užsakymo",
+    "error": "Įvyko klaida",
+    "emailRequired": "El. paštas privalomas",
+    "emailInvalid": "Neteisingas el. pašto formatas"
+  },
+  "faq": {
+    "title": "Sąlygos ir D.U.K.",
+    "subtitle": "Dažniausiai užduodami klausimai apie automobilių nuomą Rentivo.",
+    "items": [
+      { "q": "Kokie dokumentai reikalingi nuomai?", "a": "Galiojantis vairuotojo pažymėjimas (ne mažiau kaip 2 metų stažas) bei asmens tapatybės dokumentas (pasas arba ID kortelė)." },
+      { "q": "Koks minimalus vairuotojo amžius?", "a": "Vairuotojas turi būti ne jaunesnis nei 21 metų. Kai kuriems automobiliams (Premium, SUV) gali būti taikomas didesnis amžiaus reikalavimas." },
+      { "q": "Ar reikia mokėti depozitą?", "a": "Ne, depozitas nėra imamas." },
+      { "q": "Ar automobiliai apdrausti?", "a": "Draudimas ir atsakomybė\n\nVisi nuomojami automobiliai yra apdrausti privalomuoju transporto priemonių valdytojų civilinės atsakomybės draudimu (TPVCA).\n\nPageidaujant galima pasirinkti KASKO draudimo apsaugą su 0 Eur išskaita. Tokiu atveju nuomos kaina perskaičiuojama pagal pasirinktą draudimo variantą.\n\nĮvykus eismo įvykiui, apgadinus automobilį ar pastebėjus kitą žalą, nuomininkas privalo informuoti nuomotoją ne vėliau kaip per 24 valandas nuo įvykio momento. Nepranešus per nustatytą terminą, draudimo apsauga gali būti netaikoma.\n\nPraradus automobilio raktelius ar registracijos dokumentus, taikomas 200 Eur administracinis mokestis. Automobilio rakteliai ir dokumentai nėra draudžiami.\n\nDraudimo apsauga negalioja, jei transporto priemonė naudojama ne pagal paskirtį, įskaitant važiavimą bekelėmis bei kitais teisės aktuose ar draudimo taisyklėse numatytais atvejais.\n\nJeigu pasirenkamas automobilis be KASKO draudimo, nuomininkas atsako už visą transporto priemonei padarytą žalą. Tais atvejais, kai automobilis sugadinamas nepataisomai arba ekonomiškai netikslinga jį remontuoti, nuomininkas privalo atlyginti automobilio rinkos vertę įvykio dieną." },
+      { "q": "Kaip galiu atšaukti rezervaciją?", "a": "Rezervaciją galite atšaukti nemokamai iki 48 val. iki nuomos pradžios. Vėliau gali būti taikomas atšaukimo mokestis." },
+      { "q": "Kokie atsiskaitymo būdai?", "a": "Priimame banko pavedimus bei grynuosius pinigus atsiimant automobilį." },
+      { "q": "Ar yra kilometražo apribojimai?", "a": "Visiems automobiliams taikomas 200 km per dieną limitas. Viršijus limitą taikomas papildomas 0.2 eur/km mokestis." },
+      { "q": "Kur galima grąžinti automobilį?", "a": "Automobilį galima grąžinti tame pačiame mieste, kuriame paėmėte, arba kitoje paėmimo vietoje pagal sąraše nurodytą mokestį." }
+    ]
+  },
+  "about": {
+    "title": "Apie Rentivo",
+    "lead": "Mes — Rentivo — automobilių nuomos komanda, kuriai svarbu kiekvienas Jūsų kelionės kilometras.",
+    "story": "Rentivo gimė iš paprastos idėjos — padaryti automobilių nuomą Lietuvoje skaidrią, greitą ir be paslėptų mokesčių. Per keletą veiklos metų aptarnavome tūkstančius klientų visoje Lietuvoje ir nuolat plečiame savo automobilių parką.",
+    "values": "Mūsų vertybės",
+    "valuesList": [
+      { "title": "Skaidrumas", "text": "Galutinę kainą matote dar prieš rezervaciją — be paslėptų mokesčių." },
+      { "title": "Patogumas", "text": "Rezervacija per 2 minutes ir aiški paėmimo procedūra." },
+      { "title": "Pasitikėjimas", "text": "Apdrausti automobiliai ir 24/7 pagalba kelyje." }
+    ],
+    "fleet": "Mūsų parkas — nuo ekonominių automobilių iki premium klasės sedanų ir erdvių mikroautobusų. Kiekvienas automobilis kruopščiai paruošiamas prieš kiekvieną nuomą."
+  },
+  "contact": {
+    "title": "Susisiekite su mumis",
+    "subtitle": "Visada pasiruošę atsakyti į Jūsų klausimus ir padėti rinktis tinkamiausią automobilį.",
+    "phone": "Telefonas",
+    "phoneHint": "Skambinkite mums 24/7",
+    "email": "El. paštas",
+    "emailHint": "Atsakome per 1 darbo valandą",
+    "whatsapp": "WhatsApp",
+    "whatsappHint": "Greičiausias būdas susisiekti",
+    "hours": "Darbo valandos",
+    "hoursWeekdays": "I–V: 08:00–20:00",
+    "hoursSat": "VI: 09:00–18:00",
+    "hoursSun": "VII: 10:00–16:00",
+    "locations": "Paėmimo vietos",
+    "whatsappMessage": "Sveiki, norėčiau pasiteirauti dėl automobilio nuomos.",
+    "writeOnWhatsapp": "Rašyti per WhatsApp"
+  },
+  "offers": {
+    "title": "Specialūs pasiūlymai",
+    "subtitle": "Sezoniniai pasiūlymai ir nuolaidos, kurios padės sutaupyti nuomojant automobilį.",
+    "footnote": "Pasiūlymai galioja ribotą laiką. Dėl detalių susisiekite su mumis.",
+    "items": [
+      { "badge": "Iki -20%", "title": "Ilgalaikė nuoma", "text": "Nuomojantis automobilį 7 ir daugiau dienų, taikome iki 20% nuolaidą dienos kainai." },
+      { "badge": "Savaitgalio akcija", "title": "Savaitgalio kaina", "text": "Penktadienis–sekmadienis fiksuota kaina už visą savaitgalį." },
+      { "badge": "Naujiems klientams", "title": "Pirmoji nuoma -10%", "text": "Pirmą kartą nuomojantiems pas mus taikome papildomą 10% nuolaidą." }
+    ]
+  },
+  "news": {
+    "title": "Naujienos",
+    "subtitle": "Naujausi Rentivo įvykiai, akcijos ir naudingi patarimai.",
+    "items": [
+      { "date": "2026-05-15", "title": "Naujas automobilis parke", "text": "", "excerpt": "Pristatome naują šeimos klasės automobilį, kurį jau galima rezervuoti per mūsų svetainę." },
+      { "date": "2026-04-02", "title": "Vasaros sezono pasiūlymai", "text": "", "excerpt": "Atnaujinome vasaros sezono kainas — sužinokite apie nuolaidas ilgesnei nuomai." },
+      { "date": "2026-03-10", "title": "Patarimai kelionėms užsienyje", "text": "", "excerpt": "Ką svarbu žinoti prieš vykstant su nuomos automobiliu už Lietuvos ribų." }
+    ]
+  },
+  "home": {
+    "availability": {
+      "title": "Pasirinkite datas",
+      "subtitle": "Iš karto matykite, kiek automobilių laisva kiekvieną dieną.",
+      "selected": "Pasirinkta:",
+      "clear": "Išvalyti"
+    },
+    "calendar": {
+      "legendFree": "Laisva",
+      "legendLow": "Mažai laisvų",
+      "legendFull": "Pilnai užimta"
+    },
+    "cars": {
+      "availableForRange": "Laisvi automobiliai pasirinktam laikotarpiui ({{count}})",
+      "noneTitle": "Pasirinktomis datomis laisvų automobilių nėra.",
+      "noneHint": "Pabandykite pakeisti datas arba pažiūrėkite į artimiausią laisvą laikotarpį.",
+      "changeDates": "Keisti datas",
+      "showNextFree": "Rodyti artimiausią laisvą laikotarpį"
+    },
+    "seo": {
+      "h1": "Automobilių nuomos paslaugos uostamiestyje ir regione",
+      "p1": "Ieškote patikimo ir komfortiško transporto pajūryje? Automobilių nuoma Klaipėdoje ir Palangos oro uoste su „Rentivo“ – tai greitas ir lankstus sprendimas tiek verslo kelionėms, tiek poilsiui prie jūros. Mes suprantame, kad kelionės tikslas reikalauja ne tiesiog judėjimo priemonės, o techniškai tvarkingo, saugaus ir reprezentatyvaus automobilio. Atsisakykite viešojo transporto tvarkaraščių ar brangaus taksi – valdykite savo laiką patys nuo pat pirmos minutės pajūryje.",
+      "plq": {
+        "title": "Automobilių nuoma Palangos oro uoste (PLQ) – patogus startas",
+        "intro": "Atvykstate į pajūrį lėktuvu? Automobilių nuoma Palangos oro uoste leidžia išvengti logistikos rūpesčių vos nusileidus.",
+        "items": [
+          { "title": "Transportas tiesiai po skrydžio", "text": "Automobilis gali būti paruoštas jūsų atvykimui tiesiai prie Palangos oro uosto (PLQ) terminalo. Tai idealus pasirinkimas asmenims, grįžtantiems aplankyti artimųjų, bei užsienio turistams ar verslo partneriams." },
+          { "title": "Jokių laukimo eilių", "text": "Užsakykite automobilį iš anksto internetu, ir jums nereikės gaišti laiko prie nuomos langelių oro uoste – sėdate ir važiuojate." },
+          { "title": "Patogus grąžinimas", "text": "Baigiantis kelionei, automobilį galite patogiai palikti suderintoje vietoje, kad sklandžiai spėtumėte į savo skrydį atgal." }
+        ]
+      },
+      "replacement": {
+        "title": "Pakaitinis automobilis: išeitis po avarijos ar remonto metu",
+        "intro": "Sustojo įprastas gyvenimo ritmas, nes jūsų asmeninė transporto priemonė sugedo arba patekote į eismo įvykį? „Rentivo“ siūlo operatyvų sprendimą vietiniams Klaipėdos ir regiono gyventojams – pakaitinio automobilio nuomą.",
+        "items": [
+          { "title": "Nuoma serviso metu", "text": "Nepalikite savo planų nuošalyje, kol jūsų automobilis yra remontuojamas autoservise. Išsinuomokite komfortišką transportą visam remonto laikotarpiui." },
+          { "title": "Pakaitinis automobilis po eismo įvykio", "text": "Jei nukentėjote eismo įvykyje, dažnu atveju pakaitinio automobilio nuomos išlaidas kompensuoja draudimo bendrovės (pagal TPVCAPD). Suteikiame visas reikalingas sąskaitas-faktūras ir nuomos sutartis, kad išlaidų deklaravimas draudimui praeitų sklandžiai." }
+        ]
+      },
+      "why": {
+        "title": "Kodėl verta rinktis „Rentivo“ automobilių nuomą?",
+        "items": [
+          { "title": "Premium klasės komfortas", "text": "Mūsų parke – techniškai tvarkingi, dinamiški ir komfortiški vokiški automobiliai (BMW, Mercedes Benz, Volkswagen modeliai), užtikrinantys maksimalų vairavimo malonumą." },
+          { "title": "Ideali techninė būklė", "text": "Kiekviena transporto priemonė yra reguliariai prižiūrima, švari ir paruošta tiek trumpoms distancijoms mieste, tiek ilgoms kelionėms." },
+          { "title": "Visiškas lankstumas", "text": "Siūloma trumpalaikė ir ilgalaikė mašinų nuoma Klaipėdoje bei aplinkiniuose miestuose. Nuomokitės dienai, savaitgaliui ar visam mėnesiui palankiomis sąlygomis." },
+          { "title": "Paprastas procesas", "text": "Greitas automobilių rezervavimas internetu be paslėptų mokesčių ar ilgų biurokratinių procedūrų." }
+        ]
+      }
+    }
+  }
+}
+

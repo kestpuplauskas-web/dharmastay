@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS car_images_public_read ON storage.objects;

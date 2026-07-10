@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.recalc_car_mileage(uuid) FROM PUBLIC, anon, authenticated;

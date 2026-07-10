@@ -1,0 +1,264 @@
+{
+  "nav": {
+    "cars": "Cars",
+    "offers": "Special offers",
+    "news": "News",
+    "faq": "Terms (FAQ)",
+    "about": "About us",
+    "contact": "Contacts",
+    "menu": "Menu"
+  },
+  "common": {
+    "back": "Back",
+    "close": "Close",
+    "submit": "Submit",
+    "loading": "Loading...",
+    "day": "day",
+    "days_few": "days",
+    "days_many": "days",
+    "from": "from",
+    "perDay": "/ day",
+    "total": "Total",
+    "selectCity": "Select a city",
+    "selectDate": "Select a date",
+    "date": "Date"
+  },
+  "hero": {
+    "badge": "No hidden fees",
+    "title1": "Short and long term car rental in Klaipėda",
+    "title2": "Rent a car the easy way — book in 2 minutes",
+    "subtitle": "Pick your location and dates — we'll show only the cars actually available for your time.",
+    "pickupLocation": "Pickup location",
+    "dateFrom": "Date from",
+    "dateTo": "Date to",
+    "search": "Search cars"
+  },
+  "cars": {
+    "availableTitle": "Available cars",
+    "ourTitle": "Our cars",
+    "found": "Found {{count}} cars for {{days}} days ({{from}} – {{to}})",
+    "selectDatesHint": "Enter dates to see only available cars.",
+    "noneAvailable": "No cars available for the selected dates.",
+    "tryAnother": "Please try a different period.",
+    "seats_short": "seats",
+    "auto": "Automatic",
+    "manual": "Manual",
+    "totalDays": "Total ({{days}} days)",
+    "reserve": "Reserve",
+    "view": "View"
+  },
+  "why": {
+    "title": "Why choose Rentivo?",
+    "insurance": { "title": "CASCO and third-party liability insurance", "text": "All cars are insured — drive worry-free, and with the full protection package there is no deductible." },
+    "prices": { "title": "Transparent prices", "text": "No hidden fees. You see the final price upfront." },
+    "support": { "title": "24/7 support", "text": "Roadside assistance and a replacement car in case of breakdown or accident." }
+  },
+  "footer": {
+    "rights": "© {{year}} Rentivo. All rights reserved.",
+    "whatsapp": "WhatsApp",
+    "call": "Call",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service"
+  },
+  "legal": {
+    "backHome": "← Back to home",
+    "termsTitle": "Terms of Service",
+    "privacyTitle": "Privacy Policy",
+    "loading": "Loading...",
+    "termsPreparing": "Terms of service are being prepared. Please check back later.",
+    "privacyPreparing": "Privacy policy is being prepared. Please check back later."
+  },
+  "detail": {
+    "mainSpecs": "Main specifications",
+    "year": "Year",
+    "transmission": "Transmission",
+    "fuel": "Fuel type",
+    "consumption": "Consumption",
+    "mileage": "Mileage",
+    "seats": "Seats",
+    "equipment": "Vehicle equipment",
+    "pricePerDayHint": "indicative price / day",
+    "pickup": "Pickup location",
+    "return": "Return location",
+    "from": "From",
+    "to": "To",
+    "addons": "Additional services",
+    "addonsSubtitle": "Trips within the country and abroad",
+    "perDayShort": " / day",
+    "perDayQty": " / day / pc.",
+    "addonsTotal": "Services total",
+    "rateLine": "Rate ({{label}})",
+    "pickupFee": "Pickup location ({{name}})",
+    "returnFee": "Return location ({{name}})",
+    "reserveBtn": "Reserve",
+    "selectLocationDates": "Select pickup and return dates.",
+    "selectLocation": "Select pickup location",
+    "selectDates": "Select rental dates",
+    "addonItems": {
+      "clean": "Post-rental car cleaning",
+      "roadside": "Roadside assistance",
+      "fullprotect": "Full protection package, no deductible",
+      "seat15_36": "Child seat (15–36 kg)",
+      "seat9_25": "Child seat (9–25 kg)",
+      "seat0_13": "Infant seat (0–13 kg)"
+    },
+    "priceList": "Rental price list",
+    "priceListHint": "The longer the rental, the lower the daily price.",
+    "yourChoice": "Your selection ({{days}} days)",
+    "carNotFound": "Car not found",
+    "backHome": "Back to home",
+    "errorTitle": "An error occurred"
+  },
+  "booking": {
+    "title": "Reservation details",
+    "subtitle": "Fill in your contact information to complete the reservation.",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "phone": "Phone number",
+    "email": "Email",
+    "country": "Country",
+    "address": "Address",
+    "city": "City",
+    "message": "Your message (optional)",
+    "messagePlaceholder": "You can leave additional information about your order.",
+    "agree": "I agree to the rental contract terms and privacy policy",
+    "agreePrefix": "I agree to the",
+    "agreeLink": "rental contract terms",
+    "agreeAnd": "and",
+    "agreeLinkPrivacy": "privacy policy",
+    "submit": "Submit",
+    "successTitle": "Thank you!",
+    "successText": "Your reservation is successful. We will contact you during the nearest business hours.",
+    "addressPlaceholder": "Street, house no.",
+    "paymentMethod": "Payment method",
+    "payFull": "Pay the full amount",
+    "deposit": "Deposit ({{pct}}%)",
+    "depositNote": "{{amount}} now · balance on pickup",
+    "selectBank": "Choose a bank",
+    "paymentInfo": "After clicking \"Reserve\" you'll be redirected to your chosen bank's payment page. The reservation will only be confirmed once the payment is received.",
+    "redirecting": "Redirecting to bank…",
+    "submitPay": "Reserve and pay · {{amount}}",
+    "termsNotPublished": "The contract has not been published yet.",
+    "privacyNotPublished": "The privacy policy has not been published yet.",
+    "confirmAgree": "Please confirm you agree with the terms",
+    "checkFields": "Please check the highlighted fields",
+    "invalidEmail": "We can't verify this email — please use a different one",
+    "submitFailed": "Failed to submit the order",
+    "error": "An error occurred",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email format"
+  },
+  "faq": {
+    "title": "Terms & FAQ",
+    "subtitle": "Frequently asked questions about renting cars with Rentivo.",
+    "items": [
+      { "q": "What documents are required for rental?", "a": "A valid driver's license (at least 2 years of experience) and an identity document (passport or ID card)." },
+      { "q": "What is the minimum driver age?", "a": "Drivers must be at least 21 years old. Some cars (Premium, SUV) may require a higher age." },
+      { "q": "Is a deposit required?", "a": "No, a deposit is not taken." },
+      { "q": "Are the cars insured?", "a": "Insurance and Liability\n\nAll rental cars are covered by mandatory motor vehicle owner civil liability insurance (TPVCA).\n\nUpon request, CASCO insurance protection with 0 Eur deductible can be selected. In this case, the rental price is recalculated according to the selected insurance option.\n\nIn the event of a traffic accident, damage to the car, or noticing any other damage, the renter must inform the lessor no later than 24 hours from the time of the incident. Failure to report within the specified time may result in the insurance protection not being applied.\n\nIf the car keys or registration documents are lost, a 200 Eur administrative fee applies. Car keys and documents are not insured.\n\nInsurance protection does not apply if the vehicle is used for purposes other than intended, including driving off-road and other cases specified in legal acts or insurance rules.\n\nIf a car without CASCO insurance is selected, the renter is liable for all damage caused to the vehicle. In cases where the car is damaged beyond repair or it is not economically viable to repair it, the renter must compensate the market value of the car on the day of the incident." },
+      { "q": "How can I cancel a reservation?", "a": "You can cancel free of charge up to 48 hours before the rental starts. A cancellation fee may apply afterwards." },
+      { "q": "What payment methods are accepted?", "a": "We accept bank transfers and cash upon picking up the car." },
+      { "q": "Are there mileage limits?", "a": "All cars have a 200 km per day limit. Exceeding the limit incurs an additional fee. Please notify us in advance for trips abroad." },
+      { "q": "Where can I return the car?", "a": "You can return the car in the same city you picked it up, or at another pickup location for the fee listed." }
+    ]
+  },
+  "about": {
+    "title": "About Rentivo",
+    "lead": "We are Rentivo — a car rental team that cares about every kilometer of your trip.",
+    "story": "Rentivo was born from a simple idea — to make car rental in Lithuania transparent, fast, and free from hidden fees. Over several years we have served thousands of customers across the country and keep growing our fleet.",
+    "values": "Our values",
+    "valuesList": [
+      { "title": "Transparency", "text": "You see the final price before booking — no hidden fees." },
+      { "title": "Convenience", "text": "Booking in 2 minutes and a clear pickup procedure." },
+      { "title": "Trust", "text": "Insured cars and 24/7 roadside assistance." }
+    ],
+    "fleet": "Our fleet ranges from economy cars to premium sedans and spacious minivans. Every car is carefully prepared before each rental."
+  },
+  "contact": {
+    "title": "Get in touch",
+    "subtitle": "Always ready to answer your questions and help you choose the right car.",
+    "phone": "Phone",
+    "phoneHint": "Call us 24/7",
+    "email": "Email",
+    "emailHint": "We reply within 1 business hour",
+    "whatsapp": "WhatsApp",
+    "whatsappHint": "The fastest way to reach us",
+    "writeOnWhatsapp": "Message on WhatsApp",
+    "hours": "Business hours",
+    "hoursWeekdays": "Mon–Fri: 08:00–20:00",
+    "hoursSat": "Sat: 09:00–18:00",
+    "hoursSun": "Sun: 10:00–16:00",
+    "locations": "Pickup locations",
+    "whatsappMessage": "Hello, I'd like to ask about car rental."
+  },
+  "offers": {
+    "title": "Special offers",
+    "subtitle": "Seasonal deals and discounts that help you save on your rental.",
+    "footnote": "Offers are valid for a limited time. Contact us for details.",
+    "items": [
+      { "badge": "Up to -20%", "title": "Long-term rental", "text": "Rent for 7 days or more and get up to 20% off the daily rate." },
+      { "badge": "Weekend deal", "title": "Weekend rate", "text": "Friday to Sunday at a flat price for the whole weekend." },
+      { "badge": "New customers", "title": "First rental -10%", "text": "Renting with us for the first time? Get an extra 10% off." }
+    ]
+  },
+  "news": {
+    "title": "News",
+    "subtitle": "Latest Rentivo updates, promotions and useful tips.",
+    "items": [
+      { "date": "2026-05-15", "title": "New car in the fleet", "text": "", "excerpt": "We're introducing a new family-class car, already available to book on our site." },
+      { "date": "2026-04-02", "title": "Summer season offers", "text": "", "excerpt": "We've updated summer pricing — check out discounts for longer rentals." },
+      { "date": "2026-03-10", "title": "Tips for trips abroad", "text": "", "excerpt": "What to know before taking your rental car outside Lithuania." }
+    ]
+  },
+  "home": {
+    "availability": {
+      "title": "Choose your dates",
+      "subtitle": "See instantly how many cars are available on each day.",
+      "selected": "Selected:",
+      "clear": "Clear"
+    },
+    "calendar": {
+      "legendFree": "Available",
+      "legendLow": "Few left",
+      "legendFull": "Fully booked"
+    },
+    "cars": {
+      "availableForRange": "Cars available for the selected period ({{count}})",
+      "noneTitle": "No cars are available for the selected dates.",
+      "noneHint": "Try different dates or check the next available period.",
+      "changeDates": "Change dates",
+      "showNextFree": "Show next available period"
+    },
+    "seo": {
+      "h1": "Car rental services in the port city and region",
+      "p1": "Looking for reliable, comfortable transport on the coast? Renting a car in Klaipėda and at Palanga Airport with Rentivo is a fast, flexible solution for business trips and seaside getaways alike. We understand that your journey needs more than just a means of transport — it needs a technically sound, safe, and presentable car. Skip public transport timetables and expensive taxis, and take control of your time from your very first minute on the coast.",
+      "plq": {
+        "title": "Car rental at Palanga Airport (PLQ) — a convenient start",
+        "intro": "Arriving on the coast by plane? Renting a car at Palanga Airport lets you avoid logistics headaches the moment you land.",
+        "items": [
+          { "title": "Transport right after your flight", "text": "The car can be prepared for your arrival right at the Palanga Airport (PLQ) terminal. An ideal choice for people flying back to visit relatives, as well as foreign tourists and business partners." },
+          { "title": "No waiting in lines", "text": "Book the car online in advance and there's no need to waste time at rental counters at the airport — just get in and drive." },
+          { "title": "Convenient return", "text": "At the end of your trip you can leave the car at an agreed location so you make your return flight without stress." }
+        ]
+      },
+      "replacement": {
+        "title": "Replacement car: a solution after an accident or during repairs",
+        "intro": "Has your daily routine come to a halt because your personal car has broken down or been in a traffic accident? Rentivo offers a fast solution for residents of Klaipėda and the region — a replacement car rental.",
+        "items": [
+          { "title": "Rental during service", "text": "Don't put your plans on hold while your car is being repaired at the workshop. Rent a comfortable car for the entire repair period." },
+          { "title": "Replacement car after a traffic accident", "text": "If you were the victim in a traffic accident, in most cases the cost of the replacement car is covered by the insurance company (under TPVCAPD). We provide all the required invoices and rental agreements so declaring the costs to the insurer goes smoothly." }
+        ]
+      },
+      "why": {
+        "title": "Why choose Rentivo car rental?",
+        "items": [
+          { "title": "Premium-class comfort", "text": "Our fleet features technically sound, dynamic, and comfortable German cars (BMW, Mercedes-Benz, Volkswagen models) that deliver maximum driving pleasure." },
+          { "title": "Perfect technical condition", "text": "Every vehicle is regularly maintained, clean, and ready for short trips around the city as well as long journeys." },
+          { "title": "Full flexibility", "text": "We offer short- and long-term car rental in Klaipėda and nearby cities. Rent by the day, weekend, or for the whole month on favourable terms." },
+          { "title": "Simple process", "text": "Fast online car booking with no hidden fees or long bureaucratic procedures." }
+        ]
+      }
+    }
+  }
+}
+

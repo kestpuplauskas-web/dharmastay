@@ -1,0 +1,571 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, useMemo } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { listBookings, deleteBooking, BOOKING_STATUSES } from "@/lib/bookings.functions";
+import { listAllCars } from "@/lib/cars.functions";
+import { listSignedContractsByBookings } from "@/lib/contracts.functions";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell } from "@/components/ui/table";
+import { Plus, Pencil, Trash2, LayoutGrid, List, Eye, Filter, ArrowUp, ArrowDown, Check, Download } from "lucide-react";
+import { toast } from "sonner";
+import { BookingsTimeline } from "@/components/admin/BookingsTimeline";
+import jsPDF from "jspdf";
+
+export const Route = createFileRoute("/admin/bookings/")({
+  component: BookingsList,
+});
+
+const STATUS_LABELS: Record<string, string> = {
+  confirmed: "Vykdoma",
+  pending: "Rezervuota",
+  completed: "Atlikta",
+  cancelled: "Atšaukta",
+};
+const STATUS_CLASS: Record<string, string> = {
+  confirmed: "bg-primary/15 text-primary border-primary/30",
+  pending: "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30",
+  completed: "bg-muted text-muted-foreground border-border",
+  cancelled: "bg-destructive/15 text-destructive border-destructive/30",
+};
+
+const SOURCE_LABELS: Record<string, string> = {
+  phone: "Telefonas",
+  whatsapp: "WhatsApp",
+  direct: "Tiesiogiai",
+  "rentivo.lt": "rentivo.lt",
+  other: "Kita",
+  manual: "Rankinė",
+};
+
+function durationDays(from?: string | null, to?: string | null) {
+  if (!from || !to) return 0;
+  const a = new Date(from).getTime();
+  const b = new Date(to).getTime();
+  if (isNaN(a) || isNaN(b)) return 0;
+  return Math.max(1, Math.round((b - a) / 86400000) + 1);
+}
+
+function BookingsList() {
+  const fetchBookings = useServerFn(listBookings);
+  const fetchCars = useServerFn(listAllCars);
+  const fetchSigned = useServerFn(listSignedContractsByBookings);
+  const del = useServerFn(deleteBooking);
+  const qc = useQueryClient();
+  const [view, setView] = useState<"timeline" | "list">("timeline");
+
+  const q = useQuery({
+    queryKey: ["admin-bookings", {}],
+    queryFn: () => fetchBookings({ data: {} }),
+  });
+
+  const carsQ = useQuery({ queryKey: ["admin-cars"], queryFn: () => fetchCars() });
+
+  const bookingIds = useMemo(() => ((q.data as any[]) ?? []).map((b) => b.id), [q.data]);
+  const signedQ = useQuery({
+    queryKey: ["admin-signed-contracts", bookingIds],
+    queryFn: () => fetchSigned({ data: { bookingIds } }),
+    enabled: bookingIds.length > 0,
+  });
+  const signedByBooking = useMemo(() => {
+    const map = new Map<string, any>();
+    for (const s of ((signedQ.data as any[]) ?? [])) map.set(s.booking_id, s);
+    return map;
+  }, [signedQ.data]);
+
+  const delM = useMutation({
+    mutationFn: (id: string) => del({ data: { id } }),
+    onSuccess: () => {
+      toast.success("Ištrinta");
+      qc.invalidateQueries({ queryKey: ["admin-bookings"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Klaida"),
+  });
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-bold">Rezervacijos</h1>
+          <p className="text-sm text-muted-foreground">{q.data ? `${q.data.length} rastos` : "Kraunama..."}</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="inline-flex rounded-md border bg-card p-0.5">
+            <Button size="sm" variant={view === "timeline" ? "default" : "ghost"} onClick={() => setView("timeline")} className="h-8">
+              <LayoutGrid className="h-4 w-4 mr-1" /> Kalendorius
+            </Button>
+            <Button size="sm" variant={view === "list" ? "default" : "ghost"} onClick={() => setView("list")} className="h-8">
+              <List className="h-4 w-4 mr-1" /> Sąrašas
+            </Button>
+          </div>
+          <Button asChild>
+            <Link to="/admin/bookings/new"><Plus className="h-4 w-4 mr-1" /> Nauja rezervacija</Link>
+          </Button>
+        </div>
+      </div>
+
+      {view === "timeline" ? (
+        <>
+          {q.isLoading && <div className="text-muted-foreground">Kraunama...</div>}
+          {q.error && <div className="text-destructive">{(q.error as Error).message}</div>}
+          {carsQ.data && q.data && (
+            <BookingsTimeline cars={carsQ.data as any} bookings={q.data as any} />
+          )}
+        </>
+      ) : (
+        <BookingsTable
+          rows={(q.data as any[]) ?? []}
+          loading={q.isLoading}
+          signedByBooking={signedByBooking}
+          onDelete={(id, name) => { if (confirm(`Ištrinti rezervaciją ${name || ""}?`)) delM.mutate(id); }}
+        />
+      )}
+    </div>
+  );
+}
+
+type ColKey =
+  | "status" | "booking_number" | "car" | "customer_name" | "customer_phone"
+  | "customer_email" | "date_from" | "date_to" | "duration" | "total_amount";
+
+type Row = any;
+
+const COLUMNS: { key: ColKey; label: string; align?: "left" | "right"; type: "set" | "text" | "date" | "number" }[] = [
+  { key: "status", label: "Statusas", type: "set" },
+  { key: "booking_number", label: "Užsakymo Nr", type: "set" },
+  { key: "car", label: "Automobilis", type: "set" },
+  { key: "customer_name", label: "Klientas", type: "set" },
+  { key: "customer_phone", label: "Telefonas", type: "text" },
+  { key: "customer_email", label: "El. paštas", type: "text" },
+  { key: "date_from", label: "Užsakymas nuo", type: "date" },
+  { key: "date_to", label: "Užsakymas iki", type: "date" },
+  { key: "duration", label: "Trukmė (d.)", type: "number", align: "right" },
+  { key: "total_amount", label: "Suma (€)", type: "number", align: "right" },
+];
+
+function getCell(b: Row, key: ColKey): any {
+  switch (key) {
+    case "status": return b.status;
+    case "booking_number": return b.booking_number ?? "";
+    case "car": return b.cars?.name ?? "";
+    case "customer_name": return b.customer_name ?? "";
+    case "customer_phone": return b.customer_phone ?? "";
+    case "customer_email": return b.customer_email ?? "";
+    case "date_from": return b.date_from ?? "";
+    case "date_to": return b.date_to ?? "";
+    case "duration": return durationDays(b.date_from, b.date_to);
+    case "total_amount": return Number(b.total_amount ?? 0);
+  }
+}
+
+type SetFilter = { kind: "set"; values: string[] };
+type TextFilter = { kind: "text"; value: string };
+type RangeFilter = { kind: "range"; min: string; max: string };
+type AnyFilter = SetFilter | TextFilter | RangeFilter;
+
+function isFilterActive(f?: AnyFilter) {
+  if (!f) return false;
+  if (f.kind === "set") return f.values.length > 0;
+  if (f.kind === "text") return f.value.trim() !== "";
+  return f.min !== "" || f.max !== "";
+}
+
+function BookingsTable({ rows, loading, signedByBooking, onDelete }: { rows: Row[]; loading: boolean; signedByBooking: Map<string, any>; onDelete: (id: string, name: string) => void }) {
+  const [sort, setSort] = useState<{ key: ColKey; dir: "asc" | "desc" } | null>(null);
+  const [filters, setFilters] = useState<Record<string, AnyFilter>>({});
+  const [viewRow, setViewRow] = useState<Row | null>(null);
+  const [contractView, setContractView] = useState<any | null>(null);
+
+  const filtered = useMemo(() => {
+    let out = rows.slice();
+    for (const col of COLUMNS) {
+      const f = filters[col.key];
+      if (!isFilterActive(f)) continue;
+      out = out.filter((r) => {
+        const v = getCell(r, col.key);
+        if (f.kind === "set") return f.values.includes(String(v ?? ""));
+        if (f.kind === "text") return String(v ?? "").toLowerCase().includes(f.value.trim().toLowerCase());
+        // range (date or number)
+        if (col.type === "date") {
+          const sv = String(v ?? "");
+          if (f.min && sv < f.min) return false;
+          if (f.max && sv > f.max) return false;
+          return true;
+        }
+        const n = Number(v ?? 0);
+        if (f.min !== "" && n < Number(f.min)) return false;
+        if (f.max !== "" && n > Number(f.max)) return false;
+        return true;
+      });
+    }
+    if (sort) {
+      const { key, dir } = sort;
+      out.sort((a, b) => {
+        const av = getCell(a, key);
+        const bv = getCell(b, key);
+        if (typeof av === "number" && typeof bv === "number") return dir === "asc" ? av - bv : bv - av;
+        const as = String(av ?? "");
+        const bs = String(bv ?? "");
+        return dir === "asc" ? as.localeCompare(bs) : bs.localeCompare(as);
+      });
+    }
+    return out;
+  }, [rows, filters, sort]);
+
+  const total = useMemo(() => filtered.reduce((s, r) => s + Number(r.total_amount ?? 0), 0), [filtered]);
+  const anyFilter = Object.values(filters).some(isFilterActive);
+
+  const toggleSort = (k: ColKey) => {
+    setSort((s) => {
+      if (!s || s.key !== k) return { key: k, dir: "asc" };
+      if (s.dir === "asc") return { key: k, dir: "desc" };
+      return null;
+    });
+  };
+
+  return (
+    <div className="space-y-3">
+      {anyFilter && (
+        <div className="flex justify-end">
+          <Button size="sm" variant="outline" onClick={() => setFilters({})}>Išvalyti visus filtrus</Button>
+        </div>
+      )}
+
+      <div className="rounded-md border bg-card overflow-x-auto">
+        <Table className="min-w-[1400px]">
+          <TableHeader className="sticky top-0 z-10 bg-muted">
+            <TableRow>
+              {COLUMNS.map((c) => (
+                <TableHead key={c.key} className={c.align === "right" ? "text-right" : ""}>
+                  <div className={`flex items-center gap-1 ${c.align === "right" ? "justify-end" : ""}`}>
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1 font-medium hover:text-primary"
+                      onClick={() => toggleSort(c.key)}
+                    >
+                      {c.label}
+                      {sort?.key === c.key && (sort.dir === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />)}
+                    </button>
+                    <ColumnFilter
+                      col={c}
+                      rows={rows}
+                      filter={filters[c.key]}
+                      onChange={(f) => setFilters((prev) => {
+                        const next = { ...prev };
+                        if (f) next[c.key] = f; else delete next[c.key];
+                        return next;
+                      })}
+                    />
+                  </div>
+                </TableHead>
+              ))}
+              <TableHead className="text-center w-36">Sutartis</TableHead>
+              <TableHead className="text-right w-32">Veiksmai</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="[&_tr:nth-child(even)]:bg-muted/30">
+            {loading && (
+              <TableRow><TableCell colSpan={COLUMNS.length + 2} className="text-center text-muted-foreground py-8">Kraunama...</TableCell></TableRow>
+            )}
+            {!loading && filtered.length === 0 && (
+              <TableRow><TableCell colSpan={COLUMNS.length + 2} className="text-center text-muted-foreground py-8">Rezervacijų nerasta</TableCell></TableRow>
+            )}
+            {filtered.map((b) => {
+              const signed = signedByBooking.get(b.id);
+              return (
+              <TableRow key={b.id} className="hover:bg-muted/60">
+                <TableCell>
+                  <Badge variant="outline" className={STATUS_CLASS[b.status] ?? ""}>{STATUS_LABELS[b.status] ?? b.status}</Badge>
+                </TableCell>
+                <TableCell className="font-mono text-xs">{b.booking_number ?? "—"}</TableCell>
+                <TableCell className="font-medium">{b.cars?.name ?? "—"}</TableCell>
+                <TableCell>{b.customer_name || "—"}</TableCell>
+                <TableCell>{b.customer_phone || "—"}</TableCell>
+                <TableCell className="text-sm">{b.customer_email || "—"}</TableCell>
+                <TableCell className="whitespace-nowrap">{b.date_from}{b.pickup_time ? ` ${b.pickup_time}` : ""}</TableCell>
+                <TableCell className="whitespace-nowrap">{b.date_to}{b.return_time ? ` ${b.return_time}` : ""}</TableCell>
+                <TableCell className="text-right">{durationDays(b.date_from, b.date_to)}</TableCell>
+                <TableCell className="text-right font-semibold text-primary">{Number(b.total_amount ?? 0).toFixed(2)}</TableCell>
+                <TableCell className="text-center">
+                  {signed ? (
+                    <div className="inline-flex items-center gap-1">
+                      <Check className="h-4 w-4 text-green-600 dark:text-green-500" />
+                      <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => setContractView(signed)} title="Peržiūrėti sutartį">
+                        <Eye className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => downloadContractPdf(signed, b)} title="Atsisiųsti PDF">
+                        <Download className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <Badge variant="outline" className="bg-orange-500/15 text-orange-700 dark:text-orange-400 border-orange-500/30">
+                      Nepasirašyta
+                    </Badge>
+                  )}
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="inline-flex items-center gap-1">
+                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setViewRow(b)} title="Peržiūrėti">
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button asChild size="icon" variant="ghost" className="h-8 w-8" title="Redaguoti">
+                      <Link to="/admin/bookings/$id" params={{ id: b.id }}><Pencil className="h-4 w-4" /></Link>
+                    </Button>
+                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => onDelete(b.id, b.customer_name)} title="Trinti">
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+              );
+            })}
+          </TableBody>
+          <TableFooter className="bg-muted">
+            <TableRow>
+              <TableCell colSpan={COLUMNS.length + 2} className="text-right font-medium">
+                Viso: {filtered.length} rezervacijų | {total.toFixed(2)}€
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </div>
+
+      <BookingViewDialog row={viewRow} onClose={() => setViewRow(null)} />
+      <ContractPreviewDialog signed={contractView} onClose={() => setContractView(null)} />
+    </div>
+  );
+}
+
+function ColumnFilter({ col, rows, filter, onChange }: {
+  col: typeof COLUMNS[number];
+  rows: Row[];
+  filter?: AnyFilter;
+  onChange: (f: AnyFilter | null) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const active = isFilterActive(filter);
+
+  // Local draft state
+  const [search, setSearch] = useState("");
+  const [draftValues, setDraftValues] = useState<string[]>(filter?.kind === "set" ? filter.values : []);
+  const [draftText, setDraftText] = useState(filter?.kind === "text" ? filter.value : "");
+  const [draftMin, setDraftMin] = useState(filter?.kind === "range" ? filter.min : "");
+  const [draftMax, setDraftMax] = useState(filter?.kind === "range" ? filter.max : "");
+
+  const uniqueValues = useMemo(() => {
+    if (col.type !== "set") return [];
+    const set = new Set<string>();
+    for (const r of rows) {
+      const v = getCell(r, col.key);
+      const s = String(v ?? "");
+      if (s !== "") set.add(s);
+    }
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [rows, col]);
+
+  const displayLabel = (val: string) => {
+    if (col.key === "status") return STATUS_LABELS[val] ?? val;
+    return val;
+  };
+
+  const filteredOptions = uniqueValues.filter((v) =>
+    displayLabel(v).toLowerCase().includes(search.toLowerCase())
+  );
+
+  const apply = () => {
+    if (col.type === "set") {
+      if (draftValues.length === 0) onChange(null);
+      else onChange({ kind: "set", values: draftValues });
+    } else if (col.type === "text") {
+      if (!draftText.trim()) onChange(null);
+      else onChange({ kind: "text", value: draftText });
+    } else {
+      if (!draftMin && !draftMax) onChange(null);
+      else onChange({ kind: "range", min: draftMin, max: draftMax });
+    }
+    setOpen(false);
+  };
+
+  const clear = () => {
+    setDraftValues([]); setDraftText(""); setDraftMin(""); setDraftMax(""); setSearch("");
+    onChange(null);
+    setOpen(false);
+  };
+
+  // Sync draft when opening
+  const onOpenChange = (o: boolean) => {
+    if (o) {
+      setSearch("");
+      setDraftValues(filter?.kind === "set" ? filter.values : []);
+      setDraftText(filter?.kind === "text" ? filter.value : "");
+      setDraftMin(filter?.kind === "range" ? filter.min : "");
+      setDraftMax(filter?.kind === "range" ? filter.max : "");
+    }
+    setOpen(o);
+  };
+
+  return (
+    <Popover open={open} onOpenChange={onOpenChange}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className={`inline-flex h-6 w-6 items-center justify-center rounded hover:bg-background ${active ? "text-primary" : "text-muted-foreground"}`}
+          title="Filtras"
+        >
+          <Filter className="h-3 w-3" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-64 p-3 space-y-2">
+        {col.type === "set" && (
+          <>
+            <Input placeholder="Ieškoti..." value={search} onChange={(e) => setSearch(e.target.value)} className="h-8" />
+            <div className="max-h-56 overflow-y-auto space-y-1 border rounded p-2">
+              {filteredOptions.length === 0 && <div className="text-xs text-muted-foreground">Nėra reikšmių</div>}
+              {filteredOptions.map((v) => {
+                const checked = draftValues.includes(v);
+                return (
+                  <label key={v} className="flex items-center gap-2 text-sm cursor-pointer">
+                    <Checkbox
+                      checked={checked}
+                      onCheckedChange={(c) => {
+                        setDraftValues((prev) => c ? [...prev, v] : prev.filter((x) => x !== v));
+                      }}
+                    />
+                    <span className="truncate">{displayLabel(v)}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </>
+        )}
+        {col.type === "text" && (
+          <Input placeholder="Ieškoti..." value={draftText} onChange={(e) => setDraftText(e.target.value)} className="h-8" />
+        )}
+        {(col.type === "date" || col.type === "number") && (
+          <div className="space-y-2">
+            <div>
+              <div className="text-xs text-muted-foreground mb-1">Nuo</div>
+              <Input type={col.type === "date" ? "date" : "number"} value={draftMin} onChange={(e) => setDraftMin(e.target.value)} className="h-8" />
+            </div>
+            <div>
+              <div className="text-xs text-muted-foreground mb-1">Iki</div>
+              <Input type={col.type === "date" ? "date" : "number"} value={draftMax} onChange={(e) => setDraftMax(e.target.value)} className="h-8" />
+            </div>
+          </div>
+        )}
+        <div className="flex gap-2 pt-1">
+          <Button size="sm" className="flex-1" onClick={apply}>Pritaikyti</Button>
+          <Button size="sm" variant="outline" className="flex-1" onClick={clear}>Išvalyti</Button>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+function BookingViewDialog({ row, onClose }: { row: Row | null; onClose: () => void }) {
+  return (
+    <Dialog open={!!row} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Rezervacijos peržiūra</DialogTitle>
+        </DialogHeader>
+        {row && (
+          <div className="space-y-3 text-sm">
+            <div className="flex items-center gap-2 flex-wrap">
+              {row.booking_number && <span className="font-mono text-xs px-2 py-0.5 rounded bg-muted">{row.booking_number}</span>}
+              <Badge variant="outline" className={STATUS_CLASS[row.status] ?? ""}>{STATUS_LABELS[row.status] ?? row.status}</Badge>
+              <Badge variant="outline">{SOURCE_LABELS[row.source] ?? row.source}</Badge>
+            </div>
+            <Row label="Automobilis" value={row.cars?.name ?? "—"} />
+            <Row label="Klientas" value={row.customer_name || "—"} />
+            <Row label="Telefonas" value={row.customer_phone || "—"} />
+            <Row label="El. paštas" value={row.customer_email || "—"} />
+            <Row label="Adresas" value={row.customer_address || "—"} />
+            <Row label="Asmens kodas" value={row.customer_id_code || "—"} />
+            <Row label="Nuo" value={`${row.date_from}${row.pickup_time ? ` ${row.pickup_time}` : ""}`} />
+            <Row label="Iki" value={`${row.date_to}${row.return_time ? ` ${row.return_time}` : ""}`} />
+            <Row label="Trukmė" value={`${durationDays(row.date_from, row.date_to)} d.`} />
+            <Row label="Paėmimo vieta" value={row.pickup_location || "—"} />
+            <Row label="Grąžinimo vieta" value={row.return_location || "—"} />
+            <Row label="Suma" value={`${Number(row.total_amount ?? 0).toFixed(2)} €`} />
+            {row.note && <div className="pt-2 border-t italic text-muted-foreground">„{row.note}"</div>}
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="grid grid-cols-3 gap-2">
+      <div className="text-muted-foreground">{label}</div>
+      <div className="col-span-2 font-medium">{value}</div>
+    </div>
+  );
+}
+
+function ContractPreviewDialog({ signed, onClose }: { signed: any | null; onClose: () => void }) {
+  return (
+    <Dialog open={!!signed} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Pasirašyta sutartis</DialogTitle>
+        </DialogHeader>
+        {signed && (
+          <div className="space-y-3">
+            <div className="text-sm text-muted-foreground">
+              Pasirašė: <span className="font-medium text-foreground">{signed.customer_name}</span>
+              {" · "}
+              {new Date(signed.signed_at).toLocaleString("lt-LT")}
+            </div>
+            <div
+              className="prose prose-sm dark:prose-invert max-w-none border rounded-md p-4 bg-background"
+              dangerouslySetInnerHTML={{ __html: signed.contract_content || "" }}
+            />
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function downloadContractPdf(signed: any, booking: any) {
+  try {
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 40;
+    const maxWidth = pageWidth - margin * 2;
+
+    // Strip HTML to plain text for a simple, reliable PDF
+    const tmp = document.createElement("div");
+    tmp.innerHTML = signed.contract_content || "";
+    const text = (tmp.innerText || tmp.textContent || "").trim();
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("Nuomos sutartis", margin, margin);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    const meta = `Rezervacija: ${booking.booking_number ?? booking.id}   ·   Pasirašė: ${signed.customer_name}   ·   ${new Date(signed.signed_at).toLocaleString("lt-LT")}`;
+    doc.text(meta, margin, margin + 20);
+
+    doc.setFontSize(11);
+    const lines = doc.splitTextToSize(text, maxWidth);
+    doc.text(lines, margin, margin + 50);
+
+    const filename = `sutartis-${booking.booking_number ?? booking.id}.pdf`;
+    doc.save(filename);
+  } catch (e) {
+    console.error("PDF error:", e);
+  }
+}
+
+// Keep imports referenced
+void BOOKING_STATUSES;
