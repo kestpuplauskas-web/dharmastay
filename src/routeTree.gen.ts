@@ -35,10 +35,6 @@ import { Route as AdminCarsNewRouteImport } from './routes/admin.cars.new'
 import { Route as AdminBookingsNewRouteImport } from './routes/admin.bookings.new'
 import { Route as AdminBookingsIdRouteImport } from './routes/admin.bookings.$id'
 import { Route as AdminCarsIdIndexRouteImport } from './routes/admin.cars.$id.index'
-import { Route as ApiPublicPaymentReturnRouteImport } from './routes/api/public/payment/return'
-import { Route as ApiPublicPaymentNotifyRouteImport } from './routes/api/public/payment/notify'
-import { Route as ApiPublicPaymentInitiateRouteImport } from './routes/api/public/payment/initiate'
-import { Route as ApiPublicPaymentCancelRouteImport } from './routes/api/public/payment/cancel'
 import { Route as AdminCarsIdEditRouteImport } from './routes/admin.cars.$id.edit'
 import { Route as AuthenticatedAdminToolsMigrateImagesRouteImport } from './routes/_authenticated/admin.tools.migrate-images'
 
@@ -171,27 +167,6 @@ const AdminCarsIdIndexRoute = AdminCarsIdIndexRouteImport.update({
   path: '/cars/$id/',
   getParentRoute: () => AdminRoute,
 } as any)
-const ApiPublicPaymentReturnRoute = ApiPublicPaymentReturnRouteImport.update({
-  id: '/api/public/payment/return',
-  path: '/api/public/payment/return',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicPaymentNotifyRoute = ApiPublicPaymentNotifyRouteImport.update({
-  id: '/api/public/payment/notify',
-  path: '/api/public/payment/notify',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicPaymentInitiateRoute =
-  ApiPublicPaymentInitiateRouteImport.update({
-    id: '/api/public/payment/initiate',
-    path: '/api/public/payment/initiate',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicPaymentCancelRoute = ApiPublicPaymentCancelRouteImport.update({
-  id: '/api/public/payment/cancel',
-  path: '/api/public/payment/cancel',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminCarsIdEditRoute = AdminCarsIdEditRouteImport.update({
   id: '/cars/$id/edit',
   path: '/cars/$id/edit',
@@ -231,10 +206,6 @@ export interface FileRoutesByFullPath {
   '/admin/cars/': typeof AdminCarsIndexRoute
   '/admin/tools/migrate-images': typeof AuthenticatedAdminToolsMigrateImagesRoute
   '/admin/cars/$id/edit': typeof AdminCarsIdEditRoute
-  '/api/public/payment/cancel': typeof ApiPublicPaymentCancelRoute
-  '/api/public/payment/initiate': typeof ApiPublicPaymentInitiateRoute
-  '/api/public/payment/notify': typeof ApiPublicPaymentNotifyRoute
-  '/api/public/payment/return': typeof ApiPublicPaymentReturnRoute
   '/admin/cars/$id/': typeof AdminCarsIdIndexRoute
 }
 export interface FileRoutesByTo {
@@ -263,10 +234,6 @@ export interface FileRoutesByTo {
   '/admin/cars': typeof AdminCarsIndexRoute
   '/admin/tools/migrate-images': typeof AuthenticatedAdminToolsMigrateImagesRoute
   '/admin/cars/$id/edit': typeof AdminCarsIdEditRoute
-  '/api/public/payment/cancel': typeof ApiPublicPaymentCancelRoute
-  '/api/public/payment/initiate': typeof ApiPublicPaymentInitiateRoute
-  '/api/public/payment/notify': typeof ApiPublicPaymentNotifyRoute
-  '/api/public/payment/return': typeof ApiPublicPaymentReturnRoute
   '/admin/cars/$id': typeof AdminCarsIdIndexRoute
 }
 export interface FileRoutesById {
@@ -298,10 +265,6 @@ export interface FileRoutesById {
   '/admin/cars/': typeof AdminCarsIndexRoute
   '/_authenticated/admin/tools/migrate-images': typeof AuthenticatedAdminToolsMigrateImagesRoute
   '/admin/cars/$id/edit': typeof AdminCarsIdEditRoute
-  '/api/public/payment/cancel': typeof ApiPublicPaymentCancelRoute
-  '/api/public/payment/initiate': typeof ApiPublicPaymentInitiateRoute
-  '/api/public/payment/notify': typeof ApiPublicPaymentNotifyRoute
-  '/api/public/payment/return': typeof ApiPublicPaymentReturnRoute
   '/admin/cars/$id/': typeof AdminCarsIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -333,10 +296,6 @@ export interface FileRouteTypes {
     | '/admin/cars/'
     | '/admin/tools/migrate-images'
     | '/admin/cars/$id/edit'
-    | '/api/public/payment/cancel'
-    | '/api/public/payment/initiate'
-    | '/api/public/payment/notify'
-    | '/api/public/payment/return'
     | '/admin/cars/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -365,10 +324,6 @@ export interface FileRouteTypes {
     | '/admin/cars'
     | '/admin/tools/migrate-images'
     | '/admin/cars/$id/edit'
-    | '/api/public/payment/cancel'
-    | '/api/public/payment/initiate'
-    | '/api/public/payment/notify'
-    | '/api/public/payment/return'
     | '/admin/cars/$id'
   id:
     | '__root__'
@@ -399,10 +354,6 @@ export interface FileRouteTypes {
     | '/admin/cars/'
     | '/_authenticated/admin/tools/migrate-images'
     | '/admin/cars/$id/edit'
-    | '/api/public/payment/cancel'
-    | '/api/public/payment/initiate'
-    | '/api/public/payment/notify'
-    | '/api/public/payment/return'
     | '/admin/cars/$id/'
   fileRoutesById: FileRoutesById
 }
@@ -423,10 +374,6 @@ export interface RootRouteChildren {
   CarsCarIdRoute: typeof CarsCarIdRoute
   ApiPublicBookingSubmitRoute: typeof ApiPublicBookingSubmitRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
-  ApiPublicPaymentCancelRoute: typeof ApiPublicPaymentCancelRoute
-  ApiPublicPaymentInitiateRoute: typeof ApiPublicPaymentInitiateRoute
-  ApiPublicPaymentNotifyRoute: typeof ApiPublicPaymentNotifyRoute
-  ApiPublicPaymentReturnRoute: typeof ApiPublicPaymentReturnRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -613,34 +560,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCarsIdIndexRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/api/public/payment/return': {
-      id: '/api/public/payment/return'
-      path: '/api/public/payment/return'
-      fullPath: '/api/public/payment/return'
-      preLoaderRoute: typeof ApiPublicPaymentReturnRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/payment/notify': {
-      id: '/api/public/payment/notify'
-      path: '/api/public/payment/notify'
-      fullPath: '/api/public/payment/notify'
-      preLoaderRoute: typeof ApiPublicPaymentNotifyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/payment/initiate': {
-      id: '/api/public/payment/initiate'
-      path: '/api/public/payment/initiate'
-      fullPath: '/api/public/payment/initiate'
-      preLoaderRoute: typeof ApiPublicPaymentInitiateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/payment/cancel': {
-      id: '/api/public/payment/cancel'
-      path: '/api/public/payment/cancel'
-      fullPath: '/api/public/payment/cancel'
-      preLoaderRoute: typeof ApiPublicPaymentCancelRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin/cars/$id/edit': {
       id: '/admin/cars/$id/edit'
       path: '/cars/$id/edit'
@@ -717,21 +636,7 @@ const rootRouteChildren: RootRouteChildren = {
   CarsCarIdRoute: CarsCarIdRoute,
   ApiPublicBookingSubmitRoute: ApiPublicBookingSubmitRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
-  ApiPublicPaymentCancelRoute: ApiPublicPaymentCancelRoute,
-  ApiPublicPaymentInitiateRoute: ApiPublicPaymentInitiateRoute,
-  ApiPublicPaymentNotifyRoute: ApiPublicPaymentNotifyRoute,
-  ApiPublicPaymentReturnRoute: ApiPublicPaymentReturnRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

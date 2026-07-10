@@ -48,7 +48,7 @@ import {
   validateCity,
   normalizePhoneE164,
 } from "@/lib/booking-validation";
-import { SWEDBANK_BANKS } from "@/lib/swedbank-bic";
+import { BANKS } from "@/lib/banks";
 import { BankLogo } from "@/components/BankLogo";
 
 const ADDONS: { id: string; i18nKey: string; label: string; price: number; unit: "fixed" | "perDay" | "perQty" }[] = [
@@ -756,12 +756,7 @@ function CarDetail() {
                     }
                     throw new Error(data?.error ?? t("booking.submitFailed"));
                   }
-                  const data = (await res.json()) as { redirectUrl?: string };
-                  if (data?.redirectUrl) {
-                    // Nukreipiame į banko mokėjimo puslapį.
-                    window.location.href = data.redirectUrl;
-                    return;
-                  }
+                  await res.json().catch(() => ({}));
                   setBookingOpen(false);
                   setSuccessOpen(true);
                   setAgree(false);
@@ -910,7 +905,7 @@ function CarDetail() {
                 <div className="space-y-2">
                   <div className="text-sm font-medium">{t("booking.selectBank")}</div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {SWEDBANK_BANKS.filter((b) => b.country === "LT").map((b) => (
+                    {BANKS.filter((b) => b.country === "LT").map((b) => (
                       <label
                         key={b.bic}
                         className={cn(

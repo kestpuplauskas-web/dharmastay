@@ -1,12 +1,12 @@
-// Swedbank E-commerce Payment Initiation V3 palaikomos finansų įstaigos (LT/LV/EE).
-// Šaltinis: https://pi.swedbank.com/developer (finansų įstaigų sąrašas).
-export type SwedbankBank = {
+// Palaikomi bankai rankiniam banko pavedimui (LT/LV/EE).
+// BIC naudojamas kaip stabilus banko identifikatorius pasirinkimui saugoti.
+export type Bank = {
   bic: string;
   name: string;
   country: "LT" | "LV" | "EE";
 };
 
-export const SWEDBANK_BANKS: SwedbankBank[] = [
+export const BANKS: Bank[] = [
   // Lietuva
   { bic: "HABALT22", name: "Swedbank AB", country: "LT" },
   { bic: "CBVILT2X", name: "SEB bankas AB", country: "LT" },
@@ -29,6 +29,6 @@ export const SWEDBANK_BANKS: SwedbankBank[] = [
   { bic: "PARXEE22", name: "Citadele banka AS Estijos filialas", country: "EE" },
 ];
 
-export function findBank(bic: string): SwedbankBank | undefined {
-  return SWEDBANK_BANKS.find((b) => b.bic === bic);
+export function findBank(bic: string): Bank | undefined {
+  return BANKS.find((b) => b.bic === bic);
 }
