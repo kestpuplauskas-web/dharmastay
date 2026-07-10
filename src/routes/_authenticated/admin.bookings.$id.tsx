@@ -48,8 +48,8 @@ function EditBookingPage() {
     customer_email: booking.customer_email ?? "",
     customer_address: booking.customer_address ?? "",
     customer_id_code: booking.customer_id_code ?? "",
-    source: booking.source ?? "phone",
-    status: booking.status ?? "confirmed",
+    source: (booking.source ?? "phone") as BookingFormValues["source"],
+    status: (booking.status ?? "confirmed") as BookingFormValues["status"],
     total_amount: Number(booking.total_amount ?? 0),
     note: booking.note ?? "",
   };

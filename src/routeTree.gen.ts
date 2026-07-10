@@ -24,8 +24,13 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as ApiPublicBookingSubmitRouteImport } from './routes/api/public/booking-submit'
+import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authenticated/admin.expenses'
+import { Route as AuthenticatedAdminContractsRouteImport } from './routes/_authenticated/admin.contracts'
 import { Route as AuthenticatedAdminPropertiesIndexRouteImport } from './routes/_authenticated/admin.properties.index'
+import { Route as AuthenticatedAdminBookingsIndexRouteImport } from './routes/_authenticated/admin.bookings.index'
 import { Route as AuthenticatedAdminPropertiesNewRouteImport } from './routes/_authenticated/admin.properties.new'
+import { Route as AuthenticatedAdminBookingsNewRouteImport } from './routes/_authenticated/admin.bookings.new'
+import { Route as AuthenticatedAdminBookingsIdRouteImport } from './routes/_authenticated/admin.bookings.$id'
 import { Route as AuthenticatedAdminPropertiesIdEditRouteImport } from './routes/_authenticated/admin.properties.$id.edit'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -102,16 +107,46 @@ const ApiPublicBookingSubmitRoute = ApiPublicBookingSubmitRouteImport.update({
   path: '/api/public/booking-submit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminExpensesRoute =
+  AuthenticatedAdminExpensesRouteImport.update({
+    id: '/expenses',
+    path: '/expenses',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminContractsRoute =
+  AuthenticatedAdminContractsRouteImport.update({
+    id: '/contracts',
+    path: '/contracts',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminPropertiesIndexRoute =
   AuthenticatedAdminPropertiesIndexRouteImport.update({
     id: '/properties/',
     path: '/properties/',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminBookingsIndexRoute =
+  AuthenticatedAdminBookingsIndexRouteImport.update({
+    id: '/bookings/',
+    path: '/bookings/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminPropertiesNewRoute =
   AuthenticatedAdminPropertiesNewRouteImport.update({
     id: '/properties/new',
     path: '/properties/new',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminBookingsNewRoute =
+  AuthenticatedAdminBookingsNewRouteImport.update({
+    id: '/bookings/new',
+    path: '/bookings/new',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminBookingsIdRoute =
+  AuthenticatedAdminBookingsIdRouteImport.update({
+    id: '/bookings/$id',
+    path: '/bookings/$id',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminPropertiesIdEditRoute =
@@ -133,10 +168,15 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/properties/$id': typeof PropertiesIdRoute
+  '/admin/contracts': typeof AuthenticatedAdminContractsRoute
+  '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
+  '/admin/bookings/new': typeof AuthenticatedAdminBookingsNewRoute
   '/admin/properties/new': typeof AuthenticatedAdminPropertiesNewRoute
+  '/admin/bookings/': typeof AuthenticatedAdminBookingsIndexRoute
   '/admin/properties/': typeof AuthenticatedAdminPropertiesIndexRoute
   '/admin/properties/$id/edit': typeof AuthenticatedAdminPropertiesIdEditRoute
 }
@@ -151,10 +191,15 @@ export interface FileRoutesByTo {
   '/privatumo-politika': typeof PrivatumoPolitikaRoute
   '/reset-password': typeof ResetPasswordRoute
   '/properties/$id': typeof PropertiesIdRoute
+  '/admin/contracts': typeof AuthenticatedAdminContractsRoute
+  '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
+  '/admin/bookings/new': typeof AuthenticatedAdminBookingsNewRoute
   '/admin/properties/new': typeof AuthenticatedAdminPropertiesNewRoute
+  '/admin/bookings': typeof AuthenticatedAdminBookingsIndexRoute
   '/admin/properties': typeof AuthenticatedAdminPropertiesIndexRoute
   '/admin/properties/$id/edit': typeof AuthenticatedAdminPropertiesIdEditRoute
 }
@@ -172,10 +217,15 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/properties/$id': typeof PropertiesIdRoute
+  '/_authenticated/admin/contracts': typeof AuthenticatedAdminContractsRoute
+  '/_authenticated/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
+  '/_authenticated/admin/bookings/new': typeof AuthenticatedAdminBookingsNewRoute
   '/_authenticated/admin/properties/new': typeof AuthenticatedAdminPropertiesNewRoute
+  '/_authenticated/admin/bookings/': typeof AuthenticatedAdminBookingsIndexRoute
   '/_authenticated/admin/properties/': typeof AuthenticatedAdminPropertiesIndexRoute
   '/_authenticated/admin/properties/$id/edit': typeof AuthenticatedAdminPropertiesIdEditRoute
 }
@@ -193,10 +243,15 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin'
     | '/properties/$id'
+    | '/admin/contracts'
+    | '/admin/expenses'
     | '/api/public/booking-submit'
     | '/api/public/track'
     | '/admin/'
+    | '/admin/bookings/$id'
+    | '/admin/bookings/new'
     | '/admin/properties/new'
+    | '/admin/bookings/'
     | '/admin/properties/'
     | '/admin/properties/$id/edit'
   fileRoutesByTo: FileRoutesByTo
@@ -211,10 +266,15 @@ export interface FileRouteTypes {
     | '/privatumo-politika'
     | '/reset-password'
     | '/properties/$id'
+    | '/admin/contracts'
+    | '/admin/expenses'
     | '/api/public/booking-submit'
     | '/api/public/track'
     | '/admin'
+    | '/admin/bookings/$id'
+    | '/admin/bookings/new'
     | '/admin/properties/new'
+    | '/admin/bookings'
     | '/admin/properties'
     | '/admin/properties/$id/edit'
   id:
@@ -231,10 +291,15 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/_authenticated/admin'
     | '/properties/$id'
+    | '/_authenticated/admin/contracts'
+    | '/_authenticated/admin/expenses'
     | '/api/public/booking-submit'
     | '/api/public/track'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/bookings/$id'
+    | '/_authenticated/admin/bookings/new'
     | '/_authenticated/admin/properties/new'
+    | '/_authenticated/admin/bookings/'
     | '/_authenticated/admin/properties/'
     | '/_authenticated/admin/properties/$id/edit'
   fileRoutesById: FileRoutesById
@@ -362,6 +427,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBookingSubmitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/expenses': {
+      id: '/_authenticated/admin/expenses'
+      path: '/expenses'
+      fullPath: '/admin/expenses'
+      preLoaderRoute: typeof AuthenticatedAdminExpensesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/contracts': {
+      id: '/_authenticated/admin/contracts'
+      path: '/contracts'
+      fullPath: '/admin/contracts'
+      preLoaderRoute: typeof AuthenticatedAdminContractsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/properties/': {
       id: '/_authenticated/admin/properties/'
       path: '/properties'
@@ -369,11 +448,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPropertiesIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/bookings/': {
+      id: '/_authenticated/admin/bookings/'
+      path: '/bookings'
+      fullPath: '/admin/bookings/'
+      preLoaderRoute: typeof AuthenticatedAdminBookingsIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/properties/new': {
       id: '/_authenticated/admin/properties/new'
       path: '/properties/new'
       fullPath: '/admin/properties/new'
       preLoaderRoute: typeof AuthenticatedAdminPropertiesNewRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/bookings/new': {
+      id: '/_authenticated/admin/bookings/new'
+      path: '/bookings/new'
+      fullPath: '/admin/bookings/new'
+      preLoaderRoute: typeof AuthenticatedAdminBookingsNewRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/bookings/$id': {
+      id: '/_authenticated/admin/bookings/$id'
+      path: '/bookings/$id'
+      fullPath: '/admin/bookings/$id'
+      preLoaderRoute: typeof AuthenticatedAdminBookingsIdRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/properties/$id/edit': {
@@ -387,15 +487,25 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminContractsRoute: typeof AuthenticatedAdminContractsRoute
+  AuthenticatedAdminExpensesRoute: typeof AuthenticatedAdminExpensesRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminBookingsIdRoute: typeof AuthenticatedAdminBookingsIdRoute
+  AuthenticatedAdminBookingsNewRoute: typeof AuthenticatedAdminBookingsNewRoute
   AuthenticatedAdminPropertiesNewRoute: typeof AuthenticatedAdminPropertiesNewRoute
+  AuthenticatedAdminBookingsIndexRoute: typeof AuthenticatedAdminBookingsIndexRoute
   AuthenticatedAdminPropertiesIndexRoute: typeof AuthenticatedAdminPropertiesIndexRoute
   AuthenticatedAdminPropertiesIdEditRoute: typeof AuthenticatedAdminPropertiesIdEditRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminContractsRoute: AuthenticatedAdminContractsRoute,
+  AuthenticatedAdminExpensesRoute: AuthenticatedAdminExpensesRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminBookingsIdRoute: AuthenticatedAdminBookingsIdRoute,
+  AuthenticatedAdminBookingsNewRoute: AuthenticatedAdminBookingsNewRoute,
   AuthenticatedAdminPropertiesNewRoute: AuthenticatedAdminPropertiesNewRoute,
+  AuthenticatedAdminBookingsIndexRoute: AuthenticatedAdminBookingsIndexRoute,
   AuthenticatedAdminPropertiesIndexRoute:
     AuthenticatedAdminPropertiesIndexRoute,
   AuthenticatedAdminPropertiesIdEditRoute:
