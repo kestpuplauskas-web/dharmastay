@@ -12,9 +12,18 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivatumoPolitikaRouteImport } from './routes/privatumo-politika'
 import { Route as PaslauguTaisyklesRouteImport } from './routes/paslaugu-taisykles'
+import { Route as OffersRouteImport } from './routes/offers'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as PropertiesIdRouteImport } from './routes/properties.$id'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
+import { Route as ApiPublicBookingSubmitRouteImport } from './routes/api/public/booking-submit'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -31,79 +40,179 @@ const PaslauguTaisyklesRoute = PaslauguTaisyklesRouteImport.update({
   path: '/paslaugu-taisykles',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OffersRoute = OffersRouteImport.update({
+  id: '/offers',
+  path: '/offers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropertiesIdRoute = PropertiesIdRouteImport.update({
+  id: '/properties/$id',
+  path: '/properties/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
   id: '/api/public/track',
   path: '/api/public/track',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicBookingSubmitRoute = ApiPublicBookingSubmitRouteImport.update({
+  id: '/api/public/booking-submit',
+  path: '/api/public/booking-submit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof AuthenticatedRouteRoute
+  '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
+  '/offers': typeof OffersRoute
   '/paslaugu-taisykles': typeof PaslauguTaisyklesRoute
   '/privatumo-politika': typeof PrivatumoPolitikaRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/properties/$id': typeof PropertiesIdRoute
+  '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/track': typeof ApiPublicTrackRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof AuthenticatedRouteRoute
+  '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
+  '/offers': typeof OffersRoute
   '/paslaugu-taisykles': typeof PaslauguTaisyklesRoute
   '/privatumo-politika': typeof PrivatumoPolitikaRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/properties/$id': typeof PropertiesIdRoute
+  '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/track': typeof ApiPublicTrackRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_authenticated': typeof AuthenticatedRouteRoute
+  '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
+  '/offers': typeof OffersRoute
   '/paslaugu-taisykles': typeof PaslauguTaisyklesRoute
   '/privatumo-politika': typeof PrivatumoPolitikaRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/properties/$id': typeof PropertiesIdRoute
+  '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/track': typeof ApiPublicTrackRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
+    | '/contact'
+    | '/faq'
     | '/login'
+    | '/offers'
     | '/paslaugu-taisykles'
     | '/privatumo-politika'
     | '/reset-password'
+    | '/admin'
+    | '/properties/$id'
+    | '/api/public/booking-submit'
     | '/api/public/track'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
+    | '/contact'
+    | '/faq'
     | '/login'
+    | '/offers'
     | '/paslaugu-taisykles'
     | '/privatumo-politika'
     | '/reset-password'
+    | '/properties/$id'
+    | '/api/public/booking-submit'
     | '/api/public/track'
+    | '/admin'
   id:
     | '__root__'
+    | '/'
     | '/_authenticated'
+    | '/about'
+    | '/contact'
+    | '/faq'
     | '/login'
+    | '/offers'
     | '/paslaugu-taisykles'
     | '/privatumo-politika'
     | '/reset-password'
+    | '/_authenticated/admin'
+    | '/properties/$id'
+    | '/api/public/booking-submit'
     | '/api/public/track'
+    | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  AuthenticatedRouteRoute: typeof AuthenticatedRouteRoute
+  IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AboutRoute: typeof AboutRoute
+  ContactRoute: typeof ContactRoute
+  FaqRoute: typeof FaqRoute
   LoginRoute: typeof LoginRoute
+  OffersRoute: typeof OffersRoute
   PaslauguTaisyklesRoute: typeof PaslauguTaisyklesRoute
   PrivatumoPolitikaRoute: typeof PrivatumoPolitikaRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  PropertiesIdRoute: typeof PropertiesIdRoute
+  ApiPublicBookingSubmitRoute: typeof ApiPublicBookingSubmitRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
 }
 
@@ -130,11 +239,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PaslauguTaisyklesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/offers': {
+      id: '/offers'
+      path: '/offers'
+      fullPath: '/offers'
+      preLoaderRoute: typeof OffersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -144,6 +281,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/properties/$id': {
+      id: '/properties/$id'
+      path: '/properties/$id'
+      fullPath: '/properties/$id'
+      preLoaderRoute: typeof PropertiesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/api/public/track': {
       id: '/api/public/track'
       path: '/api/public/track'
@@ -151,15 +316,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicTrackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/booking-submit': {
+      id: '/api/public/booking-submit'
+      path: '/api/public/booking-submit'
+      fullPath: '/api/public/booking-submit'
+      preLoaderRoute: typeof ApiPublicBookingSubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  AuthenticatedRouteRoute: AuthenticatedRouteRoute,
+  IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AboutRoute: AboutRoute,
+  ContactRoute: ContactRoute,
+  FaqRoute: FaqRoute,
   LoginRoute: LoginRoute,
+  OffersRoute: OffersRoute,
   PaslauguTaisyklesRoute: PaslauguTaisyklesRoute,
   PrivatumoPolitikaRoute: PrivatumoPolitikaRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  PropertiesIdRoute: PropertiesIdRoute,
+  ApiPublicBookingSubmitRoute: ApiPublicBookingSubmitRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
 }
 export const routeTree = rootRouteImport
