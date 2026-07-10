@@ -13,9 +13,9 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivatumoPolitikaRouteImport } from './routes/privatumo-politika'
 import { Route as PaslauguTaisyklesRouteImport } from './routes/paslaugu-taisykles'
 import { Route as OffersRouteImport } from './routes/offers'
-import { Route as LoginRouteImport } from './routes/login'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -53,11 +53,6 @@ const OffersRoute = OffersRouteImport.update({
   path: '/offers',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const FaqRoute = FaqRouteImport.update({
   id: '/faq',
   path: '/faq',
@@ -66,6 +61,11 @@ const FaqRoute = FaqRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -159,9 +159,9 @@ const AuthenticatedAdminPropertiesIdEditRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
-  '/login': typeof LoginRoute
   '/offers': typeof OffersRoute
   '/paslaugu-taisykles': typeof PaslauguTaisyklesRoute
   '/privatumo-politika': typeof PrivatumoPolitikaRoute
@@ -183,9 +183,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
-  '/login': typeof LoginRoute
   '/offers': typeof OffersRoute
   '/paslaugu-taisykles': typeof PaslauguTaisyklesRoute
   '/privatumo-politika': typeof PrivatumoPolitikaRoute
@@ -208,9 +208,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
-  '/login': typeof LoginRoute
   '/offers': typeof OffersRoute
   '/paslaugu-taisykles': typeof PaslauguTaisyklesRoute
   '/privatumo-politika': typeof PrivatumoPolitikaRoute
@@ -234,9 +234,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/auth'
     | '/contact'
     | '/faq'
-    | '/login'
     | '/offers'
     | '/paslaugu-taisykles'
     | '/privatumo-politika'
@@ -258,9 +258,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/auth'
     | '/contact'
     | '/faq'
-    | '/login'
     | '/offers'
     | '/paslaugu-taisykles'
     | '/privatumo-politika'
@@ -282,9 +282,9 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/about'
+    | '/auth'
     | '/contact'
     | '/faq'
-    | '/login'
     | '/offers'
     | '/paslaugu-taisykles'
     | '/privatumo-politika'
@@ -308,9 +308,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
   FaqRoute: typeof FaqRoute
-  LoginRoute: typeof LoginRoute
   OffersRoute: typeof OffersRoute
   PaslauguTaisyklesRoute: typeof PaslauguTaisyklesRoute
   PrivatumoPolitikaRoute: typeof PrivatumoPolitikaRoute
@@ -350,13 +350,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OffersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/faq': {
       id: '/faq'
       path: '/faq'
@@ -369,6 +362,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -530,9 +530,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
   FaqRoute: FaqRoute,
-  LoginRoute: LoginRoute,
   OffersRoute: OffersRoute,
   PaslauguTaisyklesRoute: PaslauguTaisyklesRoute,
   PrivatumoPolitikaRoute: PrivatumoPolitikaRoute,
