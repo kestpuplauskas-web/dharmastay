@@ -1,95 +1,89 @@
 import { createServerFn } from "@tanstack/react-start";
+import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Database } from "@/integrations/supabase/types";
 
-export const getActiveContractTemplatePublic = createServerFn({ method: "POST" })
+function publicClient() {
+  return createClient<Database>(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_PUBLISHABLE_KEY!,
+    { auth: { persistSession: false, autoRefreshToken: false } },
+  );
+}
+
+const ensureAdmin = async (ctx: { supabase: any; userId: string }) => {
+  const { data, error } = await ctx.supabase.rpc("has_role", {
+    _user_id: ctx.userId,
+    _role: "admin",
+  });
+  if (error) throw new Error(error.message);
+  if (!data) throw new Error("Forbidden");
+};
+
+export const getActiveContractTemplatePublic = createServerFn({ method: "GET" })
   .inputValidator((d) =>
-    z.object({
-      language: z.enum(["lt", "en"]),
-      kind: z.enum(["rental", "privacy"]).default("rental"),
-    }).parse(d),
+    z
+      .object({
+        language: z.enum(["lt", "en"]).default("lt"),
+        kind: z.string().default("rental"),
+      })
+      .parse(d ?? {}),
   )
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: row, error } = await supabaseAdmin
+    const supabase = publicClient();
+    const { data: row, error } = await supabase
       .from("contract_templates")
-      .select("id, name, language, content, kind")
+      .select("id, name, content, language, kind, updated_at")
       .eq("language", data.language)
       .eq("kind", data.kind)
       .eq("is_active", true)
+      .order("updated_at", { ascending: false })
+      .limit(1)
       .maybeSingle();
     if (error) throw new Error(error.message);
     return row;
   });
 
-const ensureAdmin = async (ctx: { supabase: any; userId: string }) => {
-  const { data, error } = await ctx.supabase.rpc("has_role", { _user_id: ctx.userId, _role: "admin" });
-  if (error) throw new Error(error.message);
-  if (!data) throw new Error("Forbidden");
-};
-
-const templateInput = z.object({
-  name: z.string().trim().min(1).max(200),
-  language: z.enum(["lt", "en"]),
-  kind: z.enum(["rental", "privacy"]).default("rental"),
-  content: z.string().default(""),
-  is_active: z.boolean().default(false),
-});
-
-export const listContractTemplates = createServerFn({ method: "POST" })
+export const listContractTemplates = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await ensureAdmin(context);
     const { data, error } = await context.supabase
       .from("contract_templates")
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("updated_at", { ascending: false });
     if (error) throw new Error(error.message);
     return data ?? [];
   });
 
-export const getContractTemplate = createServerFn({ method: "POST" })
+export const upsertContractTemplate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
+  .inputValidator((d) =>
+    z
+      .object({
+        id: z.string().uuid().optional(),
+        name: z.string().trim().min(1).max(200),
+        content: z.string().max(200000).default(""),
+        language: z.enum(["lt", "en"]).default("lt"),
+        kind: z.string().max(50).default("rental"),
+        is_active: z.boolean().default(true),
+      })
+      .parse(d),
+  )
   .handler(async ({ data, context }) => {
     await ensureAdmin(context);
-    const { data: row, error } = await context.supabase
-      .from("contract_templates")
-      .select("*")
-      .eq("id", data.id)
-      .maybeSingle();
-    if (error) throw new Error(error.message);
-    return row;
-  });
-
-export const createContractTemplate = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((d) => templateInput.parse(d))
-  .handler(async ({ data, context }) => {
-    await ensureAdmin(context);
-    const { data: row, error } = await context.supabase
-      .from("contract_templates")
-      .insert(data)
-      .select()
-      .single();
-    if (error) throw new Error(error.message);
-    return row;
-  });
-
-export const updateContractTemplate = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((d) => templateInput.extend({ id: z.string().uuid() }).parse(d))
-  .handler(async ({ data, context }) => {
-    await ensureAdmin(context);
-    const { id, ...rest } = data;
-    const { data: row, error } = await context.supabase
-      .from("contract_templates")
-      .update(rest)
-      .eq("id", id)
-      .select()
-      .single();
-    if (error) throw new Error(error.message);
-    return row;
+    if (data.id) {
+      const { error } = await context.supabase
+        .from("contract_templates")
+        .update(data)
+        .eq("id", data.id);
+      if (error) throw new Error(error.message);
+    } else {
+      const { error } = await context.supabase.from("contract_templates").insert(data);
+      if (error) throw new Error(error.message);
+    }
+    return { ok: true };
   });
 
 export const deleteContractTemplate = createServerFn({ method: "POST" })
@@ -103,33 +97,4 @@ export const deleteContractTemplate = createServerFn({ method: "POST" })
       .eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
-  });
-
-// Signed contracts (read for admin booking list)
-export const listSignedContractsByBookings = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((d) => z.object({ bookingIds: z.array(z.string().uuid()) }).parse(d))
-  .handler(async ({ data, context }) => {
-    await ensureAdmin(context);
-    if (data.bookingIds.length === 0) return [];
-    const { data: rows, error } = await context.supabase
-      .from("signed_contracts")
-      .select("id, booking_id, customer_name, signed_at, pdf_url, contract_content")
-      .in("booking_id", data.bookingIds);
-    if (error) throw new Error(error.message);
-    return rows ?? [];
-  });
-
-export const getSignedContract = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
-  .handler(async ({ data, context }) => {
-    await ensureAdmin(context);
-    const { data: row, error } = await context.supabase
-      .from("signed_contracts")
-      .select("*")
-      .eq("id", data.id)
-      .maybeSingle();
-    if (error) throw new Error(error.message);
-    return row;
   });

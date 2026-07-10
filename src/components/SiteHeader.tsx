@@ -23,7 +23,7 @@ export function SiteHeader({ variant = "overlay" }: { variant?: "overlay" | "sol
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const carsHref = onHome ? "#cars" : "/#cars";
+  const propertiesHref = onHome ? "#properties" : "/#properties";
 
   // solid pages or overlay-after-scroll = light bar; overlay-at-top = transparent over hero
   const isLight = variant === "solid" || scrolled;
@@ -52,9 +52,8 @@ export function SiteHeader({ variant = "overlay" }: { variant?: "overlay" | "sol
         </Link>
 
         <nav className={cn("hidden xl:flex items-center gap-7 text-sm font-medium", subTextCls)}>
-          <a href={carsHref} className="transition">{t("nav.cars")}</a>
-          <Link to="/offers" className="transition" activeProps={activeLink}>{t("nav.offers")}</Link>
-          <Link to="/news" className="transition" activeProps={activeLink}>{t("nav.news")}</Link>
+          <a href={propertiesHref} className="transition">Objektai</a>
+          <Link to="/offers" className="transition" activeProps={activeLink}>Pasiūlymai</Link>
           <Link to="/faq" className="transition" activeProps={activeLink}>{t("nav.faq")}</Link>
           <Link to="/about" className="transition" activeProps={activeLink}>{t("nav.about")}</Link>
           <Link to="/contact" className="transition" activeProps={activeLink}>{t("nav.contact")}</Link>
@@ -81,9 +80,8 @@ export function SiteHeader({ variant = "overlay" }: { variant?: "overlay" | "sol
       {open && (
         <div className="xl:hidden border-t bg-background shadow-lg">
           <div className="container mx-auto px-6 py-4 flex flex-col gap-3 text-foreground">
-            <a href={carsHref} onClick={() => setOpen(false)} className="py-2 font-medium">{t("nav.cars")}</a>
-            <Link to="/offers" onClick={() => setOpen(false)} className="py-2 font-medium" activeProps={activeLink}>{t("nav.offers")}</Link>
-            <Link to="/news" onClick={() => setOpen(false)} className="py-2 font-medium" activeProps={activeLink}>{t("nav.news")}</Link>
+            <a href={propertiesHref} onClick={() => setOpen(false)} className="py-2 font-medium">Objektai</a>
+            <Link to="/offers" onClick={() => setOpen(false)} className="py-2 font-medium" activeProps={activeLink}>Pasiūlymai</Link>
             <Link to="/faq" onClick={() => setOpen(false)} className="py-2 font-medium" activeProps={activeLink}>{t("nav.faq")}</Link>
             <Link to="/about" onClick={() => setOpen(false)} className="py-2 font-medium" activeProps={activeLink}>{t("nav.about")}</Link>
             <Link to="/contact" onClick={() => setOpen(false)} className="py-2 font-medium" activeProps={activeLink}>{t("nav.contact")}</Link>

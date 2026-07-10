@@ -1,155 +1,125 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import {
-  validateName,
-  validatePhone,
-  validateAddress,
-  validateCity,
-  emailDomain,
-} from "@/lib/booking-validation";
-import { isDisposableDomain } from "@/lib/disposable-domains";
-import { hasMxRecord } from "@/lib/email-domain.server";
-import type { CountryCode } from "libphonenumber-js";
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 
-const schema = z.object({
-  carId: z.string().uuid(),
-  carName: z.string().trim().min(1).max(200).optional(),
-  location: z.string().trim().max(200).optional().default(""),
-  returnLocation: z.string().trim().max(200).optional().default(""),
-  dateFrom: z.string().trim().min(1).max(40),
-  dateTo: z.string().trim().min(1).max(40),
-  timeFrom: z.string().trim().max(10).optional().default(""),
-  timeTo: z.string().trim().max(10).optional().default(""),
-  days: z.number().int().min(0).max(365).optional(),
-  total: z.number().min(0).max(1000000).optional(),
-  addons: z.array(z.string().trim().max(200)).max(30).optional().default([]),
-  firstName: z.string().trim().min(1).max(100)
-    .refine((v) => !validateName(v, "Vardas"), { message: "Neteisingas vardas" }),
-  lastName: z.string().trim().min(1).max(100)
-    .refine((v) => !validateName(v, "Pavardė"), { message: "Neteisinga pavardė" }),
-  email: z.string().trim().email().max(255),
-  phone: z.string().trim().min(3).max(50),
-  phoneCountry: z.string().trim().length(2).optional().default("LT"),
-  country: z.string().trim().min(1).max(100),
-  address: z.string().trim().min(1).max(255)
-    .refine((v) => !validateAddress(v), { message: "Neteisingas adresas" }),
-  city: z.string().trim().min(1).max(100)
-    .refine((v) => !validateCity(v), { message: "Neteisingas miestas" }),
-  message: z.string().trim().max(2000).optional().default(""),
-  paymentOption: z.enum(["full", "deposit"]).optional().default("full"),
-  bic: z.string().trim().min(6).max(20),
-  agree: z.literal(true),
+const inputSchema = z.object({
+  property_id: z.string().uuid(),
+  date_from: z.string().min(1),
+  date_to: z.string().min(1),
+  guests: z.number().int().min(1).max(50).default(1),
+  customer_name: z.string().trim().min(1).max(200),
+  customer_phone: z.string().trim().max(50).default(""),
+  customer_email: z.string().trim().max(255).default(""),
+  bic: z.string().trim().max(20).optional(),
 });
 
-function depositPercent(): number {
-  // Fiksuotas 10% avansas — suvienodinta su UI (DEPOSIT_PCT klientinėje pusėje).
-  return 10;
+function nightsBetween(from: string, to: string): number {
+  const f = new Date(from);
+  const t = new Date(to);
+  const ms = t.getTime() - f.getTime();
+  return Math.max(1, Math.round(ms / (1000 * 60 * 60 * 24)));
 }
 
-function paymentWindowMinutes(): number {
-  const raw = Number(process.env.PAYMENT_WINDOW_MINUTES);
-  if (Number.isFinite(raw) && raw >= 5 && raw <= 240) return raw;
-  return 30;
+function priceFor(
+  pricePerNight: number,
+  tiers: Array<{ minNights: number; maxNights: number; pricePerNight: number }>,
+  nights: number,
+): number {
+  const tier = tiers.find((t) => nights >= t.minNights && nights <= t.maxNights);
+  return (tier?.pricePerNight ?? pricePerNight) * nights;
 }
 
 export const Route = createFileRoute("/api/public/booking-submit")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        let payload: unknown;
-        try {
-          payload = await request.json();
-        } catch {
-          return Response.json({ error: "Invalid JSON" }, { status: 400 });
-        }
-        const parsed = schema.safeParse(payload);
+        const body = await request.json();
+        const parsed = inputSchema.safeParse(body);
         if (!parsed.success) {
-          return Response.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
-        }
-        const d = parsed.data;
-
-        const phoneErr = validatePhone(d.phone, d.phoneCountry as CountryCode);
-        if (phoneErr) {
-          return Response.json({ error: phoneErr, code: "invalid_phone" }, { status: 400 });
-        }
-
-        const domain = emailDomain(d.email);
-        if (!domain) {
-          return Response.json({ error: "Neteisingas el. paštas", code: "invalid_email" }, { status: 400 });
-        }
-        if (isDisposableDomain(domain)) {
           return Response.json(
-            { error: "Šio el. pašto negalime patvirtinti, įveskite kitą", code: "disposable_email" },
+            { error: parsed.error.issues[0]?.message ?? "Invalid input" },
             { status: 400 },
           );
         }
-        const mxOk = await hasMxRecord(domain);
-        if (!mxOk) {
+        const data = parsed.data;
+
+        const supabase = createClient<Database>(
+          process.env.SUPABASE_URL!,
+          process.env.SUPABASE_PUBLISHABLE_KEY!,
+          { auth: { persistSession: false, autoRefreshToken: false } },
+        );
+
+        const { data: prop, error: pErr } = await supabase
+          .from("properties")
+          .select("id, name, price_per_night, price_tiers, is_active, max_guests")
+          .eq("id", data.property_id)
+          .maybeSingle();
+        if (pErr) return Response.json({ error: pErr.message }, { status: 500 });
+        if (!prop || !prop.is_active) {
+          return Response.json({ error: "Objektas neprieinamas" }, { status: 404 });
+        }
+        if (data.guests > prop.max_guests) {
           return Response.json(
-            { error: "Šio el. pašto domeno negalime patvirtinti, įveskite kitą", code: "invalid_email_domain" },
+            { error: `Šis objektas priima ne daugiau kaip ${prop.max_guests} svečių.` },
             { status: 400 },
           );
         }
 
-        const total = Number(d.total ?? 0);
-        const paymentOption = d.paymentOption;
-        const paymentAmount =
-          paymentOption === "deposit"
-            ? Math.round(((total * depositPercent()) / 100) * 100) / 100
-            : total;
-        const expiresAt = new Date(Date.now() + paymentWindowMinutes() * 60_000).toISOString();
+        const { data: conflicts, error: cErr } = await supabase
+          .from("bookings")
+          .select("id")
+          .eq("property_id", data.property_id)
+          .neq("status", "cancelled")
+          .lte("date_from", data.date_to)
+          .gte("date_to", data.date_from);
+        if (cErr) return Response.json({ error: cErr.message }, { status: 500 });
+        if (conflicts && conflicts.length > 0) {
+          return Response.json({ error: "Pasirinktos datos užimtos" }, { status: 409 });
+        }
 
-        const addonsText = d.addons.length ? d.addons.join("; ") : "";
-        const note = [
-          d.message?.trim() ? d.message.trim() : "",
-          addonsText ? `Papildomos paslaugos: ${addonsText}` : "",
-        ]
-          .filter(Boolean)
-          .join("\n\n");
+        const nights = nightsBetween(data.date_from, data.date_to);
+        const total = priceFor(
+          Number(prop.price_per_night),
+          (prop.price_tiers as unknown as Array<{
+            minNights: number;
+            maxNights: number;
+            pricePerNight: number;
+          }>) ?? [],
+          nights,
+        );
 
-        const { data: inserted, error: insertErr } = await supabaseAdmin
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+        const { data: booking, error: bErr } = await supabaseAdmin
           .from("bookings")
           .insert({
-            booking_number: "",
-            car_id: d.carId,
-            date_from: d.dateFrom,
-            date_to: d.dateTo,
-            pickup_time: d.timeFrom || "",
-            return_time: d.timeTo || "",
-            pickup_location: d.location || "",
-            return_location: d.returnLocation || d.location || "",
-            customer_name: `${d.firstName} ${d.lastName}`.trim(),
-            customer_phone: d.phone,
-            customer_email: d.email,
-            customer_address: [d.address, d.city, d.country].filter(Boolean).join(", "),
-            customer_id_code: "",
-            source: "rentivo.lt",
+            property_id: data.property_id,
+            date_from: data.date_from,
+            date_to: data.date_to,
+            guests: data.guests,
+            customer_name: data.customer_name,
+            customer_phone: data.customer_phone,
+            customer_email: data.customer_email,
+            source: "website",
             status: "pending",
             total_amount: total,
-            note,
-            payment_option: paymentOption,
+            payment_amount: total,
+            payment_option: "full",
             payment_status: "unpaid",
-            payment_amount: paymentAmount,
             payment_provider: "manual_transfer",
-            bic: d.bic,
+            bic: data.bic ?? null,
             expires_at: expiresAt,
+            booking_number: "",
           })
-          .select("id, booking_number, payment_amount, expires_at")
+          .select("booking_number, payment_amount, bic")
           .single();
-
-        if (insertErr || !inserted) {
-          console.error("[booking-submit] DB insert failed", insertErr);
-          return Response.json({ error: "Nepavyko sukurti rezervacijos" }, { status: 500 });
-        }
+        if (bErr) return Response.json({ error: bErr.message }, { status: 500 });
 
         return Response.json({
-          ok: true,
-          bookingId: inserted.id,
-          bookingNumber: inserted.booking_number,
-          paymentAmount: Number(inserted.payment_amount ?? paymentAmount),
-          paymentOption,
-          expiresAt: inserted.expires_at,
+          booking_number: booking.booking_number,
+          payment_amount: Number(booking.payment_amount),
+          bic: booking.bic,
         });
       },
     },

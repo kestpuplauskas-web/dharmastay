@@ -2,17 +2,17 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-export const MAINTENANCE_TYPES = ["ta", "insurance", "service", "oil", "belt"] as const;
+export const MAINTENANCE_TYPES = ["cleaning", "inspection", "renovation", "insurance", "utilities"] as const;
 export const EXPENSE_CATEGORIES = [
-  "fuel",
+  "utilities",
+  "cleaning",
   "maintenance",
   "insurance",
   "marketing",
   "office",
-  "transport",
-  "telecom",
-  "inspection",
-  "parts",
+  "supplies",
+  "taxes",
+  "internet",
   "other",
 ] as const;
 export const INVESTMENT_CATEGORIES = ["purchase", "registration", "other"] as const;
@@ -32,10 +32,9 @@ export const upsertMaintenance = createServerFn({ method: "POST" })
   .inputValidator((d) =>
     z
       .object({
-        car_id: z.string().uuid(),
+        property_id: z.string().uuid(),
         type: z.enum(MAINTENANCE_TYPES),
         due_date: z.string().nullable().optional(),
-        due_mileage_km: z.number().int().min(0).nullable().optional(),
         last_done_at: z.string().nullable().optional(),
         note: z.string().max(500).default(""),
       })
@@ -44,8 +43,8 @@ export const upsertMaintenance = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await ensureAdmin(context);
     const { error } = await context.supabase
-      .from("car_maintenance")
-      .upsert(data, { onConflict: "car_id,type" });
+      .from("property_maintenance")
+      .upsert(data, { onConflict: "property_id,type" });
     if (error) throw new Error(error.message);
     return { ok: true };
   });
@@ -56,8 +55,8 @@ export const listInvestments = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     await ensureAdmin(context);
     const { data, error } = await context.supabase
-      .from("car_investments")
-      .select("*, cars(name)")
+      .from("property_investments")
+      .select("*, properties(name)")
       .order("purchase_date", { ascending: false });
     if (error) throw new Error(error.message);
     return data ?? [];
@@ -68,18 +67,17 @@ export const createInvestment = createServerFn({ method: "POST" })
   .inputValidator((d) =>
     z
       .object({
-        car_id: z.string().uuid(),
+        property_id: z.string().uuid(),
         category: z.enum(INVESTMENT_CATEGORIES).default("purchase"),
         amount: z.number().min(0).max(10000000),
         purchase_date: z.string(),
-        mileage_km: z.number().int().min(0).nullable().optional(),
         note: z.string().max(500).default(""),
       })
       .parse(d),
   )
   .handler(async ({ data, context }) => {
     await ensureAdmin(context);
-    const { error } = await context.supabase.from("car_investments").insert(data);
+    const { error } = await context.supabase.from("property_investments").insert(data);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
@@ -90,7 +88,7 @@ export const deleteInvestment = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await ensureAdmin(context);
     const { error } = await context.supabase
-      .from("car_investments")
+      .from("property_investments")
       .delete()
       .eq("id", data.id);
     if (error) throw new Error(error.message);
@@ -104,7 +102,7 @@ export const listExpenses = createServerFn({ method: "GET" })
     await ensureAdmin(context);
     const { data, error } = await context.supabase
       .from("expenses")
-      .select("*, cars(name)")
+      .select("*, properties(name)")
       .order("expense_date", { ascending: false })
       .limit(200);
     if (error) throw new Error(error.message);
@@ -119,8 +117,7 @@ export const createExpense = createServerFn({ method: "POST" })
         category: z.enum(EXPENSE_CATEGORIES),
         amount: z.number().min(0).max(10000000),
         expense_date: z.string(),
-        car_id: z.string().uuid().nullable().optional(),
-        mileage_km: z.number().int().min(0).nullable().optional(),
+        property_id: z.string().uuid().nullable().optional(),
         note: z.string().max(500).default(""),
       })
       .parse(d),

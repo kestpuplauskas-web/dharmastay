@@ -1,56 +1,98 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useTranslation } from "react-i18next";
-import { Tag, Percent, CalendarDays } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { useMemo, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { useLanguageBootstrap } from "@/components/LanguageSwitcher";
-import { Card, CardContent } from "@/components/ui/card";
+import { listActiveProperties } from "@/lib/properties.functions";
+import { PROPERTY_TYPES, propertyTypeLabel } from "@/lib/properties";
 
 export const Route = createFileRoute("/offers")({
   head: () => ({
     meta: [
-      { title: "Specialūs pasiūlymai — Rentivo" },
-      { name: "description", content: "Sezoniniai pasiūlymai ir nuolaidos automobilių nuomai Rentivo." },
-      { property: "og:title", content: "Specialūs pasiūlymai — Rentivo" },
-      { property: "og:description", content: "Akcijos, nuolaidos ilgesnei nuomai ir sezoniniai pasiūlymai." },
+      { title: "Objektų sąrašas — būstas nuomai" },
+      { name: "description", content: "Visi mūsų atostogų būsto pasiūlymai." },
     ],
   }),
   component: OffersPage,
 });
 
-const ICONS = [<Percent key="p" />, <CalendarDays key="c" />, <Tag key="t" />];
-
 function OffersPage() {
-  useLanguageBootstrap();
-  const { t } = useTranslation();
-  const items = t("offers.items", { returnObjects: true }) as { title: string; text: string; badge: string }[];
+  const fetchProps = useServerFn(listActiveProperties);
+  const { data: properties = [] } = useQuery({
+    queryKey: ["active-properties"],
+    queryFn: () => fetchProps(),
+  });
+  const [type, setType] = useState("");
+  const [city, setCity] = useState("");
+
+  const cities = useMemo(() => {
+    const set = new Set(properties.map((p) => p.city).filter(Boolean));
+    return Array.from(set).sort();
+  }, [properties]);
+
+  const filtered = properties.filter(
+    (p) => (!type || p.propertyType === type) && (!city || p.city === city),
+  );
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground pt-16 md:pt-20">
+    <div className="min-h-screen bg-background">
       <SiteHeader variant="solid" />
-      <main className="flex-1 container mx-auto px-6 py-16 max-w-5xl">
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight">{t("offers.title")}</h1>
-        <p className="mt-4 text-xl text-muted-foreground">{t("offers.subtitle")}</p>
-
-        <div className="grid md:grid-cols-3 gap-5 mt-10">
-          {items.map((it, i) => (
-            <Card key={it.title} className="border-border/60">
-              <CardContent className="p-6">
-                <div className="h-11 w-11 rounded-xl grid place-items-center bg-primary/10 text-primary mb-4">
-                  {ICONS[i % ICONS.length]}
-                </div>
-                <span className="inline-block text-xs font-semibold uppercase tracking-wide text-primary mb-2">
-                  {it.badge}
-                </span>
-                <h3 className="font-semibold text-lg">{it.title}</h3>
-                <p className="text-muted-foreground mt-2 text-sm leading-relaxed">{it.text}</p>
-              </CardContent>
-            </Card>
-          ))}
+      <div className="mx-auto max-w-6xl px-4 py-10">
+        <h1 className="text-3xl font-bold">Visi objektai</h1>
+        <div className="mt-6 flex flex-wrap gap-2">
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            className="rounded-md border px-3 py-2 text-sm"
+          >
+            <option value="">Visi tipai</option>
+            {PROPERTY_TYPES.map((t) => (
+              <option key={t.value} value={t.value}>
+                {t.label}
+              </option>
+            ))}
+          </select>
+          <select
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            className="rounded-md border px-3 py-2 text-sm"
+          >
+            <option value="">Visi miestai</option>
+            {cities.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
         </div>
-
-        <p className="mt-12 text-sm text-muted-foreground">{t("offers.footnote")}</p>
-      </main>
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((p) => (
+            <Link
+              key={p.id}
+              to="/properties/$id"
+              params={{ id: p.id }}
+              className="overflow-hidden rounded-xl border bg-card"
+            >
+              <div className="aspect-[4/3] w-full bg-muted">
+                {p.image && (
+                  <img src={p.image} alt={p.name} className="h-full w-full object-cover" />
+                )}
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold">{p.name}</h3>
+                <p className="text-xs text-muted-foreground">
+                  {propertyTypeLabel(p.propertyType)} — {p.city}
+                </p>
+                <p className="mt-2 font-semibold">{p.pricePerNight.toFixed(0)} € / naktis</p>
+              </div>
+            </Link>
+          ))}
+          {filtered.length === 0 && (
+            <p className="col-span-full text-muted-foreground">Nerasta objektų.</p>
+          )}
+        </div>
+      </div>
       <SiteFooter />
     </div>
   );

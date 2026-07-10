@@ -1,45 +1,34 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useTranslation } from "react-i18next";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { useLanguageBootstrap } from "@/components/LanguageSwitcher";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export const Route = createFileRoute("/faq")({
   head: () => ({
-    meta: [
-      { title: "Sąlygos ir D.U.K. — Rentivo" },
-      { name: "description", content: "Dažniausiai užduodami klausimai apie automobilių nuomą Rentivo: dokumentai, depozitas, draudimas, atšaukimo sąlygos." },
-      { property: "og:title", content: "Sąlygos ir D.U.K. — Rentivo" },
-      { property: "og:description", content: "Atsakymai į pagrindinius automobilių nuomos klausimus." },
-    ],
+    meta: [{ title: "D.U.K. — NT nuoma" }],
   }),
   component: FaqPage,
 });
 
-function FaqPage() {
-  useLanguageBootstrap();
-  const { t } = useTranslation();
-  const items = t("faq.items", { returnObjects: true }) as { q: string; a: string }[];
+const items = [
+  { q: "Kaip užsakyti būstą?", a: "Pasirinkite objektą, datas ir svečių skaičių, užpildykite formą — administratorius patvirtins ir atsiųs mokėjimo detales." },
+  { q: "Kaip mokėti?", a: "Mokėjimas atliekamas bankiniu pervedimu į mūsų sąskaitą. Rezervacija patvirtinama gavus mokėjimą." },
+  { q: "Ar galiu atšaukti rezervaciją?", a: "Susisiekite su mumis kuo greičiau — atšaukimo sąlygos priklauso nuo datų." },
+];
 
+function FaqPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground pt-16 md:pt-20">
+    <div className="min-h-screen bg-background">
       <SiteHeader variant="solid" />
-      <main className="flex-1 container mx-auto px-6 py-16 max-w-3xl">
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight">{t("faq.title")}</h1>
-        <p className="mt-3 text-muted-foreground text-lg">{t("faq.subtitle")}</p>
-        <Accordion type="single" collapsible className="mt-10 border rounded-2xl divide-y">
-          {items.map((item, i) => (
-            <AccordionItem key={i} value={`item-${i}`} className="border-0 px-5">
-              <AccordionTrigger className="text-base font-medium text-left">{item.q}</AccordionTrigger>
-              <AccordionContent className="text-muted-foreground space-y-3">
-                {item.a.split("\n\n").map((paragraph, idx) => (
-                  <p key={idx}>{paragraph}</p>
-                ))}
-              </AccordionContent>
-            </AccordionItem>
+      <main className="mx-auto max-w-3xl px-4 py-12">
+        <h1 className="text-3xl font-bold">Dažniausiai užduodami klausimai</h1>
+        <div className="mt-6 space-y-4">
+          {items.map((it) => (
+            <div key={it.q} className="rounded-lg border p-4">
+              <h2 className="font-semibold">{it.q}</h2>
+              <p className="mt-1 text-sm text-muted-foreground">{it.a}</p>
+            </div>
           ))}
-        </Accordion>
+        </div>
       </main>
       <SiteFooter />
     </div>
