@@ -12,31 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivatumoPolitikaRouteImport } from './routes/privatumo-politika'
 import { Route as PaslauguTaisyklesRouteImport } from './routes/paslaugu-taisykles'
-import { Route as OffersRouteImport } from './routes/offers'
-import { Route as NewsRouteImport } from './routes/news'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as FaqRouteImport } from './routes/faq'
-import { Route as DemoRouteImport } from './routes/demo'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as CarsCarIdRouteImport } from './routes/cars.$carId'
-import { Route as AdminExpensesRouteImport } from './routes/admin.expenses'
-import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
-import { Route as AdminContractsRouteImport } from './routes/admin.contracts'
-import { Route as AdminCarsIndexRouteImport } from './routes/admin.cars.index'
-import { Route as AdminBookingsIndexRouteImport } from './routes/admin.bookings.index'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
-import { Route as ApiPublicBookingSubmitRouteImport } from './routes/api/public/booking-submit'
-import { Route as AdminCarsNewRouteImport } from './routes/admin.cars.new'
-import { Route as AdminBookingsNewRouteImport } from './routes/admin.bookings.new'
-import { Route as AdminBookingsIdRouteImport } from './routes/admin.bookings.$id'
-import { Route as AdminCarsIdIndexRouteImport } from './routes/admin.cars.$id.index'
-import { Route as AdminCarsIdEditRouteImport } from './routes/admin.cars.$id.edit'
-import { Route as AuthenticatedAdminToolsMigrateImagesRouteImport } from './routes/_authenticated/admin.tools.migrate-images'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -53,326 +31,79 @@ const PaslauguTaisyklesRoute = PaslauguTaisyklesRouteImport.update({
   path: '/paslaugu-taisykles',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OffersRoute = OffersRouteImport.update({
-  id: '/offers',
-  path: '/offers',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NewsRoute = NewsRouteImport.update({
-  id: '/news',
-  path: '/news',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FaqRoute = FaqRouteImport.update({
-  id: '/faq',
-  path: '/faq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoRoute = DemoRouteImport.update({
-  id: '/demo',
-  path: '/demo',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AdminRoute,
-} as any)
-const CarsCarIdRoute = CarsCarIdRouteImport.update({
-  id: '/cars/$carId',
-  path: '/cars/$carId',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminExpensesRoute = AdminExpensesRouteImport.update({
-  id: '/expenses',
-  path: '/expenses',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminDashboardRoute = AdminDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminContractsRoute = AdminContractsRouteImport.update({
-  id: '/contracts',
-  path: '/contracts',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminCarsIndexRoute = AdminCarsIndexRouteImport.update({
-  id: '/cars/',
-  path: '/cars/',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminBookingsIndexRoute = AdminBookingsIndexRouteImport.update({
-  id: '/bookings/',
-  path: '/bookings/',
-  getParentRoute: () => AdminRoute,
-} as any)
 const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
   id: '/api/public/track',
   path: '/api/public/track',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicBookingSubmitRoute = ApiPublicBookingSubmitRouteImport.update({
-  id: '/api/public/booking-submit',
-  path: '/api/public/booking-submit',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminCarsNewRoute = AdminCarsNewRouteImport.update({
-  id: '/cars/new',
-  path: '/cars/new',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminBookingsNewRoute = AdminBookingsNewRouteImport.update({
-  id: '/bookings/new',
-  path: '/bookings/new',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminBookingsIdRoute = AdminBookingsIdRouteImport.update({
-  id: '/bookings/$id',
-  path: '/bookings/$id',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminCarsIdIndexRoute = AdminCarsIdIndexRouteImport.update({
-  id: '/cars/$id/',
-  path: '/cars/$id/',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminCarsIdEditRoute = AdminCarsIdEditRouteImport.update({
-  id: '/cars/$id/edit',
-  path: '/cars/$id/edit',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AuthenticatedAdminToolsMigrateImagesRoute =
-  AuthenticatedAdminToolsMigrateImagesRouteImport.update({
-    id: '/admin/tools/migrate-images',
-    path: '/admin/tools/migrate-images',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/admin': typeof AdminRouteWithChildren
-  '/contact': typeof ContactRoute
-  '/demo': typeof DemoRoute
-  '/faq': typeof FaqRoute
+  '/': typeof AuthenticatedRouteRoute
   '/login': typeof LoginRoute
-  '/news': typeof NewsRoute
-  '/offers': typeof OffersRoute
   '/paslaugu-taisykles': typeof PaslauguTaisyklesRoute
   '/privatumo-politika': typeof PrivatumoPolitikaRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/admin/contracts': typeof AdminContractsRoute
-  '/admin/dashboard': typeof AdminDashboardRoute
-  '/admin/expenses': typeof AdminExpensesRoute
-  '/cars/$carId': typeof CarsCarIdRoute
-  '/admin/': typeof AdminIndexRoute
-  '/admin/bookings/$id': typeof AdminBookingsIdRoute
-  '/admin/bookings/new': typeof AdminBookingsNewRoute
-  '/admin/cars/new': typeof AdminCarsNewRoute
-  '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/track': typeof ApiPublicTrackRoute
-  '/admin/bookings/': typeof AdminBookingsIndexRoute
-  '/admin/cars/': typeof AdminCarsIndexRoute
-  '/admin/tools/migrate-images': typeof AuthenticatedAdminToolsMigrateImagesRoute
-  '/admin/cars/$id/edit': typeof AdminCarsIdEditRoute
-  '/admin/cars/$id/': typeof AdminCarsIdIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/contact': typeof ContactRoute
-  '/demo': typeof DemoRoute
-  '/faq': typeof FaqRoute
+  '/': typeof AuthenticatedRouteRoute
   '/login': typeof LoginRoute
-  '/news': typeof NewsRoute
-  '/offers': typeof OffersRoute
   '/paslaugu-taisykles': typeof PaslauguTaisyklesRoute
   '/privatumo-politika': typeof PrivatumoPolitikaRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/admin/contracts': typeof AdminContractsRoute
-  '/admin/dashboard': typeof AdminDashboardRoute
-  '/admin/expenses': typeof AdminExpensesRoute
-  '/cars/$carId': typeof CarsCarIdRoute
-  '/admin': typeof AdminIndexRoute
-  '/admin/bookings/$id': typeof AdminBookingsIdRoute
-  '/admin/bookings/new': typeof AdminBookingsNewRoute
-  '/admin/cars/new': typeof AdminCarsNewRoute
-  '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/track': typeof ApiPublicTrackRoute
-  '/admin/bookings': typeof AdminBookingsIndexRoute
-  '/admin/cars': typeof AdminCarsIndexRoute
-  '/admin/tools/migrate-images': typeof AuthenticatedAdminToolsMigrateImagesRoute
-  '/admin/cars/$id/edit': typeof AdminCarsIdEditRoute
-  '/admin/cars/$id': typeof AdminCarsIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/about': typeof AboutRoute
-  '/admin': typeof AdminRouteWithChildren
-  '/contact': typeof ContactRoute
-  '/demo': typeof DemoRoute
-  '/faq': typeof FaqRoute
+  '/_authenticated': typeof AuthenticatedRouteRoute
   '/login': typeof LoginRoute
-  '/news': typeof NewsRoute
-  '/offers': typeof OffersRoute
   '/paslaugu-taisykles': typeof PaslauguTaisyklesRoute
   '/privatumo-politika': typeof PrivatumoPolitikaRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/admin/contracts': typeof AdminContractsRoute
-  '/admin/dashboard': typeof AdminDashboardRoute
-  '/admin/expenses': typeof AdminExpensesRoute
-  '/cars/$carId': typeof CarsCarIdRoute
-  '/admin/': typeof AdminIndexRoute
-  '/admin/bookings/$id': typeof AdminBookingsIdRoute
-  '/admin/bookings/new': typeof AdminBookingsNewRoute
-  '/admin/cars/new': typeof AdminCarsNewRoute
-  '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/track': typeof ApiPublicTrackRoute
-  '/admin/bookings/': typeof AdminBookingsIndexRoute
-  '/admin/cars/': typeof AdminCarsIndexRoute
-  '/_authenticated/admin/tools/migrate-images': typeof AuthenticatedAdminToolsMigrateImagesRoute
-  '/admin/cars/$id/edit': typeof AdminCarsIdEditRoute
-  '/admin/cars/$id/': typeof AdminCarsIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
-    | '/admin'
-    | '/contact'
-    | '/demo'
-    | '/faq'
     | '/login'
-    | '/news'
-    | '/offers'
     | '/paslaugu-taisykles'
     | '/privatumo-politika'
     | '/reset-password'
-    | '/admin/contracts'
-    | '/admin/dashboard'
-    | '/admin/expenses'
-    | '/cars/$carId'
-    | '/admin/'
-    | '/admin/bookings/$id'
-    | '/admin/bookings/new'
-    | '/admin/cars/new'
-    | '/api/public/booking-submit'
     | '/api/public/track'
-    | '/admin/bookings/'
-    | '/admin/cars/'
-    | '/admin/tools/migrate-images'
-    | '/admin/cars/$id/edit'
-    | '/admin/cars/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
-    | '/contact'
-    | '/demo'
-    | '/faq'
     | '/login'
-    | '/news'
-    | '/offers'
     | '/paslaugu-taisykles'
     | '/privatumo-politika'
     | '/reset-password'
-    | '/admin/contracts'
-    | '/admin/dashboard'
-    | '/admin/expenses'
-    | '/cars/$carId'
-    | '/admin'
-    | '/admin/bookings/$id'
-    | '/admin/bookings/new'
-    | '/admin/cars/new'
-    | '/api/public/booking-submit'
     | '/api/public/track'
-    | '/admin/bookings'
-    | '/admin/cars'
-    | '/admin/tools/migrate-images'
-    | '/admin/cars/$id/edit'
-    | '/admin/cars/$id'
   id:
     | '__root__'
-    | '/'
     | '/_authenticated'
-    | '/about'
-    | '/admin'
-    | '/contact'
-    | '/demo'
-    | '/faq'
     | '/login'
-    | '/news'
-    | '/offers'
     | '/paslaugu-taisykles'
     | '/privatumo-politika'
     | '/reset-password'
-    | '/admin/contracts'
-    | '/admin/dashboard'
-    | '/admin/expenses'
-    | '/cars/$carId'
-    | '/admin/'
-    | '/admin/bookings/$id'
-    | '/admin/bookings/new'
-    | '/admin/cars/new'
-    | '/api/public/booking-submit'
     | '/api/public/track'
-    | '/admin/bookings/'
-    | '/admin/cars/'
-    | '/_authenticated/admin/tools/migrate-images'
-    | '/admin/cars/$id/edit'
-    | '/admin/cars/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AboutRoute: typeof AboutRoute
-  AdminRoute: typeof AdminRouteWithChildren
-  ContactRoute: typeof ContactRoute
-  DemoRoute: typeof DemoRoute
-  FaqRoute: typeof FaqRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRoute
   LoginRoute: typeof LoginRoute
-  NewsRoute: typeof NewsRoute
-  OffersRoute: typeof OffersRoute
   PaslauguTaisyklesRoute: typeof PaslauguTaisyklesRoute
   PrivatumoPolitikaRoute: typeof PrivatumoPolitikaRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
-  CarsCarIdRoute: typeof CarsCarIdRoute
-  ApiPublicBookingSubmitRoute: typeof ApiPublicBookingSubmitRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
 }
 
@@ -399,60 +130,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PaslauguTaisyklesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/offers': {
-      id: '/offers'
-      path: '/offers'
-      fullPath: '/offers'
-      preLoaderRoute: typeof OffersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/news': {
-      id: '/news'
-      path: '/news'
-      fullPath: '/news'
-      preLoaderRoute: typeof NewsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/faq': {
-      id: '/faq'
-      path: '/faq'
-      fullPath: '/faq'
-      preLoaderRoute: typeof FaqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo': {
-      id: '/demo'
-      path: '/demo'
-      fullPath: '/demo'
-      preLoaderRoute: typeof DemoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -462,62 +144,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/': {
-      id: '/admin/'
-      path: '/'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/cars/$carId': {
-      id: '/cars/$carId'
-      path: '/cars/$carId'
-      fullPath: '/cars/$carId'
-      preLoaderRoute: typeof CarsCarIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/expenses': {
-      id: '/admin/expenses'
-      path: '/expenses'
-      fullPath: '/admin/expenses'
-      preLoaderRoute: typeof AdminExpensesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/dashboard': {
-      id: '/admin/dashboard'
-      path: '/dashboard'
-      fullPath: '/admin/dashboard'
-      preLoaderRoute: typeof AdminDashboardRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/contracts': {
-      id: '/admin/contracts'
-      path: '/contracts'
-      fullPath: '/admin/contracts'
-      preLoaderRoute: typeof AdminContractsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/cars/': {
-      id: '/admin/cars/'
-      path: '/cars'
-      fullPath: '/admin/cars/'
-      preLoaderRoute: typeof AdminCarsIndexRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/bookings/': {
-      id: '/admin/bookings/'
-      path: '/bookings'
-      fullPath: '/admin/bookings/'
-      preLoaderRoute: typeof AdminBookingsIndexRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/api/public/track': {
       id: '/api/public/track'
       path: '/api/public/track'
@@ -525,116 +151,15 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicTrackRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/booking-submit': {
-      id: '/api/public/booking-submit'
-      path: '/api/public/booking-submit'
-      fullPath: '/api/public/booking-submit'
-      preLoaderRoute: typeof ApiPublicBookingSubmitRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/cars/new': {
-      id: '/admin/cars/new'
-      path: '/cars/new'
-      fullPath: '/admin/cars/new'
-      preLoaderRoute: typeof AdminCarsNewRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/bookings/new': {
-      id: '/admin/bookings/new'
-      path: '/bookings/new'
-      fullPath: '/admin/bookings/new'
-      preLoaderRoute: typeof AdminBookingsNewRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/bookings/$id': {
-      id: '/admin/bookings/$id'
-      path: '/bookings/$id'
-      fullPath: '/admin/bookings/$id'
-      preLoaderRoute: typeof AdminBookingsIdRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/cars/$id/': {
-      id: '/admin/cars/$id/'
-      path: '/cars/$id'
-      fullPath: '/admin/cars/$id/'
-      preLoaderRoute: typeof AdminCarsIdIndexRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/cars/$id/edit': {
-      id: '/admin/cars/$id/edit'
-      path: '/cars/$id/edit'
-      fullPath: '/admin/cars/$id/edit'
-      preLoaderRoute: typeof AdminCarsIdEditRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/_authenticated/admin/tools/migrate-images': {
-      id: '/_authenticated/admin/tools/migrate-images'
-      path: '/admin/tools/migrate-images'
-      fullPath: '/admin/tools/migrate-images'
-      preLoaderRoute: typeof AuthenticatedAdminToolsMigrateImagesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
   }
 }
 
-interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminToolsMigrateImagesRoute: typeof AuthenticatedAdminToolsMigrateImagesRoute
-}
-
-const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminToolsMigrateImagesRoute:
-    AuthenticatedAdminToolsMigrateImagesRoute,
-}
-
-const AuthenticatedRouteRouteWithChildren =
-  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
-
-interface AdminRouteChildren {
-  AdminContractsRoute: typeof AdminContractsRoute
-  AdminDashboardRoute: typeof AdminDashboardRoute
-  AdminExpensesRoute: typeof AdminExpensesRoute
-  AdminIndexRoute: typeof AdminIndexRoute
-  AdminBookingsIdRoute: typeof AdminBookingsIdRoute
-  AdminBookingsNewRoute: typeof AdminBookingsNewRoute
-  AdminCarsNewRoute: typeof AdminCarsNewRoute
-  AdminBookingsIndexRoute: typeof AdminBookingsIndexRoute
-  AdminCarsIndexRoute: typeof AdminCarsIndexRoute
-  AdminCarsIdEditRoute: typeof AdminCarsIdEditRoute
-  AdminCarsIdIndexRoute: typeof AdminCarsIdIndexRoute
-}
-
-const AdminRouteChildren: AdminRouteChildren = {
-  AdminContractsRoute: AdminContractsRoute,
-  AdminDashboardRoute: AdminDashboardRoute,
-  AdminExpensesRoute: AdminExpensesRoute,
-  AdminIndexRoute: AdminIndexRoute,
-  AdminBookingsIdRoute: AdminBookingsIdRoute,
-  AdminBookingsNewRoute: AdminBookingsNewRoute,
-  AdminCarsNewRoute: AdminCarsNewRoute,
-  AdminBookingsIndexRoute: AdminBookingsIndexRoute,
-  AdminCarsIndexRoute: AdminCarsIndexRoute,
-  AdminCarsIdEditRoute: AdminCarsIdEditRoute,
-  AdminCarsIdIndexRoute: AdminCarsIdIndexRoute,
-}
-
-const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AboutRoute: AboutRoute,
-  AdminRoute: AdminRouteWithChildren,
-  ContactRoute: ContactRoute,
-  DemoRoute: DemoRoute,
-  FaqRoute: FaqRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRoute,
   LoginRoute: LoginRoute,
-  NewsRoute: NewsRoute,
-  OffersRoute: OffersRoute,
   PaslauguTaisyklesRoute: PaslauguTaisyklesRoute,
   PrivatumoPolitikaRoute: PrivatumoPolitikaRoute,
   ResetPasswordRoute: ResetPasswordRoute,
-  CarsCarIdRoute: CarsCarIdRoute,
-  ApiPublicBookingSubmitRoute: ApiPublicBookingSubmitRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
 }
 export const routeTree = rootRouteImport

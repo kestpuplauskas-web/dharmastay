@@ -2,24 +2,30 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-export const BOOKING_SOURCES = ["phone", "whatsapp", "direct", "rentivo.lt", "other"] as const;
+export const BOOKING_SOURCES = ["phone", "whatsapp", "direct", "website", "other"] as const;
 export const BOOKING_STATUSES = ["confirmed", "pending", "completed", "cancelled"] as const;
 
 const bookingInput = z.object({
-  car_id: z.string().uuid(),
+  property_id: z.string().uuid(),
   date_from: z.string().min(1),
   date_to: z.string().min(1),
-  pickup_time: z.string().trim().max(10).default(""),
-  return_time: z.string().trim().max(10).default(""),
-  pickup_location: z.string().trim().max(200).default(""),
-  return_location: z.string().trim().max(200).default(""),
+  check_in_time: z.string().trim().max(10).default(""),
+  check_out_time: z.string().trim().max(10).default(""),
+  location: z.string().trim().max(300).default(""),
+  guests: z.number().int().min(1).max(50).default(1),
   customer_name: z.string().trim().min(1).max(200),
   customer_phone: z.string().trim().max(50).default(""),
-  customer_email: z.string().trim().max(255).default("").refine((v) => v === "" || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), "Neteisingas el. paštas"),
+  customer_email: z
+    .string()
+    .trim()
+    .max(255)
+    .default("")
+    .refine(
+      (v) => v === "" || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+      "Neteisingas el. paštas",
+    ),
   customer_address: z.string().trim().max(300).default(""),
   customer_id_code: z.string().trim().max(50).default(""),
-  mileage_out: z.number().int().min(0).max(9999999).nullable().default(null),
-  mileage_in: z.number().int().min(0).max(9999999).nullable().default(null),
   source: z.enum(BOOKING_SOURCES).default("phone"),
   status: z.enum(BOOKING_STATUSES).default("confirmed"),
   total_amount: z.number().min(0).max(1000000).default(0),
@@ -29,18 +35,20 @@ const bookingInput = z.object({
 export type BookingInput = z.infer<typeof bookingInput>;
 
 const ensureAdmin = async (ctx: { supabase: any; userId: string }) => {
-  const { data, error } = await ctx.supabase.rpc("has_role", { _user_id: ctx.userId, _role: "admin" });
+  const { data, error } = await ctx.supabase.rpc("has_role", {
+    _user_id: ctx.userId,
+    _role: "admin",
+  });
   if (error) throw new Error(error.message);
   if (!data) throw new Error("Forbidden");
 };
 
-// ADMIN: list bookings with optional filters
 export const listBookings = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) =>
     z
       .object({
-        carId: z.string().uuid().optional(),
+        propertyId: z.string().uuid().optional(),
         status: z.enum(BOOKING_STATUSES).optional(),
         from: z.string().optional(),
         to: z.string().optional(),
@@ -51,9 +59,9 @@ export const listBookings = createServerFn({ method: "POST" })
     await ensureAdmin(context);
     let q = context.supabase
       .from("bookings")
-      .select("*, cars(id, name)")
+      .select("*, properties(id, name)")
       .order("date_from", { ascending: false });
-    if (data.carId) q = q.eq("car_id", data.carId);
+    if (data.propertyId) q = q.eq("property_id", data.propertyId);
     if (data.status) q = q.eq("status", data.status);
     if (data.from) q = q.gte("date_to", data.from);
     if (data.to) q = q.lte("date_from", data.to);
@@ -69,20 +77,19 @@ export const getBooking = createServerFn({ method: "POST" })
     await ensureAdmin(context);
     const { data: row, error } = await context.supabase
       .from("bookings")
-      .select("*, cars(id, name)")
+      .select("*, properties(id, name)")
       .eq("id", data.id)
       .maybeSingle();
     if (error) throw new Error(error.message);
     return row;
   });
 
-// ADMIN: check conflicts (returns conflicting bookings)
 export const checkBookingConflicts = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) =>
     z
       .object({
-        car_id: z.string().uuid(),
+        property_id: z.string().uuid(),
         date_from: z.string().min(1),
         date_to: z.string().min(1),
         excludeId: z.string().uuid().optional(),
@@ -94,7 +101,7 @@ export const checkBookingConflicts = createServerFn({ method: "POST" })
     let q = context.supabase
       .from("bookings")
       .select("id, date_from, date_to, customer_name, status")
-      .eq("car_id", data.car_id)
+      .eq("property_id", data.property_id)
       .neq("status", "cancelled")
       .lte("date_from", data.date_to)
       .gte("date_to", data.date_from);
