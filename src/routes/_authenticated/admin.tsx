@@ -1,6 +1,7 @@
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { Home, Calendar, FileText, Wallet, LayoutDashboard, Globe, LogOut, Building2 } from "lucide-react";
 import { getMyRole, claimFirstAdmin } from "@/lib/properties.functions";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -44,48 +45,62 @@ function AdminLayout() {
     );
   }
 
-  const links: Array<{ to: string; label: string }> = [
-    { to: "/admin", label: "Skydas" },
-    { to: "/admin/properties", label: "Objektai" },
-    { to: "/admin/bookings", label: "Rezervacijos" },
-    { to: "/admin/expenses", label: "Išlaidos" },
-    { to: "/admin/contracts", label: "Sutartys" },
-  ];
+  const links = [
+    { to: "/admin", label: "Skydelis", icon: LayoutDashboard },
+    { to: "/admin/bookings", label: "Rezervacijos", icon: Calendar },
+    { to: "/admin/properties", label: "Objektai", icon: Home },
+    { to: "/admin/contracts", label: "Sutartys", icon: FileText },
+    { to: "/admin/expenses", label: "Finansai", icon: Wallet },
+  ] as const;
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <Link to="/admin" className="font-semibold">
-            NT Admin
-          </Link>
-          <nav className="flex items-center gap-4 text-sm">
-            {links.map((l) => (
+    <div className="flex min-h-screen w-full bg-background">
+      <aside className="flex w-60 shrink-0 flex-col border-r bg-card">
+        <div className="flex items-center gap-2 px-4 py-4 font-semibold">
+          <Building2 className="h-5 w-5 text-primary" />
+          <span>Rentivo Admin</span>
+        </div>
+        <nav className="flex-1 space-y-1 px-2">
+          {links.map((l) => {
+            const Icon = l.icon;
+            const active = location.pathname === l.to;
+            return (
               <Link
                 key={l.to}
                 to={l.to}
-                className={
-                  location.pathname === l.to
-                    ? "font-medium text-primary"
-                    : "text-muted-foreground hover:text-foreground"
-                }
+                className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm ${
+                  active
+                    ? "bg-accent font-medium text-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                }`}
               >
+                <Icon className="h-4 w-4" />
                 {l.label}
               </Link>
-            ))}
-            <button
-              className="text-muted-foreground hover:text-foreground"
-              onClick={async () => {
-                await supabase.auth.signOut();
-                window.location.href = "/";
-              }}
-            >
-              Atsijungti
-            </button>
-          </nav>
+            );
+          })}
+        </nav>
+        <div className="mt-auto space-y-1 border-t px-2 py-3">
+          <Link
+            to="/"
+            className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-foreground"
+          >
+            <Globe className="h-4 w-4" />
+            Svetainė
+          </Link>
+          <button
+            className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-foreground"
+            onClick={async () => {
+              await supabase.auth.signOut();
+              window.location.href = "/";
+            }}
+          >
+            <LogOut className="h-4 w-4" />
+            Atsijungti
+          </button>
         </div>
-      </header>
-      <main className="mx-auto max-w-6xl px-4 py-6">
+      </aside>
+      <main className="flex-1 overflow-x-hidden px-6 py-6">
         <Outlet />
       </main>
     </div>
