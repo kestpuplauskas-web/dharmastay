@@ -24,6 +24,9 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as ApiPublicBookingSubmitRouteImport } from './routes/api/public/booking-submit'
+import { Route as AuthenticatedAdminPropertiesIndexRouteImport } from './routes/_authenticated/admin.properties.index'
+import { Route as AuthenticatedAdminPropertiesNewRouteImport } from './routes/_authenticated/admin.properties.new'
+import { Route as AuthenticatedAdminPropertiesIdEditRouteImport } from './routes/_authenticated/admin.properties.$id.edit'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -99,6 +102,24 @@ const ApiPublicBookingSubmitRoute = ApiPublicBookingSubmitRouteImport.update({
   path: '/api/public/booking-submit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminPropertiesIndexRoute =
+  AuthenticatedAdminPropertiesIndexRouteImport.update({
+    id: '/properties/',
+    path: '/properties/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPropertiesNewRoute =
+  AuthenticatedAdminPropertiesNewRouteImport.update({
+    id: '/properties/new',
+    path: '/properties/new',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPropertiesIdEditRoute =
+  AuthenticatedAdminPropertiesIdEditRouteImport.update({
+    id: '/properties/$id/edit',
+    path: '/properties/$id/edit',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -115,6 +136,9 @@ export interface FileRoutesByFullPath {
   '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/properties/new': typeof AuthenticatedAdminPropertiesNewRoute
+  '/admin/properties/': typeof AuthenticatedAdminPropertiesIndexRoute
+  '/admin/properties/$id/edit': typeof AuthenticatedAdminPropertiesIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -130,6 +154,9 @@ export interface FileRoutesByTo {
   '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/properties/new': typeof AuthenticatedAdminPropertiesNewRoute
+  '/admin/properties': typeof AuthenticatedAdminPropertiesIndexRoute
+  '/admin/properties/$id/edit': typeof AuthenticatedAdminPropertiesIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -148,6 +175,9 @@ export interface FileRoutesById {
   '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/properties/new': typeof AuthenticatedAdminPropertiesNewRoute
+  '/_authenticated/admin/properties/': typeof AuthenticatedAdminPropertiesIndexRoute
+  '/_authenticated/admin/properties/$id/edit': typeof AuthenticatedAdminPropertiesIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -166,6 +196,9 @@ export interface FileRouteTypes {
     | '/api/public/booking-submit'
     | '/api/public/track'
     | '/admin/'
+    | '/admin/properties/new'
+    | '/admin/properties/'
+    | '/admin/properties/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -181,6 +214,9 @@ export interface FileRouteTypes {
     | '/api/public/booking-submit'
     | '/api/public/track'
     | '/admin'
+    | '/admin/properties/new'
+    | '/admin/properties'
+    | '/admin/properties/$id/edit'
   id:
     | '__root__'
     | '/'
@@ -198,6 +234,9 @@ export interface FileRouteTypes {
     | '/api/public/booking-submit'
     | '/api/public/track'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/properties/new'
+    | '/_authenticated/admin/properties/'
+    | '/_authenticated/admin/properties/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -323,15 +362,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBookingSubmitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/properties/': {
+      id: '/_authenticated/admin/properties/'
+      path: '/properties'
+      fullPath: '/admin/properties/'
+      preLoaderRoute: typeof AuthenticatedAdminPropertiesIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/properties/new': {
+      id: '/_authenticated/admin/properties/new'
+      path: '/properties/new'
+      fullPath: '/admin/properties/new'
+      preLoaderRoute: typeof AuthenticatedAdminPropertiesNewRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/properties/$id/edit': {
+      id: '/_authenticated/admin/properties/$id/edit'
+      path: '/properties/$id/edit'
+      fullPath: '/admin/properties/$id/edit'
+      preLoaderRoute: typeof AuthenticatedAdminPropertiesIdEditRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminPropertiesNewRoute: typeof AuthenticatedAdminPropertiesNewRoute
+  AuthenticatedAdminPropertiesIndexRoute: typeof AuthenticatedAdminPropertiesIndexRoute
+  AuthenticatedAdminPropertiesIdEditRoute: typeof AuthenticatedAdminPropertiesIdEditRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminPropertiesNewRoute: AuthenticatedAdminPropertiesNewRoute,
+  AuthenticatedAdminPropertiesIndexRoute:
+    AuthenticatedAdminPropertiesIndexRoute,
+  AuthenticatedAdminPropertiesIdEditRoute:
+    AuthenticatedAdminPropertiesIdEditRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
