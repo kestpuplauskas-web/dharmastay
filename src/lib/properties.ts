@@ -79,6 +79,44 @@ export type PriceTier = {
   pricePerNight: number;
 };
 
+export const EXTRA_CALCS = ["per_person", "per_child", "flat_per_day"] as const;
+export type ExtraCalc = (typeof EXTRA_CALCS)[number];
+
+export const EXTRA_CALC_LABELS: Record<ExtraCalc, string> = {
+  per_person: "Pagal asmenų sk. (vaikai iki 3 m. nemokamai)",
+  per_child: "Pagal vaikų sk.",
+  flat_per_day: "Fiksuota už dieną",
+};
+
+export const EXTRA_SERVICE_PRESETS: Array<{ name: string; calc: ExtraCalc }> = [
+  { name: "Pusryčiai", calc: "per_person" },
+  { name: "Pietūs", calc: "per_person" },
+  { name: "Vakarienė", calc: "per_person" },
+  { name: "Vaikiška lovytė", calc: "per_child" },
+  { name: "Pirties nuoma", calc: "flat_per_day" },
+  { name: "Kubilo nuoma", calc: "flat_per_day" },
+];
+
+export type ExtraService = {
+  name: string;
+  calc: ExtraCalc;
+  pricePerDay: number;
+};
+
+export function calcExtraTotal(
+  svc: Pick<ExtraService, "calc" | "pricePerDay">,
+  ctx: { adults: number; children: number; childrenUnder3?: number; days: number },
+): number {
+  const days = Math.max(0, ctx.days);
+  const price = Math.max(0, Number(svc.pricePerDay) || 0);
+  if (days === 0 || price === 0) return 0;
+  const under3 = Math.max(0, ctx.childrenUnder3 ?? 0);
+  const paidChildren = Math.max(0, ctx.children - under3);
+  if (svc.calc === "per_person") return (ctx.adults + paidChildren) * days * price;
+  if (svc.calc === "per_child") return ctx.children * days * price;
+  return days * price;
+}
+
 export type Rooms = {
   bedrooms?: number;
   living_rooms?: number;
@@ -108,6 +146,7 @@ export type Property = {
   amenities: string[];
   pricePerNight: number;
   priceTiers: PriceTier[];
+  extraServices: ExtraService[];
   image: string;
   images: string[];
   bookings: Booking[];
