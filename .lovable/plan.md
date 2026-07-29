@@ -1,51 +1,54 @@
 ## Tikslas
-Pakeisti statinius „Lovų / Miegamųjų / Svetainių" laukus dinamine kambarių konfigūracijos sekcija objekto formoje.
+Atnaujinti `/admin/properties` sąrašo puslapį su moderniu UI: dvigubas režimas (Kortelės/Lentelė), paieška, filtrai, rūšiavimas, geresnės kortelės ir lentelė su ikonų veiksmais.
 
-## Pakeitimai
+## Failai
 
-### 1. `src/lib/properties.ts`
-Pridėti tipus ir konstantas:
-```ts
-export const ROOM_KINDS = [
-  { value: "bedroom_1", label: "Miegamasis 1" },
-  { value: "bedroom_2", label: "Miegamasis 2" },
-  { value: "bedroom_3", label: "Miegamasis 3" },
-  { value: "bedroom_4", label: "Miegamasis 4" },
-  { value: "living_room", label: "Svetainė" },
-] as const;
+**Modifikuoti** `src/routes/_authenticated/admin.properties.index.tsx` — pilnas perrašymas su naujais komponentais.
 
-export const BED_TYPES = [
-  { value: "extra_large_double", label: "Labai didelė dvigulė lova" },
-  { value: "large_double", label: "Didelė dvigulė lova" },
-  { value: "double", label: "Standartinė dvigulė lova" },
-  { value: "single", label: "Vienvietė lova" },
-  { value: "sofa_bed", label: "Miegamoji sofa" },
-] as const;
+**Naudoti esamus komponentus** iš shadcn (`@/components/ui/`): `card`, `badge`, `button`, `input`, `select`, `dropdown-menu`, `alert-dialog`, `table`. Jei kurio nėra, importuosime iš lucide-react ikonoms (`Search`, `Pencil`, `Trash2`, `MoreVertical`, `Users`, `BedDouble`, `Ruler`, `LayoutGrid`, `List`, `Copy`).
 
-export type RoomConfig = { kind: string; beds: number; bedType: string };
-```
-Papildyti `Rooms` tipą su `configs?: RoomConfig[]` (nekeičiant esamų laukų — atgalinis suderinamumas).
+## Struktūra
 
-### 2. `src/components/admin/PropertyForm.tsx`
-- Pašalinti input laukus: „Lovų", „Miegamųjų", „Svetainių". Palikti: Plotas m², Max svečių, Vonių.
-- Pridėti naują sekciją „Miegojimo vietos / Kambariai":
-  - Grid lentelė su stulpeliais: Kambario tipas (select), Lovų sk. (number, min 1), Lovos tipas (select), Trinti (mygtukas su ikona).
-  - „+ Pridėti kambarį" mygtukas apačioje.
-  - Rodyti bendrą „Iš viso lovų: N" (automatiškai sumuojama).
-- Redaguojant esamą objektą: jei `rooms.configs` egzistuoja — užpildyti eilutes iš jo; jei ne, palikti tuščią sąrašą.
-- Saugant: `beds` laukas automatiškai = suma iš configs; `rooms.configs` išsaugoma; `bedrooms`/`living_rooms` skaičiuojami iš configs (bedroom_* / living_room) kad išliktų suderinamumas su esamu UI, kuris tuos laukus rodo.
+### Viršutinė juosta (Toolbar)
+- Kairė: pavadinimas „Objektai" + objektų skaičius (pvz. „12 objektų").
+- Dešinė: `+ Naujas objektas` mygtukas.
+- Antra eilutė (responsive `flex flex-wrap gap-2`):
+  - `Input` su `Search` ikona — paieška pagal `name` arba `city` (case‑insensitive).
+  - `Select` — Tipas (visi + `PROPERTY_TYPES`).
+  - `Select` — Būsena (visi / aktyvus / neaktyvus).
+  - `Select` — Rūšiuoti pagal (pavadinimas A‑Z, kaina ↑, kaina ↓, naujausi — pagal `sortOrder` arba id).
+  - `ToggleGroup` arba dviejų mygtukų grupė (`LayoutGrid` / `List` ikonos) — vaizdo perjungimas. Default: `grid`. Būsena saugoma `localStorage` (`admin-properties-view`).
 
-### 3. `src/lib/properties.functions.ts`
-Papildyti `propertyInputSchema.rooms` su:
-```ts
-configs: z.array(z.object({
-  kind: z.string(),
-  beds: z.number().int().min(1).max(20),
-  bedType: z.string(),
-})).max(20).optional()
-```
+### Grid vaizdas (default)
+`grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`. Kiekvienas objektas — `Card`:
+- Viršuje `aspect-[4/3]` nuotrauka (`p.image` arba fallback: pilkas `div` su `ImageOff` ikona).
+- `Badge` viršutiniame kairiajame kampe: žalia „Aktyvus" arba pilka „Neaktyvus".
+- Turinys:
+  - Pavadinimas (`font-semibold`, `truncate`).
+  - `text-xs text-muted-foreground`: `propertyTypeLabel(propertyType) • city`.
+  - Trys ikonos su skaičiais: `Users` (maxGuests), `BedDouble` (beds), `Ruler` (areaM2 m²) — praleisti jei nėra reikšmės.
+  - Kaina: `text-lg font-bold` — `X € / naktis`.
+- Footer: `Redaguoti` mygtukas (`Button variant="secondary"` su `Pencil`) + `DropdownMenu` (`MoreVertical`) su: „Kopijuoti nuorodą" (kopijuoja `window.location.origin + /properties/<id>` per `navigator.clipboard`), „Šalinti" (raudona, atidaro `AlertDialog`).
 
-## Nepakeičiama
-- DB schema (viskas telpa esamame `rooms` JSONB).
-- Public UI (properties detail puslapis).
-- Kiti laukai formoje.
+### Table vaizdas
+`Table` iš shadcn su stulpeliais:
+1. Objektas — thumb (`h-10 w-10 rounded-md object-cover` + fallback) + pavadinimas.
+2. Tipas — `propertyTypeLabel`.
+3. Miestas.
+4. Talpa — `<Users/> N` ir `<BedDouble/> N` inline.
+5. Kaina/naktis — dešinėje lygiuota.
+6. Būsena — `Badge`.
+7. Veiksmai — `Button variant="ghost" size="icon"` su `Pencil` (Link į edit) ir `Trash2` (`AlertDialog` patvirtinimas).
+
+### Šalinimo dialogas
+Vienas bendras `AlertDialog` valdomas `useState<{id, name} | null>`; patvirtinus — `del.mutate(id)`. Naudojamas iš abiejų vaizdų. Pakeičia esamą `confirm()`.
+
+### Tuščios būsenos
+- Nėra objektų iš viso: centruota kortelė su tekstu ir „+ Naujas objektas" CTA.
+- Yra objektų, bet filtrai neatitiko: „Nerasta objektų pagal filtrus" + mygtukas „Išvalyti filtrus".
+
+## Techninės pastabos
+- Filtravimas ir rūšiavimas — kliento pusėje per `useMemo`. Duomenų srautas (`useServerFn`/`useQuery`) nekeičiamas.
+- Pilna responsive adaptacija: `grid-cols-1` mobile → `4` desktop; toolbar `flex-wrap`; lentelė turi `overflow-x-auto` wrapper mobile.
+- Naudoti semantinius tokens (`bg-card`, `text-muted-foreground`, `border`) — jokių hardkodintų spalvų.
+- Jokių backend/serverio keitimų.
