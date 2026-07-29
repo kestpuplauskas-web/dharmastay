@@ -144,7 +144,7 @@ const propertyInputSchema = z.object({
   priceTiers: z
     .array(
       z.object({
-        label: z.string().trim().min(1).max(100),
+        label: z.string().trim().max(100).default(""),
         minNights: z.number().int().min(1),
         maxNights: z.number().int().min(1),
         pricePerNight: z.number().min(0),
