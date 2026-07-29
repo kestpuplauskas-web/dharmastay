@@ -9,63 +9,37 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as PrivatumoPolitikaRouteImport } from './routes/privatumo-politika'
-import { Route as PaslauguTaisyklesRouteImport } from './routes/paslaugu-taisykles'
-import { Route as OffersRouteImport } from './routes/offers'
-import { Route as FaqRouteImport } from './routes/faq'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PropertiesIdRouteImport } from './routes/properties.$id'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as OffersRouteImport } from './routes/offers'
+import { Route as PaslauguTaisyklesRouteImport } from './routes/paslaugu-taisykles'
+import { Route as PrivatumoPolitikaRouteImport } from './routes/privatumo-politika'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as PropertiesIdRouteImport } from './routes/properties.$id'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
-import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
-import { Route as ApiPublicBookingSubmitRouteImport } from './routes/api/public/booking-submit'
-import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authenticated/admin.expenses'
 import { Route as AuthenticatedAdminContractsRouteImport } from './routes/_authenticated/admin.contracts'
-import { Route as AuthenticatedAdminPropertiesIndexRouteImport } from './routes/_authenticated/admin.properties.index'
+import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authenticated/admin.expenses'
+import { Route as ApiPublicBookingSubmitRouteImport } from './routes/api/public/booking-submit'
+import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as AuthenticatedAdminBookingsIndexRouteImport } from './routes/_authenticated/admin.bookings.index'
-import { Route as AuthenticatedAdminPropertiesNewRouteImport } from './routes/_authenticated/admin.properties.new'
-import { Route as AuthenticatedAdminBookingsNewRouteImport } from './routes/_authenticated/admin.bookings.new'
 import { Route as AuthenticatedAdminBookingsIdRouteImport } from './routes/_authenticated/admin.bookings.$id'
+import { Route as AuthenticatedAdminBookingsNewRouteImport } from './routes/_authenticated/admin.bookings.new'
+import { Route as AuthenticatedAdminPropertiesIndexRouteImport } from './routes/_authenticated/admin.properties.index'
+import { Route as AuthenticatedAdminPropertiesNewRouteImport } from './routes/_authenticated/admin.properties.new'
 import { Route as AuthenticatedAdminPropertiesIdEditRouteImport } from './routes/_authenticated/admin.properties.$id.edit'
 
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PrivatumoPolitikaRoute = PrivatumoPolitikaRouteImport.update({
-  id: '/privatumo-politika',
-  path: '/privatumo-politika',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PaslauguTaisyklesRoute = PaslauguTaisyklesRouteImport.update({
-  id: '/paslaugu-taisykles',
-  path: '/paslaugu-taisykles',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OffersRoute = OffersRouteImport.update({
-  id: '/offers',
-  path: '/offers',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FaqRoute = FaqRouteImport.update({
-  id: '/faq',
-  path: '/faq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -73,18 +47,39 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PropertiesIdRoute = PropertiesIdRouteImport.update({
-  id: '/properties/$id',
-  path: '/properties/$id',
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OffersRoute = OffersRouteImport.update({
+  id: '/offers',
+  path: '/offers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaslauguTaisyklesRoute = PaslauguTaisyklesRouteImport.update({
+  id: '/paslaugu-taisykles',
+  path: '/paslaugu-taisykles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivatumoPolitikaRoute = PrivatumoPolitikaRouteImport.update({
+  id: '/privatumo-politika',
+  path: '/privatumo-politika',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -92,49 +87,48 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const PropertiesIdRoute = PropertiesIdRouteImport.update({
+  id: '/properties/$id',
+  path: '/properties/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
-  id: '/api/public/track',
-  path: '/api/public/track',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicBookingSubmitRoute = ApiPublicBookingSubmitRouteImport.update({
-  id: '/api/public/booking-submit',
-  path: '/api/public/booking-submit',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedAdminExpensesRoute =
-  AuthenticatedAdminExpensesRouteImport.update({
-    id: '/expenses',
-    path: '/expenses',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
 const AuthenticatedAdminContractsRoute =
   AuthenticatedAdminContractsRouteImport.update({
     id: '/contracts',
     path: '/contracts',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminPropertiesIndexRoute =
-  AuthenticatedAdminPropertiesIndexRouteImport.update({
-    id: '/properties/',
-    path: '/properties/',
+const AuthenticatedAdminExpensesRoute =
+  AuthenticatedAdminExpensesRouteImport.update({
+    id: '/expenses',
+    path: '/expenses',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const ApiPublicBookingSubmitRoute = ApiPublicBookingSubmitRouteImport.update({
+  id: '/api/public/booking-submit',
+  path: '/api/public/booking-submit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
+  id: '/api/public/track',
+  path: '/api/public/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminBookingsIndexRoute =
   AuthenticatedAdminBookingsIndexRouteImport.update({
     id: '/bookings/',
     path: '/bookings/',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminPropertiesNewRoute =
-  AuthenticatedAdminPropertiesNewRouteImport.update({
-    id: '/properties/new',
-    path: '/properties/new',
+const AuthenticatedAdminBookingsIdRoute =
+  AuthenticatedAdminBookingsIdRouteImport.update({
+    id: '/bookings/$id',
+    path: '/bookings/$id',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminBookingsNewRoute =
@@ -143,10 +137,16 @@ const AuthenticatedAdminBookingsNewRoute =
     path: '/bookings/new',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminBookingsIdRoute =
-  AuthenticatedAdminBookingsIdRouteImport.update({
-    id: '/bookings/$id',
-    path: '/bookings/$id',
+const AuthenticatedAdminPropertiesIndexRoute =
+  AuthenticatedAdminPropertiesIndexRouteImport.update({
+    id: '/properties/',
+    path: '/properties/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPropertiesNewRoute =
+  AuthenticatedAdminPropertiesNewRouteImport.update({
+    id: '/properties/new',
+    path: '/properties/new',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminPropertiesIdEditRoute =
@@ -322,60 +322,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privatumo-politika': {
-      id: '/privatumo-politika'
-      path: '/privatumo-politika'
-      fullPath: '/privatumo-politika'
-      preLoaderRoute: typeof PrivatumoPolitikaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/paslaugu-taisykles': {
-      id: '/paslaugu-taisykles'
-      path: '/paslaugu-taisykles'
-      fullPath: '/paslaugu-taisykles'
-      preLoaderRoute: typeof PaslauguTaisyklesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/offers': {
-      id: '/offers'
-      path: '/offers'
-      fullPath: '/offers'
-      preLoaderRoute: typeof OffersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/faq': {
-      id: '/faq'
-      path: '/faq'
-      fullPath: '/faq'
-      preLoaderRoute: typeof FaqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -385,18 +336,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/properties/$id': {
-      id: '/properties/$id'
-      path: '/properties/$id'
-      fullPath: '/properties/$id'
-      preLoaderRoute: typeof PropertiesIdRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/offers': {
+      id: '/offers'
+      path: '/offers'
+      fullPath: '/offers'
+      preLoaderRoute: typeof OffersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/paslaugu-taisykles': {
+      id: '/paslaugu-taisykles'
+      path: '/paslaugu-taisykles'
+      fullPath: '/paslaugu-taisykles'
+      preLoaderRoute: typeof PaslauguTaisyklesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privatumo-politika': {
+      id: '/privatumo-politika'
+      path: '/privatumo-politika'
+      fullPath: '/privatumo-politika'
+      preLoaderRoute: typeof PrivatumoPolitikaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -406,32 +399,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/properties/$id': {
+      id: '/properties/$id'
+      path: '/properties/$id'
+      fullPath: '/properties/$id'
+      preLoaderRoute: typeof PropertiesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/'
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/api/public/track': {
-      id: '/api/public/track'
-      path: '/api/public/track'
-      fullPath: '/api/public/track'
-      preLoaderRoute: typeof ApiPublicTrackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/booking-submit': {
-      id: '/api/public/booking-submit'
-      path: '/api/public/booking-submit'
-      fullPath: '/api/public/booking-submit'
-      preLoaderRoute: typeof ApiPublicBookingSubmitRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/admin/expenses': {
-      id: '/_authenticated/admin/expenses'
-      path: '/expenses'
-      fullPath: '/admin/expenses'
-      preLoaderRoute: typeof AuthenticatedAdminExpensesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/contracts': {
@@ -441,12 +420,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminContractsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/properties/': {
-      id: '/_authenticated/admin/properties/'
-      path: '/properties'
-      fullPath: '/admin/properties/'
-      preLoaderRoute: typeof AuthenticatedAdminPropertiesIndexRouteImport
+    '/_authenticated/admin/expenses': {
+      id: '/_authenticated/admin/expenses'
+      path: '/expenses'
+      fullPath: '/admin/expenses'
+      preLoaderRoute: typeof AuthenticatedAdminExpensesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/api/public/booking-submit': {
+      id: '/api/public/booking-submit'
+      path: '/api/public/booking-submit'
+      fullPath: '/api/public/booking-submit'
+      preLoaderRoute: typeof ApiPublicBookingSubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/track': {
+      id: '/api/public/track'
+      path: '/api/public/track'
+      fullPath: '/api/public/track'
+      preLoaderRoute: typeof ApiPublicTrackRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/bookings/': {
       id: '/_authenticated/admin/bookings/'
@@ -455,11 +448,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBookingsIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/properties/new': {
-      id: '/_authenticated/admin/properties/new'
-      path: '/properties/new'
-      fullPath: '/admin/properties/new'
-      preLoaderRoute: typeof AuthenticatedAdminPropertiesNewRouteImport
+    '/_authenticated/admin/bookings/$id': {
+      id: '/_authenticated/admin/bookings/$id'
+      path: '/bookings/$id'
+      fullPath: '/admin/bookings/$id'
+      preLoaderRoute: typeof AuthenticatedAdminBookingsIdRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/bookings/new': {
@@ -469,11 +462,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBookingsNewRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/bookings/$id': {
-      id: '/_authenticated/admin/bookings/$id'
-      path: '/bookings/$id'
-      fullPath: '/admin/bookings/$id'
-      preLoaderRoute: typeof AuthenticatedAdminBookingsIdRouteImport
+    '/_authenticated/admin/properties/': {
+      id: '/_authenticated/admin/properties/'
+      path: '/properties'
+      fullPath: '/admin/properties/'
+      preLoaderRoute: typeof AuthenticatedAdminPropertiesIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/properties/new': {
+      id: '/_authenticated/admin/properties/new'
+      path: '/properties/new'
+      fullPath: '/admin/properties/new'
+      preLoaderRoute: typeof AuthenticatedAdminPropertiesNewRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/properties/$id/edit': {
