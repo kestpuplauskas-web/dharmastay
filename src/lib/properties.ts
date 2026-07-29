@@ -11,10 +11,8 @@ export type PropertyTypeValue = (typeof PROPERTY_TYPES)[number]["value"];
 export const AMENITIES = [
   "wifi",
   "kitchen",
-  "kitchenette",
   "parking",
   "air_conditioning",
-  "heating",
   "washing_machine",
   "tv",
   "workspace",
@@ -35,11 +33,9 @@ export const AMENITIES = [
 
 export const AMENITY_LABELS: Record<string, string> = {
   wifi: "Wi‑Fi",
-  kitchen: "Virtuvė",
-  kitchenette: "Virtuvėlė",
+  kitchen: "Virtuvėlė",
   parking: "Vieta automobiliui",
   air_conditioning: "Oro kondicionierius",
-  heating: "Šildymas",
   washing_machine: "Skalbimo mašina",
   tv: "Televizorius",
   workspace: "Darbo vieta",
