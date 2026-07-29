@@ -30,6 +30,7 @@ export const AMENITIES = [
   "iron",
   "hair_dryer",
   "coffee_machine",
+  "extra_baby_bed",
 ] as const;
 
 export const AMENITY_LABELS: Record<string, string> = {
@@ -54,6 +55,7 @@ export const AMENITY_LABELS: Record<string, string> = {
   iron: "Lygintuvas",
   hair_dryer: "Plaukų džiovintuvas",
   coffee_machine: "Kavos aparatas",
+  extra_baby_bed: "Papildoma lovytė kambaryje (vaikui)",
 };
 
 export type PriceTier = {
