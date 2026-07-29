@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { AMENITIES, AMENITY_LABELS, PROPERTY_TYPES, type Property } from "@/lib/properties";
+import { Trash2 } from "lucide-react";
+import {
+  AMENITIES,
+  AMENITY_LABELS,
+  BED_TYPES,
+  PROPERTY_TYPES,
+  ROOM_KINDS,
+  type Property,
+  type RoomConfig,
+} from "@/lib/properties";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 
 export type PropertyFormValues = {
@@ -21,6 +30,7 @@ export type PropertyFormValues = {
     kitchenette?: boolean;
     parking_spot?: boolean;
     notes?: string;
+    configs?: RoomConfig[];
   };
   amenities: string[];
   pricePerNight: number;
@@ -52,7 +62,7 @@ export function propertyToForm(p: Property | null | undefined): PropertyFormValu
     areaM2: p?.areaM2 ?? null,
     maxGuests: p?.maxGuests ?? 2,
     beds: p?.beds ?? 1,
-    rooms: p?.rooms ?? {},
+    rooms: { ...(p?.rooms ?? {}), configs: p?.rooms?.configs ?? [] },
     amenities: p?.amenities ?? [],
     pricePerNight: p?.pricePerNight ?? 60,
     priceTiers: p?.priceTiers ?? [],
