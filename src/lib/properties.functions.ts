@@ -153,7 +153,7 @@ const propertyInputSchema = z.object({
     .max(20)
     .default([]),
   coverImageUrl: z.string().trim().max(2000).default(""),
-  imageUrls: z.array(z.string().trim().min(1).max(2000)).max(30).default([]),
+  imageUrls: z.array(z.string().trim().min(1).max(2000)).max(50).default([]),
   isActive: z.boolean().default(true),
   sortOrder: z.number().int().min(0).max(100000).default(0),
   status: z.enum(["active", "maintenance", "blocked"]).default("active"),
