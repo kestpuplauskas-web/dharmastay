@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import type { Property, PriceTier, Rooms, Booking } from "./properties";
+import type { Property, PriceTier, Rooms, Booking, ExtraService } from "./properties";
 import type { Database } from "@/integrations/supabase/types";
 
 function publicClient() {
@@ -37,6 +37,7 @@ function mapProperty(row: PropertyRow, bookings: BookingRow[] = []): Property {
     amenities: (row.amenities as unknown as string[]) ?? [],
     pricePerNight: Number(row.price_per_night),
     priceTiers: (row.price_tiers as unknown as PriceTier[]) ?? [],
+    extraServices: (row.extra_services as unknown as ExtraService[]) ?? [],
     image: row.cover_image_url,
     images: (row.image_urls as unknown as string[]) ?? [],
     bookings: bookings.map<Booking>((b) => ({ from: b.date_from, to: b.date_to })),
@@ -162,6 +163,16 @@ const propertyInputSchema = z.object({
     )
     .max(20)
     .default([]),
+  extraServices: z
+    .array(
+      z.object({
+        name: z.string().trim().min(1).max(100),
+        calc: z.enum(["per_person", "per_child", "flat_per_day"]),
+        pricePerDay: z.number().min(0).max(100000),
+      }),
+    )
+    .max(20)
+    .default([]),
   coverImageUrl: z.string().trim().max(2000).default(""),
   imageUrls: z.array(z.string().trim().min(1).max(2000)).max(50).default([]),
   isActive: z.boolean().default(true),
@@ -188,6 +199,7 @@ function toRow(input: z.infer<typeof propertyInputSchema>) {
     amenities: input.amenities,
     price_per_night: input.pricePerNight,
     price_tiers: input.priceTiers,
+    extra_services: input.extraServices,
     cover_image_url: input.coverImageUrl,
     image_urls: input.imageUrls,
     is_active: input.isActive,
