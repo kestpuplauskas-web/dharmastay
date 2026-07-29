@@ -126,8 +126,7 @@ export function ImageUploader({ cover, images, onChange, folder = "new" }: Props
   const remove = async (idx: number) => {
     const url = images[idx];
     const next = images.filter((_, i) => i !== idx);
-    const wasCover = url === cover;
-    onChange({ cover: wasCover ? next[0] ?? "" : cover, images: next });
+    onChange({ cover: next[0] ?? "", images: next });
     try {
       await removeFromStorage(url);
     } catch {
@@ -135,14 +134,19 @@ export function ImageUploader({ cover, images, onChange, folder = "new" }: Props
     }
   };
 
-  const setCover = (url: string) => onChange({ cover: url, images });
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 8 } }),
+  );
 
-  const move = (idx: number, dir: -1 | 1) => {
-    const j = idx + dir;
-    if (j < 0 || j >= images.length) return;
-    const next = images.slice();
-    [next[idx], next[j]] = [next[j], next[idx]];
-    onChange({ cover, images: next });
+  const onDragEnd = (e: DragEndEvent) => {
+    const { active, over } = e;
+    if (!over || active.id === over.id) return;
+    const oldIndex = images.findIndex((u) => u === active.id);
+    const newIndex = images.findIndex((u) => u === over.id);
+    if (oldIndex < 0 || newIndex < 0) return;
+    const next = arrayMove(images, oldIndex, newIndex);
+    onChange({ cover: next[0] ?? "", images: next });
   };
 
   const atLimit = images.length + pending.filter((p) => p.status !== "error").length >= MAX_IMAGES;
