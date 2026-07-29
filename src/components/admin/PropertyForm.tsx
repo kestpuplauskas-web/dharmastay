@@ -6,6 +6,11 @@ import {
   BED_TYPES,
   PROPERTY_TYPES,
   ROOM_KINDS,
+  EXTRA_SERVICE_PRESETS,
+  EXTRA_CALCS,
+  EXTRA_CALC_LABELS,
+  type ExtraService,
+  type ExtraCalc,
   type Property,
   type RoomConfig,
 } from "@/lib/properties";
@@ -40,6 +45,7 @@ export type PropertyFormValues = {
     maxNights: number;
     pricePerNight: number;
   }>;
+  extraServices: ExtraService[];
   coverImageUrl: string;
   imageUrls: string[];
   isActive: boolean;
@@ -66,6 +72,7 @@ export function propertyToForm(p: Property | null | undefined): PropertyFormValu
     amenities: p?.amenities ?? [],
     pricePerNight: p?.pricePerNight ?? 60,
     priceTiers: p?.priceTiers ?? [],
+    extraServices: p?.extraServices ?? [],
     coverImageUrl: p?.image ?? "",
     imageUrls: p?.images ?? [],
     isActive: p?.isActive ?? true,
