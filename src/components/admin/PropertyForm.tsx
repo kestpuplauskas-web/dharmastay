@@ -429,6 +429,119 @@ export function PropertyForm({
       </section>
 
       <section className="rounded-lg border p-4">
+        <h3 className="mb-2 text-sm font-semibold">Papildomos paslaugos</h3>
+        {v.extraServices.length > 0 && (
+          <div className="mb-1 hidden gap-2 px-1 text-xs font-medium text-muted-foreground md:grid md:grid-cols-[1fr_1fr_120px_40px]">
+            <div>Paslaugos pavadinimas</div>
+            <div>Skaičiavimo tipas</div>
+            <div>€ / dienai</div>
+            <div />
+          </div>
+        )}
+        {v.extraServices.map((svc, idx) => {
+          const isCustom = !EXTRA_SERVICE_PRESETS.some((p) => p.name === svc.name);
+          return (
+            <div
+              key={idx}
+              className="mb-2 grid grid-cols-1 gap-2 rounded border p-2 md:grid-cols-[1fr_1fr_120px_40px] md:items-center md:border-0 md:p-0"
+            >
+              <div className="flex flex-col gap-1">
+                <select
+                  value={isCustom ? "__custom" : svc.name}
+                  onChange={(e) => {
+                    const next = [...v.extraServices];
+                    if (e.target.value === "__custom") {
+                      next[idx] = { ...svc, name: "" };
+                    } else {
+                      const preset = EXTRA_SERVICE_PRESETS.find((p) => p.name === e.target.value);
+                      next[idx] = {
+                        ...svc,
+                        name: e.target.value,
+                        calc: preset?.calc ?? svc.calc,
+                      };
+                    }
+                    set("extraServices", next);
+                  }}
+                  className="rounded border px-2 py-1 text-sm"
+                >
+                  {EXTRA_SERVICE_PRESETS.map((p) => (
+                    <option key={p.name} value={p.name}>
+                      {p.name}
+                    </option>
+                  ))}
+                  <option value="__custom">Kita (įvesti)…</option>
+                </select>
+                {isCustom && (
+                  <input
+                    placeholder="Paslaugos pavadinimas"
+                    value={svc.name}
+                    onChange={(e) => {
+                      const next = [...v.extraServices];
+                      next[idx] = { ...svc, name: e.target.value };
+                      set("extraServices", next);
+                    }}
+                    className="rounded border px-2 py-1 text-sm"
+                  />
+                )}
+              </div>
+              <select
+                value={svc.calc}
+                onChange={(e) => {
+                  const next = [...v.extraServices];
+                  next[idx] = { ...svc, calc: e.target.value as ExtraCalc };
+                  set("extraServices", next);
+                }}
+                className="rounded border px-2 py-1 text-sm"
+              >
+                {EXTRA_CALCS.map((c) => (
+                  <option key={c} value={c}>
+                    {EXTRA_CALC_LABELS[c]}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                step="0.01"
+                min={0}
+                value={svc.pricePerDay}
+                onChange={(e) => {
+                  const next = [...v.extraServices];
+                  next[idx] = { ...svc, pricePerDay: Number(e.target.value) || 0 };
+                  set("extraServices", next);
+                }}
+                className="rounded border px-2 py-1 text-sm"
+              />
+              <button
+                type="button"
+                onClick={() =>
+                  set(
+                    "extraServices",
+                    v.extraServices.filter((_, i) => i !== idx),
+                  )
+                }
+                className="inline-flex h-8 w-8 items-center justify-center rounded text-destructive hover:bg-destructive/10"
+                aria-label="Trinti paslaugą"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          );
+        })}
+        <button
+          type="button"
+          className="mt-1 text-sm text-primary underline"
+          onClick={() =>
+            set("extraServices", [
+              ...v.extraServices,
+              { name: EXTRA_SERVICE_PRESETS[0].name, calc: EXTRA_SERVICE_PRESETS[0].calc, pricePerDay: 0 },
+            ])
+          }
+        >
+          + Pridėti paslaugą
+        </button>
+      </section>
+
+      <section className="rounded-lg border p-4">
         <ImageUploader
           cover={v.coverImageUrl}
           images={v.imageUrls}
