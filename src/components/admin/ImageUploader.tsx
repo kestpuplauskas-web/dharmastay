@@ -23,7 +23,7 @@ type PendingItem = {
 };
 
 const ACCEPT = "image/jpeg,image/jpg,image/png,image/webp";
-const MAX_IMAGES = 5;
+const MAX_IMAGES = 50;
 
 export function ImageUploader({ cover, images, onChange, folder = "new" }: Props) {
   const [pending, setPending] = useState<PendingItem[]>([]);
