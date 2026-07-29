@@ -11,9 +11,10 @@ import {
   nightsBetween,
   priceForNights,
   AMENITY_LABELS,
+  hasOnlySingleBeds,
 } from "@/lib/properties";
 import { BANKS } from "@/lib/banks";
-import { MapPin, Users, BedDouble, Square, Check } from "lucide-react";
+import { MapPin, Users, BedDouble, Bed, Square, Check } from "lucide-react";
 
 export const Route = createFileRoute("/properties/$id")({
   component: PropertyPage,
@@ -168,7 +169,12 @@ function PropertyPage() {
                   <Users className="h-4 w-4" /> iki {property.maxGuests} svečių
                 </span>
                 <span className="flex items-center gap-1">
-                  <BedDouble className="h-4 w-4" /> {property.beds} lovos
+                  {hasOnlySingleBeds(property.rooms) ? (
+                    <Bed className="h-4 w-4" />
+                  ) : (
+                    <BedDouble className="h-4 w-4" />
+                  )}{" "}
+                  {property.beds} lovos
                 </span>
                 {property.areaM2 ? (
                   <span className="flex items-center gap-1">

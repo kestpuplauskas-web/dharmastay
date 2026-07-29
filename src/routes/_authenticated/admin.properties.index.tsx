@@ -9,6 +9,7 @@ import {
   MoreVertical,
   Users,
   BedDouble,
+  Bed,
   Ruler,
   LayoutGrid,
   List as ListIcon,
@@ -17,7 +18,7 @@ import {
   Plus,
 } from "lucide-react";
 import { listAllProperties, deleteProperty } from "@/lib/properties.functions";
-import { PROPERTY_TYPES, propertyTypeLabel, type Property } from "@/lib/properties";
+import { PROPERTY_TYPES, propertyTypeLabel, hasOnlySingleBeds, type Property } from "@/lib/properties";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -350,7 +351,7 @@ function GridView({
                 {p.maxGuests}
               </span>
               <span className="inline-flex items-center gap-1">
-                <BedDouble className="h-4 w-4" />
+                {hasOnlySingleBeds(p.rooms) ? <Bed className="h-4 w-4" /> : <BedDouble className="h-4 w-4" />}
                 {p.beds}
               </span>
               {p.areaM2 ? (
@@ -428,7 +429,7 @@ function TableView({
                     {p.maxGuests}
                   </span>
                   <span className="inline-flex items-center gap-1">
-                    <BedDouble className="h-4 w-4" />
+                    {hasOnlySingleBeds(p.rooms) ? <Bed className="h-4 w-4" /> : <BedDouble className="h-4 w-4" />}
                     {p.beds}
                   </span>
                 </div>

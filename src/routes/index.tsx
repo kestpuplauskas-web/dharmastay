@@ -4,8 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { listActiveProperties } from "@/lib/properties.functions";
-import { propertyTypeLabel } from "@/lib/properties";
-import { MapPin, Users, BedDouble, Square } from "lucide-react";
+import { propertyTypeLabel, hasOnlySingleBeds } from "@/lib/properties";
+import { MapPin, Users, BedDouble, Bed, Square } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -103,7 +103,12 @@ function HomePage() {
                       <Users className="h-3 w-3" /> {p.maxGuests}
                     </span>
                     <span className="flex items-center gap-1">
-                      <BedDouble className="h-3 w-3" /> {p.beds}
+                      {hasOnlySingleBeds(p.rooms) ? (
+                        <Bed className="h-3 w-3" />
+                      ) : (
+                        <BedDouble className="h-3 w-3" />
+                      )}{" "}
+                      {p.beds}
                     </span>
                     {p.areaM2 ? (
                       <span className="flex items-center gap-1">
