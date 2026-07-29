@@ -12,6 +12,7 @@ import {
   priceForNights,
   AMENITY_LABELS,
   hasOnlySingleBeds,
+  calcExtraTotal,
 } from "@/lib/properties";
 import { BANKS } from "@/lib/banks";
 import { MapPin, Users, BedDouble, Bed, Square, Check } from "lucide-react";
@@ -31,6 +32,10 @@ function PropertyPage() {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [guests, setGuests] = useState(2);
+  const [adults, setAdults] = useState(2);
+  const [children, setChildren] = useState(0);
+  const [childrenUnder3, setChildrenUnder3] = useState(0);
+  const [selectedExtras, setSelectedExtras] = useState<Record<string, boolean>>({});
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -54,6 +59,18 @@ function PropertyPage() {
     return priceForNights(property, nights);
   }, [property, nights]);
 
+  const extrasBreakdown = useMemo(() => {
+    if (!property || nights <= 0) return { items: [], total: 0 };
+    const items = (property.extraServices ?? [])
+      .filter((s) => selectedExtras[s.name])
+      .map((s) => ({
+        svc: s,
+        amount: calcExtraTotal(s, { adults, children, childrenUnder3, days: nights }),
+      }));
+    const total = items.reduce((sum, i) => sum + i.amount, 0);
+    return { items, total };
+  }, [property, nights, selectedExtras, adults, children, childrenUnder3]);
+
   const available = useMemo(() => {
     if (!property || !from || !to || nights <= 0) return true;
     return isPropertyAvailable(property, new Date(from), new Date(to));
@@ -65,6 +82,9 @@ function PropertyPage() {
       if (nights <= 0) throw new Error("Pasirinkite datas");
       if (!available) throw new Error("Pasirinktos datos užimtos");
       if (!name.trim()) throw new Error("Nurodykite vardą");
+      const extras = (property.extraServices ?? [])
+        .filter((s) => selectedExtras[s.name])
+        .map((s) => ({ name: s.name, calc: s.calc, pricePerDay: s.pricePerDay }));
       const res = await fetch("/api/public/booking-submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -72,7 +92,11 @@ function PropertyPage() {
           property_id: property.id,
           date_from: from,
           date_to: to,
-          guests,
+          guests: adults + children,
+          adults,
+          children,
+          children_under_3: childrenUnder3,
+          extras,
           customer_name: name.trim(),
           customer_phone: phone.trim(),
           customer_email: email.trim(),
