@@ -3,11 +3,26 @@ import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
+type ExtraCalcT = "per_person" | "per_child" | "flat_per_day";
+
 const inputSchema = z.object({
   property_id: z.string().uuid(),
   date_from: z.string().min(1),
   date_to: z.string().min(1),
   guests: z.number().int().min(1).max(50).default(1),
+  adults: z.number().int().min(1).max(50).optional(),
+  children: z.number().int().min(0).max(50).default(0),
+  children_under_3: z.number().int().min(0).max(50).default(0),
+  extras: z
+    .array(
+      z.object({
+        name: z.string().trim().min(1).max(100),
+        calc: z.enum(["per_person", "per_child", "flat_per_day"]),
+        pricePerDay: z.number().min(0).max(100000),
+      }),
+    )
+    .max(20)
+    .default([]),
   customer_name: z.string().trim().min(1).max(200),
   customer_phone: z.string().trim().max(50).default(""),
   customer_email: z.string().trim().max(255).default(""),
@@ -28,6 +43,20 @@ function priceFor(
 ): number {
   const tier = tiers.find((t) => nights >= t.minNights && nights <= t.maxNights);
   return (tier?.pricePerNight ?? pricePerNight) * nights;
+}
+
+function extraLineTotal(
+  calc: ExtraCalcT,
+  pricePerDay: number,
+  ctx: { adults: number; children: number; childrenUnder3: number; days: number },
+): number {
+  const days = Math.max(0, ctx.days);
+  const price = Math.max(0, pricePerDay);
+  if (days === 0 || price === 0) return 0;
+  const paidChildren = Math.max(0, ctx.children - ctx.childrenUnder3);
+  if (calc === "per_person") return (ctx.adults + paidChildren) * days * price;
+  if (calc === "per_child") return ctx.children * days * price;
+  return days * price;
 }
 
 export const Route = createFileRoute("/api/public/booking-submit")({
@@ -52,7 +81,7 @@ export const Route = createFileRoute("/api/public/booking-submit")({
 
         const { data: prop, error: pErr } = await supabase
           .from("properties")
-          .select("id, name, price_per_night, price_tiers, is_active, max_guests")
+          .select("id, name, price_per_night, price_tiers, extra_services, is_active, max_guests")
           .eq("id", data.property_id)
           .maybeSingle();
         if (pErr) return Response.json({ error: pErr.message }, { status: 500 });
@@ -79,7 +108,7 @@ export const Route = createFileRoute("/api/public/booking-submit")({
         }
 
         const nights = nightsBetween(data.date_from, data.date_to);
-        const total = priceFor(
+        const stayTotal = priceFor(
           Number(prop.price_per_night),
           (prop.price_tiers as unknown as Array<{
             minNights: number;
@@ -88,6 +117,32 @@ export const Route = createFileRoute("/api/public/booking-submit")({
           }>) ?? [],
           nights,
         );
+
+        const defined = (prop.extra_services as unknown as Array<{
+          name: string;
+          calc: ExtraCalcT;
+          pricePerDay: number;
+        }>) ?? [];
+        const adults = data.adults ?? Math.max(1, data.guests - data.children);
+        const validatedExtras: Array<{ name: string; calc: ExtraCalcT; pricePerDay: number; amount: number }> = [];
+        for (const req of data.extras) {
+          const match = defined.find((d) => d.name === req.name);
+          if (!match) continue;
+          const amount = extraLineTotal(match.calc, Number(match.pricePerDay), {
+            adults,
+            children: data.children,
+            childrenUnder3: data.children_under_3,
+            days: nights,
+          });
+          validatedExtras.push({
+            name: match.name,
+            calc: match.calc,
+            pricePerDay: Number(match.pricePerDay),
+            amount,
+          });
+        }
+        const extrasTotal = validatedExtras.reduce((s, e) => s + e.amount, 0);
+        const total = stayTotal + extrasTotal;
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
@@ -111,6 +166,8 @@ export const Route = createFileRoute("/api/public/booking-submit")({
             bic: data.bic ?? null,
             expires_at: expiresAt,
             booking_number: "",
+            extras: validatedExtras,
+            extras_total: extrasTotal,
           })
           .select("booking_number, payment_amount, bic")
           .single();
