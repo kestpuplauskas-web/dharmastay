@@ -218,22 +218,6 @@ export function PropertyForm({
             className="mt-1 w-full rounded border px-2 py-1"
           />
         </label>
-        <label className="flex items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            checked={!!v.rooms.kitchenette}
-            onChange={(e) => set("rooms", { ...v.rooms, kitchenette: e.target.checked })}
-          />
-          Virtuvėlė
-        </label>
-        <label className="flex items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            checked={!!v.rooms.parking_spot}
-            onChange={(e) => set("rooms", { ...v.rooms, parking_spot: e.target.checked })}
-          />
-          Vieta automobiliui
-        </label>
       </section>
 
       <section className="rounded-lg border p-4">
