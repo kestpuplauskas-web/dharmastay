@@ -343,6 +343,15 @@ export function PropertyForm({
 
       <section className="rounded-lg border p-4">
         <h3 className="mb-2 text-sm font-semibold">Sezoninės kainos (pagal naktų skaičių)</h3>
+        {v.priceTiers.length > 0 && (
+          <div className="mb-1 hidden grid-cols-[1fr_96px_96px_96px_24px] gap-2 px-1 text-xs font-medium text-muted-foreground md:grid">
+            <div>Etiketė</div>
+            <div>Min naktų</div>
+            <div>Max naktų</div>
+            <div>€ / naktis</div>
+            <div></div>
+          </div>
+        )}
         {v.priceTiers.map((tier, idx) => (
           <div key={idx} className="mb-2 flex flex-wrap gap-2">
             <input
