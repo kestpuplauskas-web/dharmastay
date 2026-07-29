@@ -1,6 +1,6 @@
 export const PROPERTY_TYPES = [
   { value: "apartment", label: "Apartamentai" },
-  { value: "hotel", label: "Viešbutis" },
+  { value: "hotel", label: "SPA" },
   { value: "cottage", label: "Atostogų namelis" },
   { value: "villa", label: "Vila" },
   { value: "guest_house", label: "Svečių namai" },
