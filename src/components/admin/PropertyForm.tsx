@@ -89,6 +89,25 @@ export function PropertyForm({
   const set = <K extends keyof PropertyFormValues>(k: K, val: PropertyFormValues[K]) =>
     setV((s) => ({ ...s, [k]: val }));
 
+  const configs: RoomConfig[] = v.rooms.configs ?? [];
+  const totalBeds = configs.reduce((sum, c) => sum + (Number(c.beds) || 0), 0);
+  const setConfigs = (next: RoomConfig[]) => {
+    const bedrooms = next.filter((c) => c.kind.startsWith("bedroom_")).length;
+    const living_rooms = next.filter((c) => c.kind === "living_room").length;
+    const beds = next.reduce((s, c) => s + (Number(c.beds) || 0), 0);
+    setV((s) => ({
+      ...s,
+      beds: Math.max(1, beds),
+      rooms: { ...s.rooms, configs: next, bedrooms, living_rooms },
+    }));
+  };
+  const updateConfig = (idx: number, patch: Partial<RoomConfig>) =>
+    setConfigs(configs.map((c, i) => (i === idx ? { ...c, ...patch } : c)));
+  const removeConfig = (idx: number) =>
+    setConfigs(configs.filter((_, i) => i !== idx));
+  const addConfig = () =>
+    setConfigs([...configs, { kind: "bedroom_1", beds: 1, bedType: "double" }]);
+
   return (
     <form
       onSubmit={(e) => {
@@ -183,40 +202,6 @@ export function PropertyForm({
           />
         </label>
         <label className="text-sm">
-          Lovų
-          <input
-            type="number"
-            min={1}
-            value={v.beds}
-            onChange={(e) => set("beds", Number(e.target.value))}
-            className="mt-1 w-full rounded border px-2 py-1"
-          />
-        </label>
-        <label className="text-sm">
-          Miegamųjų
-          <input
-            type="number"
-            min={0}
-            value={v.rooms.bedrooms ?? ""}
-            onChange={(e) =>
-              set("rooms", { ...v.rooms, bedrooms: Number(e.target.value) || 0 })
-            }
-            className="mt-1 w-full rounded border px-2 py-1"
-          />
-        </label>
-        <label className="text-sm">
-          Svetainių
-          <input
-            type="number"
-            min={0}
-            value={v.rooms.living_rooms ?? ""}
-            onChange={(e) =>
-              set("rooms", { ...v.rooms, living_rooms: Number(e.target.value) || 0 })
-            }
-            className="mt-1 w-full rounded border px-2 py-1"
-          />
-        </label>
-        <label className="text-sm">
           Vonių
           <input
             type="number"
@@ -228,6 +213,78 @@ export function PropertyForm({
             className="mt-1 w-full rounded border px-2 py-1"
           />
         </label>
+      </section>
+
+      <section className="rounded-lg border p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="text-sm font-semibold">Miegojimo vietos / Kambariai</h3>
+          <span className="text-xs text-muted-foreground">Iš viso lovų: {totalBeds}</span>
+        </div>
+        {configs.length === 0 ? (
+          <p className="mb-3 text-sm text-muted-foreground">Nėra pridėtų kambarių.</p>
+        ) : (
+          <div className="mb-3 space-y-2">
+            <div className="hidden grid-cols-[1fr_120px_1fr_40px] gap-2 px-1 text-xs font-medium text-muted-foreground md:grid">
+              <div>Kambario tipas</div>
+              <div>Lovų sk.</div>
+              <div>Lovos tipas</div>
+              <div></div>
+            </div>
+            {configs.map((c, idx) => (
+              <div
+                key={idx}
+                className="grid grid-cols-1 gap-2 rounded border p-2 md:grid-cols-[1fr_120px_1fr_40px] md:items-center md:p-0 md:border-0"
+              >
+                <select
+                  value={c.kind}
+                  onChange={(e) => updateConfig(idx, { kind: e.target.value })}
+                  className="rounded border px-2 py-1 text-sm"
+                >
+                  {ROOM_KINDS.map((r) => (
+                    <option key={r.value} value={r.value}>
+                      {r.label}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="number"
+                  min={1}
+                  value={c.beds}
+                  onChange={(e) =>
+                    updateConfig(idx, { beds: Math.max(1, Number(e.target.value) || 1) })
+                  }
+                  className="rounded border px-2 py-1 text-sm"
+                />
+                <select
+                  value={c.bedType}
+                  onChange={(e) => updateConfig(idx, { bedType: e.target.value })}
+                  className="rounded border px-2 py-1 text-sm"
+                >
+                  {BED_TYPES.map((b) => (
+                    <option key={b.value} value={b.value}>
+                      {b.label}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => removeConfig(idx)}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded text-destructive hover:bg-destructive/10"
+                  aria-label="Trinti kambarį"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        <button
+          type="button"
+          onClick={addConfig}
+          className="text-sm text-primary underline"
+        >
+          + Pridėti kambarį
+        </button>
       </section>
 
       <section className="rounded-lg border p-4">
