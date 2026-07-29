@@ -1,10 +1,26 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Upload, X, Star, StarOff, Loader2, AlertCircle, RotateCcw } from "lucide-react";
+import { Upload, X, Loader2, AlertCircle, RotateCcw, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { uploadOptimizedToStorage, removeFromStorage } from "@/lib/image-optimize";
+import {
+  DndContext,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  closestCenter,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  rectSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 type Props = {
   cover: string;
@@ -110,8 +126,7 @@ export function ImageUploader({ cover, images, onChange, folder = "new" }: Props
   const remove = async (idx: number) => {
     const url = images[idx];
     const next = images.filter((_, i) => i !== idx);
-    const wasCover = url === cover;
-    onChange({ cover: wasCover ? next[0] ?? "" : cover, images: next });
+    onChange({ cover: next[0] ?? "", images: next });
     try {
       await removeFromStorage(url);
     } catch {
@@ -119,14 +134,19 @@ export function ImageUploader({ cover, images, onChange, folder = "new" }: Props
     }
   };
 
-  const setCover = (url: string) => onChange({ cover: url, images });
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 8 } }),
+  );
 
-  const move = (idx: number, dir: -1 | 1) => {
-    const j = idx + dir;
-    if (j < 0 || j >= images.length) return;
-    const next = images.slice();
-    [next[idx], next[j]] = [next[j], next[idx]];
-    onChange({ cover, images: next });
+  const onDragEnd = (e: DragEndEvent) => {
+    const { active, over } = e;
+    if (!over || active.id === over.id) return;
+    const oldIndex = images.findIndex((u) => u === active.id);
+    const newIndex = images.findIndex((u) => u === over.id);
+    if (oldIndex < 0 || newIndex < 0) return;
+    const next = arrayMove(images, oldIndex, newIndex);
+    onChange({ cover: next[0] ?? "", images: next });
   };
 
   const atLimit = images.length + pending.filter((p) => p.status !== "error").length >= MAX_IMAGES;
@@ -247,83 +267,93 @@ export function ImageUploader({ cover, images, onChange, folder = "new" }: Props
       )}
 
       {images.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          {images.map((url, i) => {
-            const isCover = url === cover;
-            return (
-              <div
-                key={url + i}
-                className={cn(
-                  "relative group rounded-lg overflow-hidden border bg-muted",
-                  isCover && "ring-2 ring-primary",
-                )}
-              >
-                <div className="aspect-[16/10] bg-muted">
-                  <img
-                    src={url}
-                    alt={`Nuotrauka ${i + 1}`}
-                    loading="lazy"
-                    decoding="async"
-                    className="h-full w-full object-cover"
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).style.opacity = "0.3";
-                    }}
-                  />
-                </div>
-                <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-1 bg-black/55 px-2 py-1.5 opacity-0 group-hover:opacity-100 transition">
-                  <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={() => move(i, -1)}
-                      disabled={i === 0}
-                      className="text-white/90 disabled:opacity-30 text-xs px-1"
-                      aria-label="Aukštyn"
-                    >
-                      ←
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => move(i, 1)}
-                      disabled={i === images.length - 1}
-                      className="text-white/90 disabled:opacity-30 text-xs px-1"
-                      aria-label="Žemyn"
-                    >
-                      →
-                    </button>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={() => setCover(url)}
-                      className="text-white"
-                      aria-label="Pažymėti kaip viršelį"
-                      title="Viršelis"
-                    >
-                      {isCover ? (
-                        <Star className="h-4 w-4 fill-yellow-300 text-yellow-300" />
-                      ) : (
-                        <StarOff className="h-4 w-4" />
-                      )}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => void remove(i)}
-                      className="text-white"
-                      aria-label="Pašalinti"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-                {isCover && (
-                  <span className="absolute top-2 left-2 text-[10px] uppercase tracking-wide bg-primary text-primary-foreground px-1.5 py-0.5 rounded">
-                    Viršelis
-                  </span>
-                )}
-              </div>
-            );
-          })}
-        </div>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+          <SortableContext items={images} strategy={rectSortingStrategy}>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+              {images.map((url, i) => (
+                <SortableImage
+                  key={url}
+                  url={url}
+                  index={i}
+                  isCover={i === 0}
+                  onRemove={() => void remove(i)}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
+      )}
+    </div>
+  );
+}
+
+function SortableImage({
+  url,
+  index,
+  isCover,
+  onRemove,
+}: {
+  url: string;
+  index: number;
+  isCover: boolean;
+  onRemove: () => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: url,
+  });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "relative group rounded-lg overflow-hidden border bg-muted touch-none",
+        isCover && "ring-2 ring-primary",
+        isDragging && "opacity-50 ring-2 ring-primary z-10",
+      )}
+    >
+      <div
+        {...attributes}
+        {...listeners}
+        className="aspect-[16/10] bg-muted cursor-grab active:cursor-grabbing"
+      >
+        <img
+          src={url}
+          alt={`Nuotrauka ${index + 1}`}
+          loading="lazy"
+          decoding="async"
+          draggable={false}
+          className="h-full w-full object-cover pointer-events-none select-none"
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).style.opacity = "0.3";
+          }}
+        />
+      </div>
+      <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+        <button
+          type="button"
+          onClick={onRemove}
+          onPointerDown={(e) => e.stopPropagation()}
+          className="rounded-md bg-black/60 p-1 text-white hover:bg-black/80"
+          aria-label="Pašalinti"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+      <span
+        className="absolute top-2 left-2 flex items-center gap-1 rounded bg-black/55 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-white/90"
+        aria-hidden
+      >
+        <GripVertical className="h-3 w-3" />
+        {index + 1}
+      </span>
+      {isCover && (
+        <span className="absolute bottom-2 left-2 rounded bg-primary px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-primary-foreground">
+          Viršelis
+        </span>
       )}
     </div>
   );

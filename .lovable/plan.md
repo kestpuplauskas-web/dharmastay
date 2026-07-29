@@ -1,54 +1,28 @@
 ## Tikslas
-Atnaujinti `/admin/properties` sąrašo puslapį su moderniu UI: dvigubas režimas (Kortelės/Lentelė), paieška, filtrai, rūšiavimas, geresnės kortelės ir lentelė su ikonų veiksmais.
+Objekto formos nuotraukų galerijoje įgalinti drag-and-drop pertvarkymą. Pirmoji nuotrauka (index 0) visada = viršelis. Viešame puslapyje nuotraukos jau rodomos pagal `images` masyvo eiliškumą, todėl užteks išsaugoti tą eiliškumą DB.
 
-## Failai
+## Pakeitimai
 
-**Modifikuoti** `src/routes/_authenticated/admin.properties.index.tsx` — pilnas perrašymas su naujais komponentais.
+### 1. `src/components/admin/ImageUploader.tsx`
+- Pridėti `@dnd-kit/core`, `@dnd-kit/sortable`, `@dnd-kit/utilities` (per `bun add`).
+- Apvynioti tinklelį į `DndContext` + `SortableContext` (`rectSortingStrategy`).
+- Kiekvieną nuotraukos kortelę iškelti į `SortableImage` komponentą su `useSortable` (drag handle = visa kortelė, `cursor-grab`/`grabbing`, švelnus `transform` + `transition`).
+- Ant tempimo — drop indikatorius: aktyvi kortelė `opacity-50 ring-2 ring-primary`, kitos slenkasi natūraliai per `@dnd-kit` animaciją.
+- `onDragEnd`: `arrayMove(images, oldIndex, newIndex)`, tuomet `onChange({ cover: next[0], images: next })`.
+- Semantikos pakeitimas: **viršelis visada = `images[0]`**. Pašalinti „Star / StarOff" mygtukus; „VIRŠELIS" badge rodomas tik ant pirmos kortelės. Rodyklių mygtukai (`←`/`→`) tampa nebereikalingi — pašalinti (drag-and-drop juos pakeičia).
+- Įkeliant naujas nuotraukas: pridedamos į galą; jei masyvas buvo tuščias — pirmoji tampa viršeliu automatiškai (kaip ir dabar).
+- Trinant `images[0]` — naujas viršelis = naujas `images[0]`.
+- Mobile: `PointerSensor` su `activationConstraint: { distance: 6 }`, kad scroll neblokuotų.
 
-**Naudoti esamus komponentus** iš shadcn (`@/components/ui/`): `card`, `badge`, `button`, `input`, `select`, `dropdown-menu`, `alert-dialog`, `table`. Jei kurio nėra, importuosime iš lucide-react ikonoms (`Search`, `Pencil`, `Trash2`, `MoreVertical`, `Users`, `BedDouble`, `Ruler`, `LayoutGrid`, `List`, `Copy`).
+### 2. `src/components/admin/PropertyForm.tsx`
+- Jokių pokyčių logikoje — `ImageUploader` grąžina `{ cover, images }`, kur `cover === images[0]`. Išsaugojimas per esamą „Išsaugoti" mygtuką (jau eina į `updateProperty` / `createProperty`).
 
-## Struktūra
+### 3. Viešas puslapis
+- `src/routes/properties.$id.tsx` jau naudoja `property.image` (cover) + `property.images.slice(1, 7)` — su nauja semantika `image === images[0]`, todėl eiliškumas atitiks admin nustatymą be papildomų pakeitimų. Patikrinti, kad `slice(1, 7)` naudoja tą patį `images` masyvą (taip).
+- `src/routes/index.tsx` ir `src/routes/offers.tsx` naudoja `property.image` kortelėse — irgi atitinka.
 
-### Viršutinė juosta (Toolbar)
-- Kairė: pavadinimas „Objektai" + objektų skaičius (pvz. „12 objektų").
-- Dešinė: `+ Naujas objektas` mygtukas.
-- Antra eilutė (responsive `flex flex-wrap gap-2`):
-  - `Input` su `Search` ikona — paieška pagal `name` arba `city` (case‑insensitive).
-  - `Select` — Tipas (visi + `PROPERTY_TYPES`).
-  - `Select` — Būsena (visi / aktyvus / neaktyvus).
-  - `Select` — Rūšiuoti pagal (pavadinimas A‑Z, kaina ↑, kaina ↓, naujausi — pagal `sortOrder` arba id).
-  - `ToggleGroup` arba dviejų mygtukų grupė (`LayoutGrid` / `List` ikonos) — vaizdo perjungimas. Default: `grid`. Būsena saugoma `localStorage` (`admin-properties-view`).
+### 4. Duomenų sluoksnis
+- Jokių DB migracijų — `image_urls` (jsonb) jau saugo tvarkingą masyvą, `cover_image_url` bus lygus `image_urls[0]`.
 
-### Grid vaizdas (default)
-`grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`. Kiekvienas objektas — `Card`:
-- Viršuje `aspect-[4/3]` nuotrauka (`p.image` arba fallback: pilkas `div` su `ImageOff` ikona).
-- `Badge` viršutiniame kairiajame kampe: žalia „Aktyvus" arba pilka „Neaktyvus".
-- Turinys:
-  - Pavadinimas (`font-semibold`, `truncate`).
-  - `text-xs text-muted-foreground`: `propertyTypeLabel(propertyType) • city`.
-  - Trys ikonos su skaičiais: `Users` (maxGuests), `BedDouble` (beds), `Ruler` (areaM2 m²) — praleisti jei nėra reikšmės.
-  - Kaina: `text-lg font-bold` — `X € / naktis`.
-- Footer: `Redaguoti` mygtukas (`Button variant="secondary"` su `Pencil`) + `DropdownMenu` (`MoreVertical`) su: „Kopijuoti nuorodą" (kopijuoja `window.location.origin + /properties/<id>` per `navigator.clipboard`), „Šalinti" (raudona, atidaro `AlertDialog`).
-
-### Table vaizdas
-`Table` iš shadcn su stulpeliais:
-1. Objektas — thumb (`h-10 w-10 rounded-md object-cover` + fallback) + pavadinimas.
-2. Tipas — `propertyTypeLabel`.
-3. Miestas.
-4. Talpa — `<Users/> N` ir `<BedDouble/> N` inline.
-5. Kaina/naktis — dešinėje lygiuota.
-6. Būsena — `Badge`.
-7. Veiksmai — `Button variant="ghost" size="icon"` su `Pencil` (Link į edit) ir `Trash2` (`AlertDialog` patvirtinimas).
-
-### Šalinimo dialogas
-Vienas bendras `AlertDialog` valdomas `useState<{id, name} | null>`; patvirtinus — `del.mutate(id)`. Naudojamas iš abiejų vaizdų. Pakeičia esamą `confirm()`.
-
-### Tuščios būsenos
-- Nėra objektų iš viso: centruota kortelė su tekstu ir „+ Naujas objektas" CTA.
-- Yra objektų, bet filtrai neatitiko: „Nerasta objektų pagal filtrus" + mygtukas „Išvalyti filtrus".
-
-## Techninės pastabos
-- Filtravimas ir rūšiavimas — kliento pusėje per `useMemo`. Duomenų srautas (`useServerFn`/`useQuery`) nekeičiamas.
-- Pilna responsive adaptacija: `grid-cols-1` mobile → `4` desktop; toolbar `flex-wrap`; lentelė turi `overflow-x-auto` wrapper mobile.
-- Naudoti semantinius tokens (`bg-card`, `text-muted-foreground`, `border`) — jokių hardkodintų spalvų.
-- Jokių backend/serverio keitimų.
+## Ne apimtyje
+- Auto-save po kiekvieno vilkimo (reikalavimas leidžia „arba" — pasirenkame išsaugojimą per „Išsaugoti" mygtuką, kad atitiktų esamą formos elgesį ir nesukurtų papildomų tinklo užklausų).
