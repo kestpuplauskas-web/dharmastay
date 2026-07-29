@@ -12,6 +12,7 @@ import {
   priceForNights,
   AMENITY_LABELS,
   hasOnlySingleBeds,
+  calcExtraTotal,
 } from "@/lib/properties";
 import { BANKS } from "@/lib/banks";
 import { MapPin, Users, BedDouble, Bed, Square, Check } from "lucide-react";
@@ -30,7 +31,10 @@ function PropertyPage() {
 
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [guests, setGuests] = useState(2);
+  const [adults, setAdults] = useState(2);
+  const [children, setChildren] = useState(0);
+  const [childrenUnder3, setChildrenUnder3] = useState(0);
+  const [selectedExtras, setSelectedExtras] = useState<Record<string, boolean>>({});
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -54,6 +58,18 @@ function PropertyPage() {
     return priceForNights(property, nights);
   }, [property, nights]);
 
+  const extrasBreakdown = useMemo(() => {
+    if (!property || nights <= 0) return { items: [], total: 0 };
+    const items = (property.extraServices ?? [])
+      .filter((s) => selectedExtras[s.name])
+      .map((s) => ({
+        svc: s,
+        amount: calcExtraTotal(s, { adults, children, childrenUnder3, days: nights }),
+      }));
+    const total = items.reduce((sum, i) => sum + i.amount, 0);
+    return { items, total };
+  }, [property, nights, selectedExtras, adults, children, childrenUnder3]);
+
   const available = useMemo(() => {
     if (!property || !from || !to || nights <= 0) return true;
     return isPropertyAvailable(property, new Date(from), new Date(to));
@@ -65,6 +81,9 @@ function PropertyPage() {
       if (nights <= 0) throw new Error("Pasirinkite datas");
       if (!available) throw new Error("Pasirinktos datos užimtos");
       if (!name.trim()) throw new Error("Nurodykite vardą");
+      const extras = (property.extraServices ?? [])
+        .filter((s) => selectedExtras[s.name])
+        .map((s) => ({ name: s.name, calc: s.calc, pricePerDay: s.pricePerDay }));
       const res = await fetch("/api/public/booking-submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -72,7 +91,11 @@ function PropertyPage() {
           property_id: property.id,
           date_from: from,
           date_to: to,
-          guests,
+          guests: adults + children,
+          adults,
+          children,
+          children_under_3: childrenUnder3,
+          extras,
           customer_name: name.trim(),
           customer_phone: phone.trim(),
           customer_email: email.trim(),
@@ -256,17 +279,72 @@ function PropertyPage() {
                       />
                     </label>
                   </div>
-                  <label className="block text-xs">
-                    Svečių
-                    <input
-                      type="number"
-                      min={1}
-                      max={property.maxGuests}
-                      value={guests}
-                      onChange={(e) => setGuests(Number(e.target.value))}
-                      className="mt-1 w-full rounded-md border px-2 py-1 text-sm"
-                    />
-                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <label className="text-xs">
+                      Suaugę
+                      <input
+                        type="number"
+                        min={1}
+                        max={property.maxGuests}
+                        value={adults}
+                        onChange={(e) => setAdults(Math.max(1, Number(e.target.value) || 1))}
+                        className="mt-1 w-full rounded-md border px-2 py-1 text-sm"
+                      />
+                    </label>
+                    <label className="text-xs">
+                      Vaikai
+                      <input
+                        type="number"
+                        min={0}
+                        value={children}
+                        onChange={(e) => setChildren(Math.max(0, Number(e.target.value) || 0))}
+                        className="mt-1 w-full rounded-md border px-2 py-1 text-sm"
+                      />
+                    </label>
+                    <label className="text-xs">
+                      Iki 3 m.
+                      <input
+                        type="number"
+                        min={0}
+                        max={children}
+                        value={childrenUnder3}
+                        onChange={(e) =>
+                          setChildrenUnder3(Math.max(0, Math.min(children, Number(e.target.value) || 0)))
+                        }
+                        className="mt-1 w-full rounded-md border px-2 py-1 text-sm"
+                      />
+                    </label>
+                  </div>
+                  {(property.extraServices?.length ?? 0) > 0 && (
+                    <div className="space-y-1 rounded-md border p-2">
+                      <div className="mb-1 text-xs font-semibold">Papildomos paslaugos</div>
+                      {property.extraServices.map((s) => {
+                        const preview = nights > 0
+                          ? calcExtraTotal(s, { adults, children, childrenUnder3, days: nights })
+                          : 0;
+                        return (
+                          <label key={s.name} className="flex items-center justify-between gap-2 text-xs">
+                            <span className="flex items-center gap-2">
+                              <input
+                                type="checkbox"
+                                checked={!!selectedExtras[s.name]}
+                                onChange={(e) =>
+                                  setSelectedExtras((prev) => ({ ...prev, [s.name]: e.target.checked }))
+                                }
+                              />
+                              {s.name}
+                              <span className="text-muted-foreground">
+                                ({s.pricePerDay.toFixed(2)} €/d.)
+                              </span>
+                            </span>
+                            {selectedExtras[s.name] && nights > 0 && (
+                              <span className="font-medium">{preview.toFixed(2)} €</span>
+                            )}
+                          </label>
+                        );
+                      })}
+                    </div>
+                  )}
                   <input
                     type="text"
                     required
@@ -308,6 +386,19 @@ function PropertyPage() {
                     <div className="rounded-md bg-muted p-2 text-sm">
                       {nights} naktys × {priceInfo.pricePerNight.toFixed(0)} € ={" "}
                       <strong>{priceInfo.total.toFixed(0)} €</strong>
+                      {extrasBreakdown.total > 0 && (
+                        <>
+                          <div className="mt-1 text-xs text-muted-foreground">
+                            Papildomai mokama suma: <strong>{extrasBreakdown.total.toFixed(2)} €</strong>
+                          </div>
+                          <div className="mt-1 border-t pt-1">
+                            Iš viso:{" "}
+                            <strong>
+                              {(priceInfo.total + extrasBreakdown.total).toFixed(2)} €
+                            </strong>
+                          </div>
+                        </>
+                      )}
                     </div>
                   )}
                   {!available && nights > 0 && (

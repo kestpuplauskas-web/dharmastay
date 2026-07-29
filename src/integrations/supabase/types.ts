@@ -29,6 +29,8 @@ export type Database = {
           date_from: string
           date_to: string
           expires_at: string | null
+          extras: Json
+          extras_total: number
           guests: number
           id: string
           location: string
@@ -59,6 +61,8 @@ export type Database = {
           date_from: string
           date_to: string
           expires_at?: string | null
+          extras?: Json
+          extras_total?: number
           guests?: number
           id?: string
           location?: string
@@ -89,6 +93,8 @@ export type Database = {
           date_from?: string
           date_to?: string
           expires_at?: string | null
+          extras?: Json
+          extras_total?: number
           guests?: number
           id?: string
           location?: string
@@ -296,6 +302,7 @@ export type Database = {
           cover_image_url: string
           created_at: string
           description: string
+          extra_services: Json
           features: Json
           id: string
           image_urls: Json
@@ -324,6 +331,7 @@ export type Database = {
           cover_image_url?: string
           created_at?: string
           description?: string
+          extra_services?: Json
           features?: Json
           id?: string
           image_urls?: Json
@@ -352,6 +360,7 @@ export type Database = {
           cover_image_url?: string
           created_at?: string
           description?: string
+          extra_services?: Json
           features?: Json
           id?: string
           image_urls?: Json
