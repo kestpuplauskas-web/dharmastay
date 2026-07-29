@@ -54,6 +54,24 @@ export const AMENITY_LABELS: Record<string, string> = {
   extra_baby_bed: "Papildoma lovytė kambaryje (vaikui)",
 };
 
+export const ROOM_KINDS = [
+  { value: "bedroom_1", label: "Miegamasis 1" },
+  { value: "bedroom_2", label: "Miegamasis 2" },
+  { value: "bedroom_3", label: "Miegamasis 3" },
+  { value: "bedroom_4", label: "Miegamasis 4" },
+  { value: "living_room", label: "Svetainė" },
+] as const;
+
+export const BED_TYPES = [
+  { value: "extra_large_double", label: "Labai didelė dvigulė lova" },
+  { value: "large_double", label: "Didelė dvigulė lova" },
+  { value: "double", label: "Standartinė dvigulė lova" },
+  { value: "single", label: "Vienvietė lova" },
+  { value: "sofa_bed", label: "Miegamoji sofa" },
+] as const;
+
+export type RoomConfig = { kind: string; beds: number; bedType: string };
+
 export type PriceTier = {
   label: string;
   minNights: number;
@@ -68,6 +86,7 @@ export type Rooms = {
   kitchenette?: boolean;
   parking_spot?: boolean;
   notes?: string;
+  configs?: RoomConfig[];
 };
 
 export type Booking = { from: string; to: string };
