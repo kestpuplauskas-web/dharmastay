@@ -9,6 +9,7 @@ import {
   MoreVertical,
   Users,
   BedDouble,
+  Bed,
   Ruler,
   LayoutGrid,
   List as ListIcon,
