@@ -1,17 +1,51 @@
-## Sukurti naują admin vartotoją
+## Tikslas
+Pakeisti statinius „Lovų / Miegamųjų / Svetainių" laukus dinamine kambarių konfigūracijos sekcija objekto formoje.
 
-**Vartotojas:** info@revoo.lt  
-**Slaptažodis:** Revoo@2026@  
-**Rolė:** admin
+## Pakeitimai
 
-### Žingsniai
+### 1. `src/lib/properties.ts`
+Pridėti tipus ir konstantas:
+```ts
+export const ROOM_KINDS = [
+  { value: "bedroom_1", label: "Miegamasis 1" },
+  { value: "bedroom_2", label: "Miegamasis 2" },
+  { value: "bedroom_3", label: "Miegamasis 3" },
+  { value: "bedroom_4", label: "Miegamasis 4" },
+  { value: "living_room", label: "Svetainė" },
+] as const;
 
-1. Sukurti auth vartotoją per Supabase Admin API (`auth.users`) su patvirtintu el. paštu, kad iš karto galėtų prisijungti.
-2. Įrašyti į `public.user_roles` naują eilutę su `role = 'admin'` naujai sukurto vartotojo `user_id`.
-3. Patikrinti, kad įrašai sėkmingi.
+export const BED_TYPES = [
+  { value: "extra_large_double", label: "Labai didelė dvigulė lova" },
+  { value: "large_double", label: "Didelė dvigulė lova" },
+  { value: "double", label: "Standartinė dvigulė lova" },
+  { value: "single", label: "Vienvietė lova" },
+  { value: "sofa_bed", label: "Miegamoji sofa" },
+] as const;
 
-### Techninės detalės
+export type RoomConfig = { kind: string; beds: number; bedType: string };
+```
+Papildyti `Rooms` tipą su `configs?: RoomConfig[]` (nekeičiant esamų laukų — atgalinis suderinamumas).
 
-- Auth vartotojas kuriamas per `psql` neprieinamas (auth schema uždrausta), todėl naudosiu vidinį Supabase Admin API kvietimą per SQL `INSERT` į `auth.users` NEGALIMA — vietoj to naudosiu Supabase Management/Admin per įrankį.
-- Konkrečiai: `supabase--insert` neveikia auth schemai. Todėl vartotoją sukursiu vienkartiniu server-side script'u naudojant service role (arba per Supabase auth admin per migration + insert kombinaciją tik user_roles daliai po to, kai auth vartotojas sukurtas).
-- Praktinis kelias: paleisti mažą Node scriptą su `SUPABASE_SERVICE_ROLE_KEY` per `code--exec`, kuris iškviečia `supabase.auth.admin.createUser({ email, password, email_confirm: true })`, tada `supabase--insert` prideda rolę į `public.user_roles`.
+### 2. `src/components/admin/PropertyForm.tsx`
+- Pašalinti input laukus: „Lovų", „Miegamųjų", „Svetainių". Palikti: Plotas m², Max svečių, Vonių.
+- Pridėti naują sekciją „Miegojimo vietos / Kambariai":
+  - Grid lentelė su stulpeliais: Kambario tipas (select), Lovų sk. (number, min 1), Lovos tipas (select), Trinti (mygtukas su ikona).
+  - „+ Pridėti kambarį" mygtukas apačioje.
+  - Rodyti bendrą „Iš viso lovų: N" (automatiškai sumuojama).
+- Redaguojant esamą objektą: jei `rooms.configs` egzistuoja — užpildyti eilutes iš jo; jei ne, palikti tuščią sąrašą.
+- Saugant: `beds` laukas automatiškai = suma iš configs; `rooms.configs` išsaugoma; `bedrooms`/`living_rooms` skaičiuojami iš configs (bedroom_* / living_room) kad išliktų suderinamumas su esamu UI, kuris tuos laukus rodo.
+
+### 3. `src/lib/properties.functions.ts`
+Papildyti `propertyInputSchema.rooms` su:
+```ts
+configs: z.array(z.object({
+  kind: z.string(),
+  beds: z.number().int().min(1).max(20),
+  bedType: z.string(),
+})).max(20).optional()
+```
+
+## Nepakeičiama
+- DB schema (viskas telpa esamame `rooms` JSONB).
+- Public UI (properties detail puslapis).
+- Kiti laukai formoje.
