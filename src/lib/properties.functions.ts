@@ -137,6 +137,16 @@ const propertyInputSchema = z.object({
       kitchenette: z.boolean().optional(),
       parking_spot: z.boolean().optional(),
       notes: z.string().max(500).optional(),
+      configs: z
+        .array(
+          z.object({
+            kind: z.string().min(1).max(50),
+            beds: z.number().int().min(1).max(20),
+            bedType: z.string().min(1).max(50),
+          }),
+        )
+        .max(20)
+        .optional(),
     })
     .default({}),
   amenities: z.array(z.string().min(1).max(50)).max(50).default([]),
