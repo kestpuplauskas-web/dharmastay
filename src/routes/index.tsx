@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { listActiveProperties } from "@/lib/properties.functions";
-import { propertyTypeLabel } from "@/lib/properties";
+import { propertyTypeLabel, hasOnlySingleBeds } from "@/lib/properties";
 import { MapPin, Users, BedDouble, Bed, Square } from "lucide-react";
 
 export const Route = createFileRoute("/")({
