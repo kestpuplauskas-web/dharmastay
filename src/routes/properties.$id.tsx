@@ -31,7 +31,6 @@ function PropertyPage() {
 
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [guests, setGuests] = useState(2);
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [childrenUnder3, setChildrenUnder3] = useState(0);
