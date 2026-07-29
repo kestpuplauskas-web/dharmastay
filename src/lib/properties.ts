@@ -144,3 +144,9 @@ export function isPropertyAvailable(p: Property, from: Date, to: Date): boolean 
 export function propertyTypeLabel(v: string): string {
   return PROPERTY_TYPES.find((t) => t.value === v)?.label ?? v;
 }
+
+export function hasOnlySingleBeds(rooms: Rooms | undefined | null): boolean {
+  const configs = rooms?.configs ?? [];
+  if (configs.length === 0) return false;
+  return configs.every((c) => (Number(c.beds) || 0) === 0 || c.bedType === "single");
+}
