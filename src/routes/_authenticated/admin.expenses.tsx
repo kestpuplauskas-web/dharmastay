@@ -9,6 +9,7 @@ import {
   EXPENSE_CATEGORIES,
 } from "@/lib/operations.functions";
 import { listAllProperties } from "@/lib/properties.functions";
+import { DatePicker } from "@/components/DatePicker";
 
 export const Route = createFileRoute("/_authenticated/admin/expenses")({
   component: ExpensesPage,
@@ -79,11 +80,9 @@ function ExpensesPage() {
           className="rounded border px-2 py-1 text-sm"
           required
         />
-        <input
-          type="date"
+        <DatePicker
           value={form.expense_date}
-          onChange={(e) => setForm({ ...form, expense_date: e.target.value })}
-          className="rounded border px-2 py-1 text-sm"
+          onChange={(val) => setForm({ ...form, expense_date: val })}
         />
         <select
           value={form.property_id}
