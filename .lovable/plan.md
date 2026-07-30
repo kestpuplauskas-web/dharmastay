@@ -1,47 +1,31 @@
-## Papildomos paslaugos (Extra Services)
+## Tikslas
 
-Pridedame dinaminę „Papildomos paslaugos" sekciją į objekto formą, saugome duomenis DB, ir naudojame klientinėje rezervacijos formoje.
+Admin rezervacijos formoje (nauja ir redagavimas) rodyti pasirinkto objekto papildomas paslaugas ir leisti jas pažymėti. Jei objektas paslaugų neturi — sekcija nerodoma.
 
-### 1. DB migracija
-Į `properties` lentelę pridėti stulpelį `extra_services jsonb not null default '[]'::jsonb`. Struktūra:
-```json
-[{ "name": "Pusryčiai", "calc": "per_person", "pricePerDay": 10 }]
-```
-`calc` reikšmės: `per_person` | `per_child` | `flat_per_day`.
+## Ką darysime
 
-Į `bookings` pridėti `extras jsonb not null default '[]'::jsonb` — išsaugoti pasirinktas paslaugas su suskaičiuotomis sumomis, ir `extras_total numeric not null default 0`.
+1. **Duomenų laukai rezervacijoje**
+   - `bookings` lentelėje jau yra `extras` (JSON) ir `extras_total` — naudosime juos, naujos migracijos nereikia.
+   - `bookingInput` schemoje (`src/lib/bookings.functions.ts`) pridėsime:
+     - `extras`: masyvas `{ name, calc, pricePerDay, amount }` (max 20, default `[]`)
+     - `extras_total`: skaičius (default 0)
+   - Serveryje (create/update) sumas perskaičiuosime iš objekto `extra_services` (kaina imama iš objekto, ne iš kliento), kaip jau daroma viešoje `booking-submit` rutėje.
 
-### 2. Tipai ir konstantos (`src/lib/properties.ts`)
-- `EXTRA_SERVICES` sąrašas su default `calc` tipu kiekvienai:
-  - Pusryčiai / Pietūs / Vakarienė → `per_person`
-  - Vaikiška lovytė → `per_child`
-  - Pirties nuoma / Kubilo nuoma → `flat_per_day`
-- `EXTRA_CALC_LABELS` LT etiketės.
-- `ExtraService` tipas ir helper `calcExtraTotal({ calc, pricePerDay }, { adults, children, days })` — vaikai iki 3 m. nemokamai už maistą (skaičiuojami tik `adults + childrenOver3` kai `per_person`).
+2. **Formos UI (`src/components/admin/BookingForm.tsx`)**
+   - Nauja sekcija „Papildomos paslaugos“, matoma tik kai pasirinktas objektas turi `extraServices`.
+   - Kiekvienai paslaugai: žymimasis langelis, pavadinimas, skaičiavimo būdas (pvz. „Pagal asmenų sk.“), kaina €/d., ir apskaičiuota suma pagal naktų skaičių bei svečių sudėtį (`calcExtraTotal` iš `src/lib/properties.ts`, kūdikiai iki 3 m. neapmokestinami).
+   - Sumos perskaičiuojamos keičiant datas ar svečių skaičių.
+   - Pakeitus objektą — pažymėjimai išvalomi (kitas objektas turi kitas paslaugas).
 
-### 3. Admin forma (`PropertyForm.tsx` + `properties.functions.ts`)
-- Į `PropertyFormValues` pridėti `extraServices: ExtraService[]`.
-- Nauja sekcija „Papildomos paslaugos" su `+ Pridėti paslaugą` mygtuku. Kiekviena eilutė: pavadinimas (Select su fiksuotais + „Kita…" custom laisvai įrašyti), skaičiavimo tipas (Select, auto-defaultina pagal pasirinkimą), įkainis €/d., trash mygtukas.
-- Grid layout su antraštėmis.
-- Zod schema `properties.functions.ts` — priimti `extraServices` masyvą (max 20).
+3. **Suma (€)**
+   - Po paslaugų sąrašu rodoma „Paslaugų suma: X €“.
+   - „Suma (€)“ laukas lieka rankinis, bet pažymėjus/atžymėjus paslaugą automatiškai pridedamas/atimamas skirtumas, kad administratoriui nereikėtų skaičiuoti; rankinis koregavimas vis tiek galimas.
 
-### 4. Klientinė rezervacija (`properties.$id.tsx`)
-- Pridėti laukus: `adults`, `children` (vietoj vieno `guests`, arba prie jo pridėti „vaikų sk." — laikysime `guests = adults + children`).
-- Kiekvienai paslaugai — checkbox (arba kiekiui `dienų skaičius` input jei norima kitokio nei rezervacijos ilgis; MVP naudosime rezervacijos ilgį).
-- Kliento pusėje realiai suskaičiuoti kiekvienos pasirinktos paslaugos sumą pagal `calcExtraTotal` ir rodyti „Papildomai mokama suma" bei pridėti prie galutinės sumos.
-- Į `/api/public/booking-submit` POST body pridėti `adults`, `children`, `extras: [{ name, calc, pricePerDay }]` (tik pavadinimai/kodai kuriuos vartotojas pasirinko).
+4. **Redagavimas ir peržiūra**
+   - `admin.bookings.$id.tsx` — įrašo `extras` užkraunami į formą, kad pažymėjimai išliktų.
+   - Rezervacijos peržiūroje/sąraše pasirinktos paslaugos rodomos kaip eilutės su suma (jei jų yra).
 
-### 5. `booking-submit` endpoint
-- Priimti `adults`, `children`, `extras` (pasirinktų pavadinimai + calc + pricePerDay, bet validuoti prieš `properties.extra_services` sąrašą, kad kaina/`calc` sutaptų — apsauga nuo klastojimo).
-- Suskaičiuoti serveryje `extras_total`, `total_amount = nights_price + extras_total`.
-- Įrašyti į `bookings.extras` ir `bookings.extras_total`.
+## Techninės pastabos
 
-### 6. Admin rezervacijos peržiūra
-- `admin.bookings.$id.tsx` — parodyti pasirinktų papildomų paslaugų sąrašą su sumomis ir bendrą papildomą sumą (mažas informacinis blokas, tik peržiūra).
-
-### Techninės pastabos
-- Vaikai iki 3 metų nemokamai už maistą: klientinėje formoje pridėsime atskirą lauką „vaikų iki 3 m." kad būtų galima teisingai suskaičiuoti maisto paslaugas (per_person naudos `adults + children_over_3`).
-- `flat_per_day` — asmenų skaičius nevertinamas, tik dienos × įkainis.
-- Nauji stulpeliai turi default reikšmes, esamos rezervacijos ir objektai lieka veikti.
-
-Po patvirtinimo pradėsiu nuo DB migracijos, tada kodo pakeitimai vienu ėjimu.
+- Objektų sąrašas formoje jau ateina iš `listAllProperties`, kuris grąžina `extraServices`, todėl papildomų užklausų nereikia.
+- Serverio pusėje paslaugų kainos visada validuojamos pagal objekto įrašą (apsauga nuo klaidingų/klastotų sumų).
