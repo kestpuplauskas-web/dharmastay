@@ -1,13 +1,20 @@
 import { useState } from "react";
 import { format, parse } from "date-fns";
 import type { Property } from "@/lib/properties";
-import { BOOKING_SOURCES, BOOKING_STATUSES, type BookingInput } from "@/lib/bookings.functions";
+import {
+  BOOKING_SOURCES,
+  BOOKING_SOURCE_LABELS,
+  BOOKING_STATUSES,
+  BOOKING_STATUS_LABELS,
+  BOOKING_SOURCE_VALUES,
+  type BookingInput,
+} from "@/lib/bookings.functions";
 import { DateRangePicker } from "@/components/DateRangePicker";
 import { DatePicker } from "@/components/DatePicker";
 import { GuestsPicker } from "@/components/GuestsPicker";
 
 export type BookingFormValues = Omit<BookingInput, "source" | "status"> & {
-  source: (typeof BOOKING_SOURCES)[number];
+  source: (typeof BOOKING_SOURCE_VALUES)[number];
   status: (typeof BOOKING_STATUSES)[number];
 };
 
@@ -276,9 +283,11 @@ export function BookingForm({
           onChange={(e) => set("source", e.target.value as any)}
           className="mt-1 w-full rounded border px-2 py-1"
         >
-          {BOOKING_SOURCES.map((s) => (
+          {(BOOKING_SOURCES as readonly string[])
+            .concat(v.source === "direct" ? ["direct"] : [])
+            .map((s) => (
             <option key={s} value={s}>
-              {s}
+              {BOOKING_SOURCE_LABELS[s] ?? s}
             </option>
           ))}
         </select>
@@ -292,7 +301,7 @@ export function BookingForm({
         >
           {BOOKING_STATUSES.map((s) => (
             <option key={s} value={s}>
-              {s}
+              {BOOKING_STATUS_LABELS[s] ?? s}
             </option>
           ))}
         </select>
