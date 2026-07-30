@@ -59,18 +59,11 @@ export const listActiveProperties = createServerFn({ method: "GET" }).handler(as
     .order("created_at", { ascending: true });
   if (error) throw new Error(error.message);
 
-  const today = new Date().toISOString().slice(0, 10);
-  const ids = (data ?? []).map((r) => r.id);
   let bookings: BookingRow[] = [];
-  if (ids.length) {
-    const { data: b, error: bErr } = await supabase
-      .from("bookings")
-      .select("property_id, date_from, date_to")
-      .in("property_id", ids)
-      .neq("status", "cancelled")
-      .gte("date_to", today);
+  if ((data ?? []).length) {
+    const { data: b, error: bErr } = await supabase.rpc("get_active_booked_dates");
     if (bErr) throw new Error(bErr.message);
-    bookings = b ?? [];
+    bookings = (b ?? []) as BookingRow[];
   }
   const byProp = new Map<string, BookingRow[]>();
   for (const b of bookings) {
