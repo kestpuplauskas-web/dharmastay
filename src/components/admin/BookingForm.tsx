@@ -115,14 +115,6 @@ export function BookingForm({
         />
       </label>
       <label className="text-sm">
-        Vieta / adresas
-        <input
-          value={v.location}
-          onChange={(e) => set("location", e.target.value)}
-          className="mt-1 w-full rounded border px-2 py-1"
-        />
-      </label>
-      <label className="text-sm">
         Vardas Pavardė
         <input
           required
