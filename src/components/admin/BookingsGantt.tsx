@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -23,6 +23,23 @@ type Booking = {
 };
 
 type Property = { id: string; name: string; propertyType?: string | null };
+
+export type RescheduleInput = {
+  id: string;
+  property_id: string;
+  date_from: string;
+  date_to: string;
+};
+
+type BarDrag = {
+  booking: Booking;
+  mode: "move" | "resize-start" | "resize-end";
+  originX: number;
+  propertyId: string;
+  fromISO: string;
+  toISO: string;
+  moved: boolean;
+};
 
 const STATUS_LABELS: Record<string, string> = {
   confirmed: "Vykdoma",
@@ -62,7 +79,17 @@ function daysBetween(a: Date, b: Date) {
   return Math.round((b.getTime() - a.getTime()) / 86400000);
 }
 
-export function BookingsGantt({ properties, bookings }: { properties: Property[]; bookings: Booking[] }) {
+export function BookingsGantt({
+  properties,
+  bookings,
+  onReschedule,
+  rescheduling,
+}: {
+  properties: Property[];
+  bookings: Booking[];
+  onReschedule?: (input: RescheduleInput) => void;
+  rescheduling?: boolean;
+}) {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
