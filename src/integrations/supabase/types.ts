@@ -646,6 +646,14 @@ export type Database = {
     }
     Functions: {
       cancel_expired_pending_bookings: { Args: never; Returns: number }
+      get_active_booked_dates: {
+        Args: never
+        Returns: {
+          date_from: string
+          date_to: string
+          property_id: string
+        }[]
+      }
       get_property_booked_dates: {
         Args: { _property_id: string }
         Returns: {
