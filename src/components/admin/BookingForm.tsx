@@ -417,18 +417,42 @@ export function BookingForm({
           ))}
         </select>
       </label>
-      <label className="text-sm">
-        Suma (€)
-        <NumberInput
-          step="0.01"
-          min={0}
-          placeholder="0.00"
-          value={v.total_amount}
-          emptyFallback={0}
-          onChange={(n) => set("total_amount", n ?? 0)}
-          className="mt-1 w-full rounded border px-2 py-1"
-        />
-      </label>
+      <div className="text-sm">
+        <label className="block">
+          Suma (€)
+          <NumberInput
+            step="0.01"
+            min={0}
+            placeholder="0.00"
+            value={v.total_amount}
+            emptyFallback={0}
+            onChange={(n) => {
+              setManualTotal(true);
+              set("total_amount", n ?? 0);
+            }}
+            className="mt-1 w-full rounded border px-2 py-1"
+          />
+        </label>
+        <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+          <span>
+            Apskaičiuota: {totals.computed.toFixed(2)} € (nakvynė {totals.stayTotal.toFixed(2)} € ·{" "}
+            {Number(totals.nightly || 0).toFixed(2)} €/naktis × {totals.days}
+            {totals.extras_total > 0 ? ` + paslaugos ${totals.extras_total.toFixed(2)} €` : ""})
+          </span>
+          {manualTotal && (
+            <button
+              type="button"
+              onClick={() => {
+                setManualTotal(false);
+                setV((s) => recalc(s, true));
+              }}
+              className="rounded border px-2 py-0.5 font-medium text-foreground hover:bg-muted"
+            >
+              Perskaičiuoti
+            </button>
+          )}
+        </div>
+      </div>
       <label className="text-sm md:col-span-2">
         Pastaba
         <textarea
