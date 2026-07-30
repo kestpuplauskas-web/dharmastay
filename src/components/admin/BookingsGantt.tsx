@@ -99,13 +99,28 @@ export function BookingsGantt({ properties, bookings }: { properties: Property[]
 
   const todayIndex = daysBetween(startDate, todayStart);
 
-  const handleEmptyClick = (propertyId: string, date: Date) => {
-    const iso = toISODate(date);
+  const [drag, setDrag] = useState<{ propertyId: string; startIdx: number; endIdx: number } | null>(null);
+
+  const goToNew = (propertyId: string, fromIdx: number, toIdx: number) => {
+    const a = Math.min(fromIdx, toIdx);
+    const b = Math.max(fromIdx, toIdx);
+    const fromISO = toISODate(addDays(startDate, a));
+    const toISO = toISODate(addDays(startDate, b === a ? a + 1 : b));
     navigate({
       to: "/admin/bookings/new",
-      search: { propertyId, from: iso, to: iso } as never,
+      search: { propertyId, from: fromISO, to: toISO } as never,
     });
   };
+
+  useEffect(() => {
+    if (!drag) return;
+    const onUp = () => {
+      setDrag(null);
+      goToNew(drag.propertyId, drag.startIdx, drag.endIdx);
+    };
+    window.addEventListener("pointerup", onUp);
+    return () => window.removeEventListener("pointerup", onUp);
+  }, [drag]);
 
   const colMinWidth = isMobile ? 36 : 28;
   const labelColWidth = isMobile ? 120 : 200;
@@ -180,12 +195,24 @@ export function BookingsGantt({ properties, bookings }: { properties: Property[]
                 </div>
                 {days.map((d, i) => {
                   const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+                  const inDrag =
+                    drag?.propertyId === p.id &&
+                    i >= Math.min(drag.startIdx, drag.endIdx) &&
+                    i <= Math.max(drag.startIdx, drag.endIdx);
                   return (
                     <button
                       key={i}
                       type="button"
-                      onClick={() => handleEmptyClick(p.id, d)}
-                      className={`border-r last:border-r-0 hover:bg-primary/10 transition-colors ${isWeekend ? "bg-muted/30" : ""}`}
+                      onPointerDown={(e) => {
+                        e.preventDefault();
+                        setDrag({ propertyId: p.id, startIdx: i, endIdx: i });
+                      }}
+                      onPointerEnter={() => {
+                        if (drag?.propertyId === p.id) setDrag({ ...drag, endIdx: i });
+                      }}
+                      className={`border-r last:border-r-0 hover:bg-primary/10 transition-colors select-none ${
+                        inDrag ? "bg-primary/25" : isWeekend ? "bg-muted/30" : ""
+                      }`}
                       aria-label={`Nauja rezervacija ${toISODate(d)}`}
                     />
                   );
