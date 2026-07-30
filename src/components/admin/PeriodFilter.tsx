@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { DatePicker } from "@/components/DatePicker";
 import {
   PERIOD_KEYS,
   PERIOD_LABELS,
