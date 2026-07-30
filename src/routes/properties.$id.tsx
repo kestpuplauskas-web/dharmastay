@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { DatePicker } from "@/components/DatePicker";
 import { getPropertyById } from "@/lib/properties.functions";
 import {
   propertyTypeLabel,
@@ -260,22 +261,20 @@ function PropertyPage() {
                   <div className="grid grid-cols-2 gap-2">
                     <label className="text-xs">
                       Atvykimas
-                      <input
-                        type="date"
+                      <DatePicker
+                        className="mt-1"
                         required
                         value={from}
-                        onChange={(e) => setFrom(e.target.value)}
-                        className="mt-1 w-full rounded-md border px-2 py-1 text-sm"
+                        onChange={(val) => setFrom(val)}
                       />
                     </label>
                     <label className="text-xs">
                       Išvykimas
-                      <input
-                        type="date"
+                      <DatePicker
+                        className="mt-1"
                         required
                         value={to}
-                        onChange={(e) => setTo(e.target.value)}
-                        className="mt-1 w-full rounded-md border px-2 py-1 text-sm"
+                        onChange={(val) => setTo(val)}
                       />
                     </label>
                   </div>

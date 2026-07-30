@@ -3,6 +3,7 @@ import { format, parse } from "date-fns";
 import type { Property } from "@/lib/properties";
 import { BOOKING_SOURCES, BOOKING_STATUSES, type BookingInput } from "@/lib/bookings.functions";
 import { DateRangePicker } from "@/components/DateRangePicker";
+import { DatePicker } from "@/components/DatePicker";
 
 export type BookingFormValues = Omit<BookingInput, "source" | "status"> & {
   source: (typeof BOOKING_SOURCES)[number];
@@ -207,11 +208,10 @@ export function BookingForm({
       {!isCompany && (
         <label className="text-sm">
           Gimimo data
-          <input
-            type="date"
+          <DatePicker
+            className="mt-1"
             value={v.birth_date ?? ""}
-            onChange={(e) => set("birth_date", e.target.value || null)}
-            className="mt-1 w-full rounded border px-2 py-1"
+            onChange={(val) => set("birth_date", val || null)}
           />
         </label>
       )}

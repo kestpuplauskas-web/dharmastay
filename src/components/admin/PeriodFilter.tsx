@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { DatePicker } from "@/components/DatePicker";
 import {
   PERIOD_KEYS,
   PERIOD_LABELS,
@@ -48,28 +49,26 @@ export function PeriodFilter({
           ))}
           <div className="mt-2 border-t pt-2">
             <label className="block text-xs text-muted-foreground">Nuo</label>
-            <input
-              type="date"
+            <DatePicker
+              className="mt-1"
               value={value.from ?? ""}
-              onChange={(e) => {
-                const from = e.target.value || null;
+              onChange={(val) => {
+                const from = val || null;
                 const to = value.to ?? null;
                 const r: ResolvedRange = { from, to };
                 onChange({ period: "custom", from, to, range: r });
               }}
-              className="mt-1 w-full rounded border bg-background px-2 py-1 text-sm"
             />
             <label className="mt-2 block text-xs text-muted-foreground">Iki</label>
-            <input
-              type="date"
+            <DatePicker
+              className="mt-1"
               value={value.to ?? ""}
-              onChange={(e) => {
-                const to = e.target.value || null;
+              onChange={(val) => {
+                const to = val || null;
                 const from = value.from ?? null;
                 const r: ResolvedRange = { from, to };
                 onChange({ period: "custom", from, to, range: r });
               }}
-              className="mt-1 w-full rounded border bg-background px-2 py-1 text-sm"
             />
           </div>
         </div>
