@@ -470,6 +470,61 @@ export function BookingsGantt({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={!!pending} onOpenChange={(o) => !o && setPending(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Patvirtinti pakeitimą</DialogTitle>
+          </DialogHeader>
+          {pending && (
+            <div className="space-y-2 text-sm">
+              <div>
+                <span className="text-muted-foreground">Rezervacija:</span>{" "}
+                {pending.booking.booking_number ? `${pending.booking.booking_number} · ` : ""}
+                {pending.booking.customer_name || "—"}
+              </div>
+              <div>
+                <span className="text-muted-foreground">Objektas:</span>{" "}
+                {pending.property_id === pending.booking.property_id ? (
+                  propertyName(pending.property_id)
+                ) : (
+                  <>
+                    <span className="line-through opacity-70">{propertyName(pending.booking.property_id)}</span>{" "}
+                    → <span className="font-medium">{propertyName(pending.property_id)}</span>
+                  </>
+                )}
+              </div>
+              <div>
+                <span className="text-muted-foreground">Laikotarpis:</span>{" "}
+                <span className="line-through opacity-70">
+                  {pending.booking.date_from} → {pending.booking.date_to}
+                </span>{" "}
+                → <span className="font-medium">{pending.date_from} → {pending.date_to}</span>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPending(null)} disabled={rescheduling}>
+              Atšaukti
+            </Button>
+            <Button
+              disabled={rescheduling}
+              onClick={() => {
+                if (!pending) return;
+                onReschedule?.({
+                  id: pending.booking.id,
+                  property_id: pending.property_id,
+                  date_from: pending.date_from,
+                  date_to: pending.date_to,
+                });
+                setPending(null);
+              }}
+            >
+              Patvirtinti
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
