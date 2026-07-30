@@ -62,6 +62,10 @@ function EditBookingPage() {
     status: (booking.status ?? "confirmed") as BookingFormValues["status"],
     total_amount: Number(booking.total_amount ?? 0),
     note: booking.note ?? "",
+    extras: Array.isArray(booking.extras)
+      ? (booking.extras as BookingFormValues["extras"])
+      : [],
+    extras_total: Number(booking.extras_total ?? 0),
   };
 
   return (
