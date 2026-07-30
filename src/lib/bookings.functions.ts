@@ -64,6 +64,18 @@ const bookingInput = z.object({
   status: z.enum(BOOKING_STATUSES).default("confirmed"),
   total_amount: z.number().min(0).max(1000000).default(0),
   note: z.string().max(2000).default(""),
+  extras: z
+    .array(
+      z.object({
+        name: z.string().trim().min(1).max(100),
+        calc: z.enum(["per_person", "per_child", "flat_per_day"]),
+        pricePerDay: z.number().min(0).max(100000).default(0),
+        amount: z.number().min(0).max(1000000).default(0),
+      }),
+    )
+    .max(20)
+    .default([]),
+  extras_total: z.number().min(0).max(1000000).default(0),
 }).superRefine((v, ctx) => {
   if (v.client_type === "company") {
     if (!v.company_name) ctx.addIssue({ code: "custom", path: ["company_name"], message: "Įmonės pavadinimas privalomas" });
