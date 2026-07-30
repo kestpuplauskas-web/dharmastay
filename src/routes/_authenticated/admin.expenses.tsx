@@ -10,6 +10,7 @@ import {
 } from "@/lib/operations.functions";
 import { listAllProperties } from "@/lib/properties.functions";
 import { DatePicker } from "@/components/DatePicker";
+import { NumberInput } from "@/components/NumberInput";
 
 export const Route = createFileRoute("/_authenticated/admin/expenses")({
   component: ExpensesPage,
@@ -71,12 +72,13 @@ function ExpensesPage() {
             </option>
           ))}
         </select>
-        <input
-          type="number"
+        <NumberInput
           step="0.01"
-          placeholder="Suma"
-          value={form.amount || ""}
-          onChange={(e) => setForm({ ...form, amount: Number(e.target.value) })}
+          min={0}
+          placeholder="0.00"
+          value={form.amount || null}
+          emptyFallback={null}
+          onChange={(n) => setForm({ ...form, amount: n ?? 0 })}
           className="rounded border px-2 py-1 text-sm"
           required
         />
