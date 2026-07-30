@@ -74,9 +74,15 @@ function EditBookingPage() {
       <BookingForm
         properties={props}
         initial={initial}
+        bookingId={id}
         onSubmit={(v) => m.mutate(v)}
         submitting={m.isPending}
       />
+      {m.error && (
+        <p className="mt-3 text-sm text-destructive">
+          {m.error instanceof Error ? m.error.message : String(m.error)}
+        </p>
+      )}
     </div>
   );
 }
