@@ -2,8 +2,27 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-export const BOOKING_SOURCES = ["phone", "whatsapp", "direct", "website", "other"] as const;
+export const BOOKING_SOURCES = ["phone", "whatsapp", "website", "booking", "airbnb", "other"] as const;
+// "direct" liko tik dėl senų įrašų suderinamumo (sąraše nerodomas)
+export const BOOKING_SOURCE_VALUES = [...BOOKING_SOURCES, "direct"] as const;
 export const BOOKING_STATUSES = ["confirmed", "pending", "completed", "cancelled"] as const;
+
+export const BOOKING_SOURCE_LABELS: Record<string, string> = {
+  phone: "Telefonu",
+  whatsapp: "WhatsApp",
+  website: "Svetainė",
+  booking: "Booking",
+  airbnb: "Airbnb",
+  other: "Kita",
+  direct: "Tiesioginis",
+};
+
+export const BOOKING_STATUS_LABELS: Record<string, string> = {
+  confirmed: "Patvirtinta",
+  pending: "Laukiama",
+  completed: "Įvykdyta",
+  cancelled: "Atšaukta",
+};
 
 const bookingInput = z.object({
   property_id: z.string().uuid(),
@@ -41,7 +60,7 @@ const bookingInput = z.object({
   company_code: z.string().trim().max(50).default(""),
   is_vat_payer: z.boolean().default(false),
   vat_number: z.string().trim().max(50).default(""),
-  source: z.enum(BOOKING_SOURCES).default("phone"),
+  source: z.enum(BOOKING_SOURCE_VALUES).default("phone"),
   status: z.enum(BOOKING_STATUSES).default("confirmed"),
   total_amount: z.number().min(0).max(1000000).default(0),
   note: z.string().max(2000).default(""),
