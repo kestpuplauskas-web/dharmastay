@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { recalcExtras, nightsBetweenDates, type ExtraCalcKind } from "@/lib/booking-extras";
 
 export const BOOKING_SOURCES = ["phone", "whatsapp", "website", "booking", "airbnb", "other"] as const;
 // "direct" liko tik dėl senų įrašų suderinamumo (sąraše nerodomas)
@@ -98,6 +99,27 @@ const ensureAdmin = async (ctx: { supabase: any; userId: string }) => {
   if (!data) throw new Error("Forbidden");
 };
 
+const withServerExtras = async (
+  supabase: any,
+  data: BookingInput,
+): Promise<BookingInput> => {
+  const { data: prop, error } = await supabase
+    .from("properties")
+    .select("extra_services")
+    .eq("id", data.property_id)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  const defined =
+    (prop?.extra_services as Array<{ name: string; calc: ExtraCalcKind; pricePerDay: number }>) ?? [];
+  const { extras, extras_total } = recalcExtras(defined, data.extras ?? [], {
+    adults: data.adults_count,
+    children: data.children_count,
+    infants: data.infants_count,
+    days: nightsBetweenDates(data.date_from, data.date_to),
+  });
+  return { ...data, extras, extras_total };
+};
+
 export const listBookings = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) =>
@@ -171,9 +193,10 @@ export const createBooking = createServerFn({ method: "POST" })
   .inputValidator((d) => bookingInput.parse(d))
   .handler(async ({ data, context }) => {
     await ensureAdmin(context);
+    const payload = await withServerExtras(context.supabase, data);
     const { data: row, error } = await context.supabase
       .from("bookings")
-      .insert({ ...data, booking_number: "" })
+      .insert({ ...payload, booking_number: "" })
       .select()
       .single();
     if (error) throw new Error(error.message);
@@ -186,9 +209,10 @@ export const updateBooking = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await ensureAdmin(context);
     const { id, ...rest } = data;
+    const payload = await withServerExtras(context.supabase, rest as BookingInput);
     const { data: row, error } = await context.supabase
       .from("bookings")
-      .update(rest)
+      .update(payload)
       .eq("id", id)
       .select()
       .single();
