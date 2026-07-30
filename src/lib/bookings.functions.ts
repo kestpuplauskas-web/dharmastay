@@ -26,6 +26,17 @@ const bookingInput = z.object({
     ),
   customer_address: z.string().trim().max(300).default(""),
   customer_id_code: z.string().trim().max(50).default(""),
+  client_type: z.enum(["person", "company"]).default("person"),
+  birth_date: z
+    .string()
+    .trim()
+    .default("")
+    .transform((v) => (v === "" ? null : v))
+    .nullable(),
+  company_name: z.string().trim().max(200).default(""),
+  company_code: z.string().trim().max(50).default(""),
+  is_vat_payer: z.boolean().default(false),
+  vat_number: z.string().trim().max(50).default(""),
   source: z.enum(BOOKING_SOURCES).default("phone"),
   status: z.enum(BOOKING_STATUSES).default("confirmed"),
   total_amount: z.number().min(0).max(1000000).default(0),
