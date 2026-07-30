@@ -62,11 +62,13 @@ export function BookingForm({
   initial,
   onSubmit,
   submitting,
+  bookingId,
 }: {
   properties: Property[];
   initial: BookingFormValues;
   onSubmit: (v: BookingFormValues) => void;
   submitting?: boolean;
+  bookingId?: string;
 }) {
   const [v, setV] = useState<BookingFormValues>(initial);
   const [manualTotal, setManualTotal] = useState<boolean>(Number(initial.total_amount) > 0);
@@ -76,6 +78,23 @@ export function BookingForm({
   const parseDate = (s: string) => (s ? parse(s, "yyyy-MM-dd", new Date()) : undefined);
   const range = { from: parseDate(v.date_from), to: parseDate(v.date_to) };
   const isCompany = v.client_type === "company";
+
+  const checkConflicts = useServerFn(checkBookingConflicts);
+  const canCheck = Boolean(v.property_id && v.date_from && v.date_to && v.date_to > v.date_from);
+  const { data: conflicts = [] } = useQuery({
+    queryKey: ["booking-conflicts", v.property_id, v.date_from, v.date_to, bookingId ?? ""],
+    enabled: canCheck,
+    queryFn: () =>
+      checkConflicts({
+        data: {
+          property_id: v.property_id,
+          date_from: v.date_from,
+          date_to: v.date_to,
+          ...(bookingId ? { excludeId: bookingId } : {}),
+        },
+      }),
+  });
+  const hasConflict = canCheck && conflicts.length > 0;
 
   const selectedProperty = properties.find((p) => p.id === v.property_id);
   const availableExtras = selectedProperty?.extraServices ?? [];
