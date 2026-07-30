@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { DatePicker } from "@/components/DatePicker";
+import { GuestsPicker } from "@/components/GuestsPicker";
 import { getPropertyById } from "@/lib/properties.functions";
 import {
   propertyTypeLabel,
@@ -35,6 +36,11 @@ function PropertyPage() {
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [childrenUnder3, setChildrenUnder3] = useState(0);
+  const guestCtx = {
+    adults,
+    children: children + childrenUnder3,
+    childrenUnder3,
+  };
   const [selectedExtras, setSelectedExtras] = useState<Record<string, boolean>>({});
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -65,7 +71,7 @@ function PropertyPage() {
       .filter((s) => selectedExtras[s.name])
       .map((s) => ({
         svc: s,
-        amount: calcExtraTotal(s, { adults, children, childrenUnder3, days: nights }),
+        amount: calcExtraTotal(s, { ...guestCtx, days: nights }),
       }));
     const total = items.reduce((sum, i) => sum + i.amount, 0);
     return { items, total };
@@ -92,10 +98,13 @@ function PropertyPage() {
           property_id: property.id,
           date_from: from,
           date_to: to,
-          guests: adults + children,
+          guests: adults + children + childrenUnder3,
           adults,
-          children,
+          children: children + childrenUnder3,
           children_under_3: childrenUnder3,
+          adults_count: adults,
+          children_count: children,
+          infants_count: childrenUnder3,
           extras,
           customer_name: name.trim(),
           customer_phone: phone.trim(),
@@ -278,48 +287,25 @@ function PropertyPage() {
                       />
                     </label>
                   </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    <label className="text-xs">
-                      Suaugę
-                      <input
-                        type="number"
-                        min={1}
-                        max={property.maxGuests}
-                        value={adults}
-                        onChange={(e) => setAdults(Math.max(1, Number(e.target.value) || 1))}
-                        className="mt-1 w-full rounded-md border px-2 py-1 text-sm"
-                      />
-                    </label>
-                    <label className="text-xs">
-                      Vaikai
-                      <input
-                        type="number"
-                        min={0}
-                        value={children}
-                        onChange={(e) => setChildren(Math.max(0, Number(e.target.value) || 0))}
-                        className="mt-1 w-full rounded-md border px-2 py-1 text-sm"
-                      />
-                    </label>
-                    <label className="text-xs">
-                      Iki 3 m.
-                      <input
-                        type="number"
-                        min={0}
-                        max={children}
-                        value={childrenUnder3}
-                        onChange={(e) =>
-                          setChildrenUnder3(Math.max(0, Math.min(children, Number(e.target.value) || 0)))
-                        }
-                        className="mt-1 w-full rounded-md border px-2 py-1 text-sm"
-                      />
-                    </label>
+                  <div>
+                    <span className="text-xs">Svečiai</span>
+                    <GuestsPicker
+                      className="mt-1"
+                      maxTotal={property.maxGuests}
+                      value={{ adults, children, infants: childrenUnder3 }}
+                      onChange={(g) => {
+                        setAdults(Math.max(1, g.adults));
+                        setChildren(g.children);
+                        setChildrenUnder3(g.infants);
+                      }}
+                    />
                   </div>
                   {(property.extraServices?.length ?? 0) > 0 && (
                     <div className="space-y-1 rounded-md border p-2">
                       <div className="mb-1 text-xs font-semibold">Papildomos paslaugos</div>
                       {property.extraServices.map((s) => {
                         const preview = nights > 0
-                          ? calcExtraTotal(s, { adults, children, childrenUnder3, days: nights })
+                          ? calcExtraTotal(s, { ...guestCtx, days: nights })
                           : 0;
                         return (
                           <label key={s.name} className="flex items-center justify-between gap-2 text-xs">

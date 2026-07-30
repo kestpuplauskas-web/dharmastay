@@ -13,6 +13,10 @@ const bookingInput = z.object({
   check_out_time: z.string().trim().max(10).default(""),
   location: z.string().trim().max(300).default(""),
   guests: z.number().int().min(1).max(50).default(1),
+  adults_count: z.number().int().min(1).max(50).default(1),
+  children_count: z.number().int().min(0).max(50).default(0),
+  infants_count: z.number().int().min(0).max(50).default(0),
+  total_guests: z.number().int().min(1).max(50).default(1),
   customer_name: z.string().trim().max(200).default(""),
   customer_phone: z.string().trim().max(50).default(""),
   customer_email: z
