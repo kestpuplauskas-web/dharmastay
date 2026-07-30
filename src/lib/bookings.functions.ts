@@ -13,7 +13,7 @@ const bookingInput = z.object({
   check_out_time: z.string().trim().max(10).default(""),
   location: z.string().trim().max(300).default(""),
   guests: z.number().int().min(1).max(50).default(1),
-  customer_name: z.string().trim().min(1).max(200),
+  customer_name: z.string().trim().max(200).default(""),
   customer_phone: z.string().trim().max(50).default(""),
   customer_email: z
     .string()
@@ -26,10 +26,30 @@ const bookingInput = z.object({
     ),
   customer_address: z.string().trim().max(300).default(""),
   customer_id_code: z.string().trim().max(50).default(""),
+  client_type: z.enum(["person", "company"]).default("person"),
+  birth_date: z
+    .string()
+    .trim()
+    .default("")
+    .transform((v) => (v === "" ? null : v))
+    .nullable(),
+  company_name: z.string().trim().max(200).default(""),
+  company_code: z.string().trim().max(50).default(""),
+  is_vat_payer: z.boolean().default(false),
+  vat_number: z.string().trim().max(50).default(""),
   source: z.enum(BOOKING_SOURCES).default("phone"),
   status: z.enum(BOOKING_STATUSES).default("confirmed"),
   total_amount: z.number().min(0).max(1000000).default(0),
   note: z.string().max(2000).default(""),
+}).superRefine((v, ctx) => {
+  if (v.client_type === "company") {
+    if (!v.company_name) ctx.addIssue({ code: "custom", path: ["company_name"], message: "Įmonės pavadinimas privalomas" });
+    if (!v.company_code) ctx.addIssue({ code: "custom", path: ["company_code"], message: "Įmonės kodas privalomas" });
+    if (v.is_vat_payer && !v.vat_number) ctx.addIssue({ code: "custom", path: ["vat_number"], message: "PVM kodas privalomas" });
+  } else if (!v.customer_name) {
+    ctx.addIssue({ code: "custom", path: ["customer_name"], message: "Vardas Pavardė privalomas" });
+  }
+  if (!v.customer_email) ctx.addIssue({ code: "custom", path: ["customer_email"], message: "El. paštas privalomas" });
 });
 
 export type BookingInput = z.infer<typeof bookingInput>;
@@ -127,7 +147,7 @@ export const createBooking = createServerFn({ method: "POST" })
 
 export const updateBooking = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d) => bookingInput.extend({ id: z.string().uuid() }).parse(d))
+  .inputValidator((d) => bookingInput.and(z.object({ id: z.string().uuid() })).parse(d))
   .handler(async ({ data, context }) => {
     await ensureAdmin(context);
     const { id, ...rest } = data;

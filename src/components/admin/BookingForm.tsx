@@ -23,6 +23,12 @@ export function defaultBookingForm(props: Property[] = []): BookingFormValues {
     customer_email: "",
     customer_address: "",
     customer_id_code: "",
+    client_type: "person",
+    birth_date: null,
+    company_name: "",
+    company_code: "",
+    is_vat_payer: false,
+    vat_number: "",
     source: "phone",
     status: "confirmed",
     total_amount: 0,
@@ -47,12 +53,27 @@ export function BookingForm({
 
   const parseDate = (s: string) => (s ? parse(s, "yyyy-MM-dd", new Date()) : undefined);
   const range = { from: parseDate(v.date_from), to: parseDate(v.date_to) };
+  const isCompany = v.client_type === "company";
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        onSubmit(v);
+        onSubmit(
+          v.client_type === "company"
+            ? {
+                ...v,
+                birth_date: null,
+                vat_number: v.is_vat_payer ? v.vat_number : "",
+              }
+            : {
+                ...v,
+                company_name: "",
+                company_code: "",
+                is_vat_payer: false,
+                vat_number: "",
+              },
+        );
       }}
       className="grid gap-4 md:grid-cols-2"
     >
@@ -114,12 +135,64 @@ export function BookingForm({
           className="mt-1 w-full rounded border px-2 py-1"
         />
       </label>
+      <div className="md:col-span-2">
+        <span className="text-sm">Kliento tipas</span>
+        <div className="mt-1 inline-flex rounded-lg border p-1">
+          {([
+            ["person", "Fizinis asmuo"],
+            ["company", "Juridinis asmuo"],
+          ] as const).map(([val, label]) => (
+            <button
+              key={val}
+              type="button"
+              onClick={() => set("client_type", val)}
+              className={
+                "rounded-md px-4 py-1.5 text-sm font-medium transition " +
+                (v.client_type === val
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground")
+              }
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
       <label className="text-sm">
         Vardas Pavardė
         <input
-          required
+          required={!isCompany}
           value={v.customer_name}
           onChange={(e) => set("customer_name", e.target.value)}
+          className="mt-1 w-full rounded border px-2 py-1"
+        />
+      </label>
+      {isCompany && (
+        <label className="text-sm">
+          Įmonės pavadinimas *
+          <input
+            required
+            value={v.company_name}
+            onChange={(e) => set("company_name", e.target.value)}
+            className="mt-1 w-full rounded border px-2 py-1"
+          />
+        </label>
+      )}
+      <label className="text-sm">
+        El. paštas *
+        <input
+          type="email"
+          required
+          value={v.customer_email}
+          onChange={(e) => set("customer_email", e.target.value)}
+          className="mt-1 w-full rounded border px-2 py-1"
+        />
+      </label>
+      <label className="text-sm">
+        {isCompany ? "Įmonės buveinės adresas" : "Adresas"}
+        <input
+          value={v.customer_address}
+          onChange={(e) => set("customer_address", e.target.value)}
           className="mt-1 w-full rounded border px-2 py-1"
         />
       </label>
@@ -131,23 +204,53 @@ export function BookingForm({
           className="mt-1 w-full rounded border px-2 py-1"
         />
       </label>
-      <label className="text-sm">
-        El. paštas
-        <input
-          type="email"
-          value={v.customer_email}
-          onChange={(e) => set("customer_email", e.target.value)}
-          className="mt-1 w-full rounded border px-2 py-1"
-        />
-      </label>
-      <label className="text-sm">
-        Adresas
-        <input
-          value={v.customer_address}
-          onChange={(e) => set("customer_address", e.target.value)}
-          className="mt-1 w-full rounded border px-2 py-1"
-        />
-      </label>
+      {!isCompany && (
+        <label className="text-sm">
+          Gimimo data
+          <input
+            type="date"
+            value={v.birth_date ?? ""}
+            onChange={(e) => set("birth_date", e.target.value || null)}
+            className="mt-1 w-full rounded border px-2 py-1"
+          />
+        </label>
+      )}
+      {isCompany && (
+        <label className="text-sm">
+          Įmonės kodas *
+          <input
+            required
+            value={v.company_code}
+            onChange={(e) => set("company_code", e.target.value)}
+            className="mt-1 w-full rounded border px-2 py-1"
+          />
+        </label>
+      )}
+      {isCompany && (
+        <div className="text-sm md:col-span-2 flex flex-wrap items-end gap-6">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={v.is_vat_payer}
+              onChange={(e) => set("is_vat_payer", e.target.checked)}
+              className="h-4 w-4"
+            />
+            Ar PVM mokėtojas
+          </label>
+          {v.is_vat_payer && (
+            <label className="min-w-[240px] flex-1">
+              PVM mokėtojo kodas
+              <input
+                required
+                placeholder="LT100000000010"
+                value={v.vat_number}
+                onChange={(e) => set("vat_number", e.target.value)}
+                className="mt-1 w-full rounded border px-2 py-1"
+              />
+            </label>
+          )}
+        </div>
+      )}
       <label className="text-sm">
         Šaltinis
         <select
