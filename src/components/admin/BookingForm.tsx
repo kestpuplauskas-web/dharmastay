@@ -167,6 +167,7 @@ export function BookingForm({
     <form
       onSubmit={(e) => {
         e.preventDefault();
+        if (hasConflict) return;
         const totals = {
           total_guests: v.adults_count + v.children_count + v.infants_count,
           guests: v.adults_count + v.children_count + v.infants_count,
@@ -224,6 +225,15 @@ export function BookingForm({
             }))
           }
         />
+        {hasConflict && (
+          <p className="mt-2 rounded border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+            Šios datos šiam objektui jau užimtos:{" "}
+            {conflicts
+              .map((c: any) => `${c.customer_name || "—"} (${c.date_from} → ${c.date_to})`)
+              .join(", ")}
+            . Pasirinkite kitas datas arba kitą objektą.
+          </p>
+        )}
       </div>
       <label className="text-sm">
         Atvykimo laikas
@@ -487,11 +497,16 @@ export function BookingForm({
       <div className="md:col-span-2">
         <button
           type="submit"
-          disabled={submitting}
+          disabled={submitting || hasConflict}
           className="rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
         >
           {submitting ? "Saugoma…" : "Išsaugoti"}
         </button>
+        {hasConflict && (
+          <p className="mt-2 text-sm text-destructive">
+            Negalima išsaugoti – datos kertasi su esama rezervacija.
+          </p>
+        )}
       </div>
     </form>
   );
