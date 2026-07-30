@@ -136,7 +136,7 @@ export function DateRangePicker({
             return disabledKeys.has(format(startOfDay(d), "yyyy-MM-dd"));
           }}
           initialFocus
-          className={cn("p-3 pointer-events-auto")}
+          className={cn("p-3 pointer-events-auto [--cell-size:2.6rem]")}
           classNames={{
             range_start:
               "!rounded-full [&_button]:!bg-primary [&_button]:!text-primary-foreground [&_button]:!rounded-full hover:[&_button]:!bg-primary",
