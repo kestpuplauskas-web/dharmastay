@@ -41,6 +41,15 @@ const bookingInput = z.object({
   status: z.enum(BOOKING_STATUSES).default("confirmed"),
   total_amount: z.number().min(0).max(1000000).default(0),
   note: z.string().max(2000).default(""),
+}).superRefine((v, ctx) => {
+  if (v.client_type === "company") {
+    if (!v.company_name) ctx.addIssue({ code: "custom", path: ["company_name"], message: "Įmonės pavadinimas privalomas" });
+    if (!v.company_code) ctx.addIssue({ code: "custom", path: ["company_code"], message: "Įmonės kodas privalomas" });
+    if (v.is_vat_payer && !v.vat_number) ctx.addIssue({ code: "custom", path: ["vat_number"], message: "PVM kodas privalomas" });
+  } else if (!v.customer_name) {
+    ctx.addIssue({ code: "custom", path: ["customer_name"], message: "Vardas Pavardė privalomas" });
+  }
+  if (!v.customer_email) ctx.addIssue({ code: "custom", path: ["customer_email"], message: "El. paštas privalomas" });
 });
 
 export type BookingInput = z.infer<typeof bookingInput>;
