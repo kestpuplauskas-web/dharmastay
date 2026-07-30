@@ -301,6 +301,7 @@ export function BookingsGantt({
               return (
                 <div
                   key={i}
+                  style={{ gridColumn: 2 + i, gridRow: 1 }}
                   className={`text-[10px] text-center py-2 border-r last:border-r-0 ${isWeekend ? "bg-muted/40" : ""}`}
                 >
                   {isWeekStart ? (
@@ -342,6 +343,7 @@ export function BookingsGantt({
                     <button
                       key={i}
                       type="button"
+                      style={{ gridColumn: 2 + i, gridRow: 1 }}
                       onPointerDown={(e) => {
                         e.preventDefault();
                         setDrag({ propertyId: p.id, startIdx: i, endIdx: i });
