@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { listBookings, deleteBooking, BOOKING_STATUSES } from "@/lib/bookings.functions";
+import { listBookings, deleteBooking, rescheduleBooking, BOOKING_STATUSES } from "@/lib/bookings.functions";
 import { listAllProperties } from "@/lib/properties.functions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -51,6 +51,7 @@ function BookingsPage() {
   const fetchBookings = useServerFn(listBookings);
   const fetchProps = useServerFn(listAllProperties);
   const del = useServerFn(deleteBooking);
+  const reschedule = useServerFn(rescheduleBooking);
   const qc = useQueryClient();
   const [view, setView] = useState<"timeline" | "list">("timeline");
 
@@ -64,6 +65,16 @@ function BookingsPage() {
     mutationFn: (id: string) => del({ data: { id } }),
     onSuccess: () => {
       toast.success("Ištrinta");
+      qc.invalidateQueries({ queryKey: ["admin-bookings"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Klaida"),
+  });
+
+  const rescheduleM = useMutation({
+    mutationFn: (v: { id: string; property_id: string; date_from: string; date_to: string }) =>
+      reschedule({ data: v }),
+    onSuccess: () => {
+      toast.success("Rezervacija perkelta");
       qc.invalidateQueries({ queryKey: ["admin-bookings"] });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Klaida"),
@@ -105,6 +116,8 @@ function BookingsPage() {
                 propertyType: p.propertyType ?? p.property_type,
               }))}
               bookings={q.data as any}
+              onReschedule={(v) => rescheduleM.mutate(v)}
+              rescheduling={rescheduleM.isPending}
             />
           )}
         </>

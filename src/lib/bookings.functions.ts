@@ -229,3 +229,45 @@ export const deleteBooking = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+// Perkelia rezervaciją kalendoriuje (kitas objektas ir (arba) kitos datos).
+// Keičiami tik property_id / date_from / date_to — kiti laukai nekeičiami.
+export const rescheduleBooking = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        property_id: z.string().uuid(),
+        date_from: z.string().min(1),
+        date_to: z.string().min(1),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await ensureAdmin(context);
+    if (data.date_to <= data.date_from) throw new Error("Išvykimo data turi būti vėlesnė už atvykimo datą");
+
+    const { data: conflicts, error: cErr } = await context.supabase
+      .from("bookings")
+      .select("id, date_from, date_to, customer_name")
+      .eq("property_id", data.property_id)
+      .neq("status", "cancelled")
+      .neq("id", data.id)
+      .lt("date_from", data.date_to)
+      .gt("date_to", data.date_from);
+    if (cErr) throw new Error(cErr.message);
+    if (conflicts && conflicts.length > 0) {
+      const c = conflicts[0];
+      throw new Error(`Laikotarpis kertasi su kita rezervacija (${c.customer_name || "—"} ${c.date_from} → ${c.date_to})`);
+    }
+
+    const { data: row, error } = await context.supabase
+      .from("bookings")
+      .update({ property_id: data.property_id, date_from: data.date_from, date_to: data.date_to })
+      .eq("id", data.id)
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+    return row;
+  });

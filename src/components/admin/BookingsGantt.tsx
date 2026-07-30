@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -23,6 +23,23 @@ type Booking = {
 };
 
 type Property = { id: string; name: string; propertyType?: string | null };
+
+export type RescheduleInput = {
+  id: string;
+  property_id: string;
+  date_from: string;
+  date_to: string;
+};
+
+type BarDrag = {
+  booking: Booking;
+  mode: "move" | "resize-start" | "resize-end";
+  originX: number;
+  propertyId: string;
+  fromISO: string;
+  toISO: string;
+  moved: boolean;
+};
 
 const STATUS_LABELS: Record<string, string> = {
   confirmed: "Vykdoma",
@@ -62,7 +79,17 @@ function daysBetween(a: Date, b: Date) {
   return Math.round((b.getTime() - a.getTime()) / 86400000);
 }
 
-export function BookingsGantt({ properties, bookings }: { properties: Property[]; bookings: Booking[] }) {
+export function BookingsGantt({
+  properties,
+  bookings,
+  onReschedule,
+  rescheduling,
+}: {
+  properties: Property[];
+  bookings: Booking[];
+  onReschedule?: (input: RescheduleInput) => void;
+  rescheduling?: boolean;
+}) {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
@@ -126,6 +153,109 @@ export function BookingsGantt({ properties, bookings }: { properties: Property[]
   const labelColWidth = isMobile ? 120 : 200;
   const gridTemplate = `${labelColWidth}px repeat(${dayCount}, minmax(${colMinWidth}px, 1fr))`;
 
+  const gridRef = useRef<HTMLDivElement>(null);
+  const canDrag = !isMobile && !!onReschedule;
+  const [barDrag, setBarDrag] = useState<BarDrag | null>(null);
+  const [pending, setPending] = useState<
+    { booking: Booking; property_id: string; date_from: string; date_to: string } | null
+  >(null);
+
+  const colWidth = () => {
+    const el = gridRef.current;
+    if (!el) return colMinWidth;
+    const w = el.getBoundingClientRect().width - labelColWidth;
+    return Math.max(1, w / dayCount);
+  };
+
+  const startBarDrag = (
+    e: React.PointerEvent,
+    booking: Booking,
+    mode: BarDrag["mode"],
+  ) => {
+    if (isMobile || !onReschedule) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setBarDrag({
+      booking,
+      mode,
+      originX: e.clientX,
+      propertyId: booking.property_id,
+      fromISO: booking.date_from,
+      toISO: booking.date_to,
+      moved: false,
+    });
+  };
+
+  useEffect(() => {
+    if (!barDrag) return;
+    const cw = colWidth();
+    const onMove = (e: PointerEvent) => {
+      const deltaDays = Math.round((e.clientX - barDrag.originX) / cw);
+      const b = barDrag.booking;
+      let fromISO = b.date_from;
+      let toISO = b.date_to;
+      let propertyId = barDrag.propertyId;
+
+      if (barDrag.mode === "move") {
+        fromISO = toISODate(addDays(parseISO(b.date_from), deltaDays));
+        toISO = toISODate(addDays(parseISO(b.date_to), deltaDays));
+        const el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
+        const row = el?.closest("[data-row-property]") as HTMLElement | null;
+        const pid = row?.getAttribute("data-row-property");
+        if (pid) propertyId = pid;
+      } else if (barDrag.mode === "resize-start") {
+        const next = addDays(parseISO(b.date_from), deltaDays);
+        const max = addDays(parseISO(b.date_to), -1);
+        fromISO = toISODate(next > max ? max : next);
+      } else {
+        const next = addDays(parseISO(b.date_to), deltaDays);
+        const min = addDays(parseISO(b.date_from), 1);
+        toISO = toISODate(next < min ? min : next);
+      }
+
+      const changed =
+        fromISO !== b.date_from || toISO !== b.date_to || propertyId !== b.property_id;
+      setBarDrag((d) => (d ? { ...d, fromISO, toISO, propertyId, moved: d.moved || changed } : d));
+    };
+    const onUp = () => {
+      setBarDrag(null);
+      const b = barDrag.booking;
+      const changed =
+        barDrag.fromISO !== b.date_from ||
+        barDrag.toISO !== b.date_to ||
+        barDrag.propertyId !== b.property_id;
+      if (changed) {
+        setPending({
+          booking: b,
+          property_id: barDrag.propertyId,
+          date_from: barDrag.fromISO,
+          date_to: barDrag.toISO,
+        });
+      } else if (!barDrag.moved) {
+        setSelected(b);
+      }
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+  }, [barDrag]);
+
+  const propertyName = (id: string) => properties.find((p) => p.id === id)?.name ?? "—";
+  const dragConflict = (() => {
+    if (!barDrag) return false;
+    return bookings.some(
+      (o) =>
+        o.id !== barDrag.booking.id &&
+        o.property_id === barDrag.propertyId &&
+        o.status !== "cancelled" &&
+        o.date_from < barDrag.toISO &&
+        o.date_to > barDrag.fromISO,
+    );
+  })();
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -152,8 +282,14 @@ export function BookingsGantt({ properties, bookings }: { properties: Property[]
         <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-gray-400 border border-gray-600" /> Atlikta</span>
       </div>
 
+      {canDrag && (
+        <p className="text-xs text-muted-foreground">
+          Vilkite rezervacijos juostą, kad perkeltumėte į kitą objektą ar datas; tempkite juostos kraštus, kad pakeistumėte trukmę.
+        </p>
+      )}
+
       <div className="border rounded-lg overflow-x-auto bg-card">
-        <div style={{ minWidth: labelColWidth + dayCount * colMinWidth }}>
+        <div ref={gridRef} style={{ minWidth: labelColWidth + dayCount * colMinWidth }}>
           <div
             className="grid border-b bg-muted/40 sticky top-0 z-10"
             style={{ gridTemplateColumns: gridTemplate }}
@@ -180,10 +316,13 @@ export function BookingsGantt({ properties, bookings }: { properties: Property[]
           </div>
 
           {properties.map((p) => {
-            const rowBookings = visibleBookings.filter((b) => b.property_id === p.id);
+            const rowBookings = visibleBookings.filter(
+              (b) => b.property_id === p.id && b.id !== barDrag?.booking.id,
+            );
             return (
               <div
                 key={p.id}
+                data-row-property={p.id}
                 className="grid border-b last:border-b-0 relative"
                 style={{ gridTemplateColumns: gridTemplate, minHeight: 56 }}
               >
@@ -237,19 +376,55 @@ export function BookingsGantt({ properties, bookings }: { properties: Property[]
                   const colEnd = 2 + endIdx + 1;
                   const cls = STATUS_CLASSES[b.status] ?? "bg-gray-400 text-white border-gray-600";
                   return (
-                    <button
+                    <div
                       key={b.id}
-                      type="button"
-                      onClick={() => setSelected(b)}
-                      className={`m-1 px-2 py-1 rounded text-xs font-medium truncate border shadow-sm cursor-pointer z-10 text-left ${cls}`}
+                      className={`relative m-1 rounded border shadow-sm z-10 ${cls} ${
+                        canDrag ? "cursor-grab active:cursor-grabbing" : "cursor-pointer"
+                      }`}
                       style={{ gridColumn: `${colStart} / ${colEnd}`, gridRow: 1 }}
                       title={`${b.customer_name} · ${b.date_from} → ${b.date_to}`}
+                      onPointerDown={(e) => startBarDrag(e, b, "move")}
+                      onClick={() => {
+                        if (!canDrag) setSelected(b);
+                      }}
                     >
-                      {b.booking_number ? <span className="font-mono opacity-80 mr-1">{b.booking_number}</span> : null}
-                      {b.customer_name || "—"}
-                    </button>
+                      <div className="px-2 py-1 text-xs font-medium truncate text-left select-none">
+                        {b.booking_number ? <span className="font-mono opacity-80 mr-1">{b.booking_number}</span> : null}
+                        {b.customer_name || "—"}
+                      </div>
+                      {canDrag && (
+                        <>
+                          <div
+                            className="absolute inset-y-0 left-0 w-2 cursor-col-resize rounded-l bg-black/10 hover:bg-black/25"
+                            onPointerDown={(e) => startBarDrag(e, b, "resize-start")}
+                          />
+                          <div
+                            className="absolute inset-y-0 right-0 w-2 cursor-col-resize rounded-r bg-black/10 hover:bg-black/25"
+                            onPointerDown={(e) => startBarDrag(e, b, "resize-end")}
+                          />
+                        </>
+                      )}
+                    </div>
                   );
                 })}
+
+                {barDrag && barDrag.propertyId === p.id && (() => {
+                  const startIdx = Math.max(0, daysBetween(startDate, parseISO(barDrag.fromISO)));
+                  const endIdx = Math.min(dayCount - 1, daysBetween(startDate, parseISO(barDrag.toISO)));
+                  if (endIdx < startIdx) return null;
+                  return (
+                    <div
+                      className={`m-1 px-2 py-1 rounded text-xs font-medium truncate border-2 border-dashed z-30 pointer-events-none ${
+                        dragConflict
+                          ? "bg-red-500/30 border-red-600 text-red-900"
+                          : "bg-primary/30 border-primary text-foreground"
+                      }`}
+                      style={{ gridColumn: `${2 + startIdx} / ${2 + endIdx + 1}`, gridRow: 1 }}
+                    >
+                      {barDrag.fromISO} → {barDrag.toISO}
+                    </div>
+                  );
+                })()}
               </div>
             );
           })}
@@ -292,6 +467,61 @@ export function BookingsGantt({ properties, bookings }: { properties: Property[]
                 <Pencil className="h-4 w-4 mr-1" /> Redaguoti
               </Button>
             )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!pending} onOpenChange={(o) => !o && setPending(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Patvirtinti pakeitimą</DialogTitle>
+          </DialogHeader>
+          {pending && (
+            <div className="space-y-2 text-sm">
+              <div>
+                <span className="text-muted-foreground">Rezervacija:</span>{" "}
+                {pending.booking.booking_number ? `${pending.booking.booking_number} · ` : ""}
+                {pending.booking.customer_name || "—"}
+              </div>
+              <div>
+                <span className="text-muted-foreground">Objektas:</span>{" "}
+                {pending.property_id === pending.booking.property_id ? (
+                  propertyName(pending.property_id)
+                ) : (
+                  <>
+                    <span className="line-through opacity-70">{propertyName(pending.booking.property_id)}</span>{" "}
+                    → <span className="font-medium">{propertyName(pending.property_id)}</span>
+                  </>
+                )}
+              </div>
+              <div>
+                <span className="text-muted-foreground">Laikotarpis:</span>{" "}
+                <span className="line-through opacity-70">
+                  {pending.booking.date_from} → {pending.booking.date_to}
+                </span>{" "}
+                → <span className="font-medium">{pending.date_from} → {pending.date_to}</span>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPending(null)} disabled={rescheduling}>
+              Atšaukti
+            </Button>
+            <Button
+              disabled={rescheduling}
+              onClick={() => {
+                if (!pending) return;
+                onReschedule?.({
+                  id: pending.booking.id,
+                  property_id: pending.property_id,
+                  date_from: pending.date_from,
+                  date_to: pending.date_to,
+                });
+                setPending(null);
+              }}
+            >
+              Patvirtinti
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
