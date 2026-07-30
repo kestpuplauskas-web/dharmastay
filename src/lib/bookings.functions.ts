@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { recalcExtras, nightsBetweenDates, type ExtraCalcKind } from "@/lib/booking-extras";
 
 export const BOOKING_SOURCES = ["phone", "whatsapp", "website", "booking", "airbnb", "other"] as const;
 // "direct" liko tik dėl senų įrašų suderinamumo (sąraše nerodomas)
@@ -64,6 +65,18 @@ const bookingInput = z.object({
   status: z.enum(BOOKING_STATUSES).default("confirmed"),
   total_amount: z.number().min(0).max(1000000).default(0),
   note: z.string().max(2000).default(""),
+  extras: z
+    .array(
+      z.object({
+        name: z.string().trim().min(1).max(100),
+        calc: z.enum(["per_person", "per_child", "flat_per_day"]),
+        pricePerDay: z.number().min(0).max(100000).default(0),
+        amount: z.number().min(0).max(1000000).default(0),
+      }),
+    )
+    .max(20)
+    .default([]),
+  extras_total: z.number().min(0).max(1000000).default(0),
 }).superRefine((v, ctx) => {
   if (v.client_type === "company") {
     if (!v.company_name) ctx.addIssue({ code: "custom", path: ["company_name"], message: "Įmonės pavadinimas privalomas" });
@@ -84,6 +97,27 @@ const ensureAdmin = async (ctx: { supabase: any; userId: string }) => {
   });
   if (error) throw new Error(error.message);
   if (!data) throw new Error("Forbidden");
+};
+
+const withServerExtras = async (
+  supabase: any,
+  data: BookingInput,
+): Promise<BookingInput> => {
+  const { data: prop, error } = await supabase
+    .from("properties")
+    .select("extra_services")
+    .eq("id", data.property_id)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  const defined =
+    (prop?.extra_services as Array<{ name: string; calc: ExtraCalcKind; pricePerDay: number }>) ?? [];
+  const { extras, extras_total } = recalcExtras(defined, data.extras ?? [], {
+    adults: data.adults_count,
+    children: data.children_count,
+    infants: data.infants_count,
+    days: nightsBetweenDates(data.date_from, data.date_to),
+  });
+  return { ...data, extras, extras_total };
 };
 
 export const listBookings = createServerFn({ method: "POST" })
@@ -159,9 +193,10 @@ export const createBooking = createServerFn({ method: "POST" })
   .inputValidator((d) => bookingInput.parse(d))
   .handler(async ({ data, context }) => {
     await ensureAdmin(context);
+    const payload = await withServerExtras(context.supabase, data);
     const { data: row, error } = await context.supabase
       .from("bookings")
-      .insert({ ...data, booking_number: "" })
+      .insert({ ...payload, booking_number: "" })
       .select()
       .single();
     if (error) throw new Error(error.message);
@@ -174,9 +209,10 @@ export const updateBooking = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await ensureAdmin(context);
     const { id, ...rest } = data;
+    const payload = await withServerExtras(context.supabase, rest as BookingInput);
     const { data: row, error } = await context.supabase
       .from("bookings")
-      .update(rest)
+      .update(payload)
       .eq("id", id)
       .select()
       .single();
