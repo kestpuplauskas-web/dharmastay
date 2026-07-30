@@ -13,6 +13,8 @@ import { DateRangePicker } from "@/components/DateRangePicker";
 import { DatePicker } from "@/components/DatePicker";
 import { GuestsPicker } from "@/components/GuestsPicker";
 import { NumberInput } from "@/components/NumberInput";
+import { EXTRA_CALC_LABELS } from "@/lib/properties";
+import { extraLineTotal, nightsBetweenDates, type ExtraCalcKind } from "@/lib/booking-extras";
 
 export type BookingFormValues = Omit<BookingInput, "source" | "status"> & {
   source: (typeof BOOKING_SOURCE_VALUES)[number];
@@ -47,6 +49,8 @@ export function defaultBookingForm(props: Property[] = []): BookingFormValues {
     status: "confirmed",
     total_amount: 0,
     note: "",
+    extras: [],
+    extras_total: 0,
   };
 }
 
@@ -68,6 +72,58 @@ export function BookingForm({
   const parseDate = (s: string) => (s ? parse(s, "yyyy-MM-dd", new Date()) : undefined);
   const range = { from: parseDate(v.date_from), to: parseDate(v.date_to) };
   const isCompany = v.client_type === "company";
+
+  const selectedProperty = properties.find((p) => p.id === v.property_id);
+  const availableExtras = selectedProperty?.extraServices ?? [];
+  const nights = nightsBetweenDates(v.date_from, v.date_to);
+  const extrasCtx = {
+    adults: v.adults_count,
+    children: v.children_count,
+    infants: v.infants_count,
+    days: nights,
+  };
+  const lineAmount = (svc: { calc: ExtraCalcKind | string; pricePerDay: number }) =>
+    extraLineTotal(svc.calc as ExtraCalcKind, Number(svc.pricePerDay) || 0, extrasCtx);
+
+  const recalc = (state: BookingFormValues): BookingFormValues => {
+    const defined = properties.find((p) => p.id === state.property_id)?.extraServices ?? [];
+    const ctx = {
+      adults: state.adults_count,
+      children: state.children_count,
+      infants: state.infants_count,
+      days: nightsBetweenDates(state.date_from, state.date_to),
+    };
+    const extras = state.extras
+      .map((e) => {
+        const match = defined.find((d) => d.name === e.name);
+        if (!match) return null;
+        return {
+          name: match.name,
+          calc: match.calc as ExtraCalcKind,
+          pricePerDay: Number(match.pricePerDay) || 0,
+          amount: extraLineTotal(match.calc as ExtraCalcKind, Number(match.pricePerDay) || 0, ctx),
+        };
+      })
+      .filter(Boolean) as BookingFormValues["extras"];
+    const extras_total = extras.reduce((s, e) => s + e.amount, 0);
+    const delta = extras_total - (state.extras_total ?? 0);
+    return {
+      ...state,
+      extras,
+      extras_total,
+      total_amount: Math.max(0, Number((state.total_amount + delta).toFixed(2))),
+    };
+  };
+
+  const toggleExtra = (name: string, checked: boolean) =>
+    setV((s) =>
+      recalc({
+        ...s,
+        extras: checked
+          ? [...s.extras, { name, calc: "flat_per_day", pricePerDay: 0, amount: 0 }]
+          : s.extras.filter((e) => e.name !== name),
+      }),
+    );
 
   return (
     <form
@@ -102,7 +158,9 @@ export function BookingForm({
         <select
           required
           value={v.property_id}
-          onChange={(e) => set("property_id", e.target.value)}
+          onChange={(e) =>
+            setV((s) => recalc({ ...s, property_id: e.target.value, extras: [] }))
+          }
           className="mt-1 w-full rounded border px-2 py-1"
         >
           <option value="">— Pasirinkite —</option>
@@ -121,7 +179,7 @@ export function BookingForm({
           placeholder="Pasirinkite datas"
           allowPast
           onChange={(r) =>
-            setV((s) => ({
+            setV((s) => recalc({
               ...s,
               date_from: r.from ? format(r.from, "yyyy-MM-dd") : "",
               date_to: r.to ? format(r.to, "yyyy-MM-dd") : "",
@@ -151,7 +209,7 @@ export function BookingForm({
           className="mt-1"
           value={{ adults: v.adults_count, children: v.children_count, infants: v.infants_count }}
           onChange={(g) =>
-            setV((s) => ({
+            setV((s) => recalc({
               ...s,
               adults_count: g.adults,
               children_count: g.children,
@@ -162,6 +220,42 @@ export function BookingForm({
           }
         />
       </div>
+      {availableExtras.length > 0 && (
+        <div className="md:col-span-2 rounded-lg border p-3">
+          <div className="text-sm font-medium">Papildomos paslaugos</div>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Skaičiuojama pagal naktų skaičių ({nights}) ir svečius. Kūdikiai iki 3 m. neįskaičiuojami.
+          </p>
+          <div className="mt-2 divide-y">
+            {availableExtras.map((svc) => {
+              const checked = v.extras.some((e) => e.name === svc.name);
+              return (
+                <label
+                  key={svc.name}
+                  className="flex flex-wrap items-center gap-3 py-2 text-sm"
+                >
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4"
+                    checked={checked}
+                    onChange={(e) => toggleExtra(svc.name, e.target.checked)}
+                  />
+                  <span className="font-medium">{svc.name}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {EXTRA_CALC_LABELS[svc.calc] ?? svc.calc} · {Number(svc.pricePerDay).toFixed(2)} €/d.
+                  </span>
+                  <span className="ml-auto tabular-nums">
+                    {lineAmount(svc).toFixed(2)} €
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+          <div className="mt-2 text-right text-sm font-medium">
+            Paslaugų suma: {(v.extras_total ?? 0).toFixed(2)} €
+          </div>
+        </div>
+      )}
       <div className="md:col-span-2">
         <span className="text-sm">Kliento tipas</span>
         <div className="mt-1 inline-flex rounded-lg border p-1">
