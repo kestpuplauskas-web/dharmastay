@@ -16,11 +16,13 @@ export type Database = {
     Tables: {
       bookings: {
         Row: {
+          adults_count: number
           bic: string | null
           birth_date: string | null
           booking_number: string
           check_in_time: string
           check_out_time: string
+          children_count: number
           client_type: string
           company_code: string
           company_name: string
@@ -37,6 +39,7 @@ export type Database = {
           extras_total: number
           guests: number
           id: string
+          infants_count: number
           is_vat_payer: boolean
           location: string
           note: string | null
@@ -50,15 +53,18 @@ export type Database = {
           source: string
           status: string
           total_amount: number
+          total_guests: number
           updated_at: string
           vat_number: string
         }
         Insert: {
+          adults_count?: number
           bic?: string | null
           birth_date?: string | null
           booking_number: string
           check_in_time?: string
           check_out_time?: string
+          children_count?: number
           client_type?: string
           company_code?: string
           company_name?: string
@@ -75,6 +81,7 @@ export type Database = {
           extras_total?: number
           guests?: number
           id?: string
+          infants_count?: number
           is_vat_payer?: boolean
           location?: string
           note?: string | null
@@ -88,15 +95,18 @@ export type Database = {
           source?: string
           status?: string
           total_amount?: number
+          total_guests?: number
           updated_at?: string
           vat_number?: string
         }
         Update: {
+          adults_count?: number
           bic?: string | null
           birth_date?: string | null
           booking_number?: string
           check_in_time?: string
           check_out_time?: string
+          children_count?: number
           client_type?: string
           company_code?: string
           company_name?: string
@@ -113,6 +123,7 @@ export type Database = {
           extras_total?: number
           guests?: number
           id?: string
+          infants_count?: number
           is_vat_payer?: boolean
           location?: string
           note?: string | null
@@ -126,6 +137,7 @@ export type Database = {
           source?: string
           status?: string
           total_amount?: number
+          total_guests?: number
           updated_at?: string
           vat_number?: string
         }
