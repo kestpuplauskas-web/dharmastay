@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { format, parse } from "date-fns";
 import type { Property } from "@/lib/properties";
 import { BOOKING_SOURCES, BOOKING_STATUSES, type BookingInput } from "@/lib/bookings.functions";
+import { DateRangePicker } from "@/components/DateRangePicker";
 
 export type BookingFormValues = Omit<BookingInput, "source" | "status"> & {
   source: (typeof BOOKING_SOURCES)[number];
@@ -43,6 +45,9 @@ export function BookingForm({
   const set = <K extends keyof BookingFormValues>(k: K, val: BookingFormValues[K]) =>
     setV((s) => ({ ...s, [k]: val }));
 
+  const parseDate = (s: string) => (s ? parse(s, "yyyy-MM-dd", new Date()) : undefined);
+  const range = { from: parseDate(v.date_from), to: parseDate(v.date_to) };
+
   return (
     <form
       onSubmit={(e) => {
@@ -67,26 +72,22 @@ export function BookingForm({
           ))}
         </select>
       </label>
-      <label className="text-sm">
-        Atvykimo data
-        <input
-          type="date"
-          required
-          value={v.date_from}
-          onChange={(e) => set("date_from", e.target.value)}
-          className="mt-1 w-full rounded border px-2 py-1"
+      <div className="text-sm md:col-span-2">
+        Atvykimo – išvykimo datos
+        <DateRangePicker
+          className="mt-1"
+          value={range}
+          placeholder="Pasirinkite datas"
+          allowPast
+          onChange={(r) =>
+            setV((s) => ({
+              ...s,
+              date_from: r.from ? format(r.from, "yyyy-MM-dd") : "",
+              date_to: r.to ? format(r.to, "yyyy-MM-dd") : "",
+            }))
+          }
         />
-      </label>
-      <label className="text-sm">
-        Išvykimo data
-        <input
-          type="date"
-          required
-          value={v.date_to}
-          onChange={(e) => set("date_to", e.target.value)}
-          className="mt-1 w-full rounded border px-2 py-1"
-        />
-      </label>
+      </div>
       <label className="text-sm">
         Atvykimo laikas
         <input
