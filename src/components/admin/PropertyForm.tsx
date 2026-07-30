@@ -189,34 +189,33 @@ export function PropertyForm({
       <section className="grid gap-3 rounded-lg border p-4 md:grid-cols-4">
         <label className="text-sm">
           Plotas m²
-          <input
-            type="number"
-            value={v.areaM2 ?? ""}
-            onChange={(e) =>
-              set("areaM2", e.target.value === "" ? null : Number(e.target.value))
-            }
+          <NumberInput
+            min={0}
+            placeholder="0"
+            value={v.areaM2 ?? null}
+            onChange={(n) => set("areaM2", n)}
             className="mt-1 w-full rounded border px-2 py-1"
           />
         </label>
         <label className="text-sm">
           Max svečių
-          <input
-            type="number"
+          <NumberInput
             min={1}
+            placeholder="1"
             value={v.maxGuests}
-            onChange={(e) => set("maxGuests", Number(e.target.value))}
+            emptyFallback={1}
+            onChange={(n) => set("maxGuests", n ?? 1)}
             className="mt-1 w-full rounded border px-2 py-1"
           />
         </label>
         <label className="text-sm">
           Vonių
-          <input
-            type="number"
+          <NumberInput
             min={0}
-            value={v.rooms.bathrooms ?? ""}
-            onChange={(e) =>
-              set("rooms", { ...v.rooms, bathrooms: Number(e.target.value) || 0 })
-            }
+            placeholder="0"
+            value={v.rooms.bathrooms ?? null}
+            emptyFallback={0}
+            onChange={(n) => set("rooms", { ...v.rooms, bathrooms: n ?? 0 })}
             className="mt-1 w-full rounded border px-2 py-1"
           />
         </label>
@@ -253,13 +252,12 @@ export function PropertyForm({
                     </option>
                   ))}
                 </select>
-                <input
-                  type="number"
+                <NumberInput
                   min={1}
+                  placeholder="1"
                   value={c.beds}
-                  onChange={(e) =>
-                    updateConfig(idx, { beds: Math.max(1, Number(e.target.value) || 1) })
-                  }
+                  emptyFallback={1}
+                  onChange={(n) => updateConfig(idx, { beds: Math.max(1, n ?? 1) })}
                   className="rounded border px-2 py-1 text-sm"
                 />
                 <select
