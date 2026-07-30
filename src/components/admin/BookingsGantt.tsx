@@ -282,7 +282,7 @@ export function BookingsGantt({
       </div>
 
       <div className="border rounded-lg overflow-x-auto bg-card">
-        <div style={{ minWidth: labelColWidth + dayCount * colMinWidth }}>
+        <div ref={gridRef} style={{ minWidth: labelColWidth + dayCount * colMinWidth }}>
           <div
             className="grid border-b bg-muted/40 sticky top-0 z-10"
             style={{ gridTemplateColumns: gridTemplate }}
