@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { format, parse } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import type { Property } from "@/lib/properties";
 import {
   BOOKING_SOURCES,
@@ -7,6 +9,7 @@ import {
   BOOKING_STATUSES,
   BOOKING_STATUS_LABELS,
   BOOKING_SOURCE_VALUES,
+  checkBookingConflicts,
   type BookingInput,
 } from "@/lib/bookings.functions";
 import { DateRangePicker } from "@/components/DateRangePicker";
@@ -59,11 +62,13 @@ export function BookingForm({
   initial,
   onSubmit,
   submitting,
+  bookingId,
 }: {
   properties: Property[];
   initial: BookingFormValues;
   onSubmit: (v: BookingFormValues) => void;
   submitting?: boolean;
+  bookingId?: string;
 }) {
   const [v, setV] = useState<BookingFormValues>(initial);
   const [manualTotal, setManualTotal] = useState<boolean>(Number(initial.total_amount) > 0);
@@ -73,6 +78,23 @@ export function BookingForm({
   const parseDate = (s: string) => (s ? parse(s, "yyyy-MM-dd", new Date()) : undefined);
   const range = { from: parseDate(v.date_from), to: parseDate(v.date_to) };
   const isCompany = v.client_type === "company";
+
+  const checkConflicts = useServerFn(checkBookingConflicts);
+  const canCheck = Boolean(v.property_id && v.date_from && v.date_to && v.date_to > v.date_from);
+  const { data: conflicts = [] } = useQuery({
+    queryKey: ["booking-conflicts", v.property_id, v.date_from, v.date_to, bookingId ?? ""],
+    enabled: canCheck,
+    queryFn: () =>
+      checkConflicts({
+        data: {
+          property_id: v.property_id,
+          date_from: v.date_from,
+          date_to: v.date_to,
+          ...(bookingId ? { excludeId: bookingId } : {}),
+        },
+      }),
+  });
+  const hasConflict = canCheck && conflicts.length > 0;
 
   const selectedProperty = properties.find((p) => p.id === v.property_id);
   const availableExtras = selectedProperty?.extraServices ?? [];
@@ -145,6 +167,7 @@ export function BookingForm({
     <form
       onSubmit={(e) => {
         e.preventDefault();
+        if (hasConflict) return;
         const totals = {
           total_guests: v.adults_count + v.children_count + v.infants_count,
           guests: v.adults_count + v.children_count + v.infants_count,
@@ -202,6 +225,15 @@ export function BookingForm({
             }))
           }
         />
+        {hasConflict && (
+          <p className="mt-2 rounded border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+            Šios datos šiam objektui jau užimtos:{" "}
+            {conflicts
+              .map((c: any) => `${c.customer_name || "—"} (${c.date_from} → ${c.date_to})`)
+              .join(", ")}
+            . Pasirinkite kitas datas arba kitą objektą.
+          </p>
+        )}
       </div>
       <label className="text-sm">
         Atvykimo laikas
@@ -465,11 +497,16 @@ export function BookingForm({
       <div className="md:col-span-2">
         <button
           type="submit"
-          disabled={submitting}
+          disabled={submitting || hasConflict}
           className="rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
         >
           {submitting ? "Saugoma…" : "Išsaugoti"}
         </button>
+        {hasConflict && (
+          <p className="mt-2 text-sm text-destructive">
+            Negalima išsaugoti – datos kertasi su esama rezervacija.
+          </p>
+        )}
       </div>
     </form>
   );

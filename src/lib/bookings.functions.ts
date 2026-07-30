@@ -120,6 +120,34 @@ const withServerExtras = async (
   return { ...data, extras, extras_total };
 };
 
+// Neleidžia persidengiančių rezervacijų tam pačiam objektui (atšauktos ignoruojamos).
+// Intervalas pusiau atviras: [date_from, date_to) — išvykimo dieną gali atvykti kitas svečias.
+const assertNoOverlap = async (
+  supabase: any,
+  input: { property_id: string; date_from: string; date_to: string; excludeId?: string },
+) => {
+  if (input.date_to <= input.date_from) {
+    throw new Error("Išvykimo data turi būti vėlesnė už atvykimo datą");
+  }
+  let q = supabase
+    .from("bookings")
+    .select("id, date_from, date_to, customer_name, company_name")
+    .eq("property_id", input.property_id)
+    .neq("status", "cancelled")
+    .lt("date_from", input.date_to)
+    .gt("date_to", input.date_from);
+  if (input.excludeId) q = q.neq("id", input.excludeId);
+  const { data: rows, error } = await q;
+  if (error) throw new Error(error.message);
+  if (rows && rows.length > 0) {
+    const c = rows[0];
+    const who = c.customer_name || c.company_name || "—";
+    throw new Error(
+      `Šios datos jau užimtos: ${who} (${c.date_from} → ${c.date_to}). Rezervacija neišsaugota.`,
+    );
+  }
+};
+
 export const listBookings = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) =>
@@ -180,8 +208,8 @@ export const checkBookingConflicts = createServerFn({ method: "POST" })
       .select("id, date_from, date_to, customer_name, status")
       .eq("property_id", data.property_id)
       .neq("status", "cancelled")
-      .lte("date_from", data.date_to)
-      .gte("date_to", data.date_from);
+      .lt("date_from", data.date_to)
+      .gt("date_to", data.date_from);
     if (data.excludeId) q = q.neq("id", data.excludeId);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
@@ -193,6 +221,11 @@ export const createBooking = createServerFn({ method: "POST" })
   .inputValidator((d) => bookingInput.parse(d))
   .handler(async ({ data, context }) => {
     await ensureAdmin(context);
+    await assertNoOverlap(context.supabase, {
+      property_id: data.property_id,
+      date_from: data.date_from,
+      date_to: data.date_to,
+    });
     const payload = await withServerExtras(context.supabase, data);
     const { data: row, error } = await context.supabase
       .from("bookings")
@@ -209,6 +242,12 @@ export const updateBooking = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await ensureAdmin(context);
     const { id, ...rest } = data;
+    await assertNoOverlap(context.supabase, {
+      property_id: rest.property_id,
+      date_from: rest.date_from,
+      date_to: rest.date_to,
+      excludeId: id,
+    });
     const payload = await withServerExtras(context.supabase, rest as BookingInput);
     const { data: row, error } = await context.supabase
       .from("bookings")

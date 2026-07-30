@@ -103,8 +103,8 @@ export const Route = createFileRoute("/api/public/booking-submit")({
           .select("id")
           .eq("property_id", data.property_id)
           .neq("status", "cancelled")
-          .lte("date_from", data.date_to)
-          .gte("date_to", data.date_from);
+          .lt("date_from", data.date_to)
+          .gt("date_to", data.date_from);
         if (cErr) return Response.json({ error: cErr.message }, { status: 500 });
         if (conflicts && conflicts.length > 0) {
           return Response.json({ error: "Pasirinktos datos užimtos" }, { status: 409 });
