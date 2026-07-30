@@ -282,6 +282,12 @@ export function BookingsGantt({
         <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-gray-400 border border-gray-600" /> Atlikta</span>
       </div>
 
+      {canDrag && (
+        <p className="text-xs text-muted-foreground">
+          Vilkite rezervacijos juostą, kad perkeltumėte į kitą objektą ar datas; tempkite juostos kraštus, kad pakeistumėte trukmę.
+        </p>
+      )}
+
       <div className="border rounded-lg overflow-x-auto bg-card">
         <div ref={gridRef} style={{ minWidth: labelColWidth + dayCount * colMinWidth }}>
           <div
