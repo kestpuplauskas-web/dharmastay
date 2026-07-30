@@ -154,6 +154,7 @@ export function BookingsGantt({
   const gridTemplate = `${labelColWidth}px repeat(${dayCount}, minmax(${colMinWidth}px, 1fr))`;
 
   const gridRef = useRef<HTMLDivElement>(null);
+  const canDrag = !isMobile && !!onReschedule;
   const [barDrag, setBarDrag] = useState<BarDrag | null>(null);
   const [pending, setPending] = useState<
     { booking: Booking; property_id: string; date_from: string; date_to: string } | null
