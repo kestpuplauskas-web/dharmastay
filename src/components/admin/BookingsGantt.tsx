@@ -294,7 +294,7 @@ export function BookingsGantt({
             className="grid border-b bg-muted/40 sticky top-0 z-10"
             style={{ gridTemplateColumns: gridTemplate }}
           >
-            <div className="px-3 py-2 text-xs font-semibold text-muted-foreground border-r">Objektas</div>
+            <div style={{ gridColumn: 1, gridRow: 1 }} className="px-3 py-2 text-xs font-semibold text-muted-foreground border-r">Objektas</div>
             {days.map((d, i) => {
               const isWeekStart = i % 7 === 0;
               const isWeekend = d.getDay() === 0 || d.getDay() === 6;
@@ -327,7 +327,7 @@ export function BookingsGantt({
                 className="grid border-b last:border-b-0 relative"
                 style={{ gridTemplateColumns: gridTemplate, minHeight: 56 }}
               >
-                <div className="px-3 py-2 text-sm border-r flex flex-col justify-center bg-muted/20 sticky left-0 z-[5]">
+                <div style={{ gridColumn: 1, gridRow: 1 }} className="px-3 py-2 text-sm border-r flex flex-col justify-center bg-muted/20 sticky left-0 z-[5]">
                   <div className="font-medium truncate">{p.name}</div>
                   {p.propertyType && (
                     <div className="text-xs text-muted-foreground truncate">{p.propertyType}</div>
