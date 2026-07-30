@@ -13,7 +13,7 @@ const bookingInput = z.object({
   check_out_time: z.string().trim().max(10).default(""),
   location: z.string().trim().max(300).default(""),
   guests: z.number().int().min(1).max(50).default(1),
-  customer_name: z.string().trim().min(1).max(200),
+  customer_name: z.string().trim().max(200).default(""),
   customer_phone: z.string().trim().max(50).default(""),
   customer_email: z
     .string()
@@ -147,7 +147,7 @@ export const createBooking = createServerFn({ method: "POST" })
 
 export const updateBooking = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d) => bookingInput.extend({ id: z.string().uuid() }).parse(d))
+  .inputValidator((d) => bookingInput.and(z.object({ id: z.string().uuid() })).parse(d))
   .handler(async ({ data, context }) => {
     await ensureAdmin(context);
     const { id, ...rest } = data;
