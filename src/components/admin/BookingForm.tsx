@@ -59,7 +59,21 @@ export function BookingForm({
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        onSubmit(v);
+        onSubmit(
+          v.client_type === "company"
+            ? {
+                ...v,
+                birth_date: null,
+                vat_number: v.is_vat_payer ? v.vat_number : "",
+              }
+            : {
+                ...v,
+                company_name: "",
+                company_code: "",
+                is_vat_payer: false,
+                vat_number: "",
+              },
+        );
       }}
       className="grid gap-4 md:grid-cols-2"
     >
