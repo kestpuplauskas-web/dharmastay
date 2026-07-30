@@ -13,6 +13,9 @@ const inputSchema = z.object({
   adults: z.number().int().min(1).max(50).optional(),
   children: z.number().int().min(0).max(50).default(0),
   children_under_3: z.number().int().min(0).max(50).default(0),
+  adults_count: z.number().int().min(1).max(50).optional(),
+  children_count: z.number().int().min(0).max(50).optional(),
+  infants_count: z.number().int().min(0).max(50).optional(),
   extras: z
     .array(
       z.object({
@@ -153,6 +156,10 @@ export const Route = createFileRoute("/api/public/booking-submit")({
             date_from: data.date_from,
             date_to: data.date_to,
             guests: data.guests,
+            adults_count: data.adults_count ?? adults,
+            children_count: data.children_count ?? Math.max(0, data.children - data.children_under_3),
+            infants_count: data.infants_count ?? data.children_under_3,
+            total_guests: data.guests,
             customer_name: data.customer_name,
             customer_phone: data.customer_phone,
             customer_email: data.customer_email,
