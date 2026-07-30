@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { DatePicker } from "@/components/DatePicker";
 import { getPropertyById } from "@/lib/properties.functions";
 import {
   propertyTypeLabel,
