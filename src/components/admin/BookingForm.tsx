@@ -13,7 +13,7 @@ import { DateRangePicker } from "@/components/DateRangePicker";
 import { DatePicker } from "@/components/DatePicker";
 import { GuestsPicker } from "@/components/GuestsPicker";
 import { NumberInput } from "@/components/NumberInput";
-import { EXTRA_CALC_LABELS } from "@/lib/properties";
+import { EXTRA_CALC_LABELS, priceForNights } from "@/lib/properties";
 import { extraLineTotal, nightsBetweenDates, type ExtraCalcKind } from "@/lib/booking-extras";
 
 export type BookingFormValues = Omit<BookingInput, "source" | "status"> & {
@@ -66,6 +66,7 @@ export function BookingForm({
   submitting?: boolean;
 }) {
   const [v, setV] = useState<BookingFormValues>(initial);
+  const [manualTotal, setManualTotal] = useState<boolean>(Number(initial.total_amount) > 0);
   const set = <K extends keyof BookingFormValues>(k: K, val: BookingFormValues[K]) =>
     setV((s) => ({ ...s, [k]: val }));
 
@@ -85,13 +86,15 @@ export function BookingForm({
   const lineAmount = (svc: { calc: ExtraCalcKind | string; pricePerDay: number }) =>
     extraLineTotal(svc.calc as ExtraCalcKind, Number(svc.pricePerDay) || 0, extrasCtx);
 
-  const recalc = (state: BookingFormValues): BookingFormValues => {
-    const defined = properties.find((p) => p.id === state.property_id)?.extraServices ?? [];
+  const computeTotals = (state: BookingFormValues) => {
+    const prop = properties.find((p) => p.id === state.property_id);
+    const defined = prop?.extraServices ?? [];
+    const days = nightsBetweenDates(state.date_from, state.date_to);
     const ctx = {
       adults: state.adults_count,
       children: state.children_count,
       infants: state.infants_count,
-      days: nightsBetweenDates(state.date_from, state.date_to),
+      days,
     };
     const extras = state.extras
       .map((e) => {
@@ -106,14 +109,27 @@ export function BookingForm({
       })
       .filter(Boolean) as BookingFormValues["extras"];
     const extras_total = extras.reduce((s, e) => s + e.amount, 0);
-    const delta = extras_total - (state.extras_total ?? 0);
+    const stay =
+      prop && days > 0
+        ? priceForNights({ pricePerNight: prop.pricePerNight, priceTiers: prop.priceTiers ?? [] }, days)
+        : { total: 0, pricePerNight: prop?.pricePerNight ?? 0, tier: null };
+    const stayTotal = Number((stay.total || 0).toFixed(2));
+    const computed = Number((stayTotal + extras_total).toFixed(2));
+    return { extras, extras_total, days, stayTotal, nightly: stay.pricePerNight, computed };
+  };
+
+  const recalc = (state: BookingFormValues, forceTotal = false): BookingFormValues => {
+    const { extras, extras_total, computed } = computeTotals(state);
     return {
       ...state,
       extras,
       extras_total,
-      total_amount: Math.max(0, Number((state.total_amount + delta).toFixed(2))),
+      total_amount:
+        manualTotal && !forceTotal ? state.total_amount : Math.max(0, computed),
     };
   };
+
+  const totals = computeTotals(v);
 
   const toggleExtra = (name: string, checked: boolean) =>
     setV((s) =>
