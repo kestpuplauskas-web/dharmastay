@@ -18,9 +18,9 @@ export const BOOKING_SOURCE_LABELS: Record<string, string> = {
 };
 
 export const BOOKING_STATUS_LABELS: Record<string, string> = {
-  confirmed: "Patvirtinta",
-  pending: "Laukiama",
-  completed: "Įvykdyta",
+  confirmed: "Apmokėta",
+  pending: "Laukiama apmokėjimo",
+  completed: "Užbaigta",
   cancelled: "Atšaukta",
 };
 
