@@ -15,6 +15,7 @@ import {
   type RoomConfig,
 } from "@/lib/properties";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import { NumberInput } from "@/components/NumberInput";
 
 export type PropertyFormValues = {
   name: string;
@@ -189,34 +190,33 @@ export function PropertyForm({
       <section className="grid gap-3 rounded-lg border p-4 md:grid-cols-4">
         <label className="text-sm">
           Plotas m²
-          <input
-            type="number"
-            value={v.areaM2 ?? ""}
-            onChange={(e) =>
-              set("areaM2", e.target.value === "" ? null : Number(e.target.value))
-            }
+          <NumberInput
+            min={0}
+            placeholder="0"
+            value={v.areaM2 ?? null}
+            onChange={(n) => set("areaM2", n)}
             className="mt-1 w-full rounded border px-2 py-1"
           />
         </label>
         <label className="text-sm">
           Max svečių
-          <input
-            type="number"
+          <NumberInput
             min={1}
+            placeholder="1"
             value={v.maxGuests}
-            onChange={(e) => set("maxGuests", Number(e.target.value))}
+            emptyFallback={1}
+            onChange={(n) => set("maxGuests", n ?? 1)}
             className="mt-1 w-full rounded border px-2 py-1"
           />
         </label>
         <label className="text-sm">
           Vonių
-          <input
-            type="number"
+          <NumberInput
             min={0}
-            value={v.rooms.bathrooms ?? ""}
-            onChange={(e) =>
-              set("rooms", { ...v.rooms, bathrooms: Number(e.target.value) || 0 })
-            }
+            placeholder="0"
+            value={v.rooms.bathrooms ?? null}
+            emptyFallback={0}
+            onChange={(n) => set("rooms", { ...v.rooms, bathrooms: n ?? 0 })}
             className="mt-1 w-full rounded border px-2 py-1"
           />
         </label>
@@ -253,13 +253,12 @@ export function PropertyForm({
                     </option>
                   ))}
                 </select>
-                <input
-                  type="number"
+                <NumberInput
                   min={1}
+                  placeholder="1"
                   value={c.beds}
-                  onChange={(e) =>
-                    updateConfig(idx, { beds: Math.max(1, Number(e.target.value) || 1) })
-                  }
+                  emptyFallback={1}
+                  onChange={(n) => updateConfig(idx, { beds: Math.max(1, n ?? 1) })}
                   className="rounded border px-2 py-1 text-sm"
                 />
                 <select
@@ -320,21 +319,23 @@ export function PropertyForm({
       <section className="grid gap-3 rounded-lg border p-4 md:grid-cols-3">
         <label className="text-sm">
           Kaina už naktį (€)
-          <input
-            type="number"
+          <NumberInput
             step="0.01"
             min={0}
+            placeholder="0.00"
             value={v.pricePerNight}
-            onChange={(e) => set("pricePerNight", Number(e.target.value))}
+            emptyFallback={0}
+            onChange={(n) => set("pricePerNight", n ?? 0)}
             className="mt-1 w-full rounded border px-2 py-1"
           />
         </label>
         <label className="text-sm">
           Rikiavimas
-          <input
-            type="number"
+          <NumberInput
+            placeholder="0"
             value={v.sortOrder}
-            onChange={(e) => set("sortOrder", Number(e.target.value))}
+            emptyFallback={0}
+            onChange={(n) => set("sortOrder", n ?? 0)}
             className="mt-1 w-full rounded border px-2 py-1"
           />
         </label>
@@ -371,36 +372,39 @@ export function PropertyForm({
               }}
               className="flex-1 rounded border px-2 py-1 text-sm"
             />
-            <input
-              type="number"
+            <NumberInput
               placeholder="Min naktų"
+              min={1}
               value={tier.minNights}
-              onChange={(e) => {
+              emptyFallback={1}
+              onChange={(n) => {
                 const next = [...v.priceTiers];
-                next[idx] = { ...tier, minNights: Number(e.target.value) };
+                next[idx] = { ...tier, minNights: n ?? 1 };
                 set("priceTiers", next);
               }}
               className="w-24 rounded border px-2 py-1 text-sm"
             />
-            <input
-              type="number"
+            <NumberInput
               placeholder="Max naktų"
+              min={1}
               value={tier.maxNights}
-              onChange={(e) => {
+              emptyFallback={1}
+              onChange={(n) => {
                 const next = [...v.priceTiers];
-                next[idx] = { ...tier, maxNights: Number(e.target.value) };
+                next[idx] = { ...tier, maxNights: n ?? 1 };
                 set("priceTiers", next);
               }}
               className="w-24 rounded border px-2 py-1 text-sm"
             />
-            <input
-              type="number"
+            <NumberInput
               step="0.01"
+              min={0}
               placeholder="€/naktis"
               value={tier.pricePerNight}
-              onChange={(e) => {
+              emptyFallback={0}
+              onChange={(n) => {
                 const next = [...v.priceTiers];
-                next[idx] = { ...tier, pricePerNight: Number(e.target.value) };
+                next[idx] = { ...tier, pricePerNight: n ?? 0 };
                 set("priceTiers", next);
               }}
               className="w-24 rounded border px-2 py-1 text-sm"
@@ -499,14 +503,15 @@ export function PropertyForm({
                   </option>
                 ))}
               </select>
-              <input
-                type="number"
+              <NumberInput
                 step="0.01"
                 min={0}
+                placeholder="0.00"
                 value={svc.pricePerDay}
-                onChange={(e) => {
+                emptyFallback={0}
+                onChange={(n) => {
                   const next = [...v.extraServices];
-                  next[idx] = { ...svc, pricePerDay: Number(e.target.value) || 0 };
+                  next[idx] = { ...svc, pricePerDay: n ?? 0 };
                   set("extraServices", next);
                 }}
                 className="rounded border px-2 py-1 text-sm"

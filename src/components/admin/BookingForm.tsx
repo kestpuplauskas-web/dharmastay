@@ -12,6 +12,7 @@ import {
 import { DateRangePicker } from "@/components/DateRangePicker";
 import { DatePicker } from "@/components/DatePicker";
 import { GuestsPicker } from "@/components/GuestsPicker";
+import { NumberInput } from "@/components/NumberInput";
 
 export type BookingFormValues = Omit<BookingInput, "source" | "status"> & {
   source: (typeof BOOKING_SOURCE_VALUES)[number];
@@ -308,11 +309,13 @@ export function BookingForm({
       </label>
       <label className="text-sm">
         Suma (€)
-        <input
-          type="number"
+        <NumberInput
           step="0.01"
+          min={0}
+          placeholder="0.00"
           value={v.total_amount}
-          onChange={(e) => set("total_amount", Number(e.target.value))}
+          emptyFallback={0}
+          onChange={(n) => set("total_amount", n ?? 0)}
           className="mt-1 w-full rounded border px-2 py-1"
         />
       </label>
