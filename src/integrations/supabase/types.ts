@@ -17,9 +17,13 @@ export type Database = {
       bookings: {
         Row: {
           bic: string | null
+          birth_date: string | null
           booking_number: string
           check_in_time: string
           check_out_time: string
+          client_type: string
+          company_code: string
+          company_name: string
           created_at: string
           customer_address: string
           customer_email: string
@@ -33,6 +37,7 @@ export type Database = {
           extras_total: number
           guests: number
           id: string
+          is_vat_payer: boolean
           location: string
           note: string | null
           payment_amount: number
@@ -46,12 +51,17 @@ export type Database = {
           status: string
           total_amount: number
           updated_at: string
+          vat_number: string
         }
         Insert: {
           bic?: string | null
+          birth_date?: string | null
           booking_number: string
           check_in_time?: string
           check_out_time?: string
+          client_type?: string
+          company_code?: string
+          company_name?: string
           created_at?: string
           customer_address?: string
           customer_email?: string
@@ -65,6 +75,7 @@ export type Database = {
           extras_total?: number
           guests?: number
           id?: string
+          is_vat_payer?: boolean
           location?: string
           note?: string | null
           payment_amount?: number
@@ -78,12 +89,17 @@ export type Database = {
           status?: string
           total_amount?: number
           updated_at?: string
+          vat_number?: string
         }
         Update: {
           bic?: string | null
+          birth_date?: string | null
           booking_number?: string
           check_in_time?: string
           check_out_time?: string
+          client_type?: string
+          company_code?: string
+          company_name?: string
           created_at?: string
           customer_address?: string
           customer_email?: string
@@ -97,6 +113,7 @@ export type Database = {
           extras_total?: number
           guests?: number
           id?: string
+          is_vat_payer?: boolean
           location?: string
           note?: string | null
           payment_amount?: number
@@ -110,6 +127,7 @@ export type Database = {
           status?: string
           total_amount?: number
           updated_at?: string
+          vat_number?: string
         }
         Relationships: [
           {
