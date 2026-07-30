@@ -153,6 +153,108 @@ export function BookingsGantt({
   const labelColWidth = isMobile ? 120 : 200;
   const gridTemplate = `${labelColWidth}px repeat(${dayCount}, minmax(${colMinWidth}px, 1fr))`;
 
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [barDrag, setBarDrag] = useState<BarDrag | null>(null);
+  const [pending, setPending] = useState<
+    { booking: Booking; property_id: string; date_from: string; date_to: string } | null
+  >(null);
+
+  const colWidth = () => {
+    const el = gridRef.current;
+    if (!el) return colMinWidth;
+    const w = el.getBoundingClientRect().width - labelColWidth;
+    return Math.max(1, w / dayCount);
+  };
+
+  const startBarDrag = (
+    e: React.PointerEvent,
+    booking: Booking,
+    mode: BarDrag["mode"],
+  ) => {
+    if (isMobile || !onReschedule) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setBarDrag({
+      booking,
+      mode,
+      originX: e.clientX,
+      propertyId: booking.property_id,
+      fromISO: booking.date_from,
+      toISO: booking.date_to,
+      moved: false,
+    });
+  };
+
+  useEffect(() => {
+    if (!barDrag) return;
+    const cw = colWidth();
+    const onMove = (e: PointerEvent) => {
+      const deltaDays = Math.round((e.clientX - barDrag.originX) / cw);
+      const b = barDrag.booking;
+      let fromISO = b.date_from;
+      let toISO = b.date_to;
+      let propertyId = barDrag.propertyId;
+
+      if (barDrag.mode === "move") {
+        fromISO = toISODate(addDays(parseISO(b.date_from), deltaDays));
+        toISO = toISODate(addDays(parseISO(b.date_to), deltaDays));
+        const el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
+        const row = el?.closest("[data-row-property]") as HTMLElement | null;
+        const pid = row?.getAttribute("data-row-property");
+        if (pid) propertyId = pid;
+      } else if (barDrag.mode === "resize-start") {
+        const next = addDays(parseISO(b.date_from), deltaDays);
+        const max = addDays(parseISO(b.date_to), -1);
+        fromISO = toISODate(next > max ? max : next);
+      } else {
+        const next = addDays(parseISO(b.date_to), deltaDays);
+        const min = addDays(parseISO(b.date_from), 1);
+        toISO = toISODate(next < min ? min : next);
+      }
+
+      const changed =
+        fromISO !== b.date_from || toISO !== b.date_to || propertyId !== b.property_id;
+      setBarDrag((d) => (d ? { ...d, fromISO, toISO, propertyId, moved: d.moved || changed } : d));
+    };
+    const onUp = () => {
+      setBarDrag(null);
+      const b = barDrag.booking;
+      const changed =
+        barDrag.fromISO !== b.date_from ||
+        barDrag.toISO !== b.date_to ||
+        barDrag.propertyId !== b.property_id;
+      if (changed) {
+        setPending({
+          booking: b,
+          property_id: barDrag.propertyId,
+          date_from: barDrag.fromISO,
+          date_to: barDrag.toISO,
+        });
+      } else if (!barDrag.moved) {
+        setSelected(b);
+      }
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+  }, [barDrag]);
+
+  const propertyName = (id: string) => properties.find((p) => p.id === id)?.name ?? "—";
+  const dragConflict = (() => {
+    if (!barDrag) return false;
+    return bookings.some(
+      (o) =>
+        o.id !== barDrag.booking.id &&
+        o.property_id === barDrag.propertyId &&
+        o.status !== "cancelled" &&
+        o.date_from < barDrag.toISO &&
+        o.date_to > barDrag.fromISO,
+    );
+  })();
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-2 flex-wrap">
