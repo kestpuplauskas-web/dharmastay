@@ -309,10 +309,13 @@ export function BookingsGantt({
           </div>
 
           {properties.map((p) => {
-            const rowBookings = visibleBookings.filter((b) => b.property_id === p.id);
+            const rowBookings = visibleBookings.filter(
+              (b) => b.property_id === p.id && b.id !== barDrag?.booking.id,
+            );
             return (
               <div
                 key={p.id}
+                data-row-property={p.id}
                 className="grid border-b last:border-b-0 relative"
                 style={{ gridTemplateColumns: gridTemplate, minHeight: 56 }}
               >
@@ -366,19 +369,55 @@ export function BookingsGantt({
                   const colEnd = 2 + endIdx + 1;
                   const cls = STATUS_CLASSES[b.status] ?? "bg-gray-400 text-white border-gray-600";
                   return (
-                    <button
+                    <div
                       key={b.id}
-                      type="button"
-                      onClick={() => setSelected(b)}
-                      className={`m-1 px-2 py-1 rounded text-xs font-medium truncate border shadow-sm cursor-pointer z-10 text-left ${cls}`}
+                      className={`relative m-1 rounded border shadow-sm z-10 ${cls} ${
+                        canDrag ? "cursor-grab active:cursor-grabbing" : "cursor-pointer"
+                      }`}
                       style={{ gridColumn: `${colStart} / ${colEnd}`, gridRow: 1 }}
                       title={`${b.customer_name} · ${b.date_from} → ${b.date_to}`}
+                      onPointerDown={(e) => startBarDrag(e, b, "move")}
+                      onClick={() => {
+                        if (!canDrag) setSelected(b);
+                      }}
                     >
-                      {b.booking_number ? <span className="font-mono opacity-80 mr-1">{b.booking_number}</span> : null}
-                      {b.customer_name || "—"}
-                    </button>
+                      <div className="px-2 py-1 text-xs font-medium truncate text-left select-none">
+                        {b.booking_number ? <span className="font-mono opacity-80 mr-1">{b.booking_number}</span> : null}
+                        {b.customer_name || "—"}
+                      </div>
+                      {canDrag && (
+                        <>
+                          <div
+                            className="absolute inset-y-0 left-0 w-2 cursor-col-resize rounded-l bg-black/10 hover:bg-black/25"
+                            onPointerDown={(e) => startBarDrag(e, b, "resize-start")}
+                          />
+                          <div
+                            className="absolute inset-y-0 right-0 w-2 cursor-col-resize rounded-r bg-black/10 hover:bg-black/25"
+                            onPointerDown={(e) => startBarDrag(e, b, "resize-end")}
+                          />
+                        </>
+                      )}
+                    </div>
                   );
                 })}
+
+                {barDrag && barDrag.propertyId === p.id && (() => {
+                  const startIdx = Math.max(0, daysBetween(startDate, parseISO(barDrag.fromISO)));
+                  const endIdx = Math.min(dayCount - 1, daysBetween(startDate, parseISO(barDrag.toISO)));
+                  if (endIdx < startIdx) return null;
+                  return (
+                    <div
+                      className={`m-1 px-2 py-1 rounded text-xs font-medium truncate border-2 border-dashed z-30 pointer-events-none ${
+                        dragConflict
+                          ? "bg-red-500/30 border-red-600 text-red-900"
+                          : "bg-primary/30 border-primary text-foreground"
+                      }`}
+                      style={{ gridColumn: `${2 + startIdx} / ${2 + endIdx + 1}`, gridRow: 1 }}
+                    >
+                      {barDrag.fromISO} → {barDrag.toISO}
+                    </div>
+                  );
+                })()}
               </div>
             );
           })}
