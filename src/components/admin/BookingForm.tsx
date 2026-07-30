@@ -4,6 +4,7 @@ import type { Property } from "@/lib/properties";
 import { BOOKING_SOURCES, BOOKING_STATUSES, type BookingInput } from "@/lib/bookings.functions";
 import { DateRangePicker } from "@/components/DateRangePicker";
 import { DatePicker } from "@/components/DatePicker";
+import { GuestsPicker } from "@/components/GuestsPicker";
 
 export type BookingFormValues = Omit<BookingInput, "source" | "status"> & {
   source: (typeof BOOKING_SOURCES)[number];
@@ -19,6 +20,10 @@ export function defaultBookingForm(props: Property[] = []): BookingFormValues {
     check_out_time: "11:00",
     location: "",
     guests: 1,
+    adults_count: 1,
+    children_count: 0,
+    infants_count: 0,
+    total_guests: 1,
     customer_name: "",
     customer_phone: "",
     customer_email: "",
@@ -60,15 +65,21 @@ export function BookingForm({
     <form
       onSubmit={(e) => {
         e.preventDefault();
+        const totals = {
+          total_guests: v.adults_count + v.children_count + v.infants_count,
+          guests: v.adults_count + v.children_count + v.infants_count,
+        };
         onSubmit(
           v.client_type === "company"
             ? {
                 ...v,
+                ...totals,
                 birth_date: null,
                 vat_number: v.is_vat_payer ? v.vat_number : "",
               }
             : {
                 ...v,
+                ...totals,
                 company_name: "",
                 company_code: "",
                 is_vat_payer: false,
@@ -126,16 +137,23 @@ export function BookingForm({
           className="mt-1 w-full rounded border px-2 py-1"
         />
       </label>
-      <label className="text-sm">
-        Svečių
-        <input
-          type="number"
-          min={1}
-          value={v.guests}
-          onChange={(e) => set("guests", Number(e.target.value))}
-          className="mt-1 w-full rounded border px-2 py-1"
+      <div className="text-sm">
+        Svečių skaičius
+        <GuestsPicker
+          className="mt-1"
+          value={{ adults: v.adults_count, children: v.children_count, infants: v.infants_count }}
+          onChange={(g) =>
+            setV((s) => ({
+              ...s,
+              adults_count: g.adults,
+              children_count: g.children,
+              infants_count: g.infants,
+              total_guests: g.adults + g.children + g.infants,
+              guests: g.adults + g.children + g.infants,
+            }))
+          }
         />
-      </label>
+      </div>
       <div className="md:col-span-2">
         <span className="text-sm">Kliento tipas</span>
         <div className="mt-1 inline-flex rounded-lg border p-1">
