@@ -401,9 +401,10 @@ export function BookingForm({
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="phone">Telefonas</Label>
+              <Label htmlFor="phone">Telefonas *</Label>
               <Input
                 id="phone"
+                required
                 placeholder="+370 600 00000"
                 value={v.customer_phone}
                 onChange={(e) => set("customer_phone", e.target.value)}
