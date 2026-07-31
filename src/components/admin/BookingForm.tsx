@@ -2,6 +2,7 @@ import { useState } from "react";
 import { format, parse } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useNavigate } from "@tanstack/react-router";
 import type { Property } from "@/lib/properties";
 import {
   BOOKING_SOURCES,
@@ -16,6 +17,20 @@ import { DateRangePicker } from "@/components/DateRangePicker";
 import { DatePicker } from "@/components/DatePicker";
 import { GuestsPicker } from "@/components/GuestsPicker";
 import { NumberInput } from "@/components/NumberInput";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { EXTRA_CALC_LABELS, priceForNights } from "@/lib/properties";
 import { extraLineTotal, nightsBetweenDates, type ExtraCalcKind } from "@/lib/booking-extras";
 
@@ -41,6 +56,7 @@ export function defaultBookingForm(props: Property[] = []): BookingFormValues {
     customer_phone: "",
     customer_email: "",
     customer_address: "",
+    customer_country: "Lietuva",
     customer_id_code: "",
     client_type: "person",
     birth_date: null,
