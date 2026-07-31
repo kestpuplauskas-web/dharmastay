@@ -66,7 +66,7 @@ export function defaultBookingForm(props: Property[] = []): BookingFormValues {
     is_vat_payer: false,
     vat_number: "",
     source: "phone",
-    status: "confirmed",
+    status: "pending",
     total_amount: 0,
     note: "",
     extras: [],
