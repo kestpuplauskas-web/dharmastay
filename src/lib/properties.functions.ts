@@ -57,12 +57,19 @@ export const listActiveProperties = createServerFn({ method: "GET" }).handler(as
     .eq("is_active", true)
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: true });
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error("[listActiveProperties]", error.message);
+    throw new Error("Nepavyko įkelti objektų.");
+  }
 
   let bookings: BookingRow[] = [];
   if ((data ?? []).length) {
-    const { data: b, error: bErr } = await supabase.rpc("get_active_booked_dates");
-    if (bErr) throw new Error(bErr.message);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: b, error: bErr } = await supabaseAdmin.rpc("get_active_booked_dates");
+    if (bErr) {
+      console.error("[listActiveProperties:booked]", bErr.message);
+      throw new Error("Nepavyko įkelti užimtumo duomenų.");
+    }
     bookings = (b ?? []) as BookingRow[];
   }
   const byProp = new Map<string, BookingRow[]>();
@@ -83,12 +90,19 @@ export const getPropertyById = createServerFn({ method: "GET" })
       .select("*")
       .eq("id", data.id)
       .maybeSingle();
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[getPropertyById]", error.message);
+      throw new Error("Nepavyko įkelti objekto.");
+    }
     if (!prop) return null;
-    const { data: bookings, error: bErr } = await supabase.rpc("get_property_booked_dates", {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: bookings, error: bErr } = await supabaseAdmin.rpc("get_property_booked_dates", {
       _property_id: data.id,
     });
-    if (bErr) throw new Error(bErr.message);
+    if (bErr) {
+      console.error("[getPropertyById:booked]", bErr.message);
+      throw new Error("Nepavyko įkelti užimtumo duomenų.");
+    }
     const rows =
       (bookings ?? []).map((b) => ({
         property_id: data.id,
@@ -249,20 +263,5 @@ export const getMyRole = createServerFn({ method: "GET" })
     return { userId, isAdmin: roles.includes("admin"), roles };
   });
 
-export const claimFirstAdmin = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const { userId } = context;
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { count, error: cErr } = await supabaseAdmin
-      .from("user_roles")
-      .select("*", { count: "exact", head: true })
-      .eq("role", "admin");
-    if (cErr) throw new Error(cErr.message);
-    if ((count ?? 0) > 0) throw new Error("Administratorius jau egzistuoja.");
-    const { error } = await supabaseAdmin
-      .from("user_roles")
-      .insert({ user_id: userId, role: "admin" });
-    if (error) throw new Error(error.message);
-    return { ok: true };
-  });
+// Self-serve admin bootstrap was removed: it allowed any registered user to
+// escalate to admin. Admin roles are granted directly in the database only.
