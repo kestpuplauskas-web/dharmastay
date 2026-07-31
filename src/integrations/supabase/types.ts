@@ -28,6 +28,7 @@ export type Database = {
           company_name: string
           created_at: string
           customer_address: string
+          customer_country: string
           customer_email: string
           customer_id_code: string
           customer_name: string
@@ -70,6 +71,7 @@ export type Database = {
           company_name?: string
           created_at?: string
           customer_address?: string
+          customer_country?: string
           customer_email?: string
           customer_id_code?: string
           customer_name?: string
@@ -112,6 +114,7 @@ export type Database = {
           company_name?: string
           created_at?: string
           customer_address?: string
+          customer_country?: string
           customer_email?: string
           customer_id_code?: string
           customer_name?: string
