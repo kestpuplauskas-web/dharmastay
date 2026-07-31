@@ -11,6 +11,7 @@ import {
   BOOKING_STATUS_LABELS,
   BOOKING_SOURCE_VALUES,
   checkBookingConflicts,
+  listOccupiedRanges,
   type BookingInput,
 } from "@/lib/bookings.functions";
 import { DateRangePicker } from "@/components/DateRangePicker";
@@ -112,6 +113,29 @@ export function BookingForm({
       }),
   });
   const hasConflict = canCheck && conflicts.length > 0;
+
+  const fetchOccupied = useServerFn(listOccupiedRanges);
+  const { data: occupiedRows = [] } = useQuery({
+    queryKey: ["booking-occupied", v.property_id, bookingId ?? ""],
+    enabled: Boolean(v.property_id),
+    queryFn: () =>
+      fetchOccupied({
+        data: {
+          property_id: v.property_id,
+          ...(bookingId ? { excludeId: bookingId } : {}),
+        },
+      }),
+  });
+  // Užimtos naktys: nuo atvykimo iki išvykimo dienos (išvykimo diena laisva)
+  const occupiedDates = (occupiedRows as any[]).flatMap((r) => {
+    const start = parse(r.date_from, "yyyy-MM-dd", new Date());
+    const end = parse(r.date_to, "yyyy-MM-dd", new Date());
+    const out: Date[] = [];
+    for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
+      out.push(new Date(d));
+    }
+    return out;
+  });
 
   const selectedProperty = properties.find((p) => p.id === v.property_id);
   const availableExtras = selectedProperty?.extraServices ?? [];
@@ -243,6 +267,7 @@ export function BookingForm({
               value={range}
               placeholder="Pasirinkite datas"
               allowPast
+              disabledDates={occupiedDates}
               onChange={(r) =>
                 setV((s) =>
                   recalc({
