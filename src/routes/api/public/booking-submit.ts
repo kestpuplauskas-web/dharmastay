@@ -87,7 +87,10 @@ export const Route = createFileRoute("/api/public/booking-submit")({
           .select("id, name, price_per_night, price_tiers, extra_services, is_active, max_guests")
           .eq("id", data.property_id)
           .maybeSingle();
-        if (pErr) return Response.json({ error: pErr.message }, { status: 500 });
+        if (pErr) {
+          console.error("[booking-submit:property]", pErr.message);
+          return Response.json({ error: "Nepavyko apdoroti užklausos" }, { status: 500 });
+        }
         if (!prop || !prop.is_active) {
           return Response.json({ error: "Objektas neprieinamas" }, { status: 404 });
         }
@@ -105,7 +108,10 @@ export const Route = createFileRoute("/api/public/booking-submit")({
           .neq("status", "cancelled")
           .lt("date_from", data.date_to)
           .gt("date_to", data.date_from);
-        if (cErr) return Response.json({ error: cErr.message }, { status: 500 });
+        if (cErr) {
+          console.error("[booking-submit:conflicts]", cErr.message);
+          return Response.json({ error: "Nepavyko apdoroti užklausos" }, { status: 500 });
+        }
         if (conflicts && conflicts.length > 0) {
           return Response.json({ error: "Pasirinktos datos užimtos" }, { status: 409 });
         }
@@ -178,7 +184,10 @@ export const Route = createFileRoute("/api/public/booking-submit")({
           })
           .select("booking_number, payment_amount, bic")
           .single();
-        if (bErr) return Response.json({ error: bErr.message }, { status: 500 });
+        if (bErr) {
+          console.error("[booking-submit:insert]", bErr.message);
+          return Response.json({ error: "Nepavyko apdoroti užklausos" }, { status: 500 });
+        }
 
         return Response.json({
           booking_number: booking.booking_number,
