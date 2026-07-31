@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-r
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Home, Calendar, FileText, Wallet, LayoutDashboard, Globe, LogOut, Building2 } from "lucide-react";
-import { getMyRole, claimFirstAdmin } from "@/lib/properties.functions";
+import { getMyRole } from "@/lib/properties.functions";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -11,8 +11,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 function AdminLayout() {
   const fetchRole = useServerFn(getMyRole);
-  const claim = useServerFn(claimFirstAdmin);
-  const { data: role, isLoading, refetch } = useQuery({
+  const { data: role, isLoading } = useQuery({
     queryKey: ["my-role"],
     queryFn: () => fetchRole(),
   });
@@ -26,21 +25,8 @@ function AdminLayout() {
       <div className="mx-auto max-w-md p-8">
         <h1 className="text-2xl font-semibold">Neturite administratoriaus teisių</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Jei projektas naujas — galite tapti pirmuoju administratoriumi.
+          Susisiekite su sistemos administratoriumi, kad jums būtų suteiktos teisės.
         </p>
-        <button
-          className="mt-4 rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground"
-          onClick={async () => {
-            try {
-              await claim();
-              await refetch();
-            } catch (e) {
-              alert(e instanceof Error ? e.message : "Klaida");
-            }
-          }}
-        >
-          Tapti pirmuoju administratoriumi
-        </button>
       </div>
     );
   }
