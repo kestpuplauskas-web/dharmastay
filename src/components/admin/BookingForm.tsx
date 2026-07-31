@@ -87,6 +87,7 @@ export function BookingForm({
   bookingId?: string;
 }) {
   const [v, setV] = useState<BookingFormValues>(initial);
+  const navigate = useNavigate();
   const [manualTotal, setManualTotal] = useState<boolean>(Number(initial.total_amount) > 0);
   const set = <K extends keyof BookingFormValues>(k: K, val: BookingFormValues[K]) =>
     setV((s) => ({ ...s, [k]: val }));
