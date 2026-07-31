@@ -51,6 +51,7 @@ function EditBookingPage() {
     customer_phone: booking.customer_phone ?? "",
     customer_email: booking.customer_email ?? "",
     customer_address: booking.customer_address ?? "",
+    customer_country: (booking as any).customer_country ?? "Lietuva",
     customer_id_code: booking.customer_id_code ?? "",
     client_type: (booking.client_type ?? "person") as BookingFormValues["client_type"],
     birth_date: booking.birth_date ?? null,
