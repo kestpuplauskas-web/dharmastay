@@ -7,19 +7,29 @@ function unauthorized() {
   });
 }
 
-async function run(request: Request) {
-  const secret = process.env.ICAL_SYNC_SECRET;
-  if (!secret) {
-    return new Response(JSON.stringify({ error: "Not configured" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+async function isAuthorized(provided: string): Promise<boolean> {
+  if (!provided) return false;
+  const envSecret = process.env.ICAL_SYNC_SECRET;
+  if (envSecret && provided === envSecret) return true;
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data } = await supabaseAdmin
+      .from("app_secrets")
+      .select("value")
+      .eq("key", "ical_sync_token")
+      .maybeSingle();
+    return !!data?.value && data.value === provided;
+  } catch {
+    return false;
   }
+}
+
+async function run(request: Request) {
   const provided =
     request.headers.get("x-ical-sync-secret") ??
     new URL(request.url).searchParams.get("secret") ??
     "";
-  if (provided !== secret) return unauthorized();
+  if (!(await isAuthorized(provided))) return unauthorized();
 
   try {
     const { syncAllCalendars } = await import("@/lib/ical.server");
