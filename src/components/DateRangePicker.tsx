@@ -147,7 +147,7 @@ export function DateRangePicker({
             today:
               "!bg-transparent !text-foreground [&_button]:ring-1 [&_button]:ring-primary [&_button]:!rounded-full",
             disabled:
-              "!text-muted-foreground !opacity-40 line-through pointer-events-none",
+              "!text-muted-foreground/70 !opacity-100 line-through decoration-muted-foreground/70 [&_button]:!bg-muted/60 [&_button]:!text-muted-foreground/70 [&_button]:line-through pointer-events-none",
           }}
         />
       </PopoverContent>

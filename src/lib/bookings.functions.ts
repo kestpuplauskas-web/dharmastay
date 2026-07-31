@@ -217,6 +217,29 @@ export const checkBookingConflicts = createServerFn({ method: "POST" })
     return rows ?? [];
   });
 
+export const listOccupiedRanges = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) =>
+    z
+      .object({
+        property_id: z.string().uuid(),
+        excludeId: z.string().uuid().optional(),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await ensureAdmin(context);
+    let q = context.supabase
+      .from("bookings")
+      .select("id, date_from, date_to")
+      .eq("property_id", data.property_id)
+      .neq("status", "cancelled");
+    if (data.excludeId) q = q.neq("id", data.excludeId);
+    const { data: rows, error } = await q;
+    if (error) throw new Error(error.message);
+    return rows ?? [];
+  });
+
 export const createBooking = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => bookingInput.parse(d))
