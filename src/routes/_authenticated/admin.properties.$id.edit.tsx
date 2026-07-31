@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router"
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPropertyById, updateProperty } from "@/lib/properties.functions";
+import { syncPropertyIcal } from "@/lib/ical.functions";
 import { PropertyForm, propertyToForm, type PropertyFormValues } from "@/components/admin/PropertyForm";
 
 export const Route = createFileRoute("/_authenticated/admin/properties/$id/edit")({
@@ -14,7 +15,9 @@ function EditPropertyPage() {
   const update = useServerFn(updateProperty);
   const navigate = useNavigate();
 
-  const { data: prop, isLoading } = useQuery({
+  const syncIcal = useServerFn(syncPropertyIcal);
+
+  const { data: prop, isLoading, refetch } = useQuery({
     queryKey: ["property-edit", id],
     queryFn: () => fetchOne({ data: { id } }),
   });
@@ -22,6 +25,11 @@ function EditPropertyPage() {
   const m = useMutation({
     mutationFn: (v: PropertyFormValues) => update({ data: { id, patch: v } }),
     onSuccess: () => navigate({ to: "/admin/properties" }),
+  });
+
+  const sync = useMutation({
+    mutationFn: () => syncIcal({ data: { propertyId: id } }),
+    onSuccess: () => refetch(),
   });
 
   if (isLoading) return <p className="text-muted-foreground">Kraunama…</p>;
@@ -34,6 +42,12 @@ function EditPropertyPage() {
         initial={propertyToForm(prop)}
         onSubmit={(v) => m.mutate(v)}
         submitting={m.isPending}
+        icalMeta={{
+          lastSyncAt: prop.icalLastSyncAt,
+          lastStatus: prop.icalLastStatus,
+          onSync: prop.icalImportUrl ? () => sync.mutate() : undefined,
+          syncing: sync.isPending,
+        }}
       />
       {m.error && (
         <p className="mt-3 text-sm text-destructive">

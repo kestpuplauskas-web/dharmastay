@@ -7,6 +7,8 @@ export const BOOKING_SOURCES = ["phone", "whatsapp", "website", "booking", "airb
 // "direct" liko tik dėl senų įrašų suderinamumo (sąraše nerodomas)
 export const BOOKING_SOURCE_VALUES = [...BOOKING_SOURCES, "direct"] as const;
 export const BOOKING_STATUSES = ["confirmed", "pending", "completed", "cancelled"] as const;
+/** Visi galimi statusai, įskaitant importuotus iš išorinių kalendorių (nerodomi formoje). */
+export const ALL_BOOKING_STATUSES = [...BOOKING_STATUSES, "blocked_external"] as const;
 
 export const BOOKING_SOURCE_LABELS: Record<string, string> = {
   phone: "Telefonu",
@@ -23,6 +25,7 @@ export const BOOKING_STATUS_LABELS: Record<string, string> = {
   pending: "Laukiama apmokėjimo",
   completed: "Užbaigta",
   cancelled: "Atšaukta",
+  blocked_external: "Išorinė / užblokuota",
 };
 
 const bookingInput = z.object({
@@ -155,7 +158,7 @@ export const listBookings = createServerFn({ method: "POST" })
     z
       .object({
         propertyId: z.string().uuid().optional(),
-        status: z.enum(BOOKING_STATUSES).optional(),
+        status: z.enum(ALL_BOOKING_STATUSES).optional(),
         from: z.string().optional(),
         to: z.string().optional(),
       })

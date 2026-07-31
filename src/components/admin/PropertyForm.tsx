@@ -54,6 +54,7 @@ export type PropertyFormValues = {
   status: "active" | "maintenance" | "blocked";
   year: number;
   category: string;
+  icalImportUrl: string;
 };
 
 export function propertyToForm(p: Property | null | undefined): PropertyFormValues {
@@ -81,6 +82,7 @@ export function propertyToForm(p: Property | null | undefined): PropertyFormValu
     status: (p?.status as "active" | "maintenance" | "blocked") ?? "active",
     year: p?.year ?? new Date().getFullYear(),
     category: p?.category ?? "",
+    icalImportUrl: p?.icalImportUrl ?? "",
   };
 }
 
@@ -88,10 +90,17 @@ export function PropertyForm({
   initial,
   onSubmit,
   submitting,
+  icalMeta,
 }: {
   initial: PropertyFormValues;
   onSubmit: (v: PropertyFormValues) => void;
   submitting?: boolean;
+  icalMeta?: {
+    lastSyncAt: string | null;
+    lastStatus: string | null;
+    onSync?: () => void;
+    syncing?: boolean;
+  };
 }) {
   const [v, setV] = useState<PropertyFormValues>(initial);
   const set = <K extends keyof PropertyFormValues>(k: K, val: PropertyFormValues[K]) =>
@@ -347,6 +356,44 @@ export function PropertyForm({
           />
           Aktyvus (rodomas svetainėje)
         </label>
+      </section>
+
+      <section className="rounded-lg border p-4">
+        <h3 className="mb-2 text-sm font-semibold">Kalendoriaus sinchronizacija (iCal)</h3>
+        <label className="text-sm block">
+          Booking.com / Airbnb iCal nuoroda
+          <input
+            type="url"
+            placeholder="https://ical.booking.com/v1/export?t=..."
+            value={v.icalImportUrl}
+            onChange={(e) => set("icalImportUrl", e.target.value)}
+            className="mt-1 w-full rounded border px-2 py-1"
+          />
+        </label>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Užimtos datos iš išorinio kalendoriaus importuojamos automatiškai kas 15 min.
+        </p>
+        {icalMeta && (
+          <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+            <span>
+              Paskutinė sinchronizacija:{" "}
+              {icalMeta.lastSyncAt
+                ? new Date(icalMeta.lastSyncAt).toLocaleString("lt-LT")
+                : "—"}
+              {icalMeta.lastStatus ? ` · ${icalMeta.lastStatus}` : ""}
+            </span>
+            {icalMeta.onSync && (
+              <button
+                type="button"
+                onClick={icalMeta.onSync}
+                disabled={icalMeta.syncing}
+                className="rounded border px-3 py-1 text-xs font-medium hover:bg-muted disabled:opacity-50"
+              >
+                {icalMeta.syncing ? "Sinchronizuojama…" : "Sinchronizuoti dabar"}
+              </button>
+            )}
+          </div>
+        )}
       </section>
 
       <section className="rounded-lg border p-4">

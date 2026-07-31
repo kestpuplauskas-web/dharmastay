@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_secrets: {
+        Row: {
+          created_at: string
+          key: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          key: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          key?: string
+          value?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           adults_count: number
@@ -36,6 +54,8 @@ export type Database = {
           date_from: string
           date_to: string
           expires_at: string | null
+          external_source: string | null
+          external_uid: string | null
           extras: Json
           extras_total: number
           guests: number
@@ -79,6 +99,8 @@ export type Database = {
           date_from: string
           date_to: string
           expires_at?: string | null
+          external_source?: string | null
+          external_uid?: string | null
           extras?: Json
           extras_total?: number
           guests?: number
@@ -122,6 +144,8 @@ export type Database = {
           date_from?: string
           date_to?: string
           expires_at?: string | null
+          external_source?: string | null
+          external_uid?: string | null
           extras?: Json
           extras_total?: number
           guests?: number
@@ -337,6 +361,9 @@ export type Database = {
           description: string
           extra_services: Json
           features: Json
+          ical_import_url: string | null
+          ical_last_status: string | null
+          ical_last_sync_at: string | null
           id: string
           image_urls: Json
           is_active: boolean
@@ -366,6 +393,9 @@ export type Database = {
           description?: string
           extra_services?: Json
           features?: Json
+          ical_import_url?: string | null
+          ical_last_status?: string | null
+          ical_last_sync_at?: string | null
           id?: string
           image_urls?: Json
           is_active?: boolean
@@ -395,6 +425,9 @@ export type Database = {
           description?: string
           extra_services?: Json
           features?: Json
+          ical_import_url?: string | null
+          ical_last_status?: string | null
+          ical_last_sync_at?: string | null
           id?: string
           image_urls?: Json
           is_active?: boolean

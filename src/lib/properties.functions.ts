@@ -46,6 +46,9 @@ function mapProperty(row: PropertyRow, bookings: BookingRow[] = []): Property {
     status: row.status,
     year: row.year,
     category: row.category ?? "",
+    icalImportUrl: row.ical_import_url ?? "",
+    icalLastSyncAt: row.ical_last_sync_at ?? null,
+    icalLastStatus: row.ical_last_status ?? null,
   };
 }
 
@@ -187,6 +190,12 @@ const propertyInputSchema = z.object({
   status: z.enum(["active", "maintenance", "blocked"]).default("active"),
   year: z.number().int().min(1800).max(2100).default(new Date().getFullYear()),
   category: z.string().max(100).default(""),
+  icalImportUrl: z
+    .string()
+    .trim()
+    .max(2000)
+    .default("")
+    .refine((v) => v === "" || /^https?:\/\/.+/i.test(v), "Neteisinga iCal nuoroda"),
 });
 
 function toRow(input: z.infer<typeof propertyInputSchema>) {
@@ -214,6 +223,7 @@ function toRow(input: z.infer<typeof propertyInputSchema>) {
     status: input.status,
     year: input.year,
     category: input.category || input.propertyType,
+    ical_import_url: input.icalImportUrl || null,
   };
 }
 
