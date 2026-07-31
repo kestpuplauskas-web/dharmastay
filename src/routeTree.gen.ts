@@ -25,6 +25,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminContractsRouteImport } from './routes/_authenticated/admin.contracts'
 import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authenticated/admin.expenses'
 import { Route as ApiPublicBookingSubmitRouteImport } from './routes/api/public/booking-submit'
+import { Route as ApiPublicIcalSyncRouteImport } from './routes/api/public/ical-sync'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as AuthenticatedAdminBookingsIndexRouteImport } from './routes/_authenticated/admin.bookings.index'
 import { Route as AuthenticatedAdminBookingsIdRouteImport } from './routes/_authenticated/admin.bookings.$id'
@@ -114,6 +115,11 @@ const ApiPublicBookingSubmitRoute = ApiPublicBookingSubmitRouteImport.update({
   path: '/api/public/booking-submit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicIcalSyncRoute = ApiPublicIcalSyncRouteImport.update({
+  id: '/api/public/ical-sync',
+  path: '/api/public/ical-sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
   id: '/api/public/track',
   path: '/api/public/track',
@@ -171,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/admin/contracts': typeof AuthenticatedAdminContractsRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
+  '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
@@ -194,6 +201,7 @@ export interface FileRoutesByTo {
   '/admin/contracts': typeof AuthenticatedAdminContractsRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
+  '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
@@ -220,6 +228,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/contracts': typeof AuthenticatedAdminContractsRoute
   '/_authenticated/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
+  '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
@@ -246,6 +255,7 @@ export interface FileRouteTypes {
     | '/admin/contracts'
     | '/admin/expenses'
     | '/api/public/booking-submit'
+    | '/api/public/ical-sync'
     | '/api/public/track'
     | '/admin/'
     | '/admin/bookings/$id'
@@ -269,6 +279,7 @@ export interface FileRouteTypes {
     | '/admin/contracts'
     | '/admin/expenses'
     | '/api/public/booking-submit'
+    | '/api/public/ical-sync'
     | '/api/public/track'
     | '/admin'
     | '/admin/bookings/$id'
@@ -294,6 +305,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/contracts'
     | '/_authenticated/admin/expenses'
     | '/api/public/booking-submit'
+    | '/api/public/ical-sync'
     | '/api/public/track'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/bookings/$id'
@@ -317,6 +329,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   PropertiesIdRoute: typeof PropertiesIdRoute
   ApiPublicBookingSubmitRoute: typeof ApiPublicBookingSubmitRoute
+  ApiPublicIcalSyncRoute: typeof ApiPublicIcalSyncRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
 }
 
@@ -434,6 +447,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBookingSubmitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/ical-sync': {
+      id: '/api/public/ical-sync'
+      path: '/api/public/ical-sync'
+      fullPath: '/api/public/ical-sync'
+      preLoaderRoute: typeof ApiPublicIcalSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/track': {
       id: '/api/public/track'
       path: '/api/public/track'
@@ -539,6 +559,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   PropertiesIdRoute: PropertiesIdRoute,
   ApiPublicBookingSubmitRoute: ApiPublicBookingSubmitRoute,
+  ApiPublicIcalSyncRoute: ApiPublicIcalSyncRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
 }
 export const routeTree = rootRouteImport
