@@ -273,6 +273,8 @@ export function BookingForm({
               <Input
                 id="check-in"
                 type="time"
+                lang="lt-LT"
+                step={300}
                 placeholder="15:00"
                 value={v.check_in_time}
                 onChange={(e) => set("check_in_time", e.target.value)}
@@ -283,6 +285,8 @@ export function BookingForm({
               <Input
                 id="check-out"
                 type="time"
+                lang="lt-LT"
+                step={300}
                 placeholder="11:00"
                 value={v.check_out_time}
                 onChange={(e) => set("check_out_time", e.target.value)}
