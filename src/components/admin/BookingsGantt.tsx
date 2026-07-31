@@ -46,6 +46,7 @@ const STATUS_LABELS: Record<string, string> = {
   pending: "Rezervuota",
   completed: "Atlikta",
   cancelled: "Atšaukta",
+  blocked_external: "Išorinė / užblokuota",
 };
 
 const STATUS_CLASSES: Record<string, string> = {
@@ -53,6 +54,8 @@ const STATUS_CLASSES: Record<string, string> = {
   confirmed: "bg-green-500 hover:bg-green-600 text-white border-green-700",
   cancelled: "bg-red-500 hover:bg-red-600 text-white border-red-700 opacity-70",
   completed: "bg-gray-400 hover:bg-gray-500 text-white border-gray-600",
+  blocked_external:
+    "bg-slate-500 hover:bg-slate-600 text-white border-slate-700 [background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.18)_0_6px,transparent_6px_12px)]",
 };
 
 const MONTH_SHORT = ["sau", "vas", "kov", "bal", "geg", "bir", "lie", "rgp", "rgs", "spa", "lap", "gru"];
@@ -377,24 +380,29 @@ export function BookingsGantt({
                   const colStart = 2 + startIdx;
                   const colEnd = 2 + endIdx + 1;
                   const cls = STATUS_CLASSES[b.status] ?? "bg-gray-400 text-white border-gray-600";
+                  const isExternal = b.status === "blocked_external";
+                  const barDraggable = canDrag && !isExternal;
                   return (
                     <div
                       key={b.id}
                       className={`relative m-1 rounded border shadow-sm z-10 ${cls} ${
-                        canDrag ? "cursor-grab active:cursor-grabbing" : "cursor-pointer"
+                        barDraggable ? "cursor-grab active:cursor-grabbing" : "cursor-pointer"
                       }`}
                       style={{ gridColumn: `${colStart} / ${colEnd}`, gridRow: 1 }}
                       title={`${b.customer_name} · ${b.date_from} → ${b.date_to}`}
-                      onPointerDown={(e) => startBarDrag(e, b, "move")}
+                      onPointerDown={(e) => {
+                        if (isExternal) return;
+                        startBarDrag(e, b, "move");
+                      }}
                       onClick={() => {
-                        if (!canDrag) setSelected(b);
+                        if (!barDraggable) setSelected(b);
                       }}
                     >
                       <div className="px-2 py-1 text-xs font-medium truncate text-left select-none">
                         {b.booking_number ? <span className="font-mono opacity-80 mr-1">{b.booking_number}</span> : null}
                         {b.customer_name || "—"}
                       </div>
-                      {canDrag && (
+                      {barDraggable && (
                         <>
                           <div
                             className="absolute inset-y-0 left-0 w-2 cursor-col-resize rounded-l bg-black/10 hover:bg-black/25"

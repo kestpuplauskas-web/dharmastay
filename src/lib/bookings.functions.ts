@@ -158,7 +158,7 @@ export const listBookings = createServerFn({ method: "POST" })
     z
       .object({
         propertyId: z.string().uuid().optional(),
-        status: z.enum(BOOKING_STATUSES).optional(),
+        status: z.enum(ALL_BOOKING_STATUSES).optional(),
         from: z.string().optional(),
         to: z.string().optional(),
       })
