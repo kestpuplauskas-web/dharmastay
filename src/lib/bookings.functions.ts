@@ -49,6 +49,7 @@ const bookingInput = z.object({
       "Neteisingas el. paštas",
     ),
   customer_address: z.string().trim().max(300).default(""),
+  customer_country: z.string().trim().max(100).default("Lietuva"),
   customer_id_code: z.string().trim().max(50).default(""),
   client_type: z.enum(["person", "company"]).default("person"),
   birth_date: z
