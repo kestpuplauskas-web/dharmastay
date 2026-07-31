@@ -54,6 +54,7 @@ export type PropertyFormValues = {
   status: "active" | "maintenance" | "blocked";
   year: number;
   category: string;
+  icalImportUrl: string;
 };
 
 export function propertyToForm(p: Property | null | undefined): PropertyFormValues {
@@ -81,6 +82,7 @@ export function propertyToForm(p: Property | null | undefined): PropertyFormValu
     status: (p?.status as "active" | "maintenance" | "blocked") ?? "active",
     year: p?.year ?? new Date().getFullYear(),
     category: p?.category ?? "",
+    icalImportUrl: p?.icalImportUrl ?? "",
   };
 }
 
@@ -88,10 +90,17 @@ export function PropertyForm({
   initial,
   onSubmit,
   submitting,
+  icalMeta,
 }: {
   initial: PropertyFormValues;
   onSubmit: (v: PropertyFormValues) => void;
   submitting?: boolean;
+  icalMeta?: {
+    lastSyncAt: string | null;
+    lastStatus: string | null;
+    onSync?: () => void;
+    syncing?: boolean;
+  };
 }) {
   const [v, setV] = useState<PropertyFormValues>(initial);
   const set = <K extends keyof PropertyFormValues>(k: K, val: PropertyFormValues[K]) =>
