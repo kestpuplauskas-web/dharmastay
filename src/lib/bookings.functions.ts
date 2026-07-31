@@ -223,6 +223,11 @@ export const createBooking = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await ensureAdmin(context);
     await assertNoOverlap(context.supabase, {
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => bookingInput.parse(d))
+  .handler(async ({ data, context }) => {
+    await ensureAdmin(context);
+    await assertNoOverlap(context.supabase, {
       property_id: data.property_id,
       date_from: data.date_from,
       date_to: data.date_to,
