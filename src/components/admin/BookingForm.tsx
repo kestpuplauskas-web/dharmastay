@@ -74,6 +74,38 @@ export function defaultBookingForm(props: Property[] = []): BookingFormValues {
   };
 }
 
+function computeTotalsFor(state: BookingFormValues, properties: Property[]) {
+  const prop = properties.find((p) => p.id === state.property_id);
+  const defined = prop?.extraServices ?? [];
+  const days = nightsBetweenDates(state.date_from, state.date_to);
+  const ctx = {
+    adults: state.adults_count,
+    children: state.children_count,
+    infants: state.infants_count,
+    days,
+  };
+  const extras = state.extras
+    .map((e) => {
+      const match = defined.find((d) => d.name === e.name);
+      if (!match) return null;
+      return {
+        name: match.name,
+        calc: match.calc as ExtraCalcKind,
+        pricePerDay: Number(match.pricePerDay) || 0,
+        amount: extraLineTotal(match.calc as ExtraCalcKind, Number(match.pricePerDay) || 0, ctx),
+      };
+    })
+    .filter(Boolean) as BookingFormValues["extras"];
+  const extras_total = extras.reduce((s, e) => s + e.amount, 0);
+  const stay =
+    prop && days > 0
+      ? priceForNights({ pricePerNight: prop.pricePerNight, priceTiers: prop.priceTiers ?? [] }, days)
+      : { total: 0, pricePerNight: prop?.pricePerNight ?? 0, tier: null };
+  const stayTotal = Number((stay.total || 0).toFixed(2));
+  const computed = Number((stayTotal + extras_total).toFixed(2));
+  return { extras, extras_total, days, stayTotal, nightly: stay.pricePerNight, computed };
+}
+
 export function BookingForm({
   properties,
   initial,
@@ -87,7 +119,16 @@ export function BookingForm({
   submitting?: boolean;
   bookingId?: string;
 }) {
-  const [v, setV] = useState<BookingFormValues>(initial);
+  const [v, setV] = useState<BookingFormValues>(() => {
+    if (Number(initial.total_amount) > 0) return initial;
+    const t = computeTotalsFor(initial, properties);
+    return {
+      ...initial,
+      extras: t.extras,
+      extras_total: t.extras_total,
+      total_amount: Math.max(0, t.computed),
+    };
+  });
   const navigate = useNavigate();
   const [manualTotal, setManualTotal] = useState<boolean>(Number(initial.total_amount) > 0);
   const set = <K extends keyof BookingFormValues>(k: K, val: BookingFormValues[K]) =>
@@ -149,37 +190,7 @@ export function BookingForm({
   const lineAmount = (svc: { calc: ExtraCalcKind | string; pricePerDay: number }) =>
     extraLineTotal(svc.calc as ExtraCalcKind, Number(svc.pricePerDay) || 0, extrasCtx);
 
-  const computeTotals = (state: BookingFormValues) => {
-    const prop = properties.find((p) => p.id === state.property_id);
-    const defined = prop?.extraServices ?? [];
-    const days = nightsBetweenDates(state.date_from, state.date_to);
-    const ctx = {
-      adults: state.adults_count,
-      children: state.children_count,
-      infants: state.infants_count,
-      days,
-    };
-    const extras = state.extras
-      .map((e) => {
-        const match = defined.find((d) => d.name === e.name);
-        if (!match) return null;
-        return {
-          name: match.name,
-          calc: match.calc as ExtraCalcKind,
-          pricePerDay: Number(match.pricePerDay) || 0,
-          amount: extraLineTotal(match.calc as ExtraCalcKind, Number(match.pricePerDay) || 0, ctx),
-        };
-      })
-      .filter(Boolean) as BookingFormValues["extras"];
-    const extras_total = extras.reduce((s, e) => s + e.amount, 0);
-    const stay =
-      prop && days > 0
-        ? priceForNights({ pricePerNight: prop.pricePerNight, priceTiers: prop.priceTiers ?? [] }, days)
-        : { total: 0, pricePerNight: prop?.pricePerNight ?? 0, tier: null };
-    const stayTotal = Number((stay.total || 0).toFixed(2));
-    const computed = Number((stayTotal + extras_total).toFixed(2));
-    return { extras, extras_total, days, stayTotal, nightly: stay.pricePerNight, computed };
-  };
+  const computeTotals = (state: BookingFormValues) => computeTotalsFor(state, properties);
 
   const recalc = (state: BookingFormValues, forceTotal = false): BookingFormValues => {
     const { extras, extras_total, computed } = computeTotals(state);
