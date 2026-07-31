@@ -1,18 +1,39 @@
-## Problema
+## Tikslas
 
-Paspaudus tuščią langelį (pvz. rugpjūčio 11 d.) forma atsidaro su visai kitomis datomis (2026-08-07 → 08-08), todėl iškart rodomas „datos užimtos" pranešimas. Pranešimas techniškai teisingas — klaida yra kalendoriuje: paspaustas langelis grąžina ne tą datą.
+Pertvarkyti admin „Nauja rezervacija" formą (`src/components/admin/BookingForm.tsx`) į tris aiškias korteles su moderniu shadcn/ui išdėstymu. Visa esama logika (kainų skaičiavimas, konfliktų tikrinimas, papildomos paslaugos) lieka nepakeista.
 
-## Priežastis
+## 1. Duomenų bazė
 
-`src/components/admin/BookingsGantt.tsx` eilutėje dienų langeliai (`<button>`) neturi aiškiai nurodyto grid stulpelio — jie išdėliojami automatiškai. Rezervacijų juostos turi aiškų `gridColumn`, todėl CSS grid jas išdėsto pirmiau, o automatiniai langeliai „peršoka" jau užimtus stulpelius ir pasislenka į dešinę.
+Nauja migracija: `bookings` lentelei pridedamas laukas „Valstybė" (tekstas, numatyta reikšmė „Lietuva"). Įtraukiamas į rezervacijos išsaugojimo ir redagavimo schemą.
 
-Konkrečiai: Petro rezervacija 2026-08-06 → 08-09 užima 4 stulpelius, todėl visi po jos einantys langeliai pasislenka 4 dienomis — vizualiai rugpjūčio 11 d. langelis iš tikrųjų yra rugpjūčio 07 d. mygtukas. Eilutėse be rezervacijų poslinkio nėra, todėl klaida atrodo atsitiktinė.
+## 2. Formos struktūra
 
-## Sprendimas
+**Kortelė A — Rezervacijos informacija**
+- Objektas (per visą plotį)
+- Atvykimo–išvykimo datos (per visą plotį, esamas DateRangePicker + užimtų datų perspėjimas)
+- Atvykimo laikas | Išvykimo laikas (2 stulpeliai)
+- Svečių skaičius (siauras laukas, ~max-w-xs)
 
-1. Kiekvienam dienos langeliui `BookingsGantt.tsx` nustatyti aiškų `style={{ gridColumn: 2 + i, gridRow: 1 }}`, kad išdėstymas nepriklausytų nuo rezervacijų juostų.
-2. Tą patį padaryti antraštės eilutėje (dienų numeriai), kad viskas liktų sulygiuota.
-3. Patikrinti, kad juostos ir „šiandien" linija liktų virš langelių (z-index nesikeičia).
-4. Patikrinti naršyklėje: eilutėje su rezervacija paspausti kelis langelius ir įsitikinti, kad formos datos atitinka paspaustą dieną; taip pat patikrinti vilkimą per kelias dienas.
+**Kortelė B — Kliento duomenys**
+- Viršuje: kliento tipas kaip ToggleGroup („Fizinis asmuo" / „Juridinis asmuo")
+- 2 stulpelių tinklelis:
+  - Vardas Pavardė | El. paštas
+  - Telefonas | Adresas
+  - Gimimo data | Valstybė (default „Lietuva")
+- Juridiniam asmeniui papildomai: Įmonės pavadinimas, Įmonės kodas, PVM mokėtojo jungiklis + PVM kodas
 
-Užimtų datų perspėjimo logika ir kalendoriaus elgsena lieka nepakeista (kaip pasirinkta) — jis tiesiog nustos rodytis be reikalo, nes datos bus perduodamos teisingos.
+**Kortelė C — Finansai ir sistemos parametrai**
+- Papildomos paslaugos (jei objektas jas turi) — čia, nes veikia sumą
+- Šaltinis | Statusas (2 stulpeliai)
+- Suma (€) su € prefiksu lauke, po juo apskaičiuota suma ir „Perskaičiuoti"
+- Pastaba (per visą plotį, apačioje)
+
+**Veiksmai**: apačioje dešinėje „Atšaukti" (pilkas, grįžta į /admin/bookings) ir „Išsaugoti rezervaciją" (pagrindinis).
+
+## 3. Techninės detalės
+
+- Naudojami shadcn komponentai: `Card`/`CardHeader`/`CardContent`, `Input`, `Label`, `Select`, `ToggleGroup`, `Checkbox`, `Textarea`, `Button`, `Separator`.
+- Vienodi tarpai: `space-y-6` tarp kortelių, `gap-4`/`gap-6` tinkleliuose; visur aiškios etiketės ir placeholder tekstai.
+- Spalvos tik per semantinius tokenus (be `text-white` ir pan.).
+- Ta pati forma naudojama ir rezervacijos redagavime (`admin.bookings.$id.tsx`) — „Atšaukti" mygtukas veikia abiem atvejais.
+- Failai: migracija, `src/lib/bookings.functions.ts` (customer_country schema), `src/components/admin/BookingForm.tsx` (perrašymas), nedideli pataisymai `admin.bookings.new.tsx` / `admin.bookings.$id.tsx`.
