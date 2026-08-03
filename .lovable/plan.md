@@ -9,7 +9,9 @@
    - „Klientinė svetainė – DEV", leidžiami domenai: klientinės svetainės peržiūros (preview) adresas
 2. Nukopijuokite abu raktus (rodomi tik vieną kartą) ir perduokite saugiu kanalu.
 
-Bazinis adresas PROD: `https://project--3b144e50-7336-4c5e-a93d-7aeca70328ba.lovable.app/api/public/v1`
+Bazinis adresas PROD: `https://dharmastay.lovable.app/api/public/v1`
+(alternatyva, jei planuojate pervadinti projektą — stabilus techninis adresas:
+`https://project--3b144e50-7336-4c5e-a93d-7aeca70328ba.lovable.app/api/public/v1`; abu veda į tą patį projektą)
 
 Bazinis adresas DEV: `https://project--3b144e50-7336-4c5e-a93d-7aeca70328ba-dev.lovable.app/api/public/v1`
 
@@ -20,7 +22,7 @@ Integruok išorinį NT nuomos API (Rentivo core). Klientinė dalis neturi savo o
 neskaičiuoja kainų pati, neinicijuoja mokėjimo ir nekeičia statusų — visi duomenys imami iš API.
 
 1) Sukurk secretus:
-   RENTIVO_API_URL_PROD = https://project--3b144e50-7336-4c5e-a93d-7aeca70328ba.lovable.app/api/public/v1
+   RENTIVO_API_URL_PROD = https://dharmastay.lovable.app/api/public/v1
    RENTIVO_API_KEY_PROD = <prod raktas>
    RENTIVO_API_URL_DEV  = https://project--3b144e50-7336-4c5e-a93d-7aeca70328ba-dev.lovable.app/api/public/v1
    RENTIVO_API_KEY_DEV  = <dev raktas>
