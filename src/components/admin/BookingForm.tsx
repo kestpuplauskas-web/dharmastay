@@ -306,26 +306,20 @@ export function BookingForm({
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="grid gap-2">
               <Label htmlFor="check-in">Atvykimo laikas</Label>
-              <Input
+              <TimeInput
                 id="check-in"
-                type="time"
-                lang="lt-LT"
-                step={300}
                 placeholder="15:00"
                 value={v.check_in_time}
-                onChange={(e) => set("check_in_time", e.target.value)}
+                onChange={(val) => set("check_in_time", val)}
               />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="check-out">Išvykimo laikas</Label>
-              <Input
+              <TimeInput
                 id="check-out"
-                type="time"
-                lang="lt-LT"
-                step={300}
                 placeholder="11:00"
                 value={v.check_out_time}
-                onChange={(e) => set("check_out_time", e.target.value)}
+                onChange={(val) => set("check_out_time", val)}
               />
             </div>
           </div>
