@@ -33,7 +33,13 @@ import { Route as AuthenticatedAdminBookingsIdRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminBookingsNewRouteImport } from './routes/_authenticated/admin.bookings.new'
 import { Route as AuthenticatedAdminPropertiesIndexRouteImport } from './routes/_authenticated/admin.properties.index'
 import { Route as AuthenticatedAdminPropertiesNewRouteImport } from './routes/_authenticated/admin.properties.new'
+import { Route as ApiPublicV1AvailabilityRouteImport } from './routes/api/public/v1/availability'
+import { Route as ApiPublicV1BookingsRouteImport } from './routes/api/public/v1/bookings'
+import { Route as ApiPublicV1PropertiesRouteImport } from './routes/api/public/v1/properties'
+import { Route as ApiPublicV1QuoteRouteImport } from './routes/api/public/v1/quote'
 import { Route as AuthenticatedAdminPropertiesIdEditRouteImport } from './routes/_authenticated/admin.properties.$id.edit'
+import { Route as ApiPublicV1BookingsBookingNumberRouteImport } from './routes/api/public/v1/bookings.$bookingNumber'
+import { Route as ApiPublicV1PropertiesIdRouteImport } from './routes/api/public/v1/properties.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -162,12 +168,43 @@ const AuthenticatedAdminPropertiesNewRoute =
     path: '/properties/new',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const ApiPublicV1AvailabilityRoute = ApiPublicV1AvailabilityRouteImport.update({
+  id: '/api/public/v1/availability',
+  path: '/api/public/v1/availability',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1BookingsRoute = ApiPublicV1BookingsRouteImport.update({
+  id: '/api/public/v1/bookings',
+  path: '/api/public/v1/bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1PropertiesRoute = ApiPublicV1PropertiesRouteImport.update({
+  id: '/api/public/v1/properties',
+  path: '/api/public/v1/properties',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1QuoteRoute = ApiPublicV1QuoteRouteImport.update({
+  id: '/api/public/v1/quote',
+  path: '/api/public/v1/quote',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminPropertiesIdEditRoute =
   AuthenticatedAdminPropertiesIdEditRouteImport.update({
     id: '/properties/$id/edit',
     path: '/properties/$id/edit',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const ApiPublicV1BookingsBookingNumberRoute =
+  ApiPublicV1BookingsBookingNumberRouteImport.update({
+    id: '/$bookingNumber',
+    path: '/$bookingNumber',
+    getParentRoute: () => ApiPublicV1BookingsRoute,
+  } as any)
+const ApiPublicV1PropertiesIdRoute = ApiPublicV1PropertiesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiPublicV1PropertiesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -191,9 +228,15 @@ export interface FileRoutesByFullPath {
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
   '/admin/bookings/new': typeof AuthenticatedAdminBookingsNewRoute
   '/admin/properties/new': typeof AuthenticatedAdminPropertiesNewRoute
+  '/api/public/v1/availability': typeof ApiPublicV1AvailabilityRoute
+  '/api/public/v1/bookings': typeof ApiPublicV1BookingsRouteWithChildren
+  '/api/public/v1/properties': typeof ApiPublicV1PropertiesRouteWithChildren
+  '/api/public/v1/quote': typeof ApiPublicV1QuoteRoute
   '/admin/bookings/': typeof AuthenticatedAdminBookingsIndexRoute
   '/admin/properties/': typeof AuthenticatedAdminPropertiesIndexRoute
   '/admin/properties/$id/edit': typeof AuthenticatedAdminPropertiesIdEditRoute
+  '/api/public/v1/bookings/$bookingNumber': typeof ApiPublicV1BookingsBookingNumberRoute
+  '/api/public/v1/properties/$id': typeof ApiPublicV1PropertiesIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -216,9 +259,15 @@ export interface FileRoutesByTo {
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
   '/admin/bookings/new': typeof AuthenticatedAdminBookingsNewRoute
   '/admin/properties/new': typeof AuthenticatedAdminPropertiesNewRoute
+  '/api/public/v1/availability': typeof ApiPublicV1AvailabilityRoute
+  '/api/public/v1/bookings': typeof ApiPublicV1BookingsRouteWithChildren
+  '/api/public/v1/properties': typeof ApiPublicV1PropertiesRouteWithChildren
+  '/api/public/v1/quote': typeof ApiPublicV1QuoteRoute
   '/admin/bookings': typeof AuthenticatedAdminBookingsIndexRoute
   '/admin/properties': typeof AuthenticatedAdminPropertiesIndexRoute
   '/admin/properties/$id/edit': typeof AuthenticatedAdminPropertiesIdEditRoute
+  '/api/public/v1/bookings/$bookingNumber': typeof ApiPublicV1BookingsBookingNumberRoute
+  '/api/public/v1/properties/$id': typeof ApiPublicV1PropertiesIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -244,9 +293,15 @@ export interface FileRoutesById {
   '/_authenticated/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
   '/_authenticated/admin/bookings/new': typeof AuthenticatedAdminBookingsNewRoute
   '/_authenticated/admin/properties/new': typeof AuthenticatedAdminPropertiesNewRoute
+  '/api/public/v1/availability': typeof ApiPublicV1AvailabilityRoute
+  '/api/public/v1/bookings': typeof ApiPublicV1BookingsRouteWithChildren
+  '/api/public/v1/properties': typeof ApiPublicV1PropertiesRouteWithChildren
+  '/api/public/v1/quote': typeof ApiPublicV1QuoteRoute
   '/_authenticated/admin/bookings/': typeof AuthenticatedAdminBookingsIndexRoute
   '/_authenticated/admin/properties/': typeof AuthenticatedAdminPropertiesIndexRoute
   '/_authenticated/admin/properties/$id/edit': typeof AuthenticatedAdminPropertiesIdEditRoute
+  '/api/public/v1/bookings/$bookingNumber': typeof ApiPublicV1BookingsBookingNumberRoute
+  '/api/public/v1/properties/$id': typeof ApiPublicV1PropertiesIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -272,9 +327,15 @@ export interface FileRouteTypes {
     | '/admin/bookings/$id'
     | '/admin/bookings/new'
     | '/admin/properties/new'
+    | '/api/public/v1/availability'
+    | '/api/public/v1/bookings'
+    | '/api/public/v1/properties'
+    | '/api/public/v1/quote'
     | '/admin/bookings/'
     | '/admin/properties/'
     | '/admin/properties/$id/edit'
+    | '/api/public/v1/bookings/$bookingNumber'
+    | '/api/public/v1/properties/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -297,9 +358,15 @@ export interface FileRouteTypes {
     | '/admin/bookings/$id'
     | '/admin/bookings/new'
     | '/admin/properties/new'
+    | '/api/public/v1/availability'
+    | '/api/public/v1/bookings'
+    | '/api/public/v1/properties'
+    | '/api/public/v1/quote'
     | '/admin/bookings'
     | '/admin/properties'
     | '/admin/properties/$id/edit'
+    | '/api/public/v1/bookings/$bookingNumber'
+    | '/api/public/v1/properties/$id'
   id:
     | '__root__'
     | '/'
@@ -324,9 +391,15 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/bookings/$id'
     | '/_authenticated/admin/bookings/new'
     | '/_authenticated/admin/properties/new'
+    | '/api/public/v1/availability'
+    | '/api/public/v1/bookings'
+    | '/api/public/v1/properties'
+    | '/api/public/v1/quote'
     | '/_authenticated/admin/bookings/'
     | '/_authenticated/admin/properties/'
     | '/_authenticated/admin/properties/$id/edit'
+    | '/api/public/v1/bookings/$bookingNumber'
+    | '/api/public/v1/properties/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -344,6 +417,10 @@ export interface RootRouteChildren {
   ApiPublicBookingSubmitRoute: typeof ApiPublicBookingSubmitRoute
   ApiPublicIcalSyncRoute: typeof ApiPublicIcalSyncRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
+  ApiPublicV1AvailabilityRoute: typeof ApiPublicV1AvailabilityRoute
+  ApiPublicV1BookingsRoute: typeof ApiPublicV1BookingsRouteWithChildren
+  ApiPublicV1PropertiesRoute: typeof ApiPublicV1PropertiesRouteWithChildren
+  ApiPublicV1QuoteRoute: typeof ApiPublicV1QuoteRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -516,12 +593,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPropertiesNewRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/api/public/v1/availability': {
+      id: '/api/public/v1/availability'
+      path: '/api/public/v1/availability'
+      fullPath: '/api/public/v1/availability'
+      preLoaderRoute: typeof ApiPublicV1AvailabilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/bookings': {
+      id: '/api/public/v1/bookings'
+      path: '/api/public/v1/bookings'
+      fullPath: '/api/public/v1/bookings'
+      preLoaderRoute: typeof ApiPublicV1BookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/properties': {
+      id: '/api/public/v1/properties'
+      path: '/api/public/v1/properties'
+      fullPath: '/api/public/v1/properties'
+      preLoaderRoute: typeof ApiPublicV1PropertiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/quote': {
+      id: '/api/public/v1/quote'
+      path: '/api/public/v1/quote'
+      fullPath: '/api/public/v1/quote'
+      preLoaderRoute: typeof ApiPublicV1QuoteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/properties/$id/edit': {
       id: '/_authenticated/admin/properties/$id/edit'
       path: '/properties/$id/edit'
       fullPath: '/admin/properties/$id/edit'
       preLoaderRoute: typeof AuthenticatedAdminPropertiesIdEditRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/api/public/v1/bookings/$bookingNumber': {
+      id: '/api/public/v1/bookings/$bookingNumber'
+      path: '/$bookingNumber'
+      fullPath: '/api/public/v1/bookings/$bookingNumber'
+      preLoaderRoute: typeof ApiPublicV1BookingsBookingNumberRouteImport
+      parentRoute: typeof ApiPublicV1BookingsRoute
+    }
+    '/api/public/v1/properties/$id': {
+      id: '/api/public/v1/properties/$id'
+      path: '/$id'
+      fullPath: '/api/public/v1/properties/$id'
+      preLoaderRoute: typeof ApiPublicV1PropertiesIdRouteImport
+      parentRoute: typeof ApiPublicV1PropertiesRoute
     }
   }
 }
@@ -568,6 +687,30 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface ApiPublicV1BookingsRouteChildren {
+  ApiPublicV1BookingsBookingNumberRoute: typeof ApiPublicV1BookingsBookingNumberRoute
+}
+
+const ApiPublicV1BookingsRouteChildren: ApiPublicV1BookingsRouteChildren = {
+  ApiPublicV1BookingsBookingNumberRoute: ApiPublicV1BookingsBookingNumberRoute,
+}
+
+const ApiPublicV1BookingsRouteWithChildren =
+  ApiPublicV1BookingsRoute._addFileChildren(ApiPublicV1BookingsRouteChildren)
+
+interface ApiPublicV1PropertiesRouteChildren {
+  ApiPublicV1PropertiesIdRoute: typeof ApiPublicV1PropertiesIdRoute
+}
+
+const ApiPublicV1PropertiesRouteChildren: ApiPublicV1PropertiesRouteChildren = {
+  ApiPublicV1PropertiesIdRoute: ApiPublicV1PropertiesIdRoute,
+}
+
+const ApiPublicV1PropertiesRouteWithChildren =
+  ApiPublicV1PropertiesRoute._addFileChildren(
+    ApiPublicV1PropertiesRouteChildren,
+  )
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -583,17 +726,11 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicBookingSubmitRoute: ApiPublicBookingSubmitRoute,
   ApiPublicIcalSyncRoute: ApiPublicIcalSyncRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
+  ApiPublicV1AvailabilityRoute: ApiPublicV1AvailabilityRoute,
+  ApiPublicV1BookingsRoute: ApiPublicV1BookingsRouteWithChildren,
+  ApiPublicV1PropertiesRoute: ApiPublicV1PropertiesRouteWithChildren,
+  ApiPublicV1QuoteRoute: ApiPublicV1QuoteRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

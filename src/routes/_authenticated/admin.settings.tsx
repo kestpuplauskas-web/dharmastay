@@ -19,6 +19,7 @@ import {
   IntegrationsSection,
   type IntegrationCard,
 } from "@/components/admin/settings/IntegrationsSection";
+import { ApiAccessSection } from "@/components/admin/settings/ApiAccessSection";
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   component: PropertySettingsPage,
   head: () => ({
@@ -38,7 +39,7 @@ export const Route = createFileRoute("/_authenticated/admin/settings")({
   }),
 });
 
-type NavId = SettingsSectionId | "integrations";
+type NavId = SettingsSectionId | "integrations" | "api";
 
 function PropertySettingsPage() {
   const fetchProperties = useServerFn(listAllProperties);
@@ -136,7 +137,8 @@ function PropertySettingsPage() {
         key: "api",
         name: "API raktai",
         description: "Prieigos raktai išorinėms sistemoms.",
-        status: "coming_soon",
+        status: "connected",
+        detail: "Valdoma skiltyje „API prieiga“",
       },
       {
         key: "webhook",
@@ -156,6 +158,7 @@ function PropertySettingsPage() {
   const navItems: { id: NavId; icon: string; title: string }[] = [
     ...SETTINGS_SECTIONS.map((s) => ({ id: s.id as NavId, icon: s.icon, title: s.title })),
     { id: "integrations", icon: "🔌", title: "Integracijos" },
+    { id: "api", icon: "🔑", title: "API prieiga" },
   ];
 
   const section = SETTINGS_SECTIONS.find((s) => s.id === active);
@@ -205,6 +208,8 @@ function PropertySettingsPage() {
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Kraunama…
               </div>
+            ) : active === "api" ? (
+              <ApiAccessSection canEdit={canEdit} />
             ) : active === "integrations" ? (
               <IntegrationsSection items={integrations} />
             ) : section ? (

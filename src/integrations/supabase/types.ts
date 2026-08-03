@@ -14,6 +14,74 @@ export type Database = {
   }
   public: {
     Tables: {
+      api_clients: {
+        Row: {
+          allowed_origins: string[]
+          created_at: string
+          id: string
+          is_active: boolean
+          key_hash: string
+          key_prefix: string
+          last_used_at: string | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          allowed_origins?: string[]
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          key_hash: string
+          key_prefix?: string
+          last_used_at?: string | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          allowed_origins?: string[]
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          key_hash?: string
+          key_prefix?: string
+          last_used_at?: string | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      api_request_log: {
+        Row: {
+          api_client_id: string | null
+          created_at: string
+          id: string
+          ip: string
+          path: string
+        }
+        Insert: {
+          api_client_id?: string | null
+          created_at?: string
+          id?: string
+          ip?: string
+          path: string
+        }
+        Update: {
+          api_client_id?: string | null
+          created_at?: string
+          id?: string
+          ip?: string
+          path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_request_log_api_client_id_fkey"
+            columns: ["api_client_id"]
+            isOneToOne: false
+            referencedRelation: "api_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       app_secrets: {
         Row: {
           created_at: string
