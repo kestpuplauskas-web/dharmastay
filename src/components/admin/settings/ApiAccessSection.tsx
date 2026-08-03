@@ -80,10 +80,33 @@ export function ApiAccessSection({ canEdit }: { canEdit: boolean }) {
 
   const copy = async (value: string) => {
     try {
-      await navigator.clipboard.writeText(value);
-      toast.success("Nukopijuota.");
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(value);
+        toast.success("Nukopijuota.");
+        return;
+      }
+      throw new Error("no-clipboard-api");
     } catch {
-      toast.error("Nepavyko nukopijuoti.");
+      // Fallback: clipboard API is blocked in iframes / non-secure contexts.
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = value;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.top = "0";
+        ta.style.left = "0";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        ta.setSelectionRange(0, value.length);
+        const ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+        if (!ok) throw new Error("execCommand failed");
+        toast.success("Nukopijuota.");
+      } catch {
+        toast.error("Nepavyko nukopijuoti automatiškai — pažymėkite tekstą ir kopijuokite ranka.");
+      }
     }
   };
 
