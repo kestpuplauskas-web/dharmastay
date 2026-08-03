@@ -95,7 +95,7 @@ export const Route = createFileRoute("/api/public/v1/bookings")({
                 customer_name: d.customer_name,
                 customer_phone: d.customer_phone,
                 customer_email: d.customer_email,
-                notes: d.notes ?? null,
+                invoice_notes: d.notes ?? null,
                 source: "website",
                 status: "pending",
                 total_amount: quote.total,
