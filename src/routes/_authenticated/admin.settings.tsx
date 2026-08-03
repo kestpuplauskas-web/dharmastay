@@ -19,15 +19,6 @@ import {
   IntegrationsSection,
   type IntegrationCard,
 } from "@/components/admin/settings/IntegrationsSection";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   component: PropertySettingsPage,
   head: () => ({
