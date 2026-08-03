@@ -23,13 +23,13 @@ export const Route = createFileRoute("/_authenticated/admin/settings")({
   component: PropertySettingsPage,
   head: () => ({
     meta: [
-      { title: "Turto nustatymai · Rentivo Admin" },
+      { title: "Bendrieji nustatymai · Rentivo Admin" },
       {
         name: "description",
         content:
           "Objekto bendrieji nustatymai: viešnagės taisyklės, mokesčiai, mokėjimai, sąskaitos, pranešimai ir integracijos.",
       },
-      { property: "og:title", content: "Turto nustatymai · Rentivo Admin" },
+      { property: "og:title", content: "Bendrieji nustatymai · Rentivo Admin" },
       {
         property: "og:description",
         content: "Centrinė objekto konfigūracijos vieta viešbučių valdymo sistemoje.",
@@ -167,7 +167,7 @@ function PropertySettingsPage() {
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-semibold">
             <Settings2 className="h-6 w-6 text-primary" />
-            Turto nustatymai
+            Bendrieji nustatymai
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Bendrieji nustatymai, galiojantys visiems objektams.

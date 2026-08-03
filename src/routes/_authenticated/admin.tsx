@@ -37,7 +37,7 @@ function AdminLayout() {
     { to: "/admin/properties", label: "Objektai", icon: Home },
     { to: "/admin/contracts", label: "Sutartys", icon: FileText },
     { to: "/admin/expenses", label: "Finansai", icon: Wallet },
-    { to: "/admin/settings", label: "Turto nustatymai", icon: Settings2 },
+    { to: "/admin/settings", label: "Bendrieji nustatymai", icon: Settings2 },
   ] as const;
 
   return (
