@@ -39,7 +39,7 @@ export const Route = createFileRoute("/_authenticated/admin/settings")({
   }),
 });
 
-type NavId = SettingsSectionId | "integrations";
+type NavId = SettingsSectionId | "integrations" | "api";
 
 function PropertySettingsPage() {
   const fetchProperties = useServerFn(listAllProperties);
