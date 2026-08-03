@@ -76,12 +76,11 @@ async function assertAdmin(ctx: { supabase: any; userId: string }) {
 
 export const getPropertySettings = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d) => z.object({ propertyId: z.string().uuid() }).parse(d))
-  .handler(async ({ data, context }) => {
+  .handler(async ({ context }) => {
     const { data: row, error } = await context.supabase
       .from("property_settings")
       .select("*")
-      .eq("property_id", data.propertyId)
+      .eq("scope", "global")
       .maybeSingle();
     if (error) {
       console.error("[getPropertySettings]", error.message);
@@ -101,7 +100,6 @@ export const savePropertySettings = createServerFn({ method: "POST" })
   .inputValidator((d) => {
     const base = z
       .object({
-        propertyId: z.string().uuid(),
         section: z.enum(sectionIds),
         values: z.record(z.unknown()),
       })
@@ -114,13 +112,13 @@ export const savePropertySettings = createServerFn({ method: "POST" })
 
     const patch = {
       ...sectionToColumns(data.values),
-      property_id: data.propertyId,
+      scope: "global",
       updated_by: context.userId,
     };
 
     const { data: row, error } = await context.supabase
       .from("property_settings")
-      .upsert(patch as never, { onConflict: "property_id" })
+      .upsert(patch as never, { onConflict: "scope" })
       .select("*")
       .single();
 
