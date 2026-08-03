@@ -359,9 +359,10 @@ export const SETTINGS_SECTIONS: SectionDef[] = [
     id: "general",
     icon: "🏨",
     title: "Objekto informacija",
-    description: "Pagrindiniai objekto duomenys, naudojami sąskaitose, laiškuose ir svetainėje.",
+    description:
+      "Bendri valdytojo duomenys, naudojami sąskaitose, laiškuose ir svetainėje (galioja visiems objektams).",
     fields: [
-      { name: "displayName", label: "Objekto pavadinimas", type: "text", help: "Rodomas svečiams ir dokumentuose." },
+      { name: "displayName", label: "Pavadinimas", type: "text", help: "Rodomas svečiams ir dokumentuose." },
       { name: "address", label: "Adresas", type: "text", help: "Gatvė ir namo numeris." },
       { name: "city", label: "Miestas", type: "text" },
       { name: "postalCode", label: "Pašto kodas", type: "text" },

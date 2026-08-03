@@ -19,15 +19,6 @@ import {
   IntegrationsSection,
   type IntegrationCard,
 } from "@/components/admin/settings/IntegrationsSection";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   component: PropertySettingsPage,
   head: () => ({
@@ -56,33 +47,28 @@ function PropertySettingsPage() {
   const saveSettings = useServerFn(savePropertySettings);
   const qc = useQueryClient();
 
-  const [propertyId, setPropertyId] = useState<string>("");
   const [active, setActive] = useState<NavId>("general");
 
   const { data: role } = useQuery({ queryKey: ["my-role"], queryFn: () => fetchRole() });
   const canEdit = Boolean(role?.isAdmin);
 
-  const { data: properties, isLoading: loadingProperties } = useQuery({
+  const { data: properties } = useQuery({
     queryKey: ["admin-properties-settings"],
     queryFn: () => fetchProperties(),
   });
 
-  const selectedId = propertyId || properties?.[0]?.id || "";
-  const selected = properties?.find((p) => p.id === selectedId);
-
   const { data, isLoading: loadingSettings } = useQuery({
-    queryKey: ["property-settings", selectedId],
-    queryFn: () => fetchSettings({ data: { propertyId: selectedId } }),
-    enabled: Boolean(selectedId),
+    queryKey: ["property-settings"],
+    queryFn: () => fetchSettings(),
   });
 
   const save = useMutation({
     mutationFn: (vars: { section: SettingsSectionId; values: Record<string, unknown> }) =>
       saveSettings({
-        data: { propertyId: selectedId, section: vars.section, values: vars.values },
+        data: { section: vars.section, values: vars.values },
       }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["property-settings", selectedId] });
+      qc.invalidateQueries({ queryKey: ["property-settings"] });
       toast.success("Nustatymai išsaugoti.");
     },
     onError: (e) =>
@@ -90,12 +76,16 @@ function PropertySettingsPage() {
   });
 
   const integrations = useMemo<IntegrationCard[]>(() => {
-    const icalOn = Boolean(selected?.icalImportUrl);
-    const syncedAt = selected?.icalLastSyncAt
-      ? new Date(selected.icalLastSyncAt).toLocaleString("lt-LT")
-      : null;
+    const withIcal = (properties ?? []).filter((p) => Boolean(p.icalImportUrl));
+    const icalOn = withIcal.length > 0;
+    const lastSync = withIcal
+      .map((p) => p.icalLastSyncAt)
+      .filter(Boolean)
+      .sort()
+      .pop();
+    const syncedAt = lastSync ? new Date(lastSync as string).toLocaleString("lt-LT") : null;
     const icalDetail = icalOn
-      ? `iCal susietas objekto lygiu${syncedAt ? ` · sinchronizuota ${syncedAt}` : ""}`
+      ? `iCal susietas ${withIcal.length} objekt(-uose)${syncedAt ? ` · sinchronizuota ${syncedAt}` : ""}`
       : "iCal nuoroda nurodoma objekto kortelėje";
     return [
       {
@@ -161,7 +151,7 @@ function PropertySettingsPage() {
         status: "coming_soon",
       },
     ];
-  }, [selected]);
+  }, [properties]);
 
   const navItems: { id: NavId; icon: string; title: string }[] = [
     ...SETTINGS_SECTIONS.map((s) => ({ id: s.id as NavId, icon: s.icon, title: s.title })),
@@ -180,38 +170,12 @@ function PropertySettingsPage() {
             Turto nustatymai
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Centrinė vieta, kur konfigūruojamas objekto veikimas.
+            Bendrieji nustatymai, galiojantys visiems objektams.
           </p>
-        </div>
-        <div className="w-full md:w-72">
-          <label className="mb-1 block text-xs font-medium text-muted-foreground">
-            Objektas
-          </label>
-          {loadingProperties ? (
-            <Skeleton className="h-9 w-full" />
-          ) : (
-            <Select value={selectedId} onValueChange={setPropertyId}>
-              <SelectTrigger>
-                <SelectValue placeholder="Pasirinkite objektą" />
-              </SelectTrigger>
-              <SelectContent>
-                {(properties ?? []).map((p) => (
-                  <SelectItem key={p.id} value={p.id}>
-                    {p.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
         </div>
       </header>
 
-      {!loadingProperties && (properties ?? []).length === 0 ? (
-        <p className="rounded-lg border p-6 text-sm text-muted-foreground">
-          Pirmiausia sukurkite objektą — tada galėsite konfigūruoti jo nustatymus.
-        </p>
-      ) : (
-        <div className="flex flex-col gap-6 lg:flex-row">
+      <div className="flex flex-col gap-6 lg:flex-row">
           <nav className="lg:w-60 lg:shrink-0">
             <div className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-2 lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0 lg:pb-0">
               {navItems.map((item) => {
@@ -236,7 +200,7 @@ function PropertySettingsPage() {
           </nav>
 
           <div className="min-w-0 flex-1">
-            {loadingSettings || !selectedId ? (
+            {loadingSettings ? (
               <div className="flex items-center gap-2 rounded-lg border p-8 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Kraunama…
@@ -245,7 +209,7 @@ function PropertySettingsPage() {
               <IntegrationsSection items={integrations} />
             ) : section ? (
               <SettingsSectionForm
-                key={`${selectedId}-${section.id}`}
+                key={section.id}
                 section={section}
                 settings={settings}
                 canEdit={canEdit}
@@ -256,8 +220,7 @@ function PropertySettingsPage() {
               />
             ) : null}
           </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
