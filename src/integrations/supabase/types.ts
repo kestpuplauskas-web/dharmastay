@@ -631,6 +631,236 @@ export type Database = {
           },
         ]
       }
+      property_settings: {
+        Row: {
+          address: string | null
+          auto_confirm_bookings: boolean
+          auto_refund_deposit: boolean
+          bank_name: string | null
+          brand_email_logo_url: string | null
+          brand_logo_url: string | null
+          brand_pdf_logo_url: string | null
+          brand_primary_color: string
+          brand_secondary_color: string
+          cancellation_fee: number
+          cancellation_fee_type: string
+          cancellation_policy_text: string | null
+          checkin_from: string
+          checkin_reminder_hours_before: number
+          checkin_until: string
+          checkout_until: string
+          children_free_until_age: number
+          city: string | null
+          city_tax: number
+          city_tax_min_age: number
+          company_address: string | null
+          company_code: string | null
+          company_name: string | null
+          company_vat_code: string | null
+          country: string
+          created_at: string
+          currency: string
+          default_language: string
+          deposit_amount: number
+          deposit_required: boolean
+          deposit_type: string
+          display_name: string | null
+          email: string | null
+          extra_guest_fee: number
+          free_cancellation_days: number
+          iban: string | null
+          id: string
+          integrations: Json
+          invoice_logo_url: string | null
+          invoice_next_number: number
+          invoice_notes: string | null
+          invoice_series: string | null
+          lat: number | null
+          lng: number | null
+          max_advance_days: number
+          max_nights: number
+          min_guest_age: number
+          min_nights: number
+          no_show_fee: number
+          notify_booking_confirmation: boolean
+          notify_cancellation_confirmation: boolean
+          notify_checkin_reminder: boolean
+          notify_checkout_reminder: boolean
+          notify_payment_reminder: boolean
+          notify_review_request: boolean
+          parties_allowed: boolean
+          payment_due_days: number
+          payment_methods: Json
+          pets_allowed: boolean
+          phone: string | null
+          postal_code: string | null
+          property_id: string
+          quiet_hours_from: string
+          quiet_hours_to: string
+          require_email: boolean
+          require_phone: boolean
+          review_request_hours_after: number
+          timezone: string
+          updated_at: string
+          updated_by: string | null
+          vat_rate: number
+        }
+        Insert: {
+          address?: string | null
+          auto_confirm_bookings?: boolean
+          auto_refund_deposit?: boolean
+          bank_name?: string | null
+          brand_email_logo_url?: string | null
+          brand_logo_url?: string | null
+          brand_pdf_logo_url?: string | null
+          brand_primary_color?: string
+          brand_secondary_color?: string
+          cancellation_fee?: number
+          cancellation_fee_type?: string
+          cancellation_policy_text?: string | null
+          checkin_from?: string
+          checkin_reminder_hours_before?: number
+          checkin_until?: string
+          checkout_until?: string
+          children_free_until_age?: number
+          city?: string | null
+          city_tax?: number
+          city_tax_min_age?: number
+          company_address?: string | null
+          company_code?: string | null
+          company_name?: string | null
+          company_vat_code?: string | null
+          country?: string
+          created_at?: string
+          currency?: string
+          default_language?: string
+          deposit_amount?: number
+          deposit_required?: boolean
+          deposit_type?: string
+          display_name?: string | null
+          email?: string | null
+          extra_guest_fee?: number
+          free_cancellation_days?: number
+          iban?: string | null
+          id?: string
+          integrations?: Json
+          invoice_logo_url?: string | null
+          invoice_next_number?: number
+          invoice_notes?: string | null
+          invoice_series?: string | null
+          lat?: number | null
+          lng?: number | null
+          max_advance_days?: number
+          max_nights?: number
+          min_guest_age?: number
+          min_nights?: number
+          no_show_fee?: number
+          notify_booking_confirmation?: boolean
+          notify_cancellation_confirmation?: boolean
+          notify_checkin_reminder?: boolean
+          notify_checkout_reminder?: boolean
+          notify_payment_reminder?: boolean
+          notify_review_request?: boolean
+          parties_allowed?: boolean
+          payment_due_days?: number
+          payment_methods?: Json
+          pets_allowed?: boolean
+          phone?: string | null
+          postal_code?: string | null
+          property_id: string
+          quiet_hours_from?: string
+          quiet_hours_to?: string
+          require_email?: boolean
+          require_phone?: boolean
+          review_request_hours_after?: number
+          timezone?: string
+          updated_at?: string
+          updated_by?: string | null
+          vat_rate?: number
+        }
+        Update: {
+          address?: string | null
+          auto_confirm_bookings?: boolean
+          auto_refund_deposit?: boolean
+          bank_name?: string | null
+          brand_email_logo_url?: string | null
+          brand_logo_url?: string | null
+          brand_pdf_logo_url?: string | null
+          brand_primary_color?: string
+          brand_secondary_color?: string
+          cancellation_fee?: number
+          cancellation_fee_type?: string
+          cancellation_policy_text?: string | null
+          checkin_from?: string
+          checkin_reminder_hours_before?: number
+          checkin_until?: string
+          checkout_until?: string
+          children_free_until_age?: number
+          city?: string | null
+          city_tax?: number
+          city_tax_min_age?: number
+          company_address?: string | null
+          company_code?: string | null
+          company_name?: string | null
+          company_vat_code?: string | null
+          country?: string
+          created_at?: string
+          currency?: string
+          default_language?: string
+          deposit_amount?: number
+          deposit_required?: boolean
+          deposit_type?: string
+          display_name?: string | null
+          email?: string | null
+          extra_guest_fee?: number
+          free_cancellation_days?: number
+          iban?: string | null
+          id?: string
+          integrations?: Json
+          invoice_logo_url?: string | null
+          invoice_next_number?: number
+          invoice_notes?: string | null
+          invoice_series?: string | null
+          lat?: number | null
+          lng?: number | null
+          max_advance_days?: number
+          max_nights?: number
+          min_guest_age?: number
+          min_nights?: number
+          no_show_fee?: number
+          notify_booking_confirmation?: boolean
+          notify_cancellation_confirmation?: boolean
+          notify_checkin_reminder?: boolean
+          notify_checkout_reminder?: boolean
+          notify_payment_reminder?: boolean
+          notify_review_request?: boolean
+          parties_allowed?: boolean
+          payment_due_days?: number
+          payment_methods?: Json
+          pets_allowed?: boolean
+          phone?: string | null
+          postal_code?: string | null
+          property_id?: string
+          quiet_hours_from?: string
+          quiet_hours_to?: string
+          require_email?: boolean
+          require_phone?: boolean
+          review_request_hours_after?: number
+          timezone?: string
+          updated_at?: string
+          updated_by?: string | null
+          vat_rate?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_settings_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: true
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       signed_contracts: {
         Row: {
           booking_id: string
