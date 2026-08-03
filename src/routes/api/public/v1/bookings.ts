@@ -26,7 +26,6 @@ export const Route = createFileRoute("/api/public/v1/bookings")({
               customer_email: z.string().trim().email().max(255),
               customer_phone: z.string().trim().min(5).max(50),
               bic: z.string().trim().max(20).optional(),
-              notes: z.string().trim().max(1000).optional(),
             });
             let body: unknown;
             try {
@@ -95,7 +94,6 @@ export const Route = createFileRoute("/api/public/v1/bookings")({
                 customer_name: d.customer_name,
                 customer_phone: d.customer_phone,
                 customer_email: d.customer_email,
-                invoice_notes: d.notes ?? null,
                 source: "website",
                 status: "pending",
                 total_amount: quote.total,
