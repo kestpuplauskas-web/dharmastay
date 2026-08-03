@@ -24,6 +24,7 @@ import { Route as PropertiesIdRouteImport } from './routes/properties.$id'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminContractsRouteImport } from './routes/_authenticated/admin.contracts'
 import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authenticated/admin.expenses'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as ApiPublicBookingSubmitRouteImport } from './routes/api/public/booking-submit'
 import { Route as ApiPublicIcalSyncRouteImport } from './routes/api/public/ical-sync'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
@@ -110,6 +111,12 @@ const AuthenticatedAdminExpensesRoute =
     path: '/expenses',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const ApiPublicBookingSubmitRoute = ApiPublicBookingSubmitRouteImport.update({
   id: '/api/public/booking-submit',
   path: '/api/public/booking-submit',
@@ -176,6 +183,7 @@ export interface FileRoutesByFullPath {
   '/properties/$id': typeof PropertiesIdRoute
   '/admin/contracts': typeof AuthenticatedAdminContractsRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -200,6 +208,7 @@ export interface FileRoutesByTo {
   '/properties/$id': typeof PropertiesIdRoute
   '/admin/contracts': typeof AuthenticatedAdminContractsRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -227,6 +236,7 @@ export interface FileRoutesById {
   '/properties/$id': typeof PropertiesIdRoute
   '/_authenticated/admin/contracts': typeof AuthenticatedAdminContractsRoute
   '/_authenticated/admin/expenses': typeof AuthenticatedAdminExpensesRoute
+  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -254,6 +264,7 @@ export interface FileRouteTypes {
     | '/properties/$id'
     | '/admin/contracts'
     | '/admin/expenses'
+    | '/admin/settings'
     | '/api/public/booking-submit'
     | '/api/public/ical-sync'
     | '/api/public/track'
@@ -278,6 +289,7 @@ export interface FileRouteTypes {
     | '/properties/$id'
     | '/admin/contracts'
     | '/admin/expenses'
+    | '/admin/settings'
     | '/api/public/booking-submit'
     | '/api/public/ical-sync'
     | '/api/public/track'
@@ -304,6 +316,7 @@ export interface FileRouteTypes {
     | '/properties/$id'
     | '/_authenticated/admin/contracts'
     | '/_authenticated/admin/expenses'
+    | '/_authenticated/admin/settings'
     | '/api/public/booking-submit'
     | '/api/public/ical-sync'
     | '/api/public/track'
@@ -440,6 +453,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminExpensesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/api/public/booking-submit': {
       id: '/api/public/booking-submit'
       path: '/api/public/booking-submit'
@@ -509,6 +529,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminContractsRoute: typeof AuthenticatedAdminContractsRoute
   AuthenticatedAdminExpensesRoute: typeof AuthenticatedAdminExpensesRoute
+  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminBookingsIdRoute: typeof AuthenticatedAdminBookingsIdRoute
   AuthenticatedAdminBookingsNewRoute: typeof AuthenticatedAdminBookingsNewRoute
@@ -521,6 +542,7 @@ interface AuthenticatedAdminRouteChildren {
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminContractsRoute: AuthenticatedAdminContractsRoute,
   AuthenticatedAdminExpensesRoute: AuthenticatedAdminExpensesRoute,
+  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminBookingsIdRoute: AuthenticatedAdminBookingsIdRoute,
   AuthenticatedAdminBookingsNewRoute: AuthenticatedAdminBookingsNewRoute,
