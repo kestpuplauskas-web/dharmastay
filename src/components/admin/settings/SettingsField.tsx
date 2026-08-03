@@ -172,7 +172,7 @@ export function SettingsField({
               <TimeInput
                 {...common}
                 value={String(rhf.value ?? "")}
-                onChange={(val) => rhf.onChange(val)}
+                onChange={(val: string) => rhf.onChange(val)}
               />
             ) : (
               <Input
