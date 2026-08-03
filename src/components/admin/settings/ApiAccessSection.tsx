@@ -144,16 +144,30 @@ export function ApiAccessSection({ canEdit }: { canEdit: boolean }) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="rounded-lg border bg-muted/40 p-4">
-          <p className="text-xs font-medium text-muted-foreground">Bazinis API adresas</p>
-          <div className="mt-1 flex items-center gap-2">
-            <code className="min-w-0 flex-1 truncate rounded bg-background px-2 py-1 text-xs">
-              {apiBaseUrl()}
-            </code>
-            <Button type="button" variant="outline" size="sm" onClick={() => copy(apiBaseUrl())}>
-              <Copy className="h-3.5 w-3.5" />
-            </Button>
-          </div>
+        <div className="space-y-3 rounded-lg border bg-muted/40 p-4">
+          <p className="text-xs text-muted-foreground">
+            Šį adresą perduokite klientinei svetainei kaip <code>RENTIVO_API_URL</code>.
+          </p>
+          {BASE_URLS.map((item) => (
+            <div key={item.url}>
+              <p className="text-xs font-medium text-muted-foreground">{item.label}</p>
+              <div className="mt-1 flex items-start gap-2">
+                <code className="min-w-0 flex-1 break-all rounded bg-background px-2 py-1 text-xs">
+                  {item.url}
+                </code>
+                <Button type="button" variant="outline" size="sm" onClick={() => copy(item.url)}>
+                  <Copy className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+              <p className="mt-1 text-[11px] text-muted-foreground">{item.hint}</p>
+            </div>
+          ))}
+          {isPreviewWindow() && (
+            <p className="rounded border border-amber-500/40 bg-amber-500/10 px-2 py-1.5 text-[11px] text-amber-700 dark:text-amber-400">
+              Dabar esate peržiūros lange — nekopijuokite naršyklės adreso, naudokite gamybinį
+              adresą aukščiau.
+            </p>
+          )}
         </div>
 
         {newKey && (
