@@ -21,9 +21,30 @@ import {
   deleteApiClient,
 } from "@/lib/api-keys.functions";
 
-function apiBaseUrl(): string {
-  if (typeof window === "undefined") return "/api/public/v1";
-  return `${window.location.origin}/api/public/v1`;
+const LOVABLE_PROJECT_ID = "3b144e50-7336-4c5e-a93d-7aeca70328ba";
+const API_PATH = "/api/public/v1";
+
+const BASE_URLS = [
+  {
+    label: "Gamybai (rekomenduojama)",
+    url: `https://project--${LOVABLE_PROJECT_ID}.lovable.app${API_PATH}`,
+    hint: "Stabilus — nesikeis net pervadinus projektą.",
+  },
+  {
+    label: "Publikuotas adresas",
+    url: `https://dharmastay.lovable.app${API_PATH}`,
+    hint: "Keisis, jei pakeisite projekto pavadinimą.",
+  },
+  {
+    label: "Testavimui",
+    url: `https://project--${LOVABLE_PROJECT_ID}-dev.lovable.app${API_PATH}`,
+    hint: "Peržiūros versija — naudokite prieš publikuojant.",
+  },
+] as const;
+
+function isPreviewWindow(): boolean {
+  if (typeof window === "undefined") return false;
+  return !window.location.origin.includes(".lovable.app");
 }
 
 export function ApiAccessSection({ canEdit }: { canEdit: boolean }) {
@@ -123,16 +144,30 @@ export function ApiAccessSection({ canEdit }: { canEdit: boolean }) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="rounded-lg border bg-muted/40 p-4">
-          <p className="text-xs font-medium text-muted-foreground">Bazinis API adresas</p>
-          <div className="mt-1 flex items-center gap-2">
-            <code className="min-w-0 flex-1 truncate rounded bg-background px-2 py-1 text-xs">
-              {apiBaseUrl()}
-            </code>
-            <Button type="button" variant="outline" size="sm" onClick={() => copy(apiBaseUrl())}>
-              <Copy className="h-3.5 w-3.5" />
-            </Button>
-          </div>
+        <div className="space-y-3 rounded-lg border bg-muted/40 p-4">
+          <p className="text-xs text-muted-foreground">
+            Šį adresą perduokite klientinei svetainei kaip <code>RENTIVO_API_URL</code>.
+          </p>
+          {BASE_URLS.map((item) => (
+            <div key={item.url}>
+              <p className="text-xs font-medium text-muted-foreground">{item.label}</p>
+              <div className="mt-1 flex items-start gap-2">
+                <code className="min-w-0 flex-1 break-all rounded bg-background px-2 py-1 text-xs">
+                  {item.url}
+                </code>
+                <Button type="button" variant="outline" size="sm" onClick={() => copy(item.url)}>
+                  <Copy className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+              <p className="mt-1 text-[11px] text-muted-foreground">{item.hint}</p>
+            </div>
+          ))}
+          {isPreviewWindow() && (
+            <p className="rounded border border-amber-500/40 bg-amber-500/10 px-2 py-1.5 text-[11px] text-amber-700 dark:text-amber-400">
+              Dabar esate peržiūros lange — nekopijuokite naršyklės adreso, naudokite gamybinį
+              adresą aukščiau.
+            </p>
+          )}
         </div>
 
         {newKey && (
