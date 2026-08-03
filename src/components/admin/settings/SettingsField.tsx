@@ -2,6 +2,7 @@ import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import type { FieldDef } from "@/lib/property-settings";
 import { Input } from "@/components/ui/input";
+import { TimeInput } from "@/components/TimeInput";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -168,13 +169,10 @@ export function SettingsField({
                 }}
               />
             ) : field.type === "time" ? (
-              <Input
+              <TimeInput
                 {...common}
-                type="time"
-                lang="lt-LT"
-                step={300}
                 value={String(rhf.value ?? "")}
-                onChange={(e) => rhf.onChange(e.target.value)}
+                onChange={(val: string) => rhf.onChange(val)}
               />
             ) : (
               <Input
