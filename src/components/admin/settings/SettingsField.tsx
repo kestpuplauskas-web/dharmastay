@@ -168,13 +168,10 @@ export function SettingsField({
                 }}
               />
             ) : field.type === "time" ? (
-              <Input
+              <TimeInput
                 {...common}
-                type="time"
-                lang="lt-LT"
-                step={300}
                 value={String(rhf.value ?? "")}
-                onChange={(e) => rhf.onChange(e.target.value)}
+                onChange={(val) => rhf.onChange(val)}
               />
             ) : (
               <Input
