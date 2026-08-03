@@ -21,6 +21,7 @@ import { NumberInput } from "@/components/NumberInput";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { TimeInput } from "@/components/TimeInput";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -310,7 +311,7 @@ export function BookingForm({
                 id="check-in"
                 placeholder="15:00"
                 value={v.check_in_time}
-                onChange={(val) => set("check_in_time", val)}
+                onChange={(val: string) => set("check_in_time", val)}
               />
             </div>
             <div className="grid gap-2">
@@ -319,7 +320,7 @@ export function BookingForm({
                 id="check-out"
                 placeholder="11:00"
                 value={v.check_out_time}
-                onChange={(val) => set("check_out_time", val)}
+                onChange={(val: string) => set("check_out_time", val)}
               />
             </div>
           </div>
