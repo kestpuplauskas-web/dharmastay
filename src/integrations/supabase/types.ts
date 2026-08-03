@@ -694,12 +694,13 @@ export type Database = {
           pets_allowed: boolean
           phone: string | null
           postal_code: string | null
-          property_id: string
+          property_id: string | null
           quiet_hours_from: string
           quiet_hours_to: string
           require_email: boolean
           require_phone: boolean
           review_request_hours_after: number
+          scope: string
           timezone: string
           updated_at: string
           updated_by: string | null
@@ -767,12 +768,13 @@ export type Database = {
           pets_allowed?: boolean
           phone?: string | null
           postal_code?: string | null
-          property_id: string
+          property_id?: string | null
           quiet_hours_from?: string
           quiet_hours_to?: string
           require_email?: boolean
           require_phone?: boolean
           review_request_hours_after?: number
+          scope?: string
           timezone?: string
           updated_at?: string
           updated_by?: string | null
@@ -840,12 +842,13 @@ export type Database = {
           pets_allowed?: boolean
           phone?: string | null
           postal_code?: string | null
-          property_id?: string
+          property_id?: string | null
           quiet_hours_from?: string
           quiet_hours_to?: string
           require_email?: boolean
           require_phone?: boolean
           review_request_hours_after?: number
+          scope?: string
           timezone?: string
           updated_at?: string
           updated_by?: string | null
@@ -855,7 +858,7 @@ export type Database = {
           {
             foreignKeyName: "property_settings_property_id_fkey"
             columns: ["property_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "properties"
             referencedColumns: ["id"]
           },
