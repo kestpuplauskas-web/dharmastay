@@ -21,9 +21,30 @@ import {
   deleteApiClient,
 } from "@/lib/api-keys.functions";
 
-function apiBaseUrl(): string {
-  if (typeof window === "undefined") return "/api/public/v1";
-  return `${window.location.origin}/api/public/v1`;
+const LOVABLE_PROJECT_ID = "3b144e50-7336-4c5e-a93d-7aeca70328ba";
+const API_PATH = "/api/public/v1";
+
+const BASE_URLS = [
+  {
+    label: "Gamybai (rekomenduojama)",
+    url: `https://project--${LOVABLE_PROJECT_ID}.lovable.app${API_PATH}`,
+    hint: "Stabilus — nesikeis net pervadinus projektą.",
+  },
+  {
+    label: "Publikuotas adresas",
+    url: `https://dharmastay.lovable.app${API_PATH}`,
+    hint: "Keisis, jei pakeisite projekto pavadinimą.",
+  },
+  {
+    label: "Testavimui",
+    url: `https://project--${LOVABLE_PROJECT_ID}-dev.lovable.app${API_PATH}`,
+    hint: "Peržiūros versija — naudokite prieš publikuojant.",
+  },
+] as const;
+
+function isPreviewWindow(): boolean {
+  if (typeof window === "undefined") return false;
+  return !window.location.origin.includes(".lovable.app");
 }
 
 export function ApiAccessSection({ canEdit }: { canEdit: boolean }) {
