@@ -56,33 +56,28 @@ function PropertySettingsPage() {
   const saveSettings = useServerFn(savePropertySettings);
   const qc = useQueryClient();
 
-  const [propertyId, setPropertyId] = useState<string>("");
   const [active, setActive] = useState<NavId>("general");
 
   const { data: role } = useQuery({ queryKey: ["my-role"], queryFn: () => fetchRole() });
   const canEdit = Boolean(role?.isAdmin);
 
-  const { data: properties, isLoading: loadingProperties } = useQuery({
+  const { data: properties } = useQuery({
     queryKey: ["admin-properties-settings"],
     queryFn: () => fetchProperties(),
   });
 
-  const selectedId = propertyId || properties?.[0]?.id || "";
-  const selected = properties?.find((p) => p.id === selectedId);
-
   const { data, isLoading: loadingSettings } = useQuery({
-    queryKey: ["property-settings", selectedId],
-    queryFn: () => fetchSettings({ data: { propertyId: selectedId } }),
-    enabled: Boolean(selectedId),
+    queryKey: ["property-settings"],
+    queryFn: () => fetchSettings(),
   });
 
   const save = useMutation({
     mutationFn: (vars: { section: SettingsSectionId; values: Record<string, unknown> }) =>
       saveSettings({
-        data: { propertyId: selectedId, section: vars.section, values: vars.values },
+        data: { section: vars.section, values: vars.values },
       }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["property-settings", selectedId] });
+      qc.invalidateQueries({ queryKey: ["property-settings"] });
       toast.success("Nustatymai išsaugoti.");
     },
     onError: (e) =>
@@ -90,12 +85,16 @@ function PropertySettingsPage() {
   });
 
   const integrations = useMemo<IntegrationCard[]>(() => {
-    const icalOn = Boolean(selected?.icalImportUrl);
-    const syncedAt = selected?.icalLastSyncAt
-      ? new Date(selected.icalLastSyncAt).toLocaleString("lt-LT")
-      : null;
+    const withIcal = (properties ?? []).filter((p) => Boolean(p.icalImportUrl));
+    const icalOn = withIcal.length > 0;
+    const lastSync = withIcal
+      .map((p) => p.icalLastSyncAt)
+      .filter(Boolean)
+      .sort()
+      .pop();
+    const syncedAt = lastSync ? new Date(lastSync as string).toLocaleString("lt-LT") : null;
     const icalDetail = icalOn
-      ? `iCal susietas objekto lygiu${syncedAt ? ` · sinchronizuota ${syncedAt}` : ""}`
+      ? `iCal susietas ${withIcal.length} objekt(-uose)${syncedAt ? ` · sinchronizuota ${syncedAt}` : ""}`
       : "iCal nuoroda nurodoma objekto kortelėje";
     return [
       {
@@ -161,7 +160,7 @@ function PropertySettingsPage() {
         status: "coming_soon",
       },
     ];
-  }, [selected]);
+  }, [properties]);
 
   const navItems: { id: NavId; icon: string; title: string }[] = [
     ...SETTINGS_SECTIONS.map((s) => ({ id: s.id as NavId, icon: s.icon, title: s.title })),
