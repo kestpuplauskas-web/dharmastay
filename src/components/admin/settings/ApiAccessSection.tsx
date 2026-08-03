@@ -26,19 +26,20 @@ const API_PATH = "/api/public/v1";
 
 const BASE_URLS = [
   {
-    label: "Gamybai (rekomenduojama)",
-    url: `https://project--${LOVABLE_PROJECT_ID}.lovable.app${API_PATH}`,
-    hint: "Stabilus — nesikeis net pervadinus projektą.",
-  },
-  {
-    label: "Publikuotas adresas",
+    envVar: "RENTIVO_API_URL_PROD",
+    label: "Gamybinė aplinka (publikuota versija)",
     url: `https://dharmastay.lovable.app${API_PATH}`,
-    hint: "Keisis, jei pakeisite projekto pavadinimą.",
+    hint: "Šį adresą naudoja realūs klientai.",
+    alt: {
+      label: "Alternatyva — stabilus techninis adresas (nesikeis pervadinus projektą)",
+      url: `https://project--${LOVABLE_PROJECT_ID}.lovable.app${API_PATH}`,
+    },
   },
   {
-    label: "Testavimui",
+    envVar: "RENTIVO_API_URL_DEV",
+    label: "Testavimo (peržiūros) aplinka",
     url: `https://project--${LOVABLE_PROJECT_ID}-dev.lovable.app${API_PATH}`,
-    hint: "Peržiūros versija — naudokite prieš publikuojant.",
+    hint: "Privalo turėti „-dev“. Be jo testai rašys į realius duomenis.",
   },
 ] as const;
 
@@ -146,12 +147,13 @@ export function ApiAccessSection({ canEdit }: { canEdit: boolean }) {
       <CardContent className="space-y-6">
         <div className="space-y-3 rounded-lg border bg-muted/40 p-4">
           <p className="text-xs text-muted-foreground">
-            Šį adresą perduokite klientinei svetainei kaip <code>RENTIVO_API_URL</code>.
+            Šiuos du kintamuosius perduokite klientinei svetainei.
           </p>
           {BASE_URLS.map((item) => (
-            <div key={item.url}>
-              <p className="text-xs font-medium text-muted-foreground">{item.label}</p>
-              <div className="mt-1 flex items-start gap-2">
+            <div key={item.envVar} className="rounded-md border bg-background/50 p-3">
+              <p className="text-xs font-semibold">{item.envVar}</p>
+              <p className="text-[11px] text-muted-foreground">{item.label}</p>
+              <div className="mt-1.5 flex items-start gap-2">
                 <code className="min-w-0 flex-1 break-all rounded bg-background px-2 py-1 text-xs">
                   {item.url}
                 </code>
@@ -160,6 +162,24 @@ export function ApiAccessSection({ canEdit }: { canEdit: boolean }) {
                 </Button>
               </div>
               <p className="mt-1 text-[11px] text-muted-foreground">{item.hint}</p>
+              {"alt" in item && item.alt && (
+                <div className="mt-2 border-t pt-2">
+                  <p className="text-[11px] text-muted-foreground">{item.alt.label}</p>
+                  <div className="mt-1 flex items-start gap-2">
+                    <code className="min-w-0 flex-1 break-all rounded bg-background px-2 py-1 text-[11px]">
+                      {item.alt.url}
+                    </code>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copy(item.alt.url)}
+                    >
+                      <Copy className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
           {isPreviewWindow() && (
