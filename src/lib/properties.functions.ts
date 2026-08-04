@@ -28,6 +28,7 @@ function mapProperty(row: PropertyRow, bookings: BookingRow[] = []): Property {
     address: row.address ?? "",
     city: row.city ?? "",
     country: row.country ?? "LT",
+    doorCode: row.door_code ?? "",
     lat: row.lat != null ? Number(row.lat) : null,
     lng: row.lng != null ? Number(row.lng) : null,
     areaM2: row.area_m2 ?? null,
@@ -190,6 +191,7 @@ const propertyInputSchema = z.object({
   status: z.enum(["active", "maintenance", "blocked"]).default("active"),
   year: z.number().int().min(1800).max(2100).default(new Date().getFullYear()),
   category: z.string().max(100).default(""),
+  doorCode: z.string().trim().max(100).default(""),
   icalImportUrl: z
     .string()
     .trim()
@@ -206,6 +208,7 @@ function toRow(input: z.infer<typeof propertyInputSchema>) {
     address: input.address,
     city: input.city,
     country: input.country,
+    door_code: input.doorCode || null,
     lat: input.lat ?? null,
     lng: input.lng ?? null,
     area_m2: input.areaM2 ?? null,

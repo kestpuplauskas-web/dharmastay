@@ -137,6 +137,7 @@ export type Property = {
   address: string;
   city: string;
   country: string;
+  doorCode: string;
   lat: number | null;
   lng: number | null;
   areaM2: number | null;
