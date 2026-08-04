@@ -109,11 +109,10 @@ function ContentPage() {
 
   const sectionTemplates = CONTENT_TEMPLATES.filter((t) => t.category === active);
   const activeSection = CONTENT_SECTIONS.find((s) => s.id === active)!;
-  const loading = loadingProperties || loadingTemplates;
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+      <header>
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-semibold">
             <FileText className="h-6 w-6 text-primary" />
@@ -121,22 +120,8 @@ function ContentPage() {
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Informacija, siunčiama klientams el. paštu, WhatsApp žinutėmis ar rodoma svečiui.
+            Nustatymai galioja visiems objektams.
           </p>
-        </div>
-        <div className="w-full space-y-1.5 md:w-72">
-          <Label htmlFor="content-property">Objektas</Label>
-          <Select value={propertyId} onValueChange={setPropertyId}>
-            <SelectTrigger id="content-property">
-              <SelectValue placeholder="Pasirinkite objektą…" />
-            </SelectTrigger>
-            <SelectContent>
-              {(properties ?? []).map((p) => (
-                <SelectItem key={p.id} value={p.id}>
-                  {p.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
       </header>
 
@@ -167,22 +152,15 @@ function ContentPage() {
             <p className="text-sm text-muted-foreground">{activeSection.description}</p>
           </div>
 
-          {!propertyId && !loading && (
-            <p className="rounded-md border border-dashed p-6 text-sm text-muted-foreground">
-              Nėra sukurtų objektų — pirmiausia pridėkite objektą.
-            </p>
-          )}
-
           {loading ? (
             <div className="flex items-center gap-2 p-6 text-sm text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" />
               Kraunama…
             </div>
           ) : (
-            propertyId &&
             sectionTemplates.map((def) => (
               <ContentTemplateCard
-                key={`${propertyId}:${def.category}:${def.name}`}
+                key={`${def.category}:${def.name}`}
                 def={def}
                 record={recordMap[templateKey(def.category, def.name)]}
                 canEdit={canEdit}
