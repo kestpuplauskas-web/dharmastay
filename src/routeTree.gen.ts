@@ -35,6 +35,7 @@ import { Route as AuthenticatedAdminPropertiesIndexRouteImport } from './routes/
 import { Route as AuthenticatedAdminPropertiesNewRouteImport } from './routes/_authenticated/admin.properties.new'
 import { Route as ApiPublicV1AvailabilityRouteImport } from './routes/api/public/v1/availability'
 import { Route as ApiPublicV1BookingsRouteImport } from './routes/api/public/v1/bookings'
+import { Route as ApiPublicV1PaymentDetailsRouteImport } from './routes/api/public/v1/payment-details'
 import { Route as ApiPublicV1PropertiesRouteImport } from './routes/api/public/v1/properties'
 import { Route as ApiPublicV1QuoteRouteImport } from './routes/api/public/v1/quote'
 import { Route as AuthenticatedAdminPropertiesIdEditRouteImport } from './routes/_authenticated/admin.properties.$id.edit'
@@ -178,6 +179,12 @@ const ApiPublicV1BookingsRoute = ApiPublicV1BookingsRouteImport.update({
   path: '/api/public/v1/bookings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicV1PaymentDetailsRoute =
+  ApiPublicV1PaymentDetailsRouteImport.update({
+    id: '/api/public/v1/payment-details',
+    path: '/api/public/v1/payment-details',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicV1PropertiesRoute = ApiPublicV1PropertiesRouteImport.update({
   id: '/api/public/v1/properties',
   path: '/api/public/v1/properties',
@@ -230,6 +237,7 @@ export interface FileRoutesByFullPath {
   '/admin/properties/new': typeof AuthenticatedAdminPropertiesNewRoute
   '/api/public/v1/availability': typeof ApiPublicV1AvailabilityRoute
   '/api/public/v1/bookings': typeof ApiPublicV1BookingsRouteWithChildren
+  '/api/public/v1/payment-details': typeof ApiPublicV1PaymentDetailsRoute
   '/api/public/v1/properties': typeof ApiPublicV1PropertiesRouteWithChildren
   '/api/public/v1/quote': typeof ApiPublicV1QuoteRoute
   '/admin/bookings/': typeof AuthenticatedAdminBookingsIndexRoute
@@ -261,6 +269,7 @@ export interface FileRoutesByTo {
   '/admin/properties/new': typeof AuthenticatedAdminPropertiesNewRoute
   '/api/public/v1/availability': typeof ApiPublicV1AvailabilityRoute
   '/api/public/v1/bookings': typeof ApiPublicV1BookingsRouteWithChildren
+  '/api/public/v1/payment-details': typeof ApiPublicV1PaymentDetailsRoute
   '/api/public/v1/properties': typeof ApiPublicV1PropertiesRouteWithChildren
   '/api/public/v1/quote': typeof ApiPublicV1QuoteRoute
   '/admin/bookings': typeof AuthenticatedAdminBookingsIndexRoute
@@ -295,6 +304,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/properties/new': typeof AuthenticatedAdminPropertiesNewRoute
   '/api/public/v1/availability': typeof ApiPublicV1AvailabilityRoute
   '/api/public/v1/bookings': typeof ApiPublicV1BookingsRouteWithChildren
+  '/api/public/v1/payment-details': typeof ApiPublicV1PaymentDetailsRoute
   '/api/public/v1/properties': typeof ApiPublicV1PropertiesRouteWithChildren
   '/api/public/v1/quote': typeof ApiPublicV1QuoteRoute
   '/_authenticated/admin/bookings/': typeof AuthenticatedAdminBookingsIndexRoute
@@ -329,6 +339,7 @@ export interface FileRouteTypes {
     | '/admin/properties/new'
     | '/api/public/v1/availability'
     | '/api/public/v1/bookings'
+    | '/api/public/v1/payment-details'
     | '/api/public/v1/properties'
     | '/api/public/v1/quote'
     | '/admin/bookings/'
@@ -360,6 +371,7 @@ export interface FileRouteTypes {
     | '/admin/properties/new'
     | '/api/public/v1/availability'
     | '/api/public/v1/bookings'
+    | '/api/public/v1/payment-details'
     | '/api/public/v1/properties'
     | '/api/public/v1/quote'
     | '/admin/bookings'
@@ -393,6 +405,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/properties/new'
     | '/api/public/v1/availability'
     | '/api/public/v1/bookings'
+    | '/api/public/v1/payment-details'
     | '/api/public/v1/properties'
     | '/api/public/v1/quote'
     | '/_authenticated/admin/bookings/'
@@ -419,6 +432,7 @@ export interface RootRouteChildren {
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
   ApiPublicV1AvailabilityRoute: typeof ApiPublicV1AvailabilityRoute
   ApiPublicV1BookingsRoute: typeof ApiPublicV1BookingsRouteWithChildren
+  ApiPublicV1PaymentDetailsRoute: typeof ApiPublicV1PaymentDetailsRoute
   ApiPublicV1PropertiesRoute: typeof ApiPublicV1PropertiesRouteWithChildren
   ApiPublicV1QuoteRoute: typeof ApiPublicV1QuoteRoute
 }
@@ -607,6 +621,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicV1BookingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/v1/payment-details': {
+      id: '/api/public/v1/payment-details'
+      path: '/api/public/v1/payment-details'
+      fullPath: '/api/public/v1/payment-details'
+      preLoaderRoute: typeof ApiPublicV1PaymentDetailsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/v1/properties': {
       id: '/api/public/v1/properties'
       path: '/api/public/v1/properties'
@@ -728,19 +749,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicTrackRoute: ApiPublicTrackRoute,
   ApiPublicV1AvailabilityRoute: ApiPublicV1AvailabilityRoute,
   ApiPublicV1BookingsRoute: ApiPublicV1BookingsRouteWithChildren,
+  ApiPublicV1PaymentDetailsRoute: ApiPublicV1PaymentDetailsRoute,
   ApiPublicV1PropertiesRoute: ApiPublicV1PropertiesRouteWithChildren,
   ApiPublicV1QuoteRoute: ApiPublicV1QuoteRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
