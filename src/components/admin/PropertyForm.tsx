@@ -24,6 +24,7 @@ export type PropertyFormValues = {
   address: string;
   city: string;
   country: string;
+  doorCode: string;
   lat: number | null;
   lng: number | null;
   areaM2: number | null;
@@ -65,6 +66,7 @@ export function propertyToForm(p: Property | null | undefined): PropertyFormValu
     address: p?.address ?? "",
     city: p?.city ?? "",
     country: p?.country ?? "LT",
+    doorCode: p?.doorCode ?? "",
     lat: p?.lat ?? null,
     lng: p?.lng ?? null,
     areaM2: p?.areaM2 ?? null,
@@ -193,6 +195,18 @@ export function PropertyForm({
             maxLength={3}
             className="mt-1 w-full rounded border px-2 py-1"
           />
+        </label>
+        <label className="text-sm md:col-span-3">
+          Durų kodo numeris
+          <input
+            value={v.doorCode}
+            onChange={(e) => set("doorCode", e.target.value)}
+            placeholder="pvz. 1234#"
+            className="mt-1 w-full rounded border px-2 py-1"
+          />
+          <span className="mt-1 block text-xs text-muted-foreground">
+            Vidinė informacija — nerodoma svetainėje ir viešame API.
+          </span>
         </label>
       </section>
 
