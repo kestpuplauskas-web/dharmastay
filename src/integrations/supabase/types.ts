@@ -246,6 +246,56 @@ export type Database = {
           },
         ]
       }
+      content_templates: {
+        Row: {
+          category: string
+          content: string
+          created_at: string
+          fields: Json
+          id: string
+          is_enabled: boolean
+          property_id: string
+          subject: string
+          template_name: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          category: string
+          content?: string
+          created_at?: string
+          fields?: Json
+          id?: string
+          is_enabled?: boolean
+          property_id: string
+          subject?: string
+          template_name: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          category?: string
+          content?: string
+          created_at?: string
+          fields?: Json
+          id?: string
+          is_enabled?: boolean
+          property_id?: string
+          subject?: string
+          template_name?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_templates_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contract_templates: {
         Row: {
           content: string

@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Home, Calendar, FileText, Wallet, LayoutDashboard, Globe, LogOut, Building2, Settings2 } from "lucide-react";
+import { Home, Calendar, FileText, Wallet, LayoutDashboard, Globe, LogOut, Building2, Settings2, FileEdit } from "lucide-react";
 import { getMyRole } from "@/lib/properties.functions";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -38,6 +38,7 @@ function AdminLayout() {
     { to: "/admin/contracts", label: "Sutartys", icon: FileText },
     { to: "/admin/expenses", label: "Finansai", icon: Wallet },
     { to: "/admin/settings", label: "Bendrieji nustatymai", icon: Settings2 },
+    { to: "/admin/content", label: "Turinys", icon: FileEdit },
   ] as const;
 
   return (
