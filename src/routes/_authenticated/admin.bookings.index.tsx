@@ -20,9 +20,9 @@ export const Route = createFileRoute("/_authenticated/admin/bookings/")({
 });
 
 const STATUS_LABELS: Record<string, string> = {
-  confirmed: "Vykdoma",
-  pending: "Rezervuota",
-  completed: "Atlikta",
+  confirmed: "Apmokėta",
+  pending: "Laukiama apmokėjimo",
+  completed: "Užbaigta",
   cancelled: "Atšaukta",
 };
 const STATUS_CLASS: Record<string, string> = {

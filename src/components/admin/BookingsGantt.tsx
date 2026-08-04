@@ -42,9 +42,9 @@ type BarDrag = {
 };
 
 const STATUS_LABELS: Record<string, string> = {
-  confirmed: "Vykdoma",
-  pending: "Rezervuota",
-  completed: "Atlikta",
+  confirmed: "Apmokėta",
+  pending: "Laukiama apmokėjimo",
+  completed: "Užbaigta",
   cancelled: "Atšaukta",
   blocked_external: "Išorinė / užblokuota",
 };
@@ -279,10 +279,10 @@ export function BookingsGantt({
       </div>
 
       <div className="flex flex-wrap items-center gap-3 text-xs">
-        <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-yellow-400 border border-yellow-600" /> Rezervuota</span>
-        <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-green-500 border border-green-700" /> Vykdoma</span>
+        <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-yellow-400 border border-yellow-600" /> Laukiama apmokėjimo</span>
+        <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-green-500 border border-green-700" /> Apmokėta</span>
         <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-red-500 border border-red-700" /> Atšaukta</span>
-        <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-gray-400 border border-gray-600" /> Atlikta</span>
+        <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-gray-400 border border-gray-600" /> Užbaigta</span>
       </div>
 
       {canDrag && (
