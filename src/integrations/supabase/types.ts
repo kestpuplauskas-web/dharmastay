@@ -753,11 +753,10 @@ export type Database = {
           min_guest_age: number
           min_nights: number
           no_show_fee: number
+          notify_booking_change: boolean
           notify_booking_confirmation: boolean
           notify_cancellation_confirmation: boolean
           notify_checkin_reminder: boolean
-          notify_checkout_reminder: boolean
-          notify_payment_reminder: boolean
           notify_review_request: boolean
           parties_allowed: boolean
           payment_due_days: number
@@ -827,11 +826,10 @@ export type Database = {
           min_guest_age?: number
           min_nights?: number
           no_show_fee?: number
+          notify_booking_change?: boolean
           notify_booking_confirmation?: boolean
           notify_cancellation_confirmation?: boolean
           notify_checkin_reminder?: boolean
-          notify_checkout_reminder?: boolean
-          notify_payment_reminder?: boolean
           notify_review_request?: boolean
           parties_allowed?: boolean
           payment_due_days?: number
@@ -901,11 +899,10 @@ export type Database = {
           min_guest_age?: number
           min_nights?: number
           no_show_fee?: number
+          notify_booking_change?: boolean
           notify_booking_confirmation?: boolean
           notify_cancellation_confirmation?: boolean
           notify_checkin_reminder?: boolean
-          notify_checkout_reminder?: boolean
-          notify_payment_reminder?: boolean
           notify_review_request?: boolean
           parties_allowed?: boolean
           payment_due_days?: number
