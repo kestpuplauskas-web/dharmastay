@@ -6,7 +6,9 @@ import DOMPurify from "dompurify";
 import { ChevronDown, Eye, ExternalLink, Loader2, Save, Send } from "lucide-react";
 import {
   buildFormSchema,
+  buildWhatsappLink,
   defaultsFor,
+  normalizeWhatsappPhone,
   renderPreview,
   type ContentTemplateDef,
   type ContentTemplateRecord,
@@ -90,6 +92,8 @@ export function ContentTemplateCard({
   const [previewOpen, setPreviewOpen] = useState(false);
   const [testOpen, setTestOpen] = useState(false);
   const [testEmail, setTestEmail] = useState("");
+  const [waOpen, setWaOpen] = useState(false);
+  const [waPhone, setWaPhone] = useState("");
 
   useEffect(() => {
     form.reset(toValues(def, record));
@@ -289,6 +293,17 @@ export function ContentTemplateCard({
             >
               <Send className="mr-2 h-4 w-4" />
               Siųsti testinį laišką
+            </Button>
+          )}
+          {def.canTestWhatsapp && (
+            <Button
+              type="button"
+              variant="outline"
+              disabled={!canEdit}
+              onClick={() => setWaOpen(true)}
+            >
+              <Send className="mr-2 h-4 w-4" />
+              Siųsti testinę WhatsApp žinutę
             </Button>
           )}
           <Button type="submit" disabled={disabled}>
