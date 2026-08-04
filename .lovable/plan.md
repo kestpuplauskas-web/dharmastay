@@ -24,12 +24,14 @@ Laukas vadinasi **`nightly_rate`**, ne `price_per_night` (žr. `QuoteResult` fai
 
 ```json
 { "data": { "nights": 4, "nightly_rate": 89, "stay_total": 356,
-  "extras": [{ "name": "Pusryčiai", "calc": "per_person_per_day",
+  "extras": [{ "name": "Pusryčiai", "calc": "per_person",
                "pricePerDay": 12, "amount": 96 }],
   "extras_total": 96, "total": 452,
   "currency": "EUR", "available": true } }
 ```
 `extras` elementai turi pilną struktūrą `{ name, calc, pricePerDay, amount }` — tiek `/quote`, tiek `/bookings` atsakymuose. Į užklausos body siunčiama tik `{ "name": "..." }`.
+
+Galimos `calc` reikšmės (tik šios trys): `per_person`, `per_child`, `flat_per_day`. Dienų skaičius jau įskaičiuotas į `amount`, o `pricePerDay` yra vieneto kaina už dieną.
 
 ## 3. Mokėjimo rekvizitai
 Pastaba prompte teisinga: tokio endpointo nėra. Duomenys sistemoje jau yra — „Bendrieji nustatymai“ turi `iban` ir `bank_name` laukus. Rekomenduoju Core pusėje pridėti `GET /v1/payment-details`, grąžinantį tik `iban`, `bank_name`, gavėjo pavadinimą — tada klientinė dalis padėkos puslapyje nerodys statiškai įrašytų rekvizitų.
