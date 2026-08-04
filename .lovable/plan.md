@@ -20,12 +20,16 @@ Vieno adreso variantas priimtinas tik jei klientinė dalis niekada netestuos su 
 ## 2. `/quote` atsakymo laukai neaprašyti
 Kodas grąžina konkrečią struktūrą — verta ją įrašyti, kad klientinė dalis nespėliotų:
 
+Laukas vadinasi **`nightly_rate`**, ne `price_per_night` (žr. `QuoteResult` faile `booking-pricing.ts`) — ieškant `price_per_night` bus gauta `undefined`.
+
 ```json
 { "data": { "nights": 4, "nightly_rate": 89, "stay_total": 356,
-  "extras": [], "extras_total": 0, "total": 356,
+  "extras": [{ "name": "Pusryčiai", "calc": "per_person_per_day",
+               "pricePerDay": 12, "amount": 96 }],
+  "extras_total": 96, "total": 452,
   "currency": "EUR", "available": true } }
 ```
-(`/bookings` atsakymas prompte aprašytas teisingai.)
+`extras` elementai turi pilną struktūrą `{ name, calc, pricePerDay, amount }` — tiek `/quote`, tiek `/bookings` atsakymuose. Į užklausos body siunčiama tik `{ "name": "..." }`.
 
 ## 3. Mokėjimo rekvizitai
 Pastaba prompte teisinga: tokio endpointo nėra. Duomenys sistemoje jau yra — „Bendrieji nustatymai“ turi `iban` ir `bank_name` laukus. Rekomenduoju Core pusėje pridėti `GET /v1/payment-details`, grąžinantį tik `iban`, `bank_name`, gavėjo pavadinimą — tada klientinė dalis padėkos puslapyje nerodys statiškai įrašytų rekvizitų.
