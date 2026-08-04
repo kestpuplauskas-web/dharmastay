@@ -4,8 +4,8 @@ Peržiūrėjau prompt'ą prieš realų kodą (`src/routes/api/public/v1/*`, `src
 
 Netikslumai / trūkumai, kuriuos verta ištaisyti prieš perduodant:
 
-## 1. Vienas API adresas vietoj dviejų aplinkų
-Prompte tik `RENTIVO_API_URL` / `RENTIVO_API_KEY`. Anksčiau sutarėme dėl dviejų aplinkų. Pakeisti į:
+## 1. Palikti dvi aplinkas (rekomenduoju)
+Prompte tik `RENTIVO_API_URL` / `RENTIVO_API_KEY`. Rekomenduoju grąžinti dviejų aplinkų variantą, kaip buvo sutarta: taip klientinė dalis gali testuoti nepaliesdama realių rezervacijų, o PROD raktą galima išjungti atskirai nuo DEV.
 
 ```
 RENTIVO_API_URL_PROD=https://project--3b144e50-7336-4c5e-a93d-7aeca70328ba.lovable.app/api/public/v1
@@ -13,13 +13,15 @@ RENTIVO_API_URL_DEV =https://project--3b144e50-7336-4c5e-a93d-7aeca70328ba-dev.l
 RENTIVO_API_KEY_PROD=...
 RENTIVO_API_KEY_DEV =...
 ```
-ir wrapperyje pasirinkti pagal aplinką.
+ir wrapperyje pasirinkti pagal aplinką (gamyboje — PROD, kitur — DEV).
+
+Vieno adreso variantas priimtinas tik jei klientinė dalis niekada netestuos su gyvais duomenimis — tada mažiau kintamųjų, bet kiekvienas testas kuria realią rezervaciją Core sistemoje.
 
 ## 2. `/quote` atsakymo laukai neaprašyti
 Kodas grąžina konkrečią struktūrą — verta ją įrašyti, kad klientinė dalis nespėliotų:
 
 ```json
-{ "data": { "nights": 4, "price_per_night": 89, "stay_total": 356,
+{ "data": { "nights": 4, "nightly_rate": 89, "stay_total": 356,
   "extras": [], "extras_total": 0, "total": 356,
   "currency": "EUR", "available": true } }
 ```
