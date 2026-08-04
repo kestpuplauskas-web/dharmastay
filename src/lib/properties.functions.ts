@@ -221,8 +221,13 @@ const propertyInputSchema = z.object({
     .trim()
     .max(2000)
     .default("")
-    .transform((v) => (v.toLowerCase().startsWith("webcal://") ? `https://${v.slice(9)}` : v))
-    .refine((v) => v === "" || /^https?:\/\/\S+$/i.test(v), "Neteisinga iCal nuoroda"),
+    .transform((v) => {
+      const cleaned = v.replace(/\s+/g, "");
+      if (!cleaned) return "";
+      if (/^webcal:\/\//i.test(cleaned)) return `https://${cleaned.slice(9)}`;
+      if (!/^https?:\/\//i.test(cleaned)) return `https://${cleaned}`;
+      return cleaned;
+    }),
 });
 
 function toRow(input: z.infer<typeof propertyInputSchema>) {
