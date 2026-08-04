@@ -140,10 +140,20 @@ export function ContentTemplateCard({
       <form onSubmit={form.handleSubmit(async (v) => { await onSave(v); })}>
         <CardHeader className="gap-1">
           <div className="flex flex-wrap items-start justify-between gap-3">
-            <div className="min-w-0">
-              <CardTitle className="text-base sm:text-lg">{def.title}</CardTitle>
-              <CardDescription>{def.description}</CardDescription>
-            </div>
+            <button
+              type="button"
+              onClick={() => setOpen((v) => !v)}
+              aria-expanded={open}
+              className="flex min-w-0 flex-1 items-start gap-3 text-left"
+            >
+              <ChevronDown
+                className={`mt-1 h-4 w-4 shrink-0 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
+              />
+              <span className="min-w-0">
+                <CardTitle className="text-base sm:text-lg">{def.title}</CardTitle>
+                <CardDescription>{def.description}</CardDescription>
+              </span>
+            </button>
             <div className="flex items-center gap-2">
               {dirty && (
                 <Badge variant="outline" className="text-xs">
@@ -165,6 +175,8 @@ export function ContentTemplateCard({
           </div>
         </CardHeader>
 
+        {open && (
+        <>
         <CardContent className="space-y-4">
           {def.hasSubject && (
             <div className="space-y-1.5">
@@ -288,6 +300,8 @@ export function ContentTemplateCard({
             {saving ? "Saugoma…" : "Išsaugoti"}
           </Button>
         </CardFooter>
+        </>
+        )}
       </form>
 
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
