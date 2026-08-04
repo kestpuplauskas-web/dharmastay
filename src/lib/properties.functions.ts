@@ -14,12 +14,16 @@ function publicClient() {
 }
 
 type PropertyRow = Database["public"]["Tables"]["properties"]["Row"];
+/** Public/anon reads never include door_code (physical access credential). */
+const PROPERTY_PUBLIC_COLUMNS =
+  "id, name, category, year, price_per_night, cover_image_url, image_urls, price_tiers, is_active, sort_order, created_at, updated_at, status, property_type, description, address, city, country, lat, lng, area_m2, max_guests, beds, rooms, amenities, extra_services, ical_import_url, ical_last_sync_at, ical_last_status";
+type PublicPropertyRow = Omit<PropertyRow, "door_code"> & { door_code?: string | null };
 type BookingRow = Pick<
   Database["public"]["Tables"]["bookings"]["Row"],
   "property_id" | "date_from" | "date_to"
 >;
 
-function mapProperty(row: PropertyRow, bookings: BookingRow[] = []): Property {
+function mapProperty(row: PublicPropertyRow, bookings: BookingRow[] = []): Property {
   return {
     id: row.id,
     name: row.name,
@@ -57,7 +61,7 @@ export const listActiveProperties = createServerFn({ method: "GET" }).handler(as
   const supabase = publicClient();
   const { data, error } = await supabase
     .from("properties")
-    .select("*")
+    .select(PROPERTY_PUBLIC_COLUMNS)
     .eq("is_active", true)
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: true });
@@ -82,7 +86,9 @@ export const listActiveProperties = createServerFn({ method: "GET" }).handler(as
     list.push(b);
     byProp.set(b.property_id, list);
   }
-  return (data ?? []).map((r) => mapProperty(r, byProp.get(r.id) ?? []));
+  return (data ?? []).map((r) =>
+    mapProperty(r as unknown as PublicPropertyRow, byProp.get(r.id) ?? []),
+  );
 });
 
 export const getPropertyById = createServerFn({ method: "GET" })
@@ -91,7 +97,7 @@ export const getPropertyById = createServerFn({ method: "GET" })
     const supabase = publicClient();
     const { data: prop, error } = await supabase
       .from("properties")
-      .select("*")
+      .select(PROPERTY_PUBLIC_COLUMNS)
       .eq("id", data.id)
       .maybeSingle();
     if (error) {
@@ -113,7 +119,25 @@ export const getPropertyById = createServerFn({ method: "GET" })
         date_from: b.date_from,
         date_to: b.date_to,
       })) ?? [];
-    return mapProperty(prop, rows);
+    return mapProperty(prop as unknown as PublicPropertyRow, rows);
+  });
+
+/** Admin-only read that includes door_code (used by the edit form). */
+export const getPropertyForEdit = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: prop, error } = await context.supabase
+      .from("properties")
+      .select("*")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (error) {
+      console.error("[getPropertyForEdit]", error.message);
+      throw new Error("Nepavyko įkelti objekto.");
+    }
+    if (!prop) return null;
+    return mapProperty(prop as PropertyRow);
   });
 
 export const listAllProperties = createServerFn({ method: "GET" })
