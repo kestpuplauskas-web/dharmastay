@@ -221,7 +221,8 @@ const propertyInputSchema = z.object({
     .trim()
     .max(2000)
     .default("")
-    .refine((v) => v === "" || /^https?:\/\/.+/i.test(v), "Neteisinga iCal nuoroda"),
+    .transform((v) => (v.toLowerCase().startsWith("webcal://") ? `https://${v.slice(9)}` : v))
+    .refine((v) => v === "" || /^https?:\/\/\S+$/i.test(v), "Neteisinga iCal nuoroda"),
 });
 
 function toRow(input: z.infer<typeof propertyInputSchema>) {
