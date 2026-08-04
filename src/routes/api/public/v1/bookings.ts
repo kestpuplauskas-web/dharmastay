@@ -107,9 +107,16 @@ export const Route = createFileRoute("/api/public/v1/bookings")({
                 extras: quote.extras,
                 extras_total: quote.extras_total,
               })
-              .select("booking_number, date_from, date_to, total_amount, status, expires_at")
+              .select("id, booking_number, date_from, date_to, total_amount, status, expires_at")
               .single();
             if (bErr) throw new Error(bErr.message);
+
+            try {
+              const { notifyBookingEvent } = await import("@/lib/notifications.server");
+              await notifyBookingEvent(String((booking as { id: string }).id), "booking_confirmation");
+            } catch (e) {
+              console.error("[api:bookings:notify]", e);
+            }
 
             return apiJson(
               {
