@@ -222,11 +222,15 @@ const propertyInputSchema = z.object({
     .max(2000)
     .default("")
     .transform((v) => {
-      const cleaned = v.replace(/\s+/g, "");
+      let cleaned = v.replace(/\s+/g, "");
       if (!cleaned) return "";
-      if (/^webcal:\/\//i.test(cleaned)) return `https://${cleaned.slice(9)}`;
-      if (!/^https?:\/\//i.test(cleaned)) return `https://${cleaned}`;
-      return cleaned;
+      // Strip any repeated / malformed scheme prefixes (https://https:/..., webcal://...)
+      let prev = "";
+      while (prev !== cleaned) {
+        prev = cleaned;
+        cleaned = cleaned.replace(/^(https?|webcal):\/{0,2}/i, "");
+      }
+      return `https://${cleaned}`;
     }),
 });
 

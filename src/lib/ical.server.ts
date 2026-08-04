@@ -16,12 +16,23 @@ function today(): string {
 }
 
 async function fetchIcal(url: string): Promise<string> {
-  const res = await fetch(url, {
+  const res = await fetch(normalizeIcalUrl(url), {
     headers: { Accept: "text/calendar, text/plain, */*" },
     signal: AbortSignal.timeout(20000),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return await res.text();
+}
+
+export function normalizeIcalUrl(raw: string): string {
+  let cleaned = raw.replace(/\s+/g, "");
+  if (!cleaned) return "";
+  let prev = "";
+  while (prev !== cleaned) {
+    prev = cleaned;
+    cleaned = cleaned.replace(/^(https?|webcal):\/{0,2}/i, "");
+  }
+  return `https://${cleaned}`;
 }
 
 export async function syncPropertyCalendar(property: {
