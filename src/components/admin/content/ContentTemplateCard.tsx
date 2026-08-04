@@ -389,6 +389,54 @@ export function ContentTemplateCard({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={waOpen} onOpenChange={setWaOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Testinė WhatsApp žinutė</DialogTitle>
+            <DialogDescription>
+              Įveskite gavėjo telefono numerį — atidarysime WhatsApp su paruošta žinute
+              (kintamieji pakeisti pavyzdinėmis reikšmėmis).
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-1.5">
+            <Label htmlFor={`wa-${dirtyKey}`}>Gavėjo telefono nr.</Label>
+            <Input
+              id={`wa-${dirtyKey}`}
+              type="tel"
+              value={waPhone}
+              placeholder="+370 600 00000"
+              onChange={(e) => setWaPhone(e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground">
+              Su šalies kodu, pvz. +370 600 00000.
+            </p>
+          </div>
+          <p className="max-h-40 overflow-y-auto whitespace-pre-wrap rounded-md border p-3 text-sm">
+            {renderPreview(values.content ?? "")}
+          </p>
+          <DialogFooter>
+            <Button variant="outline" type="button" onClick={() => setWaOpen(false)}>
+              Atšaukti
+            </Button>
+            <Button
+              type="button"
+              disabled={normalizeWhatsappPhone(waPhone).length < 8}
+              onClick={() => {
+                window.open(
+                  buildWhatsappLink(waPhone, renderPreview(values.content ?? "")),
+                  "_blank",
+                  "noopener,noreferrer",
+                );
+                setWaOpen(false);
+              }}
+            >
+              <Send className="mr-2 h-4 w-4" />
+              Atidaryti WhatsApp
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
