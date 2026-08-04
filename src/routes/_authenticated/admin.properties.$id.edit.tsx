@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getPropertyById, updateProperty } from "@/lib/properties.functions";
+import { getPropertyForEdit, updateProperty } from "@/lib/properties.functions";
 import { syncPropertyIcal } from "@/lib/ical.functions";
 import { PropertyForm, propertyToForm, type PropertyFormValues } from "@/components/admin/PropertyForm";
 
@@ -11,7 +11,7 @@ export const Route = createFileRoute("/_authenticated/admin/properties/$id/edit"
 
 function EditPropertyPage() {
   const { id } = useParams({ from: "/_authenticated/admin/properties/$id/edit" });
-  const fetchOne = useServerFn(getPropertyById);
+  const fetchOne = useServerFn(getPropertyForEdit);
   const update = useServerFn(updateProperty);
   const navigate = useNavigate();
 
