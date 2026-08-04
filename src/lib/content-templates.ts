@@ -215,6 +215,19 @@ export function templateKey(category: string, name: string) {
   return `${category}:${name}`;
 }
 
+/** Normalizuoja LT/tarptautinį telefono numerį į E.164 be „+“ (wa.me formatas). */
+export function normalizeWhatsappPhone(raw: string): string {
+  const digits = (raw ?? "").replace(/[^\d+]/g, "").replace(/(?!^)\+/g, "");
+  let n = digits.startsWith("+") ? digits.slice(1) : digits;
+  if (n.startsWith("00")) n = n.slice(2);
+  else if (n.startsWith("8") && n.length === 9) n = `370${n.slice(1)}`;
+  return n;
+}
+
+export function buildWhatsappLink(phone: string, message: string) {
+  return `https://wa.me/${normalizeWhatsappPhone(phone)}?text=${encodeURIComponent(message)}`;
+}
+
 export const contentTemplateSchema = z.object({
   category: z.enum(["email", "whatsapp", "guest_info"]),
   templateName: z.string().min(1).max(80),
