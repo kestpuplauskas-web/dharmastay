@@ -93,17 +93,19 @@ export const sendTestContentEmail = createServerFn({ method: "POST" })
     await assertAdmin({ supabase: context.supabase, userId: context.userId });
 
     const apiKey = process.env["RESEND_API_KEY"];
-    if (!apiKey) {
+    const lovableKey = process.env["LOVABLE_API_KEY"];
+    if (!apiKey || !lovableKey) {
       throw new Error(
         "El. laiškų siuntėjas dar nesukonfigūruotas — prijunkite el. pašto integraciją.",
       );
     }
     const from = process.env["RESEND_FROM_EMAIL"] ?? "onboarding@resend.dev";
 
-    const res = await fetch("https://api.resend.com/emails", {
+    const res = await fetch("https://connector-gateway.lovable.dev/resend/emails", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${lovableKey}`,
+        "X-Connection-Api-Key": apiKey,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
