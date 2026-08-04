@@ -254,7 +254,6 @@ export type Database = {
           fields: Json
           id: string
           is_enabled: boolean
-          property_id: string
           subject: string
           template_name: string
           updated_at: string
@@ -267,7 +266,6 @@ export type Database = {
           fields?: Json
           id?: string
           is_enabled?: boolean
-          property_id: string
           subject?: string
           template_name: string
           updated_at?: string
@@ -280,21 +278,12 @@ export type Database = {
           fields?: Json
           id?: string
           is_enabled?: boolean
-          property_id?: string
           subject?: string
           template_name?: string
           updated_at?: string
           updated_by?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "content_templates_property_id_fkey"
-            columns: ["property_id"]
-            isOneToOne: false
-            referencedRelation: "properties"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       contract_templates: {
         Row: {
