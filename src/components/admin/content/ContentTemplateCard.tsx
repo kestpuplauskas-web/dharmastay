@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Editor } from "@tiptap/react";
 import DOMPurify from "dompurify";
-import { Eye, ExternalLink, Loader2, Save, Send } from "lucide-react";
+import { ChevronDown, Eye, ExternalLink, Loader2, Save, Send } from "lucide-react";
 import {
   buildFormSchema,
   defaultsFor,
@@ -85,6 +85,7 @@ export function ContentTemplateCard({
   });
 
   const [editor, setEditor] = useState<Editor | null>(null);
+  const [open, setOpen] = useState(false);
   const plainRef = useRef<HTMLTextAreaElement | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [testOpen, setTestOpen] = useState(false);
