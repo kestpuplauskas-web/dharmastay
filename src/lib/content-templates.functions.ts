@@ -36,12 +36,10 @@ function rowToRecord(row: Record<string, unknown>): ContentTemplateRecord {
 
 export const listContentTemplates = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d) => z.object({ propertyId: z.string().uuid() }).parse(d))
-  .handler(async ({ data, context }) => {
+  .handler(async ({ context }) => {
     const { data: rows, error } = await context.supabase
       .from("content_templates")
-      .select("*")
-      .eq("property_id", data.propertyId);
+      .select("*");
     if (error) {
       console.error("[listContentTemplates]", error.message);
       throw new Error("Nepavyko įkelti turinio šablonų.");
@@ -59,7 +57,6 @@ export const saveContentTemplate = createServerFn({ method: "POST" })
       .from("content_templates")
       .upsert(
         {
-          property_id: data.propertyId,
           category: data.category,
           template_name: data.templateName,
           subject: data.subject,
@@ -69,7 +66,7 @@ export const saveContentTemplate = createServerFn({ method: "POST" })
           updated_by: context.userId,
           updated_at: new Date().toISOString(),
         } as never,
-        { onConflict: "property_id,category,template_name" },
+        { onConflict: "category,template_name" },
       )
       .select("*")
       .single();
