@@ -427,6 +427,7 @@ export type Database = {
           cover_image_url: string
           created_at: string
           description: string
+          door_code: string | null
           extra_services: Json
           features: Json
           ical_import_url: string | null
@@ -459,6 +460,7 @@ export type Database = {
           cover_image_url?: string
           created_at?: string
           description?: string
+          door_code?: string | null
           extra_services?: Json
           features?: Json
           ical_import_url?: string | null
@@ -491,6 +493,7 @@ export type Database = {
           cover_image_url?: string
           created_at?: string
           description?: string
+          door_code?: string | null
           extra_services?: Json
           features?: Json
           ical_import_url?: string | null
