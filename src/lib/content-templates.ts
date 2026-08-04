@@ -61,6 +61,7 @@ export type ContentTemplateDef = {
   hasSubject: boolean;
   hasRichText: boolean;
   canTestSend?: boolean;
+  canTestWhatsapp?: boolean;
   fields?: ContentFieldDef[];
   defaultSubject?: string;
   defaultContent?: string;
@@ -138,6 +139,7 @@ export const CONTENT_TEMPLATES: ContentTemplateDef[] = [
     description: "WhatsApp žinutė su atvykimo instrukcijomis ir durų kodu.",
     hasSubject: false,
     hasRichText: false,
+    canTestWhatsapp: true,
     defaultContent:
       "Sveiki, {{guest_name}}! Jūsų durų kodas objekte {{property_name}}: {{door_code}}. Atvykimas {{date_from}} nuo {{check_in}}. WiFi: {{wifi_name}} / {{wifi_password}}",
   },
