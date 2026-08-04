@@ -214,7 +214,6 @@ export function templateKey(category: string, name: string) {
 }
 
 export const contentTemplateSchema = z.object({
-  propertyId: z.string().uuid(),
   category: z.enum(["email", "whatsapp", "guest_info"]),
   templateName: z.string().min(1).max(80),
   subject: z.string().max(300).default(""),

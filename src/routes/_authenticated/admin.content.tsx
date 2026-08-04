@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { createFileRoute, useBlocker } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { FileText, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { getMyRole, listAllProperties } from "@/lib/properties.functions";
+import { getMyRole } from "@/lib/properties.functions";
 import {
   listContentTemplates,
   saveContentTemplate,
@@ -17,14 +17,6 @@ import {
   type ContentCategory,
 } from "@/lib/content-templates";
 import { ContentTemplateCard } from "@/components/admin/content/ContentTemplateCard";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -57,32 +49,20 @@ export const Route = createFileRoute("/_authenticated/admin/content")({
 
 function ContentPage() {
   const fetchRole = useServerFn(getMyRole);
-  const fetchProperties = useServerFn(listAllProperties);
   const fetchTemplates = useServerFn(listContentTemplates);
   const saveTemplate = useServerFn(saveContentTemplate);
   const sendTest = useServerFn(sendTestContentEmail);
   const qc = useQueryClient();
 
   const [active, setActive] = useState<ContentCategory>("email");
-  const [propertyId, setPropertyId] = useState<string>("");
   const [dirtyMap, setDirtyMap] = useState<Record<string, boolean>>({});
 
   const { data: role } = useQuery({ queryKey: ["my-role"], queryFn: () => fetchRole() });
   const canEdit = Boolean(role?.isAdmin);
 
-  const { data: properties, isLoading: loadingProperties } = useQuery({
-    queryKey: ["admin-properties-content"],
-    queryFn: () => fetchProperties(),
-  });
-
-  useEffect(() => {
-    if (!propertyId && properties?.length) setPropertyId(properties[0]!.id);
-  }, [properties, propertyId]);
-
-  const { data: templates, isLoading: loadingTemplates } = useQuery({
-    queryKey: ["content-templates", propertyId],
-    queryFn: () => fetchTemplates({ data: { propertyId } }),
-    enabled: Boolean(propertyId),
+  const { data: templates, isLoading: loading } = useQuery({
+    queryKey: ["content-templates"],
+    queryFn: () => fetchTemplates(),
   });
 
   const recordMap = useMemo(() => {
@@ -99,9 +79,9 @@ function ContentPage() {
       content: string;
       fields: Record<string, string>;
       isEnabled: boolean;
-    }) => saveTemplate({ data: { propertyId, ...vars } }),
+    }) => saveTemplate({ data: vars }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["content-templates", propertyId] });
+      qc.invalidateQueries({ queryKey: ["content-templates"] });
       toast.success("Turinys išsaugotas.");
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Nepavyko išsaugoti."),
@@ -129,11 +109,10 @@ function ContentPage() {
 
   const sectionTemplates = CONTENT_TEMPLATES.filter((t) => t.category === active);
   const activeSection = CONTENT_SECTIONS.find((s) => s.id === active)!;
-  const loading = loadingProperties || loadingTemplates;
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+      <header>
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-semibold">
             <FileText className="h-6 w-6 text-primary" />
@@ -141,22 +120,8 @@ function ContentPage() {
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Informacija, siunčiama klientams el. paštu, WhatsApp žinutėmis ar rodoma svečiui.
+            Nustatymai galioja visiems objektams.
           </p>
-        </div>
-        <div className="w-full space-y-1.5 md:w-72">
-          <Label htmlFor="content-property">Objektas</Label>
-          <Select value={propertyId} onValueChange={setPropertyId}>
-            <SelectTrigger id="content-property">
-              <SelectValue placeholder="Pasirinkite objektą…" />
-            </SelectTrigger>
-            <SelectContent>
-              {(properties ?? []).map((p) => (
-                <SelectItem key={p.id} value={p.id}>
-                  {p.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
       </header>
 
@@ -187,22 +152,15 @@ function ContentPage() {
             <p className="text-sm text-muted-foreground">{activeSection.description}</p>
           </div>
 
-          {!propertyId && !loading && (
-            <p className="rounded-md border border-dashed p-6 text-sm text-muted-foreground">
-              Nėra sukurtų objektų — pirmiausia pridėkite objektą.
-            </p>
-          )}
-
           {loading ? (
             <div className="flex items-center gap-2 p-6 text-sm text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" />
               Kraunama…
             </div>
           ) : (
-            propertyId &&
             sectionTemplates.map((def) => (
               <ContentTemplateCard
-                key={`${propertyId}:${def.category}:${def.name}`}
+                key={`${def.category}:${def.name}`}
                 def={def}
                 record={recordMap[templateKey(def.category, def.name)]}
                 canEdit={canEdit}
