@@ -182,11 +182,18 @@ export const Route = createFileRoute("/api/public/booking-submit")({
             extras: validatedExtras,
             extras_total: extrasTotal,
           })
-          .select("booking_number, payment_amount, bic")
+          .select("id, booking_number, payment_amount, bic")
           .single();
         if (bErr) {
           console.error("[booking-submit:insert]", bErr.message);
           return Response.json({ error: "Nepavyko apdoroti užklausos" }, { status: 500 });
+        }
+
+        try {
+          const { notifyBookingEvent } = await import("@/lib/notifications.server");
+          await notifyBookingEvent(String(booking.id), "booking_confirmation");
+        } catch (e) {
+          console.error("[booking-submit:notify]", e);
         }
 
         return Response.json({
