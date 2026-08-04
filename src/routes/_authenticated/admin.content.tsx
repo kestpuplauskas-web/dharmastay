@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { createFileRoute, useBlocker } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { FileText, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { getMyRole, listAllProperties } from "@/lib/properties.functions";
+import { getMyRole } from "@/lib/properties.functions";
 import {
   listContentTemplates,
   saveContentTemplate,
@@ -17,14 +17,6 @@ import {
   type ContentCategory,
 } from "@/lib/content-templates";
 import { ContentTemplateCard } from "@/components/admin/content/ContentTemplateCard";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -57,32 +49,20 @@ export const Route = createFileRoute("/_authenticated/admin/content")({
 
 function ContentPage() {
   const fetchRole = useServerFn(getMyRole);
-  const fetchProperties = useServerFn(listAllProperties);
   const fetchTemplates = useServerFn(listContentTemplates);
   const saveTemplate = useServerFn(saveContentTemplate);
   const sendTest = useServerFn(sendTestContentEmail);
   const qc = useQueryClient();
 
   const [active, setActive] = useState<ContentCategory>("email");
-  const [propertyId, setPropertyId] = useState<string>("");
   const [dirtyMap, setDirtyMap] = useState<Record<string, boolean>>({});
 
   const { data: role } = useQuery({ queryKey: ["my-role"], queryFn: () => fetchRole() });
   const canEdit = Boolean(role?.isAdmin);
 
-  const { data: properties, isLoading: loadingProperties } = useQuery({
-    queryKey: ["admin-properties-content"],
-    queryFn: () => fetchProperties(),
-  });
-
-  useEffect(() => {
-    if (!propertyId && properties?.length) setPropertyId(properties[0]!.id);
-  }, [properties, propertyId]);
-
-  const { data: templates, isLoading: loadingTemplates } = useQuery({
-    queryKey: ["content-templates", propertyId],
-    queryFn: () => fetchTemplates({ data: { propertyId } }),
-    enabled: Boolean(propertyId),
+  const { data: templates, isLoading: loading } = useQuery({
+    queryKey: ["content-templates"],
+    queryFn: () => fetchTemplates(),
   });
 
   const recordMap = useMemo(() => {
@@ -99,9 +79,9 @@ function ContentPage() {
       content: string;
       fields: Record<string, string>;
       isEnabled: boolean;
-    }) => saveTemplate({ data: { propertyId, ...vars } }),
+    }) => saveTemplate({ data: vars }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["content-templates", propertyId] });
+      qc.invalidateQueries({ queryKey: ["content-templates"] });
       toast.success("Turinys išsaugotas.");
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Nepavyko išsaugoti."),
