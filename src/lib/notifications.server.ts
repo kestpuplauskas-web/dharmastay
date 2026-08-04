@@ -39,11 +39,17 @@ async function admin(): Promise<Admin> {
 export async function sendEmail(opts: { to: string; subject: string; html: string; replyTo?: string }) {
   const apiKey = process.env["RESEND_API_KEY"];
   if (!apiKey) throw new Error("RESEND_API_KEY nesukonfigūruotas.");
+  const lovableKey = process.env["LOVABLE_API_KEY"];
+  if (!lovableKey) throw new Error("LOVABLE_API_KEY nesukonfigūruotas.");
   const from = process.env["RESEND_FROM_EMAIL"] ?? "onboarding@resend.dev";
 
-  const res = await fetch("https://api.resend.com/emails", {
+  const res = await fetch("https://connector-gateway.lovable.dev/resend/emails", {
     method: "POST",
-    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    headers: {
+      Authorization: `Bearer ${lovableKey}`,
+      "X-Connection-Api-Key": apiKey,
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({
       from,
       to: [opts.to],
