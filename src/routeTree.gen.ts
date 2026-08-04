@@ -28,6 +28,7 @@ import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as ApiPublicBookingSubmitRouteImport } from './routes/api/public/booking-submit'
 import { Route as ApiPublicIcalSyncRouteImport } from './routes/api/public/ical-sync'
+import { Route as ApiPublicNotificationsCronRouteImport } from './routes/api/public/notifications-cron'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as AuthenticatedAdminBookingsIndexRouteImport } from './routes/_authenticated/admin.bookings.index'
 import { Route as AuthenticatedAdminBookingsIdRouteImport } from './routes/_authenticated/admin.bookings.$id'
@@ -141,6 +142,12 @@ const ApiPublicIcalSyncRoute = ApiPublicIcalSyncRouteImport.update({
   path: '/api/public/ical-sync',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicNotificationsCronRoute =
+  ApiPublicNotificationsCronRouteImport.update({
+    id: '/api/public/notifications-cron',
+    path: '/api/public/notifications-cron',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
   id: '/api/public/track',
   path: '/api/public/track',
@@ -238,6 +245,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
+  '/api/public/notifications-cron': typeof ApiPublicNotificationsCronRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
@@ -271,6 +279,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
+  '/api/public/notifications-cron': typeof ApiPublicNotificationsCronRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
@@ -307,6 +316,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
+  '/api/public/notifications-cron': typeof ApiPublicNotificationsCronRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
@@ -343,6 +353,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/api/public/booking-submit'
     | '/api/public/ical-sync'
+    | '/api/public/notifications-cron'
     | '/api/public/track'
     | '/admin/'
     | '/admin/bookings/$id'
@@ -376,6 +387,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/api/public/booking-submit'
     | '/api/public/ical-sync'
+    | '/api/public/notifications-cron'
     | '/api/public/track'
     | '/admin'
     | '/admin/bookings/$id'
@@ -411,6 +423,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/settings'
     | '/api/public/booking-submit'
     | '/api/public/ical-sync'
+    | '/api/public/notifications-cron'
     | '/api/public/track'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/bookings/$id'
@@ -442,6 +455,7 @@ export interface RootRouteChildren {
   PropertiesIdRoute: typeof PropertiesIdRoute
   ApiPublicBookingSubmitRoute: typeof ApiPublicBookingSubmitRoute
   ApiPublicIcalSyncRoute: typeof ApiPublicIcalSyncRoute
+  ApiPublicNotificationsCronRoute: typeof ApiPublicNotificationsCronRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
   ApiPublicV1AvailabilityRoute: typeof ApiPublicV1AvailabilityRoute
   ApiPublicV1BookingsRoute: typeof ApiPublicV1BookingsRouteWithChildren
@@ -583,6 +597,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/ical-sync'
       fullPath: '/api/public/ical-sync'
       preLoaderRoute: typeof ApiPublicIcalSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/notifications-cron': {
+      id: '/api/public/notifications-cron'
+      path: '/api/public/notifications-cron'
+      fullPath: '/api/public/notifications-cron'
+      preLoaderRoute: typeof ApiPublicNotificationsCronRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/track': {
@@ -768,6 +789,7 @@ const rootRouteChildren: RootRouteChildren = {
   PropertiesIdRoute: PropertiesIdRoute,
   ApiPublicBookingSubmitRoute: ApiPublicBookingSubmitRoute,
   ApiPublicIcalSyncRoute: ApiPublicIcalSyncRoute,
+  ApiPublicNotificationsCronRoute: ApiPublicNotificationsCronRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
   ApiPublicV1AvailabilityRoute: ApiPublicV1AvailabilityRoute,
   ApiPublicV1BookingsRoute: ApiPublicV1BookingsRouteWithChildren,

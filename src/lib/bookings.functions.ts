@@ -260,6 +260,12 @@ export const createBooking = createServerFn({ method: "POST" })
       .select()
       .single();
     if (error) throw new Error(error.message);
+    try {
+      const { notifyBookingEvent } = await import("./notifications.server");
+      await notifyBookingEvent(String((row as { id: string }).id), "booking_confirmation");
+    } catch (e) {
+      console.error("[createBooking:notify]", e);
+    }
     return row;
   });
 
@@ -275,6 +281,11 @@ export const updateBooking = createServerFn({ method: "POST" })
       date_to: rest.date_to,
       excludeId: id,
     });
+    const { data: before } = await context.supabase
+      .from("bookings")
+      .select("status, date_from, date_to, total_amount")
+      .eq("id", id)
+      .maybeSingle();
     const payload = await withServerExtras(context.supabase, rest as BookingInput);
     const { data: row, error } = await context.supabase
       .from("bookings")
@@ -283,6 +294,24 @@ export const updateBooking = createServerFn({ method: "POST" })
       .select()
       .single();
     if (error) throw new Error(error.message);
+    try {
+      const { notifyBookingEvent } = await import("./notifications.server");
+      const prev = before as { status?: string; date_from?: string; date_to?: string; total_amount?: number } | null;
+      const next = row as { status?: string; date_from?: string; date_to?: string; total_amount?: number };
+      if (prev && prev.status !== "cancelled" && next.status === "cancelled") {
+        await notifyBookingEvent(id, "booking_cancellation");
+      } else if (
+        prev &&
+        (prev.date_from !== next.date_from ||
+          prev.date_to !== next.date_to ||
+          Number(prev.total_amount) !== Number(next.total_amount) ||
+          prev.status !== next.status)
+      ) {
+        await notifyBookingEvent(id, "booking_change");
+      }
+    } catch (e) {
+      console.error("[updateBooking:notify]", e);
+    }
     return row;
   });
 
@@ -335,5 +364,11 @@ export const rescheduleBooking = createServerFn({ method: "POST" })
       .select()
       .single();
     if (error) throw new Error(error.message);
+    try {
+      const { notifyBookingEvent } = await import("./notifications.server");
+      await notifyBookingEvent(data.id, "booking_change");
+    } catch (e) {
+      console.error("[rescheduleBooking:notify]", e);
+    }
     return row;
   });

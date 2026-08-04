@@ -100,6 +100,44 @@ export type Database = {
         }
         Relationships: []
       }
+      booking_notifications: {
+        Row: {
+          booking_id: string
+          created_at: string
+          error: string
+          id: string
+          kind: string
+          recipient: string
+          status: string
+        }
+        Insert: {
+          booking_id: string
+          created_at?: string
+          error?: string
+          id?: string
+          kind: string
+          recipient?: string
+          status?: string
+        }
+        Update: {
+          booking_id?: string
+          created_at?: string
+          error?: string
+          id?: string
+          kind?: string
+          recipient?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_notifications_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           adults_count: number
