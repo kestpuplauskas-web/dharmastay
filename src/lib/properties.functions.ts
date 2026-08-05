@@ -5,6 +5,16 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Property, PriceTier, Rooms, Booking, ExtraService } from "./properties";
 import type { Database } from "@/integrations/supabase/types";
 
+/** Defense-in-depth: programos lygmens administratoriaus patikra (šalia RLS). */
+const assertAdmin = async (ctx: { supabase: any; userId: string }) => {
+  const { data, error } = await ctx.supabase.rpc("has_role", {
+    _user_id: ctx.userId,
+    _role: "admin",
+  });
+  if (error) throw new Error(error.message);
+  if (!data) throw new Error("Neturite administratoriaus teisių.");
+};
+
 function publicClient() {
   const url = process.env.SUPABASE_URL!;
   const key = process.env.SUPABASE_PUBLISHABLE_KEY!;
