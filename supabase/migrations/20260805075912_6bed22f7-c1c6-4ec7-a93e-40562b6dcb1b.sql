@@ -1,0 +1,1 @@
+DELETE FROM public.api_clients WHERE key_hash = '3b33c059cf86ceb4d969a5311fdce75d4d2cf6d11817374c49c31a90798f89cb';
