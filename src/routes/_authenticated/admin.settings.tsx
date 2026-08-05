@@ -20,6 +20,7 @@ import {
   type IntegrationCard,
 } from "@/components/admin/settings/IntegrationsSection";
 import { ApiAccessSection } from "@/components/admin/settings/ApiAccessSection";
+import { UsersSection } from "@/components/admin/settings/UsersSection";
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   component: PropertySettingsPage,
   head: () => ({
@@ -39,7 +40,7 @@ export const Route = createFileRoute("/_authenticated/admin/settings")({
   }),
 });
 
-type NavId = SettingsSectionId | "integrations" | "api";
+type NavId = SettingsSectionId | "integrations" | "api" | "users";
 
 function PropertySettingsPage() {
   const fetchProperties = useServerFn(listAllProperties);
@@ -159,6 +160,7 @@ function PropertySettingsPage() {
     ...SETTINGS_SECTIONS.map((s) => ({ id: s.id as NavId, icon: s.icon, title: s.title })),
     { id: "integrations", icon: "🔌", title: "Integracijos" },
     { id: "api", icon: "🔑", title: "API prieiga" },
+    { id: "users", icon: "👥", title: "Vartotojai" },
   ];
 
   const section = SETTINGS_SECTIONS.find((s) => s.id === active);
@@ -208,6 +210,8 @@ function PropertySettingsPage() {
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Kraunama…
               </div>
+            ) : active === "users" ? (
+              <UsersSection canEdit={canEdit} />
             ) : active === "api" ? (
               <ApiAccessSection canEdit={canEdit} />
             ) : active === "integrations" ? (

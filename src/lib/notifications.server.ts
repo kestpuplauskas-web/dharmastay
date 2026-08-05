@@ -9,9 +9,12 @@ export type NotificationKind =
   | "booking_change"
   | "booking_cancellation"
   | "checkin_reminder"
-  | "review_request";
+  | "review_request"
+  | "door_code_delivery";
 
-const SETTINGS_FLAG: Record<NotificationKind, keyof PropertySettings> = {
+// "door_code_delivery" tyčia neturi jungiklio — tai būtina prieigos informacija,
+// kurios negalima išjungti bendru pranešimų nustatymu.
+const SETTINGS_FLAG: Partial<Record<NotificationKind, keyof PropertySettings>> = {
   booking_confirmation: "notifyBookingConfirmation",
   booking_change: "notifyBookingChange",
   booking_cancellation: "notifyCancellationConfirmation",
@@ -25,6 +28,7 @@ const ADMIN_SUBJECTS: Record<NotificationKind, string> = {
   booking_cancellation: "Rezervacija atšaukta",
   checkin_reminder: "Artėja svečio atvykimas",
   review_request: "Svečias išvyko",
+  door_code_delivery: "Durų kodas išsiųstas svečiui",
 };
 
 type Admin = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
@@ -129,6 +133,9 @@ async function buildTokens(booking: Record<string, any>, settings: PropertySetti
     .maybeSingle();
   const wifi = await loadGuestInfoFields("wifi");
 
+  // Durų kodas svečiui atskleidžiamas tik po apmokėjimo (status = "confirmed").
+  const isPaid = booking["status"] === "confirmed";
+
   return {
     "{{guest_name}}": String(booking["customer_name"] ?? ""),
     "{{property_name}}": String((prop as any)?.name ?? settings.displayName ?? ""),
@@ -138,7 +145,7 @@ async function buildTokens(booking: Record<string, any>, settings: PropertySetti
     "{{date_to}}": String(booking["date_to"] ?? ""),
     "{{check_in}}": String(booking["check_in_time"] ?? settings.checkinFrom ?? ""),
     "{{check_out}}": String(booking["check_out_time"] ?? settings.checkoutUntil ?? ""),
-    "{{door_code}}": String((prop as any)?.door_code ?? ""),
+    "{{door_code}}": isPaid ? String((prop as any)?.door_code ?? "") : "",
     "{{wifi_name}}": wifi["wifiName"] ?? "",
     "{{wifi_password}}": wifi["wifiPassword"] ?? "",
     "{{total_amount}}": money(booking["total_amount"]),
@@ -173,7 +180,13 @@ async function logSend(bookingId: string, logKind: string, recipient: string, st
 
 /* ------------------------------ pagrindinis ------------------------------- */
 
-const ONE_SHOT: NotificationKind[] = ["booking_confirmation", "booking_cancellation", "checkin_reminder", "review_request"];
+const ONE_SHOT: NotificationKind[] = [
+  "booking_confirmation",
+  "booking_cancellation",
+  "checkin_reminder",
+  "review_request",
+  "door_code_delivery",
+];
 
 /**
  * Išsiunčia laišką svečiui pagal „Turinys“ šabloną ir informuoja administratorių.
@@ -186,7 +199,8 @@ export async function notifyBookingEvent(bookingId: string, kind: NotificationKi
     if (!booking) return;
 
     const settings = await loadGlobalSettings();
-    if (!settings[SETTINGS_FLAG[kind]]) return;
+    const flag = SETTINGS_FLAG[kind];
+    if (flag && !settings[flag]) return;
 
     const tokens = await buildTokens(booking as Record<string, any>, settings);
     const tpl = await loadTemplate(kind);

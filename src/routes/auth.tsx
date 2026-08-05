@@ -14,7 +14,7 @@ export const Route = createFileRoute("/auth")({
 
 function LoginPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
+  const [mode, setMode] = useState<"login" | "forgot">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -38,14 +38,6 @@ function LoginPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Prisijungta");
-      } else if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: `${window.location.origin}/admin` },
-        });
-        if (error) throw error;
-        toast.success("Registracija sėkminga. Patikrink el. paštą patvirtinimui.");
       } else {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/reset-password`,
@@ -66,12 +58,12 @@ function LoginPage() {
         <CardContent className="p-6 space-y-5">
           <div>
             <h1 className="text-2xl font-bold">
-              {mode === "login" ? "Prisijungimas" : mode === "signup" ? "Registracija" : "Slaptažodžio atstatymas"}
+              {mode === "login" ? "Prisijungimas" : "Slaptažodžio atstatymas"}
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
               {mode === "forgot"
                 ? "Įvesk el. paštą — atsiųsime nuorodą naujam slaptažodžiui nustatyti."
-                : "Administratoriaus skydeliui valdyti automobilius."}
+                : "Prieiga tik pakviestiems vartotojams."}
             </p>
           </div>
           <form onSubmit={submit} className="space-y-3">
@@ -86,28 +78,16 @@ function LoginPage() {
               </div>
             )}
             <Button type="submit" className="w-full" disabled={busy}>
-              {busy ? "Vykdoma..." : mode === "login" ? "Prisijungti" : mode === "signup" ? "Registruotis" : "Siųsti nuorodą"}
+              {busy ? "Vykdoma..." : mode === "login" ? "Prisijungti" : "Siųsti nuorodą"}
             </Button>
           </form>
           <div className="text-sm text-center text-muted-foreground space-y-2">
             {mode === "login" && (
-              <>
-                <div>
-                  <button type="button" className="underline" onClick={() => setMode("forgot")}>
-                    Pamiršai slaptažodį?
-                  </button>
-                </div>
-                <div>
-                  <button type="button" className="underline" onClick={() => setMode("signup")}>
-                    Neturi paskyros? Registruokis
-                  </button>
-                </div>
-              </>
-            )}
-            {mode === "signup" && (
-              <button type="button" className="underline" onClick={() => setMode("login")}>
-                Jau turi paskyrą? Prisijunk
-              </button>
+              <div>
+                <button type="button" className="underline" onClick={() => setMode("forgot")}>
+                  Pamiršai slaptažodį?
+                </button>
+              </div>
             )}
             {mode === "forgot" && (
               <button type="button" className="underline" onClick={() => setMode("login")}>

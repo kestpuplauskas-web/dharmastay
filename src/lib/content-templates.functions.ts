@@ -37,6 +37,7 @@ function rowToRecord(row: Record<string, unknown>): ContentTemplateRecord {
 export const listContentTemplates = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    await assertAdmin({ supabase: context.supabase, userId: context.userId });
     const { data: rows, error } = await context.supabase
       .from("content_templates")
       .select("*");

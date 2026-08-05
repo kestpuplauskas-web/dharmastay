@@ -5,6 +5,16 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Property, PriceTier, Rooms, Booking, ExtraService } from "./properties";
 import type { Database } from "@/integrations/supabase/types";
 
+/** Defense-in-depth: programos lygmens administratoriaus patikra (šalia RLS). */
+const assertAdmin = async (ctx: { supabase: any; userId: string }) => {
+  const { data, error } = await ctx.supabase.rpc("has_role", {
+    _user_id: ctx.userId,
+    _role: "admin",
+  });
+  if (error) throw new Error(error.message);
+  if (!data) throw new Error("Neturite administratoriaus teisių.");
+};
+
 function publicClient() {
   const url = process.env.SUPABASE_URL!;
   const key = process.env.SUPABASE_PUBLISHABLE_KEY!;
@@ -130,6 +140,7 @@ export const getPropertyForEdit = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
+    await assertAdmin(context);
     const { data: prop, error } = await context.supabase
       .from("properties")
       .select(PROPERTY_PUBLIC_COLUMNS)
@@ -152,6 +163,7 @@ export const getPropertyForEdit = createServerFn({ method: "GET" })
 export const listAllProperties = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    await assertAdmin(context);
     const { supabase } = context;
     const { data, error } = await supabase
       .from("properties")
@@ -277,6 +289,7 @@ export const createProperty = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => propertyInputSchema.parse(d))
   .handler(async ({ data, context }) => {
+    await assertAdmin(context);
     const { data: row, error } = await context.supabase
       .from("properties")
       .insert(toRow(data))
@@ -290,6 +303,7 @@ export const updateProperty = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ id: z.string().uuid(), patch: propertyInputSchema }).parse(d))
   .handler(async ({ data, context }) => {
+    await assertAdmin(context);
     const { data: row, error } = await context.supabase
       .from("properties")
       .update(toRow(data.patch))
@@ -304,6 +318,7 @@ export const deleteProperty = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
+    await assertAdmin(context);
     const { error } = await context.supabase.from("properties").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
