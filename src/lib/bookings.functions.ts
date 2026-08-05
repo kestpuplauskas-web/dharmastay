@@ -300,14 +300,21 @@ export const updateBooking = createServerFn({ method: "POST" })
       const next = row as { status?: string; date_from?: string; date_to?: string; total_amount?: number };
       if (prev && prev.status !== "cancelled" && next.status === "cancelled") {
         await notifyBookingEvent(id, "booking_cancellation");
-      } else if (
-        prev &&
-        (prev.date_from !== next.date_from ||
-          prev.date_to !== next.date_to ||
-          Number(prev.total_amount) !== Number(next.total_amount) ||
-          prev.status !== next.status)
-      ) {
-        await notifyBookingEvent(id, "booking_change");
+      } else {
+        // Durų kodo pristatymas apmokėjus — besąlygiškas, nepriklauso nuo
+        // bendro „rezervacijos pakeitimo“ jungiklio.
+        if (prev && prev.status !== "confirmed" && next.status === "confirmed") {
+          await notifyBookingEvent(id, "door_code_delivery");
+        }
+        if (
+          prev &&
+          (prev.date_from !== next.date_from ||
+            prev.date_to !== next.date_to ||
+            Number(prev.total_amount) !== Number(next.total_amount) ||
+            prev.status !== next.status)
+        ) {
+          await notifyBookingEvent(id, "booking_change");
+        }
       }
     } catch (e) {
       console.error("[updateBooking:notify]", e);
