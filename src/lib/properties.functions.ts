@@ -152,7 +152,7 @@ export const listAllProperties = createServerFn({ method: "GET" })
     const { supabase } = context;
     const { data, error } = await supabase
       .from("properties")
-      .select("*")
+      .select(PROPERTY_PUBLIC_COLUMNS)
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: true });
     if (error) throw new Error(error.message);
@@ -277,7 +277,7 @@ export const createProperty = createServerFn({ method: "POST" })
     const { data: row, error } = await context.supabase
       .from("properties")
       .insert(toRow(data))
-      .select("*")
+      .select(PROPERTY_PUBLIC_COLUMNS)
       .single();
     if (error) throw new Error(error.message);
     return mapProperty(row);
@@ -291,7 +291,7 @@ export const updateProperty = createServerFn({ method: "POST" })
       .from("properties")
       .update(toRow(data.patch))
       .eq("id", data.id)
-      .select("*")
+      .select(PROPERTY_PUBLIC_COLUMNS)
       .single();
     if (error) throw new Error(error.message);
     return mapProperty(row);
