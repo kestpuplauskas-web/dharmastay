@@ -9,27 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as FaqRouteImport } from './routes/faq'
-import { Route as OffersRouteImport } from './routes/offers'
-import { Route as PaslauguTaisyklesRouteImport } from './routes/paslaugu-taisykles'
-import { Route as PrivatumoPolitikaRouteImport } from './routes/privatumo-politika'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
-import { Route as PropertiesIdRouteImport } from './routes/properties.$id'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminContentRouteImport } from './routes/_authenticated/admin.content'
 import { Route as AuthenticatedAdminContractsRouteImport } from './routes/_authenticated/admin.contracts'
 import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authenticated/admin.expenses'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
-import { Route as ApiPublicBookingSubmitRouteImport } from './routes/api/public/booking-submit'
 import { Route as ApiPublicIcalSyncRouteImport } from './routes/api/public/ical-sync'
 import { Route as ApiPublicNotificationsCronRouteImport } from './routes/api/public/notifications-cron'
-import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as AuthenticatedAdminBookingsIndexRouteImport } from './routes/_authenticated/admin.bookings.index'
 import { Route as AuthenticatedAdminBookingsIdRouteImport } from './routes/_authenticated/admin.bookings.$id'
 import { Route as AuthenticatedAdminBookingsNewRouteImport } from './routes/_authenticated/admin.bookings.new'
@@ -45,48 +35,13 @@ import { Route as AuthenticatedAdminPropertiesIdEditRouteImport } from './routes
 import { Route as ApiPublicV1BookingsBookingNumberRouteImport } from './routes/api/public/v1/bookings.$bookingNumber'
 import { Route as ApiPublicV1PropertiesIdRouteImport } from './routes/api/public/v1/properties.$id'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FaqRoute = FaqRouteImport.update({
-  id: '/faq',
-  path: '/faq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OffersRoute = OffersRouteImport.update({
-  id: '/offers',
-  path: '/offers',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PaslauguTaisyklesRoute = PaslauguTaisyklesRouteImport.update({
-  id: '/paslaugu-taisykles',
-  path: '/paslaugu-taisykles',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivatumoPolitikaRoute = PrivatumoPolitikaRouteImport.update({
-  id: '/privatumo-politika',
-  path: '/privatumo-politika',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -98,11 +53,6 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const PropertiesIdRoute = PropertiesIdRouteImport.update({
-  id: '/properties/$id',
-  path: '/properties/$id',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
@@ -133,11 +83,6 @@ const AuthenticatedAdminSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const ApiPublicBookingSubmitRoute = ApiPublicBookingSubmitRouteImport.update({
-  id: '/api/public/booking-submit',
-  path: '/api/public/booking-submit',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPublicIcalSyncRoute = ApiPublicIcalSyncRouteImport.update({
   id: '/api/public/ical-sync',
   path: '/api/public/ical-sync',
@@ -149,11 +94,6 @@ const ApiPublicNotificationsCronRoute =
     path: '/api/public/notifications-cron',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
-  id: '/api/public/track',
-  path: '/api/public/track',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedAdminBookingsIndexRoute =
   AuthenticatedAdminBookingsIndexRouteImport.update({
     id: '/bookings/',
@@ -234,25 +174,16 @@ const ApiPublicV1PropertiesIdRoute = ApiPublicV1PropertiesIdRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/contact': typeof ContactRoute
-  '/faq': typeof FaqRoute
-  '/offers': typeof OffersRoute
-  '/paslaugu-taisykles': typeof PaslauguTaisyklesRoute
-  '/privatumo-politika': typeof PrivatumoPolitikaRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/properties/$id': typeof PropertiesIdRoute
   '/admin/content': typeof AuthenticatedAdminContentRoute
   '/admin/contracts': typeof AuthenticatedAdminContractsRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
   '/api/public/notifications-cron': typeof ApiPublicNotificationsCronRoute
-  '/api/public/track': typeof ApiPublicTrackRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
   '/admin/bookings/new': typeof AuthenticatedAdminBookingsNewRoute
@@ -270,24 +201,15 @@ export interface FileRoutesByFullPath {
   '/api/public/v1/properties/$id': typeof ApiPublicV1PropertiesIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/contact': typeof ContactRoute
-  '/faq': typeof FaqRoute
-  '/offers': typeof OffersRoute
-  '/paslaugu-taisykles': typeof PaslauguTaisyklesRoute
-  '/privatumo-politika': typeof PrivatumoPolitikaRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/properties/$id': typeof PropertiesIdRoute
   '/admin/content': typeof AuthenticatedAdminContentRoute
   '/admin/contracts': typeof AuthenticatedAdminContractsRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
   '/api/public/notifications-cron': typeof ApiPublicNotificationsCronRoute
-  '/api/public/track': typeof ApiPublicTrackRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
   '/admin/bookings/new': typeof AuthenticatedAdminBookingsNewRoute
@@ -306,26 +228,16 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
-  '/contact': typeof ContactRoute
-  '/faq': typeof FaqRoute
-  '/offers': typeof OffersRoute
-  '/paslaugu-taisykles': typeof PaslauguTaisyklesRoute
-  '/privatumo-politika': typeof PrivatumoPolitikaRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/properties/$id': typeof PropertiesIdRoute
   '/_authenticated/admin/content': typeof AuthenticatedAdminContentRoute
   '/_authenticated/admin/contracts': typeof AuthenticatedAdminContractsRoute
   '/_authenticated/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/api/public/booking-submit': typeof ApiPublicBookingSubmitRoute
   '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
   '/api/public/notifications-cron': typeof ApiPublicNotificationsCronRoute
-  '/api/public/track': typeof ApiPublicTrackRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
   '/_authenticated/admin/bookings/new': typeof AuthenticatedAdminBookingsNewRoute
@@ -346,24 +258,15 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
     | '/auth'
-    | '/contact'
-    | '/faq'
-    | '/offers'
-    | '/paslaugu-taisykles'
-    | '/privatumo-politika'
     | '/reset-password'
     | '/admin'
-    | '/properties/$id'
     | '/admin/content'
     | '/admin/contracts'
     | '/admin/expenses'
     | '/admin/settings'
-    | '/api/public/booking-submit'
     | '/api/public/ical-sync'
     | '/api/public/notifications-cron'
-    | '/api/public/track'
     | '/admin/'
     | '/admin/bookings/$id'
     | '/admin/bookings/new'
@@ -382,23 +285,14 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
     | '/auth'
-    | '/contact'
-    | '/faq'
-    | '/offers'
-    | '/paslaugu-taisykles'
-    | '/privatumo-politika'
     | '/reset-password'
-    | '/properties/$id'
     | '/admin/content'
     | '/admin/contracts'
     | '/admin/expenses'
     | '/admin/settings'
-    | '/api/public/booking-submit'
     | '/api/public/ical-sync'
     | '/api/public/notifications-cron'
-    | '/api/public/track'
     | '/admin'
     | '/admin/bookings/$id'
     | '/admin/bookings/new'
@@ -416,26 +310,16 @@ export interface FileRouteTypes {
     | '/api/public/v1/properties/$id'
   id:
     | '__root__'
-    | '/'
     | '/_authenticated'
-    | '/about'
     | '/auth'
-    | '/contact'
-    | '/faq'
-    | '/offers'
-    | '/paslaugu-taisykles'
-    | '/privatumo-politika'
     | '/reset-password'
     | '/_authenticated/admin'
-    | '/properties/$id'
     | '/_authenticated/admin/content'
     | '/_authenticated/admin/contracts'
     | '/_authenticated/admin/expenses'
     | '/_authenticated/admin/settings'
-    | '/api/public/booking-submit'
     | '/api/public/ical-sync'
     | '/api/public/notifications-cron'
-    | '/api/public/track'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/bookings/$id'
     | '/_authenticated/admin/bookings/new'
@@ -454,21 +338,11 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
-  ContactRoute: typeof ContactRoute
-  FaqRoute: typeof FaqRoute
-  OffersRoute: typeof OffersRoute
-  PaslauguTaisyklesRoute: typeof PaslauguTaisyklesRoute
-  PrivatumoPolitikaRoute: typeof PrivatumoPolitikaRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
-  PropertiesIdRoute: typeof PropertiesIdRoute
-  ApiPublicBookingSubmitRoute: typeof ApiPublicBookingSubmitRoute
   ApiPublicIcalSyncRoute: typeof ApiPublicIcalSyncRoute
   ApiPublicNotificationsCronRoute: typeof ApiPublicNotificationsCronRoute
-  ApiPublicTrackRoute: typeof ApiPublicTrackRoute
   ApiPublicV1AvailabilityRoute: typeof ApiPublicV1AvailabilityRoute
   ApiPublicV1BookingsRoute: typeof ApiPublicV1BookingsRouteWithChildren
   ApiPublicV1LegalRoute: typeof ApiPublicV1LegalRoute
@@ -479,13 +353,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -493,53 +360,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth': {
       id: '/auth'
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/faq': {
-      id: '/faq'
-      path: '/faq'
-      fullPath: '/faq'
-      preLoaderRoute: typeof FaqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/offers': {
-      id: '/offers'
-      path: '/offers'
-      fullPath: '/offers'
-      preLoaderRoute: typeof OffersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/paslaugu-taisykles': {
-      id: '/paslaugu-taisykles'
-      path: '/paslaugu-taisykles'
-      fullPath: '/paslaugu-taisykles'
-      preLoaderRoute: typeof PaslauguTaisyklesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privatumo-politika': {
-      id: '/privatumo-politika'
-      path: '/privatumo-politika'
-      fullPath: '/privatumo-politika'
-      preLoaderRoute: typeof PrivatumoPolitikaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -555,13 +380,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/properties/$id': {
-      id: '/properties/$id'
-      path: '/properties/$id'
-      fullPath: '/properties/$id'
-      preLoaderRoute: typeof PropertiesIdRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
@@ -598,13 +416,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/api/public/booking-submit': {
-      id: '/api/public/booking-submit'
-      path: '/api/public/booking-submit'
-      fullPath: '/api/public/booking-submit'
-      preLoaderRoute: typeof ApiPublicBookingSubmitRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/ical-sync': {
       id: '/api/public/ical-sync'
       path: '/api/public/ical-sync'
@@ -617,13 +428,6 @@ declare module '@tanstack/react-router' {
       path: '/api/public/notifications-cron'
       fullPath: '/api/public/notifications-cron'
       preLoaderRoute: typeof ApiPublicNotificationsCronRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/track': {
-      id: '/api/public/track'
-      path: '/api/public/track'
-      fullPath: '/api/public/track'
-      preLoaderRoute: typeof ApiPublicTrackRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/bookings/': {
@@ -796,21 +600,11 @@ const ApiPublicV1PropertiesRouteWithChildren =
   )
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
-  ContactRoute: ContactRoute,
-  FaqRoute: FaqRoute,
-  OffersRoute: OffersRoute,
-  PaslauguTaisyklesRoute: PaslauguTaisyklesRoute,
-  PrivatumoPolitikaRoute: PrivatumoPolitikaRoute,
   ResetPasswordRoute: ResetPasswordRoute,
-  PropertiesIdRoute: PropertiesIdRoute,
-  ApiPublicBookingSubmitRoute: ApiPublicBookingSubmitRoute,
   ApiPublicIcalSyncRoute: ApiPublicIcalSyncRoute,
   ApiPublicNotificationsCronRoute: ApiPublicNotificationsCronRoute,
-  ApiPublicTrackRoute: ApiPublicTrackRoute,
   ApiPublicV1AvailabilityRoute: ApiPublicV1AvailabilityRoute,
   ApiPublicV1BookingsRoute: ApiPublicV1BookingsRouteWithChildren,
   ApiPublicV1LegalRoute: ApiPublicV1LegalRoute,
