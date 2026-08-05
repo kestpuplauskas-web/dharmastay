@@ -17,7 +17,10 @@ type PropertyRow = Database["public"]["Tables"]["properties"]["Row"];
 /** Public/anon reads never include door_code (physical access credential). */
 const PROPERTY_PUBLIC_COLUMNS =
   "id, name, category, year, price_per_night, cover_image_url, image_urls, price_tiers, is_active, sort_order, created_at, updated_at, status, property_type, description, address, city, country, lat, lng, area_m2, max_guests, beds, rooms, amenities, extra_services, ical_import_url, ical_last_sync_at, ical_last_status";
-type PublicPropertyRow = Omit<PropertyRow, "door_code"> & { door_code?: string | null };
+type PublicPropertyRow = Omit<PropertyRow, "door_code" | "features"> & {
+  door_code?: string | null;
+  features?: PropertyRow["features"];
+};
 type BookingRow = Pick<
   Database["public"]["Tables"]["bookings"]["Row"],
   "property_id" | "date_from" | "date_to"
