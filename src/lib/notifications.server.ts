@@ -9,9 +9,12 @@ export type NotificationKind =
   | "booking_change"
   | "booking_cancellation"
   | "checkin_reminder"
-  | "review_request";
+  | "review_request"
+  | "door_code_delivery";
 
-const SETTINGS_FLAG: Record<NotificationKind, keyof PropertySettings> = {
+// "door_code_delivery" tyčia neturi jungiklio — tai būtina prieigos informacija,
+// kurios negalima išjungti bendru pranešimų nustatymu.
+const SETTINGS_FLAG: Partial<Record<NotificationKind, keyof PropertySettings>> = {
   booking_confirmation: "notifyBookingConfirmation",
   booking_change: "notifyBookingChange",
   booking_cancellation: "notifyCancellationConfirmation",
@@ -25,6 +28,7 @@ const ADMIN_SUBJECTS: Record<NotificationKind, string> = {
   booking_cancellation: "Rezervacija atšaukta",
   checkin_reminder: "Artėja svečio atvykimas",
   review_request: "Svečias išvyko",
+  door_code_delivery: "Durų kodas išsiųstas svečiui",
 };
 
 type Admin = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
