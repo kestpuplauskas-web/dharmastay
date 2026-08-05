@@ -129,7 +129,7 @@ export const getPropertyForEdit = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     const { data: prop, error } = await context.supabase
       .from("properties")
-      .select("*")
+      .select(PROPERTY_PUBLIC_COLUMNS)
       .eq("id", data.id)
       .maybeSingle();
     if (error) {
@@ -137,7 +137,13 @@ export const getPropertyForEdit = createServerFn({ method: "GET" })
       throw new Error("Nepavyko įkelti objekto.");
     }
     if (!prop) return null;
-    return mapProperty(prop as PropertyRow);
+    const { data: doorCode } = await context.supabase.rpc("admin_get_door_code", {
+      _property_id: data.id,
+    });
+    return mapProperty({
+      ...(prop as unknown as PublicPropertyRow),
+      door_code: (doorCode as string | null) ?? null,
+    });
   });
 
 export const listAllProperties = createServerFn({ method: "GET" })
