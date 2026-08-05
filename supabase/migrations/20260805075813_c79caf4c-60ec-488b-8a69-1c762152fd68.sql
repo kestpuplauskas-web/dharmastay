@@ -1,0 +1,2 @@
+INSERT INTO public.api_clients (name, key_hash, key_prefix, allowed_origins, is_active)
+VALUES ('TEMP legal endpoint test', '3b33c059cf86ceb4d969a5311fdce75d4d2cf6d11817374c49c31a90798f89cb', 'rk_live_test_', ARRAY[]::text[], true);
