@@ -196,6 +196,32 @@ Rezervacijos būsenos patikra. Reikalauja to paties el. pašto, kuriuo rezervuot
 payment_status, total_amount, currency, extras, extras_total`.
 Rate limit: **60 užklausų / 10 min**.
 
+### GET `/legal?kind=&language=`
+
+Teisinio turinio (paslaugų teikimo taisyklės, privatumo politika) atidavimas.
+Turinys valdomas Core administravimo panelėje.
+
+**Parametrai:** `kind` — `rental` arba `privacy` (privalomas);
+`language` — `lt` arba `en` (nenurodžius — `lt`).
+
+**Atsakymas `200`:**
+
+```json
+{
+  "data": {
+    "kind": "rental",
+    "language": "lt",
+    "name": "Paslaugų teikimo taisyklės",
+    "content": "<h2>...</h2>",
+    "updated_at": "2026-08-05T07:00:00.000Z"
+  }
+}
+```
+
+`content` yra HTML — klientinė dalis privalo jį sanitizuoti (pvz. `DOMPurify.sanitize()`)
+prieš `dangerouslySetInnerHTML`. Jei aktyvaus šablono nėra — `404 not_found`.
+Rate limit netaikomas.
+
 ## 4. Klaidų formatas (visi endpoint'ai)
 
 ```json
@@ -248,6 +274,8 @@ export const createBooking = (body: unknown) =>
 export const getPaymentDetails = () => rentivoFetch("/payment-details");
 export const getBookingStatus = (bookingNumber: string, email: string) =>
   rentivoFetch(`/bookings/${bookingNumber}?email=${encodeURIComponent(email)}`);
+export const getLegal = (kind: "rental" | "privacy", language: "lt" | "en" = "lt") =>
+  rentivoFetch(`/legal?kind=${kind}&language=${language}`);
 ```
 
 ## 7. Ko klientinė dalis NEDARO
