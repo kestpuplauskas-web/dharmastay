@@ -17,7 +17,10 @@ type PropertyRow = Database["public"]["Tables"]["properties"]["Row"];
 /** Public/anon reads never include door_code (physical access credential). */
 const PROPERTY_PUBLIC_COLUMNS =
   "id, name, category, year, price_per_night, cover_image_url, image_urls, price_tiers, is_active, sort_order, created_at, updated_at, status, property_type, description, address, city, country, lat, lng, area_m2, max_guests, beds, rooms, amenities, extra_services, ical_import_url, ical_last_sync_at, ical_last_status";
-type PublicPropertyRow = Omit<PropertyRow, "door_code"> & { door_code?: string | null };
+type PublicPropertyRow = Omit<PropertyRow, "door_code" | "features"> & {
+  door_code?: string | null;
+  features?: PropertyRow["features"];
+};
 type BookingRow = Pick<
   Database["public"]["Tables"]["bookings"]["Row"],
   "property_id" | "date_from" | "date_to"
@@ -129,7 +132,7 @@ export const getPropertyForEdit = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     const { data: prop, error } = await context.supabase
       .from("properties")
-      .select("*")
+      .select(PROPERTY_PUBLIC_COLUMNS)
       .eq("id", data.id)
       .maybeSingle();
     if (error) {
@@ -137,7 +140,13 @@ export const getPropertyForEdit = createServerFn({ method: "GET" })
       throw new Error("Nepavyko įkelti objekto.");
     }
     if (!prop) return null;
-    return mapProperty(prop as PropertyRow);
+    const { data: doorCode } = await context.supabase.rpc("admin_get_door_code", {
+      _property_id: data.id,
+    });
+    return mapProperty({
+      ...(prop as unknown as PublicPropertyRow),
+      door_code: (doorCode as string | null) ?? null,
+    });
   });
 
 export const listAllProperties = createServerFn({ method: "GET" })
@@ -146,7 +155,7 @@ export const listAllProperties = createServerFn({ method: "GET" })
     const { supabase } = context;
     const { data, error } = await supabase
       .from("properties")
-      .select("*")
+      .select(PROPERTY_PUBLIC_COLUMNS)
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: true });
     if (error) throw new Error(error.message);
@@ -271,7 +280,7 @@ export const createProperty = createServerFn({ method: "POST" })
     const { data: row, error } = await context.supabase
       .from("properties")
       .insert(toRow(data))
-      .select("*")
+      .select(PROPERTY_PUBLIC_COLUMNS)
       .single();
     if (error) throw new Error(error.message);
     return mapProperty(row);
@@ -285,7 +294,7 @@ export const updateProperty = createServerFn({ method: "POST" })
       .from("properties")
       .update(toRow(data.patch))
       .eq("id", data.id)
-      .select("*")
+      .select(PROPERTY_PUBLIC_COLUMNS)
       .single();
     if (error) throw new Error(error.message);
     return mapProperty(row);

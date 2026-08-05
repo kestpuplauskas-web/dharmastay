@@ -38,7 +38,9 @@ export const getDashboardStats = createServerFn({ method: "POST" })
     const in30 = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10);
 
     const [propsRes, bookingsRes, expensesRes] = await Promise.all([
-      supabase.from("properties").select("*"),
+      supabase
+        .from("properties")
+        .select("id, name, category, property_type, price_per_night, is_active, status, sort_order, created_at"),
       supabase.from("bookings").select("*, properties(id,name)").order("created_at", { ascending: false }),
       supabase.from("expenses").select("*"),
     ]);
