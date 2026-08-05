@@ -61,7 +61,7 @@ export type PropertyFormValues = {
 export function propertyToForm(p: Property | null | undefined): PropertyFormValues {
   return {
     name: p?.name ?? "",
-    propertyType: p?.propertyType ?? "apartment",
+    propertyType: p?.propertyType ?? "standard",
     description: p?.description ?? "",
     address: p?.address ?? "",
     city: p?.city ?? "",

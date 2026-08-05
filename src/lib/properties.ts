@@ -1,9 +1,7 @@
 export const PROPERTY_TYPES = [
-  { value: "apartment", label: "Apartamentai" },
-  { value: "hotel", label: "SPA" },
-  { value: "cottage", label: "Atostogų namelis" },
-  { value: "villa", label: "Vila" },
-  { value: "guest_house", label: "Svečių namai" },
+  { value: "standard", label: "Standartiniai apartamentai" },
+  { value: "terrace", label: "Apartamentai su terasa" },
+  { value: "cottage", label: "Namelis su pirtimi ir kubilu" },
 ] as const;
 
 export type PropertyTypeValue = (typeof PROPERTY_TYPES)[number]["value"];
