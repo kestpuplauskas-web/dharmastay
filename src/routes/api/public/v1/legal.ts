@@ -24,14 +24,11 @@ export const Route = createFileRoute("/api/public/v1/legal")({
             return apiError("bad_request", "Invalid query parameters", 400, headers);
           }
 
-          const { createClient } = await import("@supabase/supabase-js");
-          const supabase = createClient(
-            process.env["SUPABASE_URL"]!,
-            process.env["SUPABASE_PUBLISHABLE_KEY"]!,
-            { auth: { persistSession: false, autoRefreshToken: false } },
-          );
+          // Kvietėjas jau patvirtintas API raktu; contract_templates neturi anon
+          // skaitymo politikos, tad skaitome per privilegijuotą klientą.
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-          const { data: row, error } = await supabase
+          const { data: row, error } = await supabaseAdmin
             .from("contract_templates")
             .select("id, name, content, language, kind, updated_at")
             .eq("language", parsed.data.language)
