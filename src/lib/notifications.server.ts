@@ -133,8 +133,14 @@ async function buildTokens(booking: Record<string, any>, settings: PropertySetti
     .maybeSingle();
   const wifi = await loadGuestInfoFields("wifi");
 
-  // Durų kodas svečiui atskleidžiamas tik po apmokėjimo (status = "confirmed").
-  const isPaid = booking["status"] === "confirmed";
+  // Durų kodas svečiui atskleidžiamas tik po apmokėjimo/patvirtinimo.
+  const status = String(booking["status"] ?? "");
+  const paymentStatus = String(booking["payment_status"] ?? "");
+  const isPaid =
+    status === "confirmed" ||
+    status === "completed" ||
+    paymentStatus === "paid" ||
+    paymentStatus === "partial";
 
   return {
     "{{guest_name}}": String(booking["customer_name"] ?? ""),
