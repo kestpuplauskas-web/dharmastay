@@ -135,6 +135,7 @@ export type Property = {
   address: string;
   city: string;
   country: string;
+  locationNote: string;
   doorCode: string;
   lat: number | null;
   lng: number | null;

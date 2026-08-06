@@ -24,6 +24,7 @@ export type PropertyFormValues = {
   address: string;
   city: string;
   country: string;
+  locationNote: string;
   doorCode: string;
   lat: number | null;
   lng: number | null;
@@ -66,6 +67,7 @@ export function propertyToForm(p: Property | null | undefined): PropertyFormValu
     address: p?.address ?? "",
     city: p?.city ?? "",
     country: p?.country ?? "LT",
+    locationNote: p?.locationNote ?? "",
     doorCode: p?.doorCode ?? "",
     lat: p?.lat ?? null,
     lng: p?.lng ?? null,
