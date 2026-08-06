@@ -128,7 +128,7 @@ async function buildTokens(booking: Record<string, any>, settings: PropertySetti
   const db = await admin();
   const { data: prop } = await db
     .from("properties")
-    .select("name, door_code")
+    .select("name, door_code, location_note")
     .eq("id", booking["property_id"])
     .maybeSingle();
   const wifi = await loadGuestInfoFields("wifi");
@@ -146,6 +146,7 @@ async function buildTokens(booking: Record<string, any>, settings: PropertySetti
     "{{check_in}}": String(booking["check_in_time"] ?? settings.checkinFrom ?? ""),
     "{{check_out}}": String(booking["check_out_time"] ?? settings.checkoutUntil ?? ""),
     "{{door_code}}": isPaid ? String((prop as any)?.door_code ?? "") : "",
+    "{{location}}": String((prop as any)?.location_note ?? ""),
     "{{wifi_name}}": wifi["wifiName"] ?? "",
     "{{wifi_password}}": wifi["wifiPassword"] ?? "",
     "{{total_amount}}": money(booking["total_amount"]),

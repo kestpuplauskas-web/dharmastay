@@ -24,6 +24,7 @@ export type PropertyFormValues = {
   address: string;
   city: string;
   country: string;
+  locationNote: string;
   doorCode: string;
   lat: number | null;
   lng: number | null;
@@ -66,6 +67,7 @@ export function propertyToForm(p: Property | null | undefined): PropertyFormValu
     address: p?.address ?? "",
     city: p?.city ?? "",
     country: p?.country ?? "LT",
+    locationNote: p?.locationNote ?? "",
     doorCode: p?.doorCode ?? "",
     lat: p?.lat ?? null,
     lng: p?.lng ?? null,
@@ -195,6 +197,20 @@ export function PropertyForm({
             maxLength={3}
             className="mt-1 w-full rounded border px-2 py-1"
           />
+        </label>
+        <label className="text-sm md:col-span-3">
+          Vieta
+          <textarea
+            value={v.locationNote}
+            onChange={(e) => set("locationNote", e.target.value)}
+            rows={3}
+            placeholder="pvz. Vilniaus g. 10, 2 aukštas, durys Nr. 3 — įėjimas iš kiemo pusės"
+            className="mt-1 w-full rounded border px-2 py-1"
+          />
+          <span className="mt-1 block text-xs text-muted-foreground">
+            Tekstinis aprašymas, kur tiksliai randasi objektas. Galima naudoti laiškuose kaip{" "}
+            <code className="font-mono">{"{{location}}"}</code>.
+          </span>
         </label>
         <label className="text-sm md:col-span-3">
           Durų kodo numeris

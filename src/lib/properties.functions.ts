@@ -26,7 +26,7 @@ function publicClient() {
 type PropertyRow = Database["public"]["Tables"]["properties"]["Row"];
 /** Public/anon reads never include door_code (physical access credential). */
 const PROPERTY_PUBLIC_COLUMNS =
-  "id, name, category, year, price_per_night, cover_image_url, image_urls, price_tiers, is_active, sort_order, created_at, updated_at, status, property_type, description, address, city, country, lat, lng, area_m2, max_guests, beds, rooms, amenities, extra_services, ical_import_url, ical_last_sync_at, ical_last_status";
+  "id, name, category, year, price_per_night, cover_image_url, image_urls, price_tiers, is_active, sort_order, created_at, updated_at, status, property_type, description, address, city, country, location_note, lat, lng, area_m2, max_guests, beds, rooms, amenities, extra_services, ical_import_url, ical_last_sync_at, ical_last_status";
 type PublicPropertyRow = Omit<PropertyRow, "door_code" | "features"> & {
   door_code?: string | null;
   features?: PropertyRow["features"];
@@ -45,6 +45,7 @@ function mapProperty(row: PublicPropertyRow, bookings: BookingRow[] = []): Prope
     address: row.address ?? "",
     city: row.city ?? "",
     country: row.country ?? "LT",
+    locationNote: row.location_note ?? "",
     doorCode: row.door_code ?? "",
     lat: row.lat != null ? Number(row.lat) : null,
     lng: row.lng != null ? Number(row.lng) : null,
@@ -181,6 +182,7 @@ const propertyInputSchema = z.object({
   address: z.string().trim().max(300).default(""),
   city: z.string().trim().max(100).default(""),
   country: z.string().trim().max(3).default("LT"),
+  locationNote: z.string().trim().max(2000).default(""),
   lat: z.number().min(-90).max(90).nullable().optional(),
   lng: z.number().min(-180).max(180).nullable().optional(),
   areaM2: z.number().int().min(0).max(100000).nullable().optional(),
@@ -263,6 +265,7 @@ function toRow(input: z.infer<typeof propertyInputSchema>) {
     address: input.address,
     city: input.city,
     country: input.country,
+    location_note: input.locationNote,
     door_code: input.doorCode || null,
     lat: input.lat ?? null,
     lng: input.lng ?? null,
