@@ -194,7 +194,11 @@ const ONE_SHOT: NotificationKind[] = [
  * Išsiunčia laišką svečiui pagal „Turinys“ šabloną ir informuoja administratorių.
  * Klaidos niekada nemeta – tik įrašo į žurnalą (rezervacija svarbiau nei laiškas).
  */
-export async function notifyBookingEvent(bookingId: string, kind: NotificationKind) {
+export async function notifyBookingEvent(
+  bookingId: string,
+  kind: NotificationKind,
+  opts?: { force?: boolean },
+) {
   try {
     const db = await admin();
     const { data: booking } = await db.from("bookings").select("*").eq("id", bookingId).maybeSingle();
@@ -202,7 +206,7 @@ export async function notifyBookingEvent(bookingId: string, kind: NotificationKi
 
     const settings = await loadGlobalSettings();
     const flag = SETTINGS_FLAG[kind];
-    if (flag && !settings[flag]) return;
+    if (!opts?.force && flag && !settings[flag]) return;
 
     const tokens = await buildTokens(booking as Record<string, any>, settings);
     const tpl = await loadTemplate(kind);
