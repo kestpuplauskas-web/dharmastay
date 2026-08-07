@@ -301,11 +301,6 @@ export const updateBooking = createServerFn({ method: "POST" })
       if (prev && prev.status !== "cancelled" && next.status === "cancelled") {
         await notifyBookingEvent(id, "booking_cancellation");
       } else {
-        // Durų kodo pristatymas apmokėjus — besąlygiškas, nepriklauso nuo
-        // bendro „rezervacijos pakeitimo“ jungiklio.
-        if (prev && prev.status !== "confirmed" && next.status === "confirmed") {
-          await notifyBookingEvent(id, "door_code_delivery");
-        }
         if (
           prev &&
           (prev.date_from !== next.date_from ||
