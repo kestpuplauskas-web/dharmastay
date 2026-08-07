@@ -39,7 +39,14 @@ export async function withStaffAuth(
   handler: (ctx: StaffCtx) => Promise<Response>,
 ): Promise<Response> {
   const origin = request.headers.get("origin");
-  const headers = corsHeaders(origin, allowedOrigins());
+  const sameOrigin = (() => {
+    try {
+      return origin ? new URL(request.url).origin === origin : false;
+    } catch {
+      return false;
+    }
+  })();
+  const headers = corsHeaders(origin, sameOrigin && origin ? [origin] : allowedOrigins());
   if (origin && !headers["Access-Control-Allow-Origin"]) {
     return apiError("forbidden_origin", "Origin not allowed", 403, headers);
   }

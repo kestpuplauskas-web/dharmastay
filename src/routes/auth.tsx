@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getMyRole } from "@/lib/properties.functions";
+import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,21 +16,32 @@ export const Route = createFileRoute("/auth")({
 
 function LoginPage() {
   const navigate = useNavigate();
+  const fetchRole = useServerFn(getMyRole);
   const [mode, setMode] = useState<"login" | "forgot">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
+    const goToDestination = async () => {
+      try {
+        const role = await fetchRole();
+        if (role.isAdmin) navigate({ to: "/admin" });
+        else if (role.roles.includes("housekeeper")) navigate({ to: "/staff" });
+        else navigate({ to: "/admin" });
+      } catch {
+        navigate({ to: "/admin" });
+      }
+    };
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "PASSWORD_RECOVERY") return;
-      if (session) navigate({ to: "/admin" });
+      if (session) void goToDestination();
     });
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/admin" });
+      if (data.session) void goToDestination();
     });
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, fetchRole]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
