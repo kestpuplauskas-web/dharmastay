@@ -1,26 +1,29 @@
-# Durų kodo laiškas: kada siunčiamas ir kaip jį valdyti
+# Durų kodo laiško pašalinimas ir atvykimo priminimo patikra
 
-## Kada siunčiamas
+## 1. Pašalinti „durų kodo" laišką
 
-Šis laiškas („… apmokėta — durų kodas") siunčiamas automatiškai, kai rezervacijos statusas pakeičiamas į **Patvirtinta / apmokėta** (iš bet kokio kito statuso). Vienai rezervacijai siunčiamas tik kartą — pakartotinai perjungus statusą, laiškas nedubliuojamas. Kopija keliauja ir administratoriui.
+Laiškas („… apmokėta — durų kodas") siunčiamas, kai rezervacijos statusas pakeičiamas į „Patvirtinta". Pašalinsiu jį visiškai:
 
-Durų kodas laiške įrašomas tik tada, kai rezervacija patvirtinta/apmokėta ir objekto kortelėje užpildytas laukas „Durų kodas".
+- išimsiu automatinį siuntimą keičiant statusą (`src/lib/bookings.functions.ts`);
+- pašalinsiu `door_code_delivery` tipą iš pranešimų variklio (`src/lib/notifications.server.ts`);
+- ištrinsiu šabloną iš duomenų bazės, kad jo nebeliktų ir turinio įrašuose.
 
-## Ar jį galima redaguoti per nustatymus
+WhatsApp žinutė „Durų kodas" ir kintamasis `{{door_code}}` kituose laiškuose lieka nepakitę.
 
-Šiuo metu — ne. Laiško tema ir tekstas jau saugomi duomenų bazėje kaip šablonas `door_code_delivery`, bet jis **nerodomas** administratoriaus skiltyje „Turinys", todėl per sąsają jo redaguoti negalima. Jungiklio Bendruosiuose nustatymuose jis taip pat neturi sąmoningai — tai būtina prieigos informacija.
+## 2. „Priminimas prieš atvykstant" — kodėl nesiunčiamas
 
-## Ką siūlau padaryti
+Patikrinau:
 
-Pridėti šį šabloną į „Turinys" → „Pranešimai el. paštu" kaip atskirą kortelę „Durų kodas (po apmokėjimo)":
+- valandinis planuotojas veikia ir kviečia priminimų užduotį;
+- jungiklis Bendruosiuose nustatymuose įjungtas, priminimas nustatytas likus 1 val. iki atvykimo;
+- **bet šablono „Priminimas prieš atvykimą" įrašo duomenų bazėje nėra** — jis niekada nebuvo išsaugotas skiltyje „Turinys". Todėl svečiui laiškas nesiunčiamas (nueina tik kopija administratoriui).
 
-- tema + turinys su tekstų redaktoriumi ir kintamųjų įterpimu (`{{door_code}}`, `{{wifi_name}}`, `{{location}}` ir kt.);
-- testinio laiško siuntimas, kaip kitose el. laiškų kortelėse;
-- kortelės įjungimo jungiklis paliekamas, bet pagal dabartinę logiką laiškas laikomas privalomu ir lieka įjungtas.
+Sprendimas: įrašyti numatytąjį šio laiško turinį (tema + tekstas su `{{door_code}}`, `{{wifi_name}}`, `{{location}}`), kad kortelė „Turinys" būtų užpildyta ir siuntimas veiktų. Vėliau tekstą galėsite laisvai redaguoti.
 
-Esami duomenų bazėje išsaugoti tekstai nekeičiami — kortelė iškart parodys tai, kas siunčiama dabar.
+Papildomai pasiūlymas apsvarstyti: 1 valanda iki atvykimo yra labai vėlu — įprasta 24 val. Galiu pakeisti, jei norite.
 
-## Techninės detalės
+## 3. Testinis laiškas
 
-- Naujas įrašas `CONTENT_TEMPLATES` masyve (`src/lib/content-templates.ts`): `category: "email"`, `name: "door_code_delivery"`, `hasSubject`, `hasRichText`, `canTestSend: true`, su dabartiniais numatytaisiais tekstais.
-- Siuntimo logika (`src/lib/notifications.server.ts`) nekeičiama — ji jau ima šabloną pagal tą patį pavadinimą.
+Išsiųsiu testinį „Priminimas prieš atvykimą" laišką į vasiliauskas.mantas88@gmail.com ir patvirtinsiu rezultatą iš siuntimo žurnalo.
+
+Pastaba: nurodytas adresas žinutėje buvo `vasiliausas.mantas88@gmail.com` (be „k"). Naudosiu sistemoje jau esantį `vasiliauskas.mantas88@gmail.com`.
