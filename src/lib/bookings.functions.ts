@@ -300,16 +300,18 @@ export const updateBooking = createServerFn({ method: "POST" })
       const next = row as { status?: string; date_from?: string; date_to?: string; total_amount?: number };
       if (prev && prev.status !== "cancelled" && next.status === "cancelled") {
         await notifyBookingEvent(id, "booking_cancellation");
-      } else {
-        if (
-          prev &&
-          (prev.date_from !== next.date_from ||
-            prev.date_to !== next.date_to ||
-            Number(prev.total_amount) !== Number(next.total_amount) ||
-            prev.status !== next.status)
-        ) {
-          await notifyBookingEvent(id, "booking_change");
-        }
+      } else if (
+        prev &&
+        (prev.date_from !== next.date_from ||
+          prev.date_to !== next.date_to ||
+          Number(prev.total_amount) !== Number(next.total_amount) ||
+          prev.status !== next.status)
+      ) {
+        // Jei būtent šis pakeitimas yra perėjimas į „Apmokėta“ — durų kodas svečiui
+        // turi pasiekti visada, nepriklausomai nuo „Rezervacijos pakeitimas“ jungiklio.
+        // Kitais atvejais (datos/suma) gerbiamas administratoriaus nustatymas.
+        const justConfirmed = prev.status !== "confirmed" && next.status === "confirmed";
+        await notifyBookingEvent(id, "booking_change", justConfirmed ? { force: true } : undefined);
       }
     } catch (e) {
       console.error("[updateBooking:notify]", e);
