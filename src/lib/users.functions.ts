@@ -18,6 +18,7 @@ export const inviteUser = createServerFn({ method: "POST" })
       .object({
         email: z.string().trim().email(),
         role: z.enum(["admin", "housekeeper"]),
+        redirectTo: z.string().url().optional(),
       })
       .parse(d),
   )
@@ -26,7 +27,9 @@ export const inviteUser = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const { data: invited, error: inviteErr } =
-      await supabaseAdmin.auth.admin.inviteUserByEmail(data.email);
+      await supabaseAdmin.auth.admin.inviteUserByEmail(data.email, {
+        redirectTo: data.redirectTo,
+      });
     if (inviteErr) throw new Error(inviteErr.message);
 
     const newUserId = invited.user?.id;
