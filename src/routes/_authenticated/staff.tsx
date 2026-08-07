@@ -20,6 +20,7 @@ function StaffLayout() {
   const { data: role, isLoading } = useQuery({
     queryKey: ["my-role"],
     queryFn: () => fetchRole(),
+    refetchOnMount: "always",
   });
 
   if (isLoading) {
