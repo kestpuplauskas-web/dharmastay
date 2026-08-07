@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useRouterState, Navigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Home, Calendar, FileText, Wallet, LayoutDashboard, Globe, LogOut, Building2, Settings2, FileEdit } from "lucide-react";
@@ -21,6 +21,9 @@ function AdminLayout() {
     return <div className="p-8 text-muted-foreground">Kraunama…</div>;
   }
   if (!role?.isAdmin) {
+    if (role?.roles.includes("housekeeper")) {
+      return <Navigate to="/staff" replace />;
+    }
     return (
       <div className="mx-auto max-w-md p-8">
         <h1 className="text-2xl font-semibold">Neturite administratoriaus teisių</h1>
