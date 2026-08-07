@@ -1012,6 +1012,50 @@ export type Database = {
           },
         ]
       }
+      room_status: {
+        Row: {
+          assigned_at: string | null
+          assigned_to: string | null
+          created_at: string
+          id: string
+          note: string
+          property_id: string
+          status: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          assigned_at?: string | null
+          assigned_to?: string | null
+          created_at?: string
+          id?: string
+          note?: string
+          property_id: string
+          status?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          assigned_at?: string | null
+          assigned_to?: string | null
+          created_at?: string
+          id?: string
+          note?: string
+          property_id?: string
+          status?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_status_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: true
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       signed_contracts: {
         Row: {
           booking_id: string

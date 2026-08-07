@@ -32,9 +32,13 @@ import { Route as ApiPublicV1LegalRouteImport } from './routes/api/public/v1/leg
 import { Route as ApiPublicV1PaymentDetailsRouteImport } from './routes/api/public/v1/payment-details'
 import { Route as ApiPublicV1PropertiesRouteImport } from './routes/api/public/v1/properties'
 import { Route as ApiPublicV1QuoteRouteImport } from './routes/api/public/v1/quote'
+import { Route as ApiStaffV1RoomsRouteImport } from './routes/api/staff/v1/rooms'
 import { Route as AuthenticatedAdminPropertiesIdEditRouteImport } from './routes/_authenticated/admin.properties.$id.edit'
 import { Route as ApiPublicV1BookingsBookingNumberRouteImport } from './routes/api/public/v1/bookings.$bookingNumber'
 import { Route as ApiPublicV1PropertiesIdRouteImport } from './routes/api/public/v1/properties.$id'
+import { Route as ApiStaffV1RoomsIdAssignRouteImport } from './routes/api/staff/v1/rooms.$id.assign'
+import { Route as ApiStaffV1RoomsIdStatusRouteImport } from './routes/api/staff/v1/rooms.$id.status'
+import { Route as ApiStaffV1RoomsIdUnassignRouteImport } from './routes/api/staff/v1/rooms.$id.unassign'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -161,6 +165,11 @@ const ApiPublicV1QuoteRoute = ApiPublicV1QuoteRouteImport.update({
   path: '/api/public/v1/quote',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiStaffV1RoomsRoute = ApiStaffV1RoomsRouteImport.update({
+  id: '/api/staff/v1/rooms',
+  path: '/api/staff/v1/rooms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminPropertiesIdEditRoute =
   AuthenticatedAdminPropertiesIdEditRouteImport.update({
     id: '/properties/$id/edit',
@@ -178,6 +187,22 @@ const ApiPublicV1PropertiesIdRoute = ApiPublicV1PropertiesIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => ApiPublicV1PropertiesRoute,
 } as any)
+const ApiStaffV1RoomsIdAssignRoute = ApiStaffV1RoomsIdAssignRouteImport.update({
+  id: '/$id/assign',
+  path: '/$id/assign',
+  getParentRoute: () => ApiStaffV1RoomsRoute,
+} as any)
+const ApiStaffV1RoomsIdStatusRoute = ApiStaffV1RoomsIdStatusRouteImport.update({
+  id: '/$id/status',
+  path: '/$id/status',
+  getParentRoute: () => ApiStaffV1RoomsRoute,
+} as any)
+const ApiStaffV1RoomsIdUnassignRoute =
+  ApiStaffV1RoomsIdUnassignRouteImport.update({
+    id: '/$id/unassign',
+    path: '/$id/unassign',
+    getParentRoute: () => ApiStaffV1RoomsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -200,11 +225,15 @@ export interface FileRoutesByFullPath {
   '/api/public/v1/payment-details': typeof ApiPublicV1PaymentDetailsRoute
   '/api/public/v1/properties': typeof ApiPublicV1PropertiesRouteWithChildren
   '/api/public/v1/quote': typeof ApiPublicV1QuoteRoute
+  '/api/staff/v1/rooms': typeof ApiStaffV1RoomsRouteWithChildren
   '/admin/bookings/': typeof AuthenticatedAdminBookingsIndexRoute
   '/admin/properties/': typeof AuthenticatedAdminPropertiesIndexRoute
   '/admin/properties/$id/edit': typeof AuthenticatedAdminPropertiesIdEditRoute
   '/api/public/v1/bookings/$bookingNumber': typeof ApiPublicV1BookingsBookingNumberRoute
   '/api/public/v1/properties/$id': typeof ApiPublicV1PropertiesIdRoute
+  '/api/staff/v1/rooms/$id/assign': typeof ApiStaffV1RoomsIdAssignRoute
+  '/api/staff/v1/rooms/$id/status': typeof ApiStaffV1RoomsIdStatusRoute
+  '/api/staff/v1/rooms/$id/unassign': typeof ApiStaffV1RoomsIdUnassignRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -226,11 +255,15 @@ export interface FileRoutesByTo {
   '/api/public/v1/payment-details': typeof ApiPublicV1PaymentDetailsRoute
   '/api/public/v1/properties': typeof ApiPublicV1PropertiesRouteWithChildren
   '/api/public/v1/quote': typeof ApiPublicV1QuoteRoute
+  '/api/staff/v1/rooms': typeof ApiStaffV1RoomsRouteWithChildren
   '/admin/bookings': typeof AuthenticatedAdminBookingsIndexRoute
   '/admin/properties': typeof AuthenticatedAdminPropertiesIndexRoute
   '/admin/properties/$id/edit': typeof AuthenticatedAdminPropertiesIdEditRoute
   '/api/public/v1/bookings/$bookingNumber': typeof ApiPublicV1BookingsBookingNumberRoute
   '/api/public/v1/properties/$id': typeof ApiPublicV1PropertiesIdRoute
+  '/api/staff/v1/rooms/$id/assign': typeof ApiStaffV1RoomsIdAssignRoute
+  '/api/staff/v1/rooms/$id/status': typeof ApiStaffV1RoomsIdStatusRoute
+  '/api/staff/v1/rooms/$id/unassign': typeof ApiStaffV1RoomsIdUnassignRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -255,11 +288,15 @@ export interface FileRoutesById {
   '/api/public/v1/payment-details': typeof ApiPublicV1PaymentDetailsRoute
   '/api/public/v1/properties': typeof ApiPublicV1PropertiesRouteWithChildren
   '/api/public/v1/quote': typeof ApiPublicV1QuoteRoute
+  '/api/staff/v1/rooms': typeof ApiStaffV1RoomsRouteWithChildren
   '/_authenticated/admin/bookings/': typeof AuthenticatedAdminBookingsIndexRoute
   '/_authenticated/admin/properties/': typeof AuthenticatedAdminPropertiesIndexRoute
   '/_authenticated/admin/properties/$id/edit': typeof AuthenticatedAdminPropertiesIdEditRoute
   '/api/public/v1/bookings/$bookingNumber': typeof ApiPublicV1BookingsBookingNumberRoute
   '/api/public/v1/properties/$id': typeof ApiPublicV1PropertiesIdRoute
+  '/api/staff/v1/rooms/$id/assign': typeof ApiStaffV1RoomsIdAssignRoute
+  '/api/staff/v1/rooms/$id/status': typeof ApiStaffV1RoomsIdStatusRoute
+  '/api/staff/v1/rooms/$id/unassign': typeof ApiStaffV1RoomsIdUnassignRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -284,11 +321,15 @@ export interface FileRouteTypes {
     | '/api/public/v1/payment-details'
     | '/api/public/v1/properties'
     | '/api/public/v1/quote'
+    | '/api/staff/v1/rooms'
     | '/admin/bookings/'
     | '/admin/properties/'
     | '/admin/properties/$id/edit'
     | '/api/public/v1/bookings/$bookingNumber'
     | '/api/public/v1/properties/$id'
+    | '/api/staff/v1/rooms/$id/assign'
+    | '/api/staff/v1/rooms/$id/status'
+    | '/api/staff/v1/rooms/$id/unassign'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -310,11 +351,15 @@ export interface FileRouteTypes {
     | '/api/public/v1/payment-details'
     | '/api/public/v1/properties'
     | '/api/public/v1/quote'
+    | '/api/staff/v1/rooms'
     | '/admin/bookings'
     | '/admin/properties'
     | '/admin/properties/$id/edit'
     | '/api/public/v1/bookings/$bookingNumber'
     | '/api/public/v1/properties/$id'
+    | '/api/staff/v1/rooms/$id/assign'
+    | '/api/staff/v1/rooms/$id/status'
+    | '/api/staff/v1/rooms/$id/unassign'
   id:
     | '__root__'
     | '/'
@@ -338,11 +383,15 @@ export interface FileRouteTypes {
     | '/api/public/v1/payment-details'
     | '/api/public/v1/properties'
     | '/api/public/v1/quote'
+    | '/api/staff/v1/rooms'
     | '/_authenticated/admin/bookings/'
     | '/_authenticated/admin/properties/'
     | '/_authenticated/admin/properties/$id/edit'
     | '/api/public/v1/bookings/$bookingNumber'
     | '/api/public/v1/properties/$id'
+    | '/api/staff/v1/rooms/$id/assign'
+    | '/api/staff/v1/rooms/$id/status'
+    | '/api/staff/v1/rooms/$id/unassign'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -358,6 +407,7 @@ export interface RootRouteChildren {
   ApiPublicV1PaymentDetailsRoute: typeof ApiPublicV1PaymentDetailsRoute
   ApiPublicV1PropertiesRoute: typeof ApiPublicV1PropertiesRouteWithChildren
   ApiPublicV1QuoteRoute: typeof ApiPublicV1QuoteRoute
+  ApiStaffV1RoomsRoute: typeof ApiStaffV1RoomsRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -523,6 +573,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicV1QuoteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/staff/v1/rooms': {
+      id: '/api/staff/v1/rooms'
+      path: '/api/staff/v1/rooms'
+      fullPath: '/api/staff/v1/rooms'
+      preLoaderRoute: typeof ApiStaffV1RoomsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/properties/$id/edit': {
       id: '/_authenticated/admin/properties/$id/edit'
       path: '/properties/$id/edit'
@@ -543,6 +600,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/public/v1/properties/$id'
       preLoaderRoute: typeof ApiPublicV1PropertiesIdRouteImport
       parentRoute: typeof ApiPublicV1PropertiesRoute
+    }
+    '/api/staff/v1/rooms/$id/assign': {
+      id: '/api/staff/v1/rooms/$id/assign'
+      path: '/$id/assign'
+      fullPath: '/api/staff/v1/rooms/$id/assign'
+      preLoaderRoute: typeof ApiStaffV1RoomsIdAssignRouteImport
+      parentRoute: typeof ApiStaffV1RoomsRoute
+    }
+    '/api/staff/v1/rooms/$id/status': {
+      id: '/api/staff/v1/rooms/$id/status'
+      path: '/$id/status'
+      fullPath: '/api/staff/v1/rooms/$id/status'
+      preLoaderRoute: typeof ApiStaffV1RoomsIdStatusRouteImport
+      parentRoute: typeof ApiStaffV1RoomsRoute
+    }
+    '/api/staff/v1/rooms/$id/unassign': {
+      id: '/api/staff/v1/rooms/$id/unassign'
+      path: '/$id/unassign'
+      fullPath: '/api/staff/v1/rooms/$id/unassign'
+      preLoaderRoute: typeof ApiStaffV1RoomsIdUnassignRouteImport
+      parentRoute: typeof ApiStaffV1RoomsRoute
     }
   }
 }
@@ -615,6 +693,22 @@ const ApiPublicV1PropertiesRouteWithChildren =
     ApiPublicV1PropertiesRouteChildren,
   )
 
+interface ApiStaffV1RoomsRouteChildren {
+  ApiStaffV1RoomsIdAssignRoute: typeof ApiStaffV1RoomsIdAssignRoute
+  ApiStaffV1RoomsIdStatusRoute: typeof ApiStaffV1RoomsIdStatusRoute
+  ApiStaffV1RoomsIdUnassignRoute: typeof ApiStaffV1RoomsIdUnassignRoute
+}
+
+const ApiStaffV1RoomsRouteChildren: ApiStaffV1RoomsRouteChildren = {
+  ApiStaffV1RoomsIdAssignRoute: ApiStaffV1RoomsIdAssignRoute,
+  ApiStaffV1RoomsIdStatusRoute: ApiStaffV1RoomsIdStatusRoute,
+  ApiStaffV1RoomsIdUnassignRoute: ApiStaffV1RoomsIdUnassignRoute,
+}
+
+const ApiStaffV1RoomsRouteWithChildren = ApiStaffV1RoomsRoute._addFileChildren(
+  ApiStaffV1RoomsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -628,17 +722,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicV1PaymentDetailsRoute: ApiPublicV1PaymentDetailsRoute,
   ApiPublicV1PropertiesRoute: ApiPublicV1PropertiesRouteWithChildren,
   ApiPublicV1QuoteRoute: ApiPublicV1QuoteRoute,
+  ApiStaffV1RoomsRoute: ApiStaffV1RoomsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
