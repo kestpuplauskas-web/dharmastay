@@ -26,11 +26,11 @@ function LoginPage() {
     const goToDestination = async () => {
       try {
         const role = await fetchRole();
-        if (role.isAdmin) navigate({ to: "/admin" });
-        else if (role.roles.includes("housekeeper")) navigate({ to: "/staff" });
-        else navigate({ to: "/admin" });
+        if (role.isAdmin) navigate({ to: "/admin", replace: true });
+        else if (role.roles.includes("housekeeper")) navigate({ to: "/staff", replace: true });
+        else navigate({ to: "/admin", replace: true });
       } catch {
-        navigate({ to: "/admin" });
+        navigate({ to: "/admin", replace: true });
       }
     };
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
