@@ -26,13 +26,15 @@ export const inviteUser = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { data: invited, error: inviteErr } =
-      await supabaseAdmin.auth.admin.inviteUserByEmail(data.email, {
-        redirectTo: data.redirectTo,
-      });
+    const { data: invited, error: inviteErr } = await supabaseAdmin.auth.admin.generateLink({
+      type: "invite",
+      email: data.email,
+      options: data.redirectTo ? { redirectTo: data.redirectTo } : undefined,
+    });
     if (inviteErr) throw new Error(inviteErr.message);
 
     const newUserId = invited.user?.id;
+    const actionLink = invited.properties?.action_link;
     if (!newUserId) throw new Error("Nepavyko sukurti vartotojo.");
 
     const { error: roleErr } = await supabaseAdmin
@@ -40,7 +42,26 @@ export const inviteUser = createServerFn({ method: "POST" })
       .insert({ user_id: newUserId, role: data.role } as never);
     if (roleErr) throw new Error(roleErr.message);
 
-    return { ok: true, userId: newUserId };
+    if (actionLink) {
+      const { sendEmail } = await import("@/lib/notifications.server");
+      const roleLabel =
+        data.role === "admin" ? "administratoriaus" : "kambarių tvarkytojos";
+      await sendEmail({
+        to: data.email,
+        subject: "Kvietimas prisijungti prie Dharma Stay sistemos",
+        html: `
+          <div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#111;line-height:1.6">
+            <p>Sveiki,</p>
+            <p>Jums sukurta ${roleLabel} paskyra Dharma Stay valdymo sistemoje.</p>
+            <p>Paspauskite nuorodą ir susikurkite slaptažodį:</p>
+            <p><a href="${actionLink}" style="display:inline-block;padding:10px 18px;background:#111;color:#fff;text-decoration:none;border-radius:6px">Susikurti slaptažodį</a></p>
+            <p style="font-size:13px;color:#666">Jei mygtukas neveikia, nukopijuokite šią nuorodą:<br>${actionLink}</p>
+          </div>
+        `,
+      });
+    }
+
+    return { ok: true, userId: newUserId, emailed: Boolean(actionLink) };
   });
 
 export const listUsersWithRoles = createServerFn({ method: "GET" })
