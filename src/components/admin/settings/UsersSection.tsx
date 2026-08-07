@@ -35,7 +35,17 @@ export function UsersSection({ canEdit }: { canEdit: boolean }) {
   });
 
   const m = useMutation({
-    mutationFn: () => invite({ data: { email, role } }),
+    mutationFn: () =>
+      invite({
+        data: {
+          email,
+          role,
+          redirectTo:
+            typeof window !== "undefined"
+              ? `${window.location.origin}/reset-password`
+              : undefined,
+        },
+      }),
     onSuccess: () => {
       toast.success("Kvietimas išsiųstas.");
       setEmail("");
