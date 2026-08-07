@@ -26,20 +26,31 @@ export const inviteUser = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { data: invited, error: inviteErr } = await supabaseAdmin.auth.admin.generateLink({
+    const opts = data.redirectTo ? { redirectTo: data.redirectTo } : undefined;
+    let link = await supabaseAdmin.auth.admin.generateLink({
       type: "invite",
       email: data.email,
-      options: data.redirectTo ? { redirectTo: data.redirectTo } : undefined,
+      options: opts,
     });
-    if (inviteErr) throw new Error(inviteErr.message);
+    // Jei vartotojas jau egzistuoja — siunčiame slaptažodžio susikūrimo nuorodą.
+    if (link.error && /registered|exists/i.test(link.error.message)) {
+      link = await supabaseAdmin.auth.admin.generateLink({
+        type: "recovery",
+        email: data.email,
+        options: opts,
+      });
+    }
+    if (link.error) throw new Error(link.error.message);
 
-    const newUserId = invited.user?.id;
-    const actionLink = invited.properties?.action_link;
+    const newUserId = link.data.user?.id;
+    const actionLink = link.data.properties?.action_link;
     if (!newUserId) throw new Error("Nepavyko sukurti vartotojo.");
 
     const { error: roleErr } = await supabaseAdmin
       .from("user_roles")
-      .insert({ user_id: newUserId, role: data.role } as never);
+      .upsert({ user_id: newUserId, role: data.role } as never, {
+        onConflict: "user_id,role",
+      });
     if (roleErr) throw new Error(roleErr.message);
 
     if (actionLink) {
