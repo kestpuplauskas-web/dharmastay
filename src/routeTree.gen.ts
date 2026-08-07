@@ -21,6 +21,7 @@ import { Route as AuthenticatedAdminContractsRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authenticated/admin.expenses'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedStaffIndexRouteImport } from './routes/_authenticated/staff.index'
+import { Route as AuthenticatedStaffIdRouteImport } from './routes/_authenticated/staff.$id'
 import { Route as ApiPublicIcalSyncRouteImport } from './routes/api/public/ical-sync'
 import { Route as ApiPublicNotificationsCronRouteImport } from './routes/api/public/notifications-cron'
 import { Route as AuthenticatedAdminBookingsIndexRouteImport } from './routes/_authenticated/admin.bookings.index'
@@ -103,6 +104,11 @@ const AuthenticatedAdminSettingsRoute =
 const AuthenticatedStaffIndexRoute = AuthenticatedStaffIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AuthenticatedStaffRoute,
+} as any)
+const AuthenticatedStaffIdRoute = AuthenticatedStaffIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
   getParentRoute: () => AuthenticatedStaffRoute,
 } as any)
 const ApiPublicIcalSyncRoute = ApiPublicIcalSyncRouteImport.update({
@@ -226,6 +232,7 @@ export interface FileRoutesByFullPath {
   '/admin/contracts': typeof AuthenticatedAdminContractsRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/staff/$id': typeof AuthenticatedStaffIdRoute
   '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
   '/api/public/notifications-cron': typeof ApiPublicNotificationsCronRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -257,6 +264,7 @@ export interface FileRoutesByTo {
   '/admin/contracts': typeof AuthenticatedAdminContractsRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/staff/$id': typeof AuthenticatedStaffIdRoute
   '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
   '/api/public/notifications-cron': typeof ApiPublicNotificationsCronRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -292,6 +300,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/contracts': typeof AuthenticatedAdminContractsRoute
   '/_authenticated/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/staff/$id': typeof AuthenticatedStaffIdRoute
   '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
   '/api/public/notifications-cron': typeof ApiPublicNotificationsCronRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -327,6 +336,7 @@ export interface FileRouteTypes {
     | '/admin/contracts'
     | '/admin/expenses'
     | '/admin/settings'
+    | '/staff/$id'
     | '/api/public/ical-sync'
     | '/api/public/notifications-cron'
     | '/admin/'
@@ -358,6 +368,7 @@ export interface FileRouteTypes {
     | '/admin/contracts'
     | '/admin/expenses'
     | '/admin/settings'
+    | '/staff/$id'
     | '/api/public/ical-sync'
     | '/api/public/notifications-cron'
     | '/admin'
@@ -392,6 +403,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/contracts'
     | '/_authenticated/admin/expenses'
     | '/_authenticated/admin/settings'
+    | '/_authenticated/staff/$id'
     | '/api/public/ical-sync'
     | '/api/public/notifications-cron'
     | '/_authenticated/admin/'
@@ -516,6 +528,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/staff/'
       preLoaderRoute: typeof AuthenticatedStaffIndexRouteImport
+      parentRoute: typeof AuthenticatedStaffRoute
+    }
+    '/_authenticated/staff/$id': {
+      id: '/_authenticated/staff/$id'
+      path: '/$id'
+      fullPath: '/staff/$id'
+      preLoaderRoute: typeof AuthenticatedStaffIdRouteImport
       parentRoute: typeof AuthenticatedStaffRoute
     }
     '/api/public/ical-sync': {
@@ -695,10 +714,12 @@ const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
 interface AuthenticatedStaffRouteChildren {
+  AuthenticatedStaffIdRoute: typeof AuthenticatedStaffIdRoute
   AuthenticatedStaffIndexRoute: typeof AuthenticatedStaffIndexRoute
 }
 
 const AuthenticatedStaffRouteChildren: AuthenticatedStaffRouteChildren = {
+  AuthenticatedStaffIdRoute: AuthenticatedStaffIdRoute,
   AuthenticatedStaffIndexRoute: AuthenticatedStaffIndexRoute,
 }
 
