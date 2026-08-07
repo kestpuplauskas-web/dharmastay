@@ -20,6 +20,7 @@ import { Route as AuthenticatedAdminContentRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminContractsRouteImport } from './routes/_authenticated/admin.contracts'
 import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authenticated/admin.expenses'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
+import { Route as AuthenticatedStaffIndexRouteImport } from './routes/_authenticated/staff.index'
 import { Route as ApiPublicIcalSyncRouteImport } from './routes/api/public/ical-sync'
 import { Route as ApiPublicNotificationsCronRouteImport } from './routes/api/public/notifications-cron'
 import { Route as AuthenticatedAdminBookingsIndexRouteImport } from './routes/_authenticated/admin.bookings.index'
@@ -99,6 +100,11 @@ const AuthenticatedAdminSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedStaffIndexRoute = AuthenticatedStaffIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedStaffRoute,
+} as any)
 const ApiPublicIcalSyncRoute = ApiPublicIcalSyncRouteImport.update({
   id: '/api/public/ical-sync',
   path: '/api/public/ical-sync',
@@ -215,7 +221,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/staff': typeof AuthenticatedStaffRoute
+  '/staff': typeof AuthenticatedStaffRouteWithChildren
   '/admin/content': typeof AuthenticatedAdminContentRoute
   '/admin/contracts': typeof AuthenticatedAdminContractsRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
@@ -223,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
   '/api/public/notifications-cron': typeof ApiPublicNotificationsCronRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/staff/': typeof AuthenticatedStaffIndexRoute
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
   '/admin/bookings/new': typeof AuthenticatedAdminBookingsNewRoute
   '/admin/properties/new': typeof AuthenticatedAdminPropertiesNewRoute
@@ -246,7 +253,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/staff': typeof AuthenticatedStaffRoute
   '/admin/content': typeof AuthenticatedAdminContentRoute
   '/admin/contracts': typeof AuthenticatedAdminContractsRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
@@ -254,6 +260,7 @@ export interface FileRoutesByTo {
   '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
   '/api/public/notifications-cron': typeof ApiPublicNotificationsCronRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/staff': typeof AuthenticatedStaffIndexRoute
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
   '/admin/bookings/new': typeof AuthenticatedAdminBookingsNewRoute
   '/admin/properties/new': typeof AuthenticatedAdminPropertiesNewRoute
@@ -280,7 +287,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/_authenticated/staff': typeof AuthenticatedStaffRoute
+  '/_authenticated/staff': typeof AuthenticatedStaffRouteWithChildren
   '/_authenticated/admin/content': typeof AuthenticatedAdminContentRoute
   '/_authenticated/admin/contracts': typeof AuthenticatedAdminContractsRoute
   '/_authenticated/admin/expenses': typeof AuthenticatedAdminExpensesRoute
@@ -288,6 +295,7 @@ export interface FileRoutesById {
   '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
   '/api/public/notifications-cron': typeof ApiPublicNotificationsCronRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/staff/': typeof AuthenticatedStaffIndexRoute
   '/_authenticated/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
   '/_authenticated/admin/bookings/new': typeof AuthenticatedAdminBookingsNewRoute
   '/_authenticated/admin/properties/new': typeof AuthenticatedAdminPropertiesNewRoute
@@ -322,6 +330,7 @@ export interface FileRouteTypes {
     | '/api/public/ical-sync'
     | '/api/public/notifications-cron'
     | '/admin/'
+    | '/staff/'
     | '/admin/bookings/$id'
     | '/admin/bookings/new'
     | '/admin/properties/new'
@@ -345,7 +354,6 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/reset-password'
-    | '/staff'
     | '/admin/content'
     | '/admin/contracts'
     | '/admin/expenses'
@@ -353,6 +361,7 @@ export interface FileRouteTypes {
     | '/api/public/ical-sync'
     | '/api/public/notifications-cron'
     | '/admin'
+    | '/staff'
     | '/admin/bookings/$id'
     | '/admin/bookings/new'
     | '/admin/properties/new'
@@ -386,6 +395,7 @@ export interface FileRouteTypes {
     | '/api/public/ical-sync'
     | '/api/public/notifications-cron'
     | '/_authenticated/admin/'
+    | '/_authenticated/staff/'
     | '/_authenticated/admin/bookings/$id'
     | '/_authenticated/admin/bookings/new'
     | '/_authenticated/admin/properties/new'
@@ -500,6 +510,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/settings'
       preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/staff/': {
+      id: '/_authenticated/staff/'
+      path: '/'
+      fullPath: '/staff/'
+      preLoaderRoute: typeof AuthenticatedStaffIndexRouteImport
+      parentRoute: typeof AuthenticatedStaffRoute
     }
     '/api/public/ical-sync': {
       id: '/api/public/ical-sync'
@@ -677,14 +694,25 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
 const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
+interface AuthenticatedStaffRouteChildren {
+  AuthenticatedStaffIndexRoute: typeof AuthenticatedStaffIndexRoute
+}
+
+const AuthenticatedStaffRouteChildren: AuthenticatedStaffRouteChildren = {
+  AuthenticatedStaffIndexRoute: AuthenticatedStaffIndexRoute,
+}
+
+const AuthenticatedStaffRouteWithChildren =
+  AuthenticatedStaffRoute._addFileChildren(AuthenticatedStaffRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
-  AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
+  AuthenticatedStaffRoute: typeof AuthenticatedStaffRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
-  AuthenticatedStaffRoute: AuthenticatedStaffRoute,
+  AuthenticatedStaffRoute: AuthenticatedStaffRouteWithChildren,
 }
 
 const AuthenticatedRouteRouteWithChildren =
