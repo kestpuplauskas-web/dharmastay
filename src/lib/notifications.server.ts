@@ -278,8 +278,12 @@ function adminHtml(kind: NotificationKind, booking: Record<string, any>, t: Reco
 }
 
 /** Fire-and-forget: nestabdo pagrindinio srauto. */
-export function notifyBookingEventAsync(bookingId: string, kind: NotificationKind) {
-  void notifyBookingEvent(bookingId, kind).catch((e) => console.error("[notifyAsync]", e));
+export function notifyBookingEventAsync(
+  bookingId: string,
+  kind: NotificationKind,
+  opts?: { force?: boolean },
+) {
+  void notifyBookingEvent(bookingId, kind, opts).catch((e) => console.error("[notifyAsync]", e));
 }
 
 /* --------------------------- suplanuoti laiškai --------------------------- */
