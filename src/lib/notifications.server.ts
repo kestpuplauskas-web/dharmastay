@@ -284,6 +284,33 @@ function addHours(iso: string, hours: number) {
   return new Date(new Date(iso).getTime() + hours * 3600_000);
 }
 
+/** Vietos laiką (pvz. Europe/Vilnius) paverčia į tikrą UTC momentą. */
+function zonedToUtc(dateStr: string, timeStr: string, timeZone: string): Date {
+  const [h, m] = (timeStr || "15:00").slice(0, 5).split(":");
+  const naive = new Date(`${dateStr}T${h}:${m}:00Z`);
+  const fmt = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    hour12: false,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+  const p = Object.fromEntries(fmt.formatToParts(naive).map((x) => [x.type, x.value]));
+  const asUtc = Date.UTC(
+    Number(p["year"]),
+    Number(p["month"]) - 1,
+    Number(p["day"]),
+    Number(p["hour"] === "24" ? "0" : p["hour"]),
+    Number(p["minute"]),
+    Number(p["second"]),
+  );
+  const offset = asUtc - naive.getTime();
+  return new Date(naive.getTime() - offset);
+}
+
 /**
  * Paleidžiama pagal tvarkaraštį: atvykimo priminimai ir atsiliepimo prašymai.
  */
@@ -292,6 +319,7 @@ export async function runScheduledNotifications() {
   const db = await admin();
   const now = Date.now();
   const result = { checkin_reminder: 0, review_request: 0 };
+  const tz = settings.timezone || "Europe/Vilnius";
 
   if (settings.notifyCheckinReminder) {
     const hours = Number(settings.checkinReminderHoursBefore ?? 24);
@@ -304,7 +332,10 @@ export async function runScheduledNotifications() {
       .gte("date_from", today)
       .lte("date_from", windowEnd);
     for (const r of (rows ?? []) as Array<{ id: string; date_from: string }>) {
-      const target = addHours(`${r.date_from}T${(settings.checkinFrom || "15:00").slice(0, 5)}:00`, -hours);
+      const target = addHours(
+        zonedToUtc(r.date_from, settings.checkinFrom || "15:00", tz).toISOString(),
+        -hours,
+      );
       if (target.getTime() > now) continue;
       if (await alreadySent(r.id, "checkin_reminder")) continue;
       await notifyBookingEvent(r.id, "checkin_reminder");
@@ -323,7 +354,10 @@ export async function runScheduledNotifications() {
       .gte("date_to", from)
       .lte("date_to", today);
     for (const r of (rows ?? []) as Array<{ id: string; date_to: string }>) {
-      const target = addHours(`${r.date_to}T${(settings.checkoutUntil || "11:00").slice(0, 5)}:00`, hours);
+      const target = addHours(
+        zonedToUtc(r.date_to, settings.checkoutUntil || "11:00", tz).toISOString(),
+        hours,
+      );
       if (target.getTime() > now) continue;
       if (await alreadySent(r.id, "review_request")) continue;
       await notifyBookingEvent(r.id, "review_request");
