@@ -331,10 +331,18 @@ export const getMyRole = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
-    const { data, error } = await supabase.from("user_roles").select("role").eq("user_id", userId);
-    if (error) throw new Error(error.message);
-    const roles = (data ?? []).map((r) => r.role);
-    return { userId, isAdmin: roles.includes("admin"), roles };
+    const [{ data: isAdmin, error: adminError }, { data: isHousekeeper, error: staffError }] =
+      await Promise.all([
+        supabase.rpc("has_role", { _user_id: userId, _role: "admin" }),
+        supabase.rpc("has_role", { _user_id: userId, _role: "housekeeper" }),
+      ]);
+    if (adminError) throw new Error(adminError.message);
+    if (staffError) throw new Error(staffError.message);
+
+    const roles: Array<"admin" | "housekeeper"> = [];
+    if (isAdmin) roles.push("admin");
+    if (isHousekeeper) roles.push("housekeeper");
+    return { userId, isAdmin: Boolean(isAdmin), roles };
   });
 
 // Self-serve admin bootstrap was removed: it allowed any registered user to
