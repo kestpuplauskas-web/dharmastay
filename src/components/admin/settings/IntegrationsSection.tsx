@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { CheckCircle2, Clock } from "lucide-react";
 import {
   Card,
@@ -17,15 +18,16 @@ export type IntegrationCard = {
 };
 
 export function IntegrationsSection({ items }: { items: IntegrationCard[] }) {
+  const { t } = useTranslation();
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
           <span aria-hidden>🔌</span>
-          Integracijos
+          {t("settings.integrations.title")}
         </CardTitle>
         <CardDescription>
-          Išorinių sistemų prijungimas. Naujos integracijos atsiras šioje skiltyje.
+          {t("settings.integrations.description")}
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-3 sm:grid-cols-2">
@@ -40,12 +42,12 @@ export function IntegrationsSection({ items }: { items: IntegrationCard[] }) {
                 {it.status === "connected" ? (
                   <Badge className="gap-1 whitespace-nowrap">
                     <CheckCircle2 className="h-3 w-3" />
-                    Veikia
+                    {t("settings.integrations.connected")}
                   </Badge>
                 ) : (
                   <Badge variant="secondary" className="gap-1 whitespace-nowrap">
                     <Clock className="h-3 w-3" />
-                    Greitai
+                    {t("settings.integrations.comingSoon")}
                   </Badge>
                 )}
               </div>

@@ -49,7 +49,7 @@ type NavId = SettingsSectionId | "integrations" | "api" | "users";
 
 function PropertySettingsPage() {
   const { t } = useTranslation();
-  useBrandedTitle("Bendrieji nustatymai");
+  useBrandedTitle(t("settings.title"));
   const fetchProperties = useServerFn(listAllProperties);
   const fetchRole = useServerFn(getMyRole);
   const fetchSettings = useServerFn(getPropertySettings);
@@ -78,10 +78,10 @@ function PropertySettingsPage() {
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["property-settings"] });
-      toast.success("Nustatymai išsaugoti.");
+      toast.success(t("settings.saved"));
     },
     onError: (e) =>
-      toast.error(e instanceof Error ? e.message : "Nepavyko išsaugoti nustatymų."),
+      toast.error(e instanceof Error ? e.message : t("settings.saveFailed")),
   });
 
   const integrations = useMemo<IntegrationCard[]>(() => {
@@ -94,80 +94,82 @@ function PropertySettingsPage() {
       .pop();
     const syncedAt = lastSync ? new Date(lastSync as string).toLocaleString("lt-LT") : null;
     const icalDetail = icalOn
-      ? `iCal susietas ${withIcal.length} objekt(-uose)${syncedAt ? ` · sinchronizuota ${syncedAt}` : ""}`
-      : "iCal nuoroda nurodoma objekto kortelėje";
+      ? t("settings.integrations.icalConnected", { count: withIcal.length }) +
+        (syncedAt ? t("settings.integrations.icalSyncedSuffix", { date: syncedAt }) : "")
+      : t("settings.integrations.icalNotConnected");
     return [
       {
         key: "booking",
         name: "Booking.com",
-        description: "Užimtumo importas per iCal kalendorių.",
+        description: t("settings.integrations.items.booking"),
         status: icalOn ? "connected" : "coming_soon",
         detail: icalDetail,
       },
       {
         key: "airbnb",
         name: "Airbnb",
-        description: "Užimtumo importas per iCal kalendorių.",
+        description: t("settings.integrations.items.airbnb"),
         status: icalOn ? "connected" : "coming_soon",
         detail: icalDetail,
       },
       {
         key: "gcal",
         name: "Google Calendar",
-        description: "Rezervacijų sinchronizacija su Google kalendoriumi.",
+        description: t("settings.integrations.items.gcal"),
         status: "coming_soon",
       },
       {
         key: "stripe",
         name: "Stripe",
-        description: "Kortelių mokėjimai ir avansų surinkimas.",
+        description: t("settings.integrations.items.stripe"),
         status: "coming_soon",
       },
       {
         key: "paysera",
         name: "Paysera",
-        description: "Mokėjimai per Lietuvos bankus.",
+        description: t("settings.integrations.items.paysera"),
         status: "coming_soon",
       },
       {
         key: "smtp",
         name: "SMTP",
-        description: "Išeinančių el. laiškų siuntimo serveris.",
+        description: t("settings.integrations.items.smtp"),
         status: "coming_soon",
       },
       {
         key: "sms",
-        name: "SMS paslaugų teikėjas",
-        description: "SMS priminimai svečiams.",
+        name: t("settings.integrations.smsName"),
+        description: t("settings.integrations.items.sms"),
         status: "coming_soon",
       },
       {
         key: "api",
-        name: "API raktai",
-        description: "Prieigos raktai išorinėms sistemoms.",
+        name: t("settings.integrations.apiName"),
+        description: t("settings.integrations.items.api"),
         status: "connected",
-        detail: "Valdoma skiltyje „API prieiga“",
+        detail: t("settings.integrations.apiDetail"),
       },
       {
         key: "webhook",
         name: "Webhook URL",
-        description: "Įvykių pranešimai į išorinę sistemą.",
+        description: t("settings.integrations.items.webhook"),
         status: "coming_soon",
       },
       {
         key: "landing",
-        name: "Klientinė svetainė",
-        description: "Landing page, per kurią ateina rezervacijos.",
+        name: t("settings.integrations.landingName"),
+        description: t("settings.integrations.items.landing"),
         status: "coming_soon",
       },
     ];
-  }, [properties]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [properties, t]);
 
   const navItems: { id: NavId; icon: string; title: string }[] = [
     ...SETTINGS_SECTIONS.map((s) => ({ id: s.id as NavId, icon: s.icon, title: t(s.titleKey) })),
-    { id: "integrations", icon: "🔌", title: "Integracijos" },
-    { id: "api", icon: "🔑", title: "API prieiga" },
-    { id: "users", icon: "👥", title: "Vartotojai" },
+    { id: "integrations", icon: "🔌", title: t("settings.nav.integrations") },
+    { id: "api", icon: "🔑", title: t("settings.nav.api") },
+    { id: "users", icon: "👥", title: t("settings.nav.users") },
   ];
 
   const section = SETTINGS_SECTIONS.find((s) => s.id === active);
@@ -179,10 +181,10 @@ function PropertySettingsPage() {
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-semibold">
             <Settings2 className="h-6 w-6 text-primary" />
-            Bendrieji nustatymai
+            {t("settings.title")}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Bendrieji nustatymai, galiojantys visiems objektams.
+            {t("settings.subtitle")}
           </p>
         </div>
       </header>
@@ -215,7 +217,7 @@ function PropertySettingsPage() {
             {loadingSettings ? (
               <div className="flex items-center gap-2 rounded-lg border p-8 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Kraunama…
+                {t("common.loading")}
               </div>
             ) : active === "users" ? (
               <UsersSection canEdit={canEdit} />

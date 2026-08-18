@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Copy, KeyRound, Loader2, Plus, Trash2 } from "lucide-react";
@@ -27,19 +28,19 @@ const API_PATH = "/api/public/v1";
 const BASE_URLS = [
   {
     envVar: "RENTIVO_API_URL_PROD",
-    label: "Gamybinė aplinka (publikuota versija)",
+    labelKey: "settings.api.prodLabel",
     url: `https://dharmastay.lovable.app${API_PATH}`,
-    hint: "Šį adresą naudoja realūs klientai.",
+    hintKey: "settings.api.prodHint",
     alt: {
-      label: "Alternatyva — stabilus techninis adresas (nesikeis pervadinus projektą)",
+      labelKey: "settings.api.altLabel",
       url: `https://project--${LOVABLE_PROJECT_ID}.lovable.app${API_PATH}`,
     },
   },
   {
     envVar: "RENTIVO_API_URL_DEV",
-    label: "Testavimo (peržiūros) aplinka",
+    labelKey: "settings.api.devLabel",
     url: `https://project--${LOVABLE_PROJECT_ID}-dev.lovable.app${API_PATH}`,
-    hint: "Privalo turėti „-dev“. Be jo testai rašys į realius duomenis.",
+    hintKey: "settings.api.devHint",
   },
 ] as const;
 
@@ -49,6 +50,7 @@ function isPreviewWindow(): boolean {
 }
 
 export function ApiAccessSection({ canEdit }: { canEdit: boolean }) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const fetchList = useServerFn(listApiClients);
   const create = useServerFn(createApiClient);
@@ -80,31 +82,31 @@ export function ApiAccessSection({ canEdit }: { canEdit: boolean }) {
       setName("");
       setOrigins("");
       qc.invalidateQueries({ queryKey: ["api-clients"] });
-      toast.success("API raktas sukurtas. Nukopijuokite jį dabar.");
+      toast.success(t("settings.api.created"));
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Nepavyko sukurti rakto."),
+    onError: (e) => toast.error(e instanceof Error ? e.message : t("settings.api.createFailed")),
   });
 
   const toggleMut = useMutation({
     mutationFn: (v: { id: string; isActive: boolean }) => setActive({ data: v }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["api-clients"] }),
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Nepavyko atnaujinti."),
+    onError: (e) => toast.error(e instanceof Error ? e.message : t("settings.api.updateFailed")),
   });
 
   const deleteMut = useMutation({
     mutationFn: (id: string) => remove({ data: { id } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["api-clients"] });
-      toast.success("Raktas ištrintas.");
+      toast.success(t("settings.api.deleted"));
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Nepavyko ištrinti."),
+    onError: (e) => toast.error(e instanceof Error ? e.message : t("settings.api.deleteFailed")),
   });
 
   const copy = async (value: string) => {
     try {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(value);
-        toast.success("Nukopijuota.");
+        toast.success(t("settings.api.copied"));
         return;
       }
       throw new Error("no-clipboard-api");
@@ -125,9 +127,9 @@ export function ApiAccessSection({ canEdit }: { canEdit: boolean }) {
         const ok = document.execCommand("copy");
         document.body.removeChild(ta);
         if (!ok) throw new Error("execCommand failed");
-        toast.success("Nukopijuota.");
+        toast.success(t("settings.api.copied"));
       } catch {
-        toast.error("Nepavyko nukopijuoti automatiškai — pažymėkite tekstą ir kopijuokite ranka.");
+        toast.error(t("settings.api.copyFailed"));
       }
     }
   };
@@ -137,22 +139,21 @@ export function ApiAccessSection({ canEdit }: { canEdit: boolean }) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
           <KeyRound className="h-5 w-5 text-primary" />
-          API prieiga
+          {t("settings.api.title")}
         </CardTitle>
         <CardDescription>
-          Raktai išorinei klientinei svetainei, kuri kviečia šio projekto viešą API.
-          Raktą naudokite tik serverio pusėje.
+          {t("settings.api.description")}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-3 rounded-lg border bg-muted/40 p-4">
           <p className="text-xs text-muted-foreground">
-            Šiuos du kintamuosius perduokite klientinei svetainei.
+            {t("settings.api.envHint")}
           </p>
           {BASE_URLS.map((item) => (
             <div key={item.envVar} className="rounded-md border bg-background/50 p-3">
               <p className="text-xs font-semibold">{item.envVar}</p>
-              <p className="text-[11px] text-muted-foreground">{item.label}</p>
+              <p className="text-[11px] text-muted-foreground">{t(item.labelKey)}</p>
               <div className="mt-1.5 flex items-start gap-2">
                 <code className="min-w-0 flex-1 break-all rounded bg-background px-2 py-1 text-xs">
                   {item.url}
@@ -161,10 +162,10 @@ export function ApiAccessSection({ canEdit }: { canEdit: boolean }) {
                   <Copy className="h-3.5 w-3.5" />
                 </Button>
               </div>
-              <p className="mt-1 text-[11px] text-muted-foreground">{item.hint}</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">{t(item.hintKey)}</p>
               {"alt" in item && item.alt && (
                 <div className="mt-2 border-t pt-2">
-                  <p className="text-[11px] text-muted-foreground">{item.alt.label}</p>
+                  <p className="text-[11px] text-muted-foreground">{t(item.alt.labelKey)}</p>
                   <div className="mt-1 flex items-start gap-2">
                     <code className="min-w-0 flex-1 break-all rounded bg-background px-2 py-1 text-[11px]">
                       {item.alt.url}
@@ -184,25 +185,24 @@ export function ApiAccessSection({ canEdit }: { canEdit: boolean }) {
           ))}
           {isPreviewWindow() && (
             <p className="rounded border border-amber-500/40 bg-amber-500/10 px-2 py-1.5 text-[11px] text-amber-700 dark:text-amber-400">
-              Dabar esate peržiūros lange — nekopijuokite naršyklės adreso, naudokite gamybinį
-              adresą aukščiau.
+              {t("settings.api.previewWarning")}
             </p>
           )}
         </div>
 
         {newKey && (
           <div className="rounded-lg border border-primary/40 bg-primary/5 p-4">
-            <p className="text-sm font-medium">Naujas raktas (rodomas tik vieną kartą)</p>
+            <p className="text-sm font-medium">{t("settings.api.newKeyTitle")}</p>
             <div className="mt-2 flex items-center gap-2">
               <code className="min-w-0 flex-1 truncate rounded bg-background px-2 py-1 text-xs">
                 {newKey}
               </code>
               <Button type="button" size="sm" onClick={() => copy(newKey)}>
                 <Copy className="mr-1 h-3.5 w-3.5" />
-                Kopijuoti
+                {t("settings.api.copy")}
               </Button>
               <Button type="button" variant="ghost" size="sm" onClick={() => setNewKey(null)}>
-                Uždaryti
+                {t("common.close")}
               </Button>
             </div>
           </div>
@@ -214,23 +214,23 @@ export function ApiAccessSection({ canEdit }: { canEdit: boolean }) {
             onSubmit={(e) => {
               e.preventDefault();
               if (name.trim().length < 2) {
-                toast.error("Įveskite rakto pavadinimą.");
+                toast.error(t("settings.api.nameRequired"));
                 return;
               }
               createMut.mutate();
             }}
           >
             <div className="space-y-1.5">
-              <Label htmlFor="api-key-name">Pavadinimas</Label>
+              <Label htmlFor="api-key-name">{t("settings.api.name")}</Label>
               <Input
                 id="api-key-name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Klientinė svetainė"
+                placeholder={t("settings.api.namePlaceholder")}
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="api-key-origins">Leidžiami domenai (nebūtina)</Label>
+              <Label htmlFor="api-key-origins">{t("settings.api.origins")}</Label>
               <Input
                 id="api-key-origins"
                 value={origins}
@@ -244,7 +244,7 @@ export function ApiAccessSection({ canEdit }: { canEdit: boolean }) {
               ) : (
                 <Plus className="mr-1 h-4 w-4" />
               )}
-              Sukurti raktą
+              {t("settings.api.create")}
             </Button>
           </form>
         )}
@@ -253,11 +253,11 @@ export function ApiAccessSection({ canEdit }: { canEdit: boolean }) {
           {isLoading && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" />
-              Kraunama…
+              {t("settings.api.loading")}
             </div>
           )}
           {!isLoading && (clients ?? []).length === 0 && (
-            <p className="text-sm text-muted-foreground">Raktų kol kas nėra.</p>
+            <p className="text-sm text-muted-foreground">{t("settings.api.empty")}</p>
           )}
           {(clients ?? []).map((c) => (
             <div
@@ -268,21 +268,26 @@ export function ApiAccessSection({ canEdit }: { canEdit: boolean }) {
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium">{c.name}</span>
                   {c.is_active ? (
-                    <Badge>Aktyvus</Badge>
+                    <Badge>{t("settings.api.active")}</Badge>
                   ) : (
-                    <Badge variant="secondary">Išjungtas</Badge>
+                    <Badge variant="secondary">{t("settings.api.disabled")}</Badge>
                   )}
                 </div>
                 <p className="mt-0.5 text-xs text-muted-foreground">
-                  {c.key_prefix}… · sukurta{" "}
-                  {new Date(c.created_at).toLocaleDateString("lt-LT")}
+                  {c.key_prefix}… ·{" "}
+                  {t("settings.api.createdAt", {
+                    date: new Date(c.created_at).toLocaleDateString("lt-LT"),
+                  })}
+                  {" · "}
                   {c.last_used_at
-                    ? ` · naudota ${new Date(c.last_used_at).toLocaleString("lt-LT")}`
-                    : " · dar nenaudotas"}
+                    ? t("settings.api.usedAt", {
+                        date: new Date(c.last_used_at).toLocaleString("lt-LT"),
+                      })
+                    : t("settings.api.neverUsed")}
                 </p>
                 {(c.allowed_origins ?? []).length > 0 && (
                   <p className="text-xs text-muted-foreground">
-                    Domenai: {(c.allowed_origins ?? []).join(", ")}
+                    {t("settings.api.domains", { list: (c.allowed_origins ?? []).join(", ") })}
                   </p>
                 )}
               </div>
@@ -294,14 +299,15 @@ export function ApiAccessSection({ canEdit }: { canEdit: boolean }) {
                     size="sm"
                     onClick={() => toggleMut.mutate({ id: c.id, isActive: !c.is_active })}
                   >
-                    {c.is_active ? "Išjungti" : "Įjungti"}
+                    {c.is_active ? t("settings.api.disable") : t("settings.api.enable")}
                   </Button>
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
                     onClick={() => {
-                      if (confirm(`Ištrinti raktą „${c.name}"?`)) deleteMut.mutate(c.id);
+                      if (confirm(t("settings.api.confirmDelete", { name: c.name })))
+                        deleteMut.mutate(c.id);
                     }}
                   >
                     <Trash2 className="h-4 w-4 text-destructive" />
