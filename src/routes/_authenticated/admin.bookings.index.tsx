@@ -43,6 +43,7 @@ function durationDays(from?: string | null, to?: string | null) {
 }
 
 function BookingsPage() {
+  const { t } = useTranslation();
   const fetchBookings = useServerFn(listBookings);
   const fetchProps = useServerFn(listAllProperties);
   const del = useServerFn(deleteBooking);
@@ -59,49 +60,49 @@ function BookingsPage() {
   const delM = useMutation({
     mutationFn: (id: string) => del({ data: { id } }),
     onSuccess: () => {
-      toast.success("Ištrinta");
+      toast.success(t("bookings.deleted"));
       qc.invalidateQueries({ queryKey: ["admin-bookings"] });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Klaida"),
+    onError: (e) => toast.error(e instanceof Error ? e.message : t("bookings.error")),
   });
 
   const rescheduleM = useMutation({
     mutationFn: (v: { id: string; property_id: string; date_from: string; date_to: string }) =>
       reschedule({ data: v }),
     onSuccess: () => {
-      toast.success("Rezervacija perkelta");
+      toast.success(t("bookings.rescheduled"));
       qc.invalidateQueries({ queryKey: ["admin-bookings"] });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Klaida"),
+    onError: (e) => toast.error(e instanceof Error ? e.message : t("bookings.error")),
   });
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold">Rezervacijos</h1>
+          <h1 className="text-2xl font-bold">{t("bookings.title")}</h1>
           <p className="text-sm text-muted-foreground">
-            {q.data ? `${q.data.length} rastos` : "Kraunama..."}
+            {q.data ? t("bookings.found", { count: q.data.length }) : t("common.loading")}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <div className="inline-flex rounded-md border bg-card p-0.5">
             <Button size="sm" variant={view === "timeline" ? "default" : "ghost"} onClick={() => setView("timeline")} className="h-8">
-              <LayoutGrid className="h-4 w-4 mr-1" /> Kalendorius
+              <LayoutGrid className="h-4 w-4 mr-1" /> {t("bookings.viewCalendar")}
             </Button>
             <Button size="sm" variant={view === "list" ? "default" : "ghost"} onClick={() => setView("list")} className="h-8">
-              <List className="h-4 w-4 mr-1" /> Sąrašas
+              <List className="h-4 w-4 mr-1" /> {t("bookings.viewList")}
             </Button>
           </div>
           <Button asChild>
-            <Link to="/admin/bookings/new"><Plus className="h-4 w-4 mr-1" /> Nauja rezervacija</Link>
+            <Link to="/admin/bookings/new"><Plus className="h-4 w-4 mr-1" /> {t("bookings.new")}</Link>
           </Button>
         </div>
       </div>
 
       {view === "timeline" ? (
         <>
-          {q.isLoading && <div className="text-muted-foreground">Kraunama...</div>}
+          {q.isLoading && <div className="text-muted-foreground">{t("common.loading")}</div>}
           {q.error && <div className="text-destructive">{(q.error as Error).message}</div>}
           {propsQ.data && q.data && (
             <BookingsGantt
@@ -121,7 +122,7 @@ function BookingsPage() {
           rows={(q.data as any[]) ?? []}
           loading={q.isLoading}
           onDelete={(id, name) => {
-            if (confirm(`Ištrinti rezervaciją ${name || ""}?`)) delM.mutate(id);
+            if (confirm(t("bookings.confirmDelete", { name: name || "" }))) delM.mutate(id);
           }}
         />
       )}
