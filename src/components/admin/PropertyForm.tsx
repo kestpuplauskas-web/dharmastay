@@ -153,7 +153,7 @@ export function PropertyForm({
     >
       <section className="grid gap-3 rounded-lg border p-4 md:grid-cols-2">
         <label className="text-sm">
-          Pavadinimas
+          {t("properties.form.name")}
           <input
             required
             value={v.name}
@@ -162,7 +162,7 @@ export function PropertyForm({
           />
         </label>
         <label className="text-sm">
-          Tipas
+          {t("properties.form.type")}
           <select
             value={v.propertyType}
             onChange={(e) => set("propertyType", e.target.value)}
@@ -176,7 +176,7 @@ export function PropertyForm({
           </select>
         </label>
         <label className="text-sm md:col-span-2">
-          Aprašymas
+          {t("properties.form.description")}
           <textarea
             value={v.description}
             onChange={(e) => set("description", e.target.value)}
@@ -188,7 +188,7 @@ export function PropertyForm({
 
       <section className="grid gap-3 rounded-lg border p-4 md:grid-cols-3">
         <label className="text-sm md:col-span-2">
-          Adresas
+          {t("properties.form.address")}
           <input
             value={v.address}
             onChange={(e) => set("address", e.target.value)}
@@ -196,7 +196,7 @@ export function PropertyForm({
           />
         </label>
         <label className="text-sm">
-          Miestas
+          {t("properties.form.city")}
           <input
             value={v.city}
             onChange={(e) => set("city", e.target.value)}
@@ -204,7 +204,7 @@ export function PropertyForm({
           />
         </label>
         <label className="text-sm">
-          Šalis (ISO)
+          {t("properties.form.country")}
           <input
             value={v.country}
             onChange={(e) => set("country", e.target.value.toUpperCase())}
@@ -213,36 +213,36 @@ export function PropertyForm({
           />
         </label>
         <label className="text-sm md:col-span-3">
-          Vieta
+          {t("properties.form.location")}
           <textarea
             value={v.locationNote}
             onChange={(e) => set("locationNote", e.target.value)}
             rows={3}
-            placeholder="pvz. Vilniaus g. 10, 2 aukštas, durys Nr. 3 — įėjimas iš kiemo pusės"
+            placeholder={t("properties.form.locationPlaceholder")}
             className="mt-1 w-full rounded border px-2 py-1"
           />
           <span className="mt-1 block text-xs text-muted-foreground">
-            Tekstinis aprašymas, kur tiksliai randasi objektas. Galima naudoti laiškuose kaip{" "}
+            {t("properties.form.locationHelpPre")}{" "}
             <code className="font-mono">{"{{location}}"}</code>.
           </span>
         </label>
         <label className="text-sm md:col-span-3">
-          Durų kodo numeris
+          {t("properties.form.doorCode")}
           <input
             value={v.doorCode}
             onChange={(e) => set("doorCode", e.target.value)}
-            placeholder="pvz. 1234#"
+            placeholder={t("properties.form.doorCodePlaceholder")}
             className="mt-1 w-full rounded border px-2 py-1"
           />
           <span className="mt-1 block text-xs text-muted-foreground">
-            Vidinė informacija — nerodoma svetainėje ir viešame API.
+            {t("properties.form.doorCodeHelp")}
           </span>
         </label>
       </section>
 
       <section className="grid gap-3 rounded-lg border p-4 md:grid-cols-4">
         <label className="text-sm">
-          Plotas m²
+          {t("properties.form.area")}
           <NumberInput
             min={0}
             placeholder="0"
@@ -252,7 +252,7 @@ export function PropertyForm({
           />
         </label>
         <label className="text-sm">
-          Max svečių
+          {t("properties.form.maxGuests")}
           <NumberInput
             min={1}
             placeholder="1"
@@ -263,7 +263,7 @@ export function PropertyForm({
           />
         </label>
         <label className="text-sm">
-          Vonių
+          {t("properties.form.bathrooms")}
           <NumberInput
             min={0}
             placeholder="0"
@@ -277,17 +277,17 @@ export function PropertyForm({
 
       <section className="rounded-lg border p-4">
         <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-sm font-semibold">Miegojimo vietos / Kambariai</h3>
-          <span className="text-xs text-muted-foreground">Iš viso lovų: {totalBeds}</span>
+          <h3 className="text-sm font-semibold">{t("properties.form.roomsTitle")}</h3>
+          <span className="text-xs text-muted-foreground">{t("properties.form.totalBeds", { count: totalBeds })}</span>
         </div>
         {configs.length === 0 ? (
-          <p className="mb-3 text-sm text-muted-foreground">Nėra pridėtų kambarių.</p>
+          <p className="mb-3 text-sm text-muted-foreground">{t("properties.form.noRooms")}</p>
         ) : (
           <div className="mb-3 space-y-2">
             <div className="hidden grid-cols-[1fr_120px_1fr_40px] gap-2 px-1 text-xs font-medium text-muted-foreground md:grid">
-              <div>Kambario tipas</div>
-              <div>Lovų sk.</div>
-              <div>Lovos tipas</div>
+              <div>{t("properties.form.roomType")}</div>
+              <div>{t("properties.form.bedCount")}</div>
+              <div>{t("properties.form.bedType")}</div>
               <div></div>
             </div>
             {configs.map((c, idx) => (
@@ -302,7 +302,7 @@ export function PropertyForm({
                 >
                   {ROOM_KINDS.map((r) => (
                     <option key={r.value} value={r.value}>
-                      {r.label}
+                      {t(r.labelKey)}
                     </option>
                   ))}
                 </select>
@@ -321,7 +321,7 @@ export function PropertyForm({
                 >
                   {BED_TYPES.map((b) => (
                     <option key={b.value} value={b.value}>
-                      {b.label}
+                      {t(b.labelKey)}
                     </option>
                   ))}
                 </select>
@@ -329,7 +329,7 @@ export function PropertyForm({
                   type="button"
                   onClick={() => removeConfig(idx)}
                   className="inline-flex h-8 w-8 items-center justify-center rounded text-destructive hover:bg-destructive/10"
-                  aria-label="Trinti kambarį"
+                  aria-label={t("properties.form.deleteRoom")}
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -342,12 +342,12 @@ export function PropertyForm({
           onClick={addConfig}
           className="text-sm text-primary underline"
         >
-          + Pridėti kambarį
+          {t("properties.form.addRoom")}
         </button>
       </section>
 
       <section className="rounded-lg border p-4">
-        <h3 className="mb-2 text-sm font-semibold">Patogumai</h3>
+        <h3 className="mb-2 text-sm font-semibold">{t("properties.form.amenities")}</h3>
         <div className="grid grid-cols-2 gap-1 md:grid-cols-4">
           {AMENITIES.map((a) => (
             <label key={a} className="flex items-center gap-2 text-sm">
@@ -371,7 +371,7 @@ export function PropertyForm({
 
       <section className="grid gap-3 rounded-lg border p-4 md:grid-cols-3">
         <label className="text-sm">
-          Kaina už naktį (€)
+          {t("properties.form.pricePerNight")}
           <NumberInput
             step="0.01"
             min={0}
@@ -383,7 +383,7 @@ export function PropertyForm({
           />
         </label>
         <label className="text-sm">
-          Rikiavimas
+          {t("properties.form.sortOrder")}
           <NumberInput
             placeholder="0"
             value={v.sortOrder}
@@ -398,14 +398,14 @@ export function PropertyForm({
             checked={v.isActive}
             onChange={(e) => set("isActive", e.target.checked)}
           />
-          Aktyvus (rodomas svetainėje)
+          {t("properties.form.activeLabel")}
         </label>
       </section>
 
       <section className="rounded-lg border p-4">
-        <h3 className="mb-2 text-sm font-semibold">Kalendoriaus sinchronizacija (iCal)</h3>
+        <h3 className="mb-2 text-sm font-semibold">{t("properties.form.icalTitle")}</h3>
         <label className="text-sm block">
-          Booking.com / Airbnb iCal nuoroda
+          {t("properties.form.icalUrl")}
           <input
             type="url"
             placeholder="https://ical.booking.com/v1/export?t=..."
@@ -415,12 +415,12 @@ export function PropertyForm({
           />
         </label>
         <p className="mt-1 text-xs text-muted-foreground">
-          Užimtos datos iš išorinio kalendoriaus importuojamos automatiškai kas 15 min.
+          {t("properties.form.icalHelp")}
         </p>
         {icalMeta && (
           <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
             <span>
-              Paskutinė sinchronizacija:{" "}
+              {t("properties.form.lastSync")}{" "}
               {icalMeta.lastSyncAt
                 ? new Date(icalMeta.lastSyncAt).toLocaleString("lt-LT")
                 : "—"}
@@ -433,7 +433,7 @@ export function PropertyForm({
                 disabled={icalMeta.syncing}
                 className="rounded border px-3 py-1 text-xs font-medium hover:bg-muted disabled:opacity-50"
               >
-                {icalMeta.syncing ? "Sinchronizuojama…" : "Sinchronizuoti dabar"}
+                {icalMeta.syncing ? t("properties.form.syncing") : t("properties.form.syncNow")}
               </button>
             )}
           </div>
@@ -441,20 +441,20 @@ export function PropertyForm({
       </section>
 
       <section className="rounded-lg border p-4">
-        <h3 className="mb-2 text-sm font-semibold">Sezoninės kainos (pagal naktų skaičių)</h3>
+        <h3 className="mb-2 text-sm font-semibold">{t("properties.form.tiersTitle")}</h3>
         {v.priceTiers.length > 0 && (
           <div className="mb-1 hidden flex-wrap gap-2 px-1 text-xs font-medium text-muted-foreground md:flex">
-            <div className="flex-1">Etiketė</div>
-            <div className="w-24">Min naktų</div>
-            <div className="w-24">Max naktų</div>
-            <div className="w-24">€ / naktis</div>
+            <div className="flex-1">{t("properties.form.tierLabel")}</div>
+            <div className="w-24">{t("properties.form.minNights")}</div>
+            <div className="w-24">{t("properties.form.maxNights")}</div>
+            <div className="w-24">{t("properties.form.pricePerNightShort")}</div>
             <div className="w-4" />
           </div>
         )}
         {v.priceTiers.map((tier, idx) => (
           <div key={idx} className="mb-2 flex flex-wrap gap-2">
             <input
-              placeholder="Etiketė"
+              placeholder={t("properties.form.tierLabel")}
               value={tier.label}
               onChange={(e) => {
                 const next = [...v.priceTiers];
@@ -464,7 +464,7 @@ export function PropertyForm({
               className="flex-1 rounded border px-2 py-1 text-sm"
             />
             <NumberInput
-              placeholder="Min naktų"
+              placeholder={t("properties.form.minNights")}
               min={1}
               value={tier.minNights}
               emptyFallback={1}
@@ -476,7 +476,7 @@ export function PropertyForm({
               className="w-24 rounded border px-2 py-1 text-sm"
             />
             <NumberInput
-              placeholder="Max naktų"
+              placeholder={t("properties.form.maxNights")}
               min={1}
               value={tier.maxNights}
               emptyFallback={1}
@@ -490,7 +490,7 @@ export function PropertyForm({
             <NumberInput
               step="0.01"
               min={0}
-              placeholder="€/naktis"
+              placeholder={t("properties.form.pricePerNightShort")}
               value={tier.pricePerNight}
               emptyFallback={0}
               onChange={(n) => {
@@ -519,17 +519,17 @@ export function PropertyForm({
             ])
           }
         >
-          + Pridėti tarifą
+          {t("properties.form.addTier")}
         </button>
       </section>
 
       <section className="rounded-lg border p-4">
-        <h3 className="mb-2 text-sm font-semibold">Papildomos paslaugos</h3>
+        <h3 className="mb-2 text-sm font-semibold">{t("properties.form.extrasTitle")}</h3>
         {v.extraServices.length > 0 && (
           <div className="mb-1 hidden gap-2 px-1 text-xs font-medium text-muted-foreground md:grid md:grid-cols-[1fr_1fr_120px_40px]">
-            <div>Paslaugos pavadinimas</div>
-            <div>Skaičiavimo tipas</div>
-            <div>€ / dienai</div>
+            <div>{t("properties.form.serviceName")}</div>
+            <div>{t("properties.form.calcType")}</div>
+            <div>{t("properties.form.pricePerDay")}</div>
             <div />
           </div>
         )}
@@ -561,14 +561,14 @@ export function PropertyForm({
                 >
                   {EXTRA_SERVICE_PRESETS.map((p) => (
                     <option key={p.name} value={p.name}>
-                      {p.name}
+                      {t(p.labelKey)}
                     </option>
                   ))}
-                  <option value="__custom">Kita (įvesti)…</option>
+                  <option value="__custom">{t("properties.form.customOption")}</option>
                 </select>
                 {isCustom && (
                   <input
-                    placeholder="Paslaugos pavadinimas"
+                    placeholder={t("properties.form.serviceName")}
                     value={svc.name}
                     onChange={(e) => {
                       const next = [...v.extraServices];
@@ -616,7 +616,7 @@ export function PropertyForm({
                   )
                 }
                 className="inline-flex h-8 w-8 items-center justify-center rounded text-destructive hover:bg-destructive/10"
-                aria-label="Trinti paslaugą"
+                aria-label={t("properties.form.deleteService")}
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -633,7 +633,7 @@ export function PropertyForm({
             ])
           }
         >
-          + Pridėti paslaugą
+          {t("properties.form.addService")}
         </button>
       </section>
 
@@ -654,7 +654,7 @@ export function PropertyForm({
         disabled={submitting}
         className="rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
       >
-        {submitting ? "Saugoma…" : "Išsaugoti"}
+        {submitting ? t("properties.form.saving") : t("properties.form.save")}
       </button>
     </form>
   );
