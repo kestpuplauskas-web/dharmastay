@@ -2,30 +2,33 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import lt from "./locales/lt.json";
 import en from "./locales/en.json";
+import {
+  SUPPORTED_LANGUAGES,
+  FALLBACK_LANGUAGE,
+  LANGUAGE_STORAGE_KEY,
+  isSupportedLanguage,
+  type LanguageCode,
+} from "@/lib/languages";
 
-/** Vienintelė vieta, kur registruojamos palaikomos kalbos. */
-export const SUPPORTED_LANGUAGES = [
-  { code: "lt", labelKey: "language.lt" },
-  { code: "en", labelKey: "language.en" },
-] as const;
+export {
+  SUPPORTED_LANGUAGES,
+  FALLBACK_LANGUAGE,
+  LANGUAGE_STORAGE_KEY,
+  isSupportedLanguage,
+  type LanguageCode,
+};
 
-export type LanguageCode = (typeof SUPPORTED_LANGUAGES)[number]["code"];
-
-export const DEFAULT_LANGUAGE: LanguageCode = "lt";
-export const LANGUAGE_STORAGE_KEY = "revoo.lang";
-
-export function isSupportedLanguage(v: unknown): v is LanguageCode {
-  return SUPPORTED_LANGUAGES.some((l) => l.code === v);
-}
-
-/** Saugiai nuskaito išsaugotą kalbą (naršyklėje). Serveryje visada grąžina numatytąją. */
-export function readStoredLanguage(): LanguageCode {
-  if (typeof window === "undefined") return DEFAULT_LANGUAGE;
+/**
+ * Vartotojo SĄMONINGAI pasirinkta kalba, arba `null`, jei jis nieko nesirinko.
+ * `null` reiškia, kad reikia taikyti objekto numatytąją kalbą iš nustatymų.
+ */
+export function readStoredLanguage(): LanguageCode | null {
+  if (typeof window === "undefined") return null;
   try {
     const saved = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
-    return isSupportedLanguage(saved) ? saved : DEFAULT_LANGUAGE;
+    return isSupportedLanguage(saved) ? saved : null;
   } catch {
-    return DEFAULT_LANGUAGE;
+    return null;
   }
 }
 
@@ -44,8 +47,10 @@ if (!i18n.isInitialized) {
       lt: { translation: lt },
       en: { translation: en },
     },
-    lng: DEFAULT_LANGUAGE,
-    fallbackLng: DEFAULT_LANGUAGE,
+    // Serveris nustatymų dar nežino, tad startuojame nuo atsarginės kalbos;
+    // tikroji numatytoji pritaikoma naršyklėje.
+    lng: FALLBACK_LANGUAGE,
+    fallbackLng: FALLBACK_LANGUAGE,
     supportedLngs: SUPPORTED_LANGUAGES.map((l) => l.code),
     interpolation: { escapeValue: false },
     react: { useSuspense: false },
