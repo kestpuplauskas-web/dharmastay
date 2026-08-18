@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useBlocker } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -50,6 +51,7 @@ export function TranslationPanel({
   /** Rodyti kintamųjų ({{...}}) įterpimo juostą po kiekvienu lauku. */
   showVariables?: boolean;
 }) {
+  const { t } = useTranslation();
   const fetchTranslations = useServerFn(getTranslations);
   const save = useServerFn(saveTranslations);
   const qc = useQueryClient();
@@ -128,10 +130,10 @@ export function TranslationPanel({
     onSuccess: () => {
       setDirty(false);
       qc.invalidateQueries({ queryKey: ["translations", entityType, entityId] });
-      toast.success("Vertimai išsaugoti.");
+      toast.success(t("translations.panel.saved"));
     },
     onError: (e) =>
-      toast.error(e instanceof Error ? e.message : "Nepavyko išsaugoti vertimų."),
+      toast.error(e instanceof Error ? e.message : t("translations.panel.saveFailed")),
   });
 
   if (languages.length === 0 || !activeLang) return null;
@@ -143,11 +145,14 @@ export function TranslationPanel({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Languages className="h-5 w-5" />
-          Vertimai
+          {t("translations.panel.title")}
         </CardTitle>
         <CardDescription>
-          Neprivaloma. Jei vertimo nėra, svečiui rodomas tekstas numatytąja kalba (
-          {defaultLang.toUpperCase()}). Išversta {filled} iš {fields.length}.
+          {t("translations.panel.description", {
+            lang: defaultLang.toUpperCase(),
+            filled,
+            total: fields.length,
+          })}
         </CardDescription>
       </CardHeader>
 
@@ -174,22 +179,22 @@ export function TranslationPanel({
         {isLoading ? (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin" />
-            Kraunama…
+            {t("translations.panel.loading")}
           </div>
         ) : (
           fields.map((f) => (
             <div key={f.field} className="space-y-1.5">
-              <Label>{f.label}</Label>
+              <Label>{f.labelKey ? t(f.labelKey) : f.label}</Label>
               {f.html ? (
                 <div
                   className="prose prose-sm dark:prose-invert max-w-none rounded-md bg-muted px-3 py-2 text-muted-foreground"
                   dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(originals[f.field]?.trim() || "<p>(tuščias)</p>"),
+                    __html: DOMPurify.sanitize(originals[f.field]?.trim() || `<p>${t("translations.panel.empty")}</p>`),
                   }}
                 />
               ) : (
                 <div className="rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground whitespace-pre-wrap">
-                  {originals[f.field]?.trim() || "(tuščias)"}
+                  {originals[f.field]?.trim() || t("translations.panel.empty")}
                 </div>
               )}
               {f.html ? (
@@ -207,7 +212,7 @@ export function TranslationPanel({
                     inputsRef.current[f.field] = el;
                   }}
                   value={draft[f.field] ?? ""}
-                  placeholder={`${activeLang.toUpperCase()} vertimas`}
+                  placeholder={t("translations.panel.placeholder", { lang: activeLang.toUpperCase() })}
                   onChange={(e) => edit(f.field, e.target.value)}
                 />
               ) : (
@@ -216,7 +221,7 @@ export function TranslationPanel({
                     inputsRef.current[f.field] = el;
                   }}
                   value={draft[f.field] ?? ""}
-                  placeholder={`${activeLang.toUpperCase()} vertimas`}
+                  placeholder={t("translations.panel.placeholder", { lang: activeLang.toUpperCase() })}
                   onChange={(e) => edit(f.field, e.target.value)}
                 />
               )}
@@ -237,26 +242,24 @@ export function TranslationPanel({
           ) : (
             <Save className="mr-2 h-4 w-4" />
           )}
-          Išsaugoti vertimus
+          {t("translations.panel.save")}
         </Button>
         {dirty && (
-          <span className="text-sm text-muted-foreground">Yra neišsaugotų vertimų.</span>
+          <span className="text-sm text-muted-foreground">{t("translations.panel.unsaved")}</span>
         )}
       </CardFooter>
 
       <AlertDialog open={status === "blocked"}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Neišsaugoti vertimai</AlertDialogTitle>
+            <AlertDialogTitle>{t("translations.panel.blockedTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Įvedėte vertimų, kurių neišsaugojote. Išėję iš šio puslapio juos prarasite.
-              Vertimai saugomi atskiru mygtuku „Išsaugoti vertimus" — objekto formos
-              išsaugojimas jų neįrašo.
+              {t("translations.panel.blockedDesc")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={reset}>Likti puslapyje</AlertDialogCancel>
-            <AlertDialogAction onClick={proceed}>Išeiti neišsaugojus</AlertDialogAction>
+            <AlertDialogCancel onClick={reset}>{t("translations.panel.stay")}</AlertDialogCancel>
+            <AlertDialogAction onClick={proceed}>{t("translations.panel.leave")}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

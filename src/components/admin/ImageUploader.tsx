@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Upload, X, Loader2, AlertCircle, RotateCcw, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -42,6 +43,7 @@ const ACCEPT = "image/jpeg,image/jpg,image/png,image/webp";
 const MAX_IMAGES = 50;
 
 export function ImageUploader({ cover, images, onChange, folder = "new" }: Props) {
+  const { t } = useTranslation();
   const [pending, setPending] = useState<PendingItem[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -69,7 +71,7 @@ export function ImageUploader({ cover, images, onChange, folder = "new" }: Props
         onChange({ cover: nextCover, images: nextImages });
         setPending((p) => p.filter((it) => it.id !== id));
       } catch (e) {
-        const msg = e instanceof Error ? e.message : "Nepavyko įkelti";
+        const msg = e instanceof Error ? e.message : t("properties.images.uploadFailed");
         setPending((p) =>
           p.map((it) => (it.id === id ? { ...it, status: "error", error: msg } : it)),
         );
@@ -83,7 +85,7 @@ export function ImageUploader({ cover, images, onChange, folder = "new" }: Props
     (files: FileList | File[]) => {
       const arr = Array.from(files).filter((f) => f.type.startsWith("image/"));
       if (arr.length === 0) {
-        toast.error("Palaikomi tik nuotraukų failai (JPG, PNG, WebP)");
+        toast.error(t("properties.images.onlyImages"));
         return;
       }
       const current = stateRef.current;
@@ -96,7 +98,7 @@ export function ImageUploader({ cover, images, onChange, folder = "new" }: Props
       let toUpload = arr;
       if (arr.length > remaining) {
         toUpload = arr.slice(0, remaining);
-        toast.warning(`Įkeltos tik pirmos ${remaining} nuotraukos (max ${MAX_IMAGES})`);
+        toast.warning(t("properties.images.onlyFirst", { count: remaining, max: MAX_IMAGES }));
       }
       const items: PendingItem[] = toUpload.map((file) => ({
         id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
@@ -153,11 +155,9 @@ export function ImageUploader({ cover, images, onChange, folder = "new" }: Props
 
   return (
     <div className="space-y-3">
-      <Label>Nuotraukos</Label>
+      <Label>{t("properties.images.label")}</Label>
       <p className="text-xs text-muted-foreground">
-        Vilkite failus arba spustelėkite pasirinkti (iki {MAX_IMAGES} nuotraukų). Nuotraukos
-        automatiškai optimizuojamos: WebP, max 1200px, ~80% kokybės, iki ~200 KB. Pažymėkite vieną
-        kaip viršelį.
+        {t("properties.images.help", { max: MAX_IMAGES })}
       </p>
 
       <div
@@ -176,7 +176,7 @@ export function ImageUploader({ cover, images, onChange, folder = "new" }: Props
         }}
         onClick={() => {
           if (atLimit) {
-            toast.error(`Maksimaliai ${MAX_IMAGES} nuotraukos`);
+            toast.error(t("properties.images.maxToast", { max: MAX_IMAGES }));
             return;
           }
           inputRef.current?.click();
@@ -206,11 +206,11 @@ export function ImageUploader({ cover, images, onChange, folder = "new" }: Props
         <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
         <div className="font-medium">
           {atLimit
-            ? `Pasiektas limitas (${MAX_IMAGES} nuotraukos)`
-            : "Vilkite nuotraukas čia arba spustelėkite pasirinkti"}
+            ? t("properties.images.limitReached", { max: MAX_IMAGES })
+            : t("properties.images.dropzone")}
         </div>
         <div className="text-xs text-muted-foreground mt-1">
-          JPG, PNG arba WebP · konvertuojama į WebP · max {MAX_IMAGES}
+          {t("properties.images.hint", { max: MAX_IMAGES })}
         </div>
       </div>
 
@@ -230,9 +230,9 @@ export function ImageUploader({ cover, images, onChange, folder = "new" }: Props
               <div className="flex-1 min-w-0">
                 <div className="truncate">{it.name}</div>
                 <div className="text-xs text-muted-foreground">
-                  {it.status === "processing" && "Optimizuojama…"}
-                  {it.status === "uploading" && "Keliama…"}
-                  {it.status === "error" && (it.error || "Klaida")}
+                  {it.status === "processing" && t("properties.images.optimizing")}
+                  {it.status === "uploading" && t("properties.images.uploading")}
+                  {it.status === "error" && (it.error || t("properties.images.error"))}
                 </div>
               </div>
               {it.status === "error" && (
@@ -243,7 +243,7 @@ export function ImageUploader({ cover, images, onChange, folder = "new" }: Props
                     size="sm"
                     onClick={() => retry(it.id)}
                   >
-                    <RotateCcw className="h-3.5 w-3.5 mr-1" /> Bandyti dar kartą
+                    <RotateCcw className="h-3.5 w-3.5 mr-1" /> {t("properties.images.retry")}
                   </Button>
                   <Button
                     type="button"
@@ -262,7 +262,7 @@ export function ImageUploader({ cover, images, onChange, folder = "new" }: Props
 
       {images.length === 0 && pending.length === 0 && (
         <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-          Dar nėra nuotraukų.
+          {t("properties.images.empty")}
         </div>
       )}
 
