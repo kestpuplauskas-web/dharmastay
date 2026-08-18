@@ -1,9 +1,10 @@
+import { useTranslation } from "react-i18next";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
   callStaffApi,
   STAFF_STATUS_CLASS,
-  STAFF_STATUS_LABEL,
+  STAFF_STATUS_LABEL_KEYS,
   type StaffRoom,
 } from "@/lib/staff-api-client";
 
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/_authenticated/staff/")({
 });
 
 function RoomList() {
+  const { t } = useTranslation();
   const { data, isLoading, error } = useQuery({
     queryKey: ["staff-rooms"],
     queryFn: () => callStaffApi<{ data: StaffRoom[] }>("/rooms"),
@@ -44,7 +46,7 @@ function RoomList() {
             <span
               className={`shrink-0 rounded-full border px-2.5 py-0.5 text-xs ${STAFF_STATUS_CLASS[r.status]}`}
             >
-              {STAFF_STATUS_LABEL[r.status]}
+              {t(STAFF_STATUS_LABEL_KEYS[r.status])}
             </span>
           </div>
           <div className="mt-2 flex flex-wrap gap-2 text-xs">

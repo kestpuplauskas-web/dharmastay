@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { CONTENT_VARIABLES } from "@/lib/content-templates";
 import { Badge } from "@/components/ui/badge";
 
@@ -8,6 +9,7 @@ export function VariablePicker({
   onInsert: (token: string) => void;
   disabled?: boolean;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-2">
       <p className="text-xs font-medium text-muted-foreground">
@@ -19,7 +21,7 @@ export function VariablePicker({
             key={v.token}
             type="button"
             disabled={disabled}
-            title={v.label}
+            title={t(v.labelKey)}
             onClick={() => onInsert(v.token)}
             className="disabled:opacity-50"
           >

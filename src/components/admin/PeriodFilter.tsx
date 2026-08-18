@@ -1,10 +1,11 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { DatePicker } from "@/components/DatePicker";
 import {
   PERIOD_KEYS,
-  PERIOD_LABELS,
+  PERIOD_LABEL_KEYS,
   formatPeriodLabel,
   resolvePeriod,
   type PeriodKey,
@@ -44,7 +45,7 @@ export function PeriodFilter({
                 setOpen(false);
               }}
             >
-              {PERIOD_LABELS[k]}
+              {t(PERIOD_LABEL_KEYS[k])}
             </button>
           ))}
           <div className="mt-2 border-t pt-2">
