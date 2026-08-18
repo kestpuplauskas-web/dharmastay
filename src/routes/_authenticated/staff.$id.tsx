@@ -43,7 +43,7 @@ function RoomDetail() {
         body: JSON.stringify({ status, ...(note ? { note } : {}) }),
       }),
     onSuccess: () => {
-      toast.success("Būsena atnaujinta");
+      toast.success(t("staff.statusUpdated"));
       invalidate();
     },
     onError,
@@ -79,12 +79,12 @@ function RoomDetail() {
 
       <div className="flex flex-wrap gap-2 text-xs">
         {room.checkout_today && (
-          <span className="rounded-md bg-muted px-2 py-1">Išvyksta šiandien</span>
+          <span className="rounded-md bg-muted px-2 py-1">{t("staff.leavingToday")}</span>
         )}
         {room.checkin_today && (
-          <span className="rounded-md bg-muted px-2 py-1">Atvyksta šiandien</span>
+          <span className="rounded-md bg-muted px-2 py-1">{t("staff.arrivingToday")}</span>
         )}
-        {room.occupied_today && <span className="rounded-md bg-muted px-2 py-1">Užimta</span>}
+        {room.occupied_today && <span className="rounded-md bg-muted px-2 py-1">{t("staff.occupied")}</span>}
       </div>
 
       <div className="space-y-2">
@@ -92,7 +92,7 @@ function RoomDetail() {
         <Textarea
           value={note}
           maxLength={500}
-          placeholder={room.note || "Pastaba (nebūtina)"}
+          placeholder={room.note || t("staff.notePlaceholder")}
           onChange={(e) => setNote(e.target.value)}
         />
       </div>

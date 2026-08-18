@@ -29,7 +29,7 @@ function RoomList() {
   });
 
   if (rooms.length === 0) {
-    return <p className="p-4 text-sm text-muted-foreground">Kambarių nerasta.</p>;
+    return <p className="p-4 text-sm text-muted-foreground">{t("staff.noRooms")}</p>;
   }
 
   return (
@@ -51,13 +51,13 @@ function RoomList() {
           </div>
           <div className="mt-2 flex flex-wrap gap-2 text-xs">
             {r.checkout_today && (
-              <span className="rounded-md bg-muted px-2 py-0.5">Išvyksta šiandien</span>
+              <span className="rounded-md bg-muted px-2 py-0.5">{t("staff.leavingToday")}</span>
             )}
             {r.checkin_today && (
-              <span className="rounded-md bg-muted px-2 py-0.5">Atvyksta šiandien</span>
+              <span className="rounded-md bg-muted px-2 py-0.5">{t("staff.arrivingToday")}</span>
             )}
             {!r.checkout_today && !r.checkin_today && r.occupied_today && (
-              <span className="rounded-md bg-muted px-2 py-0.5">Užimta</span>
+              <span className="rounded-md bg-muted px-2 py-0.5">{t("staff.occupied")}</span>
             )}
           </div>
           {r.assigned_to && (
