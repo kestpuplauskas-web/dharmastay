@@ -107,8 +107,19 @@ export function PropertyForm({
   };
 }) {
   const [v, setV] = useState<PropertyFormValues>(initial);
+  // Kai iš serverio ateina šviežesni duomenys, forma persikrauna (jei vartotojas dar neredagavo).
+  const dirtyRef = useRef(false);
+  const initialKey = JSON.stringify(initial);
+  useEffect(() => {
+    if (dirtyRef.current) return;
+    setV(initial);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialKey]);
   const set = <K extends keyof PropertyFormValues>(k: K, val: PropertyFormValues[K]) =>
-    setV((s) => ({ ...s, [k]: val }));
+    setV((s) => {
+      dirtyRef.current = true;
+      return { ...s, [k]: val };
+    });
 
   const configs: RoomConfig[] = v.rooms.configs ?? [];
   const totalBeds = configs.reduce((sum, c) => sum + (Number(c.beds) || 0), 0);
@@ -116,6 +127,7 @@ export function PropertyForm({
     const bedrooms = next.filter((c) => c.kind.startsWith("bedroom_")).length;
     const living_rooms = next.filter((c) => c.kind === "living_room").length;
     const beds = next.reduce((s, c) => s + (Number(c.beds) || 0), 0);
+    dirtyRef.current = true;
     setV((s) => ({
       ...s,
       beds: Math.max(1, beds),
