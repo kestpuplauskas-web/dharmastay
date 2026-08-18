@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState } from "react";
 import { createFileRoute, useBlocker } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { AutoTranslateAllButton } from "@/components/admin/AutoTranslateAllButton";
 import { FileText, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { getMyRole } from "@/lib/properties.functions";
@@ -117,7 +118,7 @@ function ContentPage() {
 
   return (
     <div className="space-y-6">
-      <header>
+      <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-semibold">
             <FileText className="h-6 w-6 text-primary" />
@@ -127,6 +128,7 @@ function ContentPage() {
 {t("content.ui.pageDescription")}
           </p>
         </div>
+        <AutoTranslateAllButton />
       </header>
 
       <div className="flex flex-col gap-6 lg:flex-row">
