@@ -136,17 +136,17 @@ type ColKey =
 
 type Row = any;
 
-const COLUMNS: { key: ColKey; label: string; align?: "left" | "right"; type: "set" | "text" | "date" | "number" }[] = [
-  { key: "status", label: "Statusas", type: "set" },
-  { key: "booking_number", label: "Užsakymo Nr", type: "set" },
-  { key: "property", label: "Objektas", type: "set" },
-  { key: "customer_name", label: "Klientas", type: "set" },
-  { key: "customer_phone", label: "Telefonas", type: "text" },
-  { key: "customer_email", label: "El. paštas", type: "text" },
-  { key: "date_from", label: "Užsakymas nuo", type: "date" },
-  { key: "date_to", label: "Užsakymas iki", type: "date" },
-  { key: "duration", label: "Trukmė (d.)", type: "number", align: "right" },
-  { key: "total_amount", label: "Suma (€)", type: "number", align: "right" },
+const COLUMNS: { key: ColKey; labelKey: string; align?: "left" | "right"; type: "set" | "text" | "date" | "number" }[] = [
+  { key: "status", labelKey: "bookings.cols.status", type: "set" },
+  { key: "booking_number", labelKey: "bookings.cols.booking_number", type: "set" },
+  { key: "property", labelKey: "bookings.cols.property", type: "set" },
+  { key: "customer_name", labelKey: "bookings.cols.customer_name", type: "set" },
+  { key: "customer_phone", labelKey: "bookings.cols.customer_phone", type: "text" },
+  { key: "customer_email", labelKey: "bookings.cols.customer_email", type: "text" },
+  { key: "date_from", labelKey: "bookings.cols.date_from", type: "date" },
+  { key: "date_to", labelKey: "bookings.cols.date_to", type: "date" },
+  { key: "duration", labelKey: "bookings.cols.duration", type: "number", align: "right" },
+  { key: "total_amount", labelKey: "bookings.cols.total_amount", type: "number", align: "right" },
 ];
 
 function getCell(b: Row, key: ColKey): any {
