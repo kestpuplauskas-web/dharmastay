@@ -639,9 +639,10 @@ export function PropertyForm({
         <ImageUploader
           cover={v.coverImageUrl}
           images={v.imageUrls}
-          onChange={({ cover, images }) =>
-            setV((s) => ({ ...s, coverImageUrl: cover, imageUrls: images }))
-          }
+          onChange={({ cover, images }) => {
+            dirtyRef.current = true;
+            setV((s) => ({ ...s, coverImageUrl: cover, imageUrls: images }));
+          }}
           folder="properties"
         />
       </section>
