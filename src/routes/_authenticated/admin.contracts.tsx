@@ -29,9 +29,11 @@ import {
   List as ListIcon, ListOrdered, Pilcrow,
 } from "lucide-react";
 import { toast } from "sonner";
+import { PLATFORM_NAME } from "@/lib/brand";
+import { useBrandedTitle } from "@/hooks/useBrandedTitle";
 
 export const Route = createFileRoute("/_authenticated/admin/contracts")({
-  head: () => ({ meta: [{ title: "Sutartys | Dharma Stay Admin" }] }),
+  head: () => ({ meta: [{ title: `Sutartys | ${PLATFORM_NAME}` }] }),
   component: ContractsPage,
 });
 
@@ -64,6 +66,7 @@ const KIND_LABEL: Record<string, string> = {
 };
 
 function ContractsPage() {
+  useBrandedTitle("Sutartys");
   const fetchList = useServerFn(listContractTemplates);
   const upsertFn = useServerFn(upsertContractTemplate);
   const deleteFn = useServerFn(deleteContractTemplate);
