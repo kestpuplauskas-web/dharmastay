@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
 
 /**
@@ -6,6 +7,7 @@ import { Loader2 } from "lucide-react";
  * kai naršyklės įterptasis PDF peržiūros modulis blokuojamas iframe'e.
  */
 export function PdfPreview({ data }: { data: Uint8Array | null }) {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +64,7 @@ export function PdfPreview({ data }: { data: Uint8Array | null }) {
       {loading && (
         <div className="flex h-64 items-center justify-center gap-2 text-sm text-muted-foreground">
           <Loader2 className="h-4 w-4 animate-spin" />
-          Generuojama peržiūra…
+          {t("common.generatingPreview")}
         </div>
       )}
       {error && <p className="p-4 text-sm text-destructive">{error}</p>}
