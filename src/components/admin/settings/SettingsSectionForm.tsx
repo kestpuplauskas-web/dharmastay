@@ -40,6 +40,7 @@ export function SettingsSectionForm({
   saving: boolean;
   onSave: (values: Record<string, unknown>) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const form = useForm({
     resolver: zodResolver(settingsSchemas[section.id] as never),
     defaultValues: pick(section, settings),
