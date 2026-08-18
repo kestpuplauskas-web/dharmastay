@@ -4,22 +4,32 @@ import { useServerFn } from "@tanstack/react-start";
 import { Home, Calendar, FileText, Wallet, LayoutDashboard, Globe, LogOut, Building2, Settings2, FileEdit } from "lucide-react";
 import { getMyRole } from "@/lib/properties.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { getPropertySettings } from "@/lib/property-settings.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
 });
 
 function AdminLayout() {
+  const { t } = useTranslation();
   const fetchRole = useServerFn(getMyRole);
   const { data: role, isLoading } = useQuery({
     queryKey: ["my-role"],
     queryFn: () => fetchRole(),
     refetchOnMount: "always",
   });
+  const fetchSettings = useServerFn(getPropertySettings);
+  const { data: settingsData } = useQuery({
+    queryKey: ["property-settings"],
+    queryFn: () => fetchSettings(),
+  });
+  const brandName = settingsData?.settings.displayName?.trim() || "Revoo";
   const { location } = useRouterState();
 
   if (isLoading) {
-    return <div className="p-8 text-muted-foreground">Kraunama…</div>;
+    return <div className="p-8 text-muted-foreground">{t("common.loading")}</div>;
   }
   if (!role?.isAdmin) {
     if (role?.roles.includes("housekeeper")) {
@@ -27,22 +37,20 @@ function AdminLayout() {
     }
     return (
       <div className="mx-auto max-w-md p-8">
-        <h1 className="text-2xl font-semibold">Neturite administratoriaus teisių</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Susisiekite su sistemos administratoriumi, kad jums būtų suteiktos teisės.
-        </p>
+        <h1 className="text-2xl font-semibold">{t("admin.noAdminTitle")}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t("admin.noAdminText")}</p>
       </div>
     );
   }
 
   const links = [
-    { to: "/admin", label: "Skydelis", icon: LayoutDashboard },
-    { to: "/admin/bookings", label: "Rezervacijos", icon: Calendar },
-    { to: "/admin/properties", label: "Objektai", icon: Home },
-    { to: "/admin/contracts", label: "Sutartys", icon: FileText },
-    { to: "/admin/expenses", label: "Finansai", icon: Wallet },
-    { to: "/admin/settings", label: "Bendrieji nustatymai", icon: Settings2 },
-    { to: "/admin/content", label: "Turinys", icon: FileEdit },
+    { to: "/admin", label: t("nav.dashboard"), icon: LayoutDashboard },
+    { to: "/admin/bookings", label: t("nav.bookings"), icon: Calendar },
+    { to: "/admin/properties", label: t("nav.properties"), icon: Home },
+    { to: "/admin/contracts", label: t("nav.contracts"), icon: FileText },
+    { to: "/admin/expenses", label: t("nav.expenses"), icon: Wallet },
+    { to: "/admin/settings", label: t("nav.settings"), icon: Settings2 },
+    { to: "/admin/content", label: t("nav.content"), icon: FileEdit },
   ] as const;
 
   return (
@@ -50,7 +58,7 @@ function AdminLayout() {
       <aside className="flex w-60 shrink-0 flex-col border-r bg-card">
         <div className="flex items-center gap-2 px-4 py-4 font-semibold">
           <Building2 className="h-5 w-5 text-primary" />
-          <span>Dharma Stay</span>
+          <span>{brandName}</span>
         </div>
         <nav className="flex-1 space-y-1 px-2">
           {links.map((l) => {
@@ -73,6 +81,7 @@ function AdminLayout() {
           })}
         </nav>
         <div className="mt-auto space-y-1 border-t px-2 py-3">
+          <LanguageSwitcher />
           <a
             href="https://dharma.revoo.lt/"
             target="_blank"
@@ -80,7 +89,7 @@ function AdminLayout() {
             className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-foreground"
           >
             <Globe className="h-4 w-4" />
-            Svetainė
+            {t("nav.website")}
           </a>
           <button
             className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-foreground"
@@ -90,7 +99,7 @@ function AdminLayout() {
             }}
           >
             <LogOut className="h-4 w-4" />
-            Atsijungti
+            {t("nav.signOut")}
           </button>
         </div>
       </aside>
