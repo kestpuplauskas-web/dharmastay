@@ -327,6 +327,24 @@
       "living_room": "Svetainė"
     }
   },
+  "gantt": {
+    "amount": "Suma",
+    "back": "Atgal",
+    "booking": "Rezervacija",
+    "confirm": "Patvirtinti",
+    "confirmTitle": "Patvirtinti pakeitimą",
+    "customer": "Klientas",
+    "dragHint": "Vilkite rezervacijos juostą, kad perkeltumėte į kitą objektą ar datas; tempkite juostos kraštus, kad pakeistumėte trukmę.",
+    "email": "El. paštas",
+    "forward": "Pirmyn",
+    "location": "Vieta",
+    "noProperties": "Nėra objektų",
+    "period": "Laikotarpis",
+    "phone": "Telefonas",
+    "property": "Objektas",
+    "status": "Statusas",
+    "today": "Šiandien"
+  },
   "language": {
     "en": "English",
     "label": "Kalba",

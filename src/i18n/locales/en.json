@@ -327,6 +327,24 @@
       "living_room": "Living room"
     }
   },
+  "gantt": {
+    "amount": "Amount",
+    "back": "Back",
+    "booking": "Booking",
+    "confirm": "Confirm",
+    "confirmTitle": "Confirm change",
+    "customer": "Guest",
+    "dragHint": "Drag a booking bar to move it to another property or dates; drag the bar edges to change its length.",
+    "email": "Email",
+    "forward": "Forward",
+    "location": "Location",
+    "noProperties": "No properties",
+    "period": "Period",
+    "phone": "Phone",
+    "property": "Property",
+    "status": "Status",
+    "today": "Today"
+  },
   "language": {
     "en": "English",
     "label": "Language",
