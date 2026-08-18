@@ -20,6 +20,7 @@ function mockInvoiceData(
   fallbackAddress: string,
   currency: string,
   vatRate: number,
+  labels: { stayLine: string; extraLine: string; companyName: string },
 ): InvoiceDocData {
   const isVatInvoice = Boolean(values.companyVatCode?.trim());
   const rate = isVatInvoice ? vatRate || 0 : 0;
@@ -33,7 +34,7 @@ function mockInvoiceData(
 
   const lineItems = [
     {
-      name: "Nakvynė — Standard kambarys (pavyzdys)",
+      name: labels.stayLine,
       qty: nights,
       unit: "naktys",
       unitPriceNet: stayNet / nights,
@@ -42,7 +43,7 @@ function mockInvoiceData(
       lineTotal: stayGross,
     },
     {
-      name: "Papildoma paslauga — Pusryčiai (pavyzdys)",
+      name: labels.extraLine,
       qty: 2,
       unit: "vnt.",
       unitPriceNet: extraNet / 2,
@@ -61,7 +62,7 @@ function mockInvoiceData(
     vatRate: rate,
     currency: currency || "EUR",
     seller: {
-      name: values.companyName?.trim() || fallbackCompanyName || "Jūsų įmonės pavadinimas",
+      name: values.companyName?.trim() || fallbackCompanyName || labels.companyName,
       code: values.companyCode?.trim() || "",
       vatCode: values.companyVatCode?.trim() || "",
       address: values.companyAddress?.trim() || fallbackAddress || "",
@@ -107,7 +108,11 @@ export function InvoicePreviewDialog({
     if (!open) return;
     let cancelled = false;
     setBytes(null);
-    const data = mockInvoiceData(values, fallbackCompanyName, fallbackAddress, currency, vatRate);
+    const data = mockInvoiceData(values, fallbackCompanyName, fallbackAddress, currency, vatRate, {
+      stayLine: t("settings.invoicePreview.sampleStayLine"),
+      extraLine: t("settings.invoicePreview.sampleExtraLine"),
+      companyName: t("settings.invoicePreview.sampleCompanyName"),
+    });
     buildInvoicePdf(data).then((doc) => {
       if (cancelled) return;
       setBytes(new Uint8Array(doc.output("arraybuffer") as ArrayBuffer));
@@ -116,7 +121,7 @@ export function InvoicePreviewDialog({
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, JSON.stringify(values), fallbackCompanyName, fallbackAddress, currency, vatRate]);
+  }, [open, JSON.stringify(values), fallbackCompanyName, fallbackAddress, currency, vatRate, t]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
