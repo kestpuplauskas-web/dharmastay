@@ -109,6 +109,43 @@
     }
   },
   "dashboard": {
+    "biz": {
+      "avgStay": "Avg. stay",
+      "days": "{{value}} nights",
+      "expenses": "Expenses",
+      "expensesByCategory": "Expenses by category",
+      "netProfit": "Net profit",
+      "noExpenses": "No expenses.",
+      "revenue": "Revenue"
+    },
+    "checkinsToday": "Check-ins today",
+    "checkoutsToday": "Check-outs today",
+    "emptyList": "Nothing here.",
+    "fleet": {
+      "activeHint_one": "{{count}} active",
+      "activeHint_other": "{{count}} active",
+      "avgPrice": "Avg. nightly rate",
+      "byType": "Properties by type",
+      "empty": "No properties.",
+      "missingDescription": "Without description",
+      "missingPhotos": "Without photos",
+      "total": "Total properties"
+    },
+    "noRecent": "No new bookings.",
+    "ops": {
+      "abv": "ABV",
+      "abvHint": "Average booking value",
+      "awaitingPayment": "Awaiting payment",
+      "awaitingPaymentHint_one": "{{count}} booking",
+      "awaitingPaymentHint_other": "{{count}} bookings",
+      "confirmed30d": "Confirmed 30d",
+      "confirmed30dHint": "Upcoming bookings",
+      "freeToday": "Free today",
+      "revenue": "Revenue",
+      "revenueHint": "Selected period",
+      "utilization": "Occupancy",
+      "utilizationHint": "Portfolio occupancy"
+    },
     "period": {
       "all": "All time",
       "custom": "Custom period",
@@ -119,7 +156,15 @@
       "today": "Today",
       "yesterday": "Yesterday",
       "ytd": "This year"
-    }
+    },
+    "recent24h": "Latest bookings (24h)",
+    "subtitle": "Your business control centre — everything in one place.",
+    "tabs": {
+      "biz": "Business",
+      "fleet": "Properties",
+      "ops": "Operations"
+    },
+    "title": "Dashboard"
   },
   "enums": {
     "amenities": {

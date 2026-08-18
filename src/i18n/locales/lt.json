@@ -109,6 +109,43 @@
     }
   },
   "dashboard": {
+    "biz": {
+      "avgStay": "Vid. viešnagė",
+      "days": "{{value}} d.",
+      "expenses": "Išlaidos",
+      "expensesByCategory": "Išlaidos pagal kategoriją",
+      "netProfit": "Grynasis pelnas",
+      "noExpenses": "Nėra išlaidų.",
+      "revenue": "Pajamos"
+    },
+    "checkinsToday": "Atvykimai šiandien",
+    "checkoutsToday": "Išvykimai šiandien",
+    "emptyList": "Nieko nėra.",
+    "fleet": {
+      "activeHint_one": "{{count}} aktyvus",
+      "activeHint_other": "{{count}} aktyvūs",
+      "avgPrice": "Vid. paros kaina",
+      "byType": "Objektai pagal tipą",
+      "empty": "Nėra objektų.",
+      "missingDescription": "Be aprašymo",
+      "missingPhotos": "Be nuotraukų",
+      "total": "Viso objektų"
+    },
+    "noRecent": "Naujų rezervacijų nėra.",
+    "ops": {
+      "abv": "ABV",
+      "abvHint": "Vidutinė rezervacija",
+      "awaitingPayment": "Laukia apmokėjimo",
+      "awaitingPaymentHint_one": "{{count}} rezervacija",
+      "awaitingPaymentHint_other": "{{count}} rezervacijos",
+      "confirmed30d": "30d patvirtinta",
+      "confirmed30dHint": "Ateinančios rezervacijos",
+      "freeToday": "Laisvi šiandien",
+      "revenue": "Pajamos",
+      "revenueHint": "Pasirinktas laikotarpis",
+      "utilization": "Užimtumas",
+      "utilizationHint": "Parko užimtumas"
+    },
     "period": {
       "all": "Visas laikotarpis",
       "custom": "Pasirinktas laikotarpis",
@@ -119,7 +156,15 @@
       "today": "Šiandien",
       "yesterday": "Vakar",
       "ytd": "Šie metai"
-    }
+    },
+    "recent24h": "Naujausios rezervacijos (24h)",
+    "subtitle": "Verslo valdymo centras — viskas vienoje vietoje.",
+    "tabs": {
+      "biz": "Verslas",
+      "fleet": "Objektai",
+      "ops": "Operacijos"
+    },
+    "title": "Skydelis"
   },
   "enums": {
     "amenities": {
