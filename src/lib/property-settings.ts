@@ -64,7 +64,7 @@ export const FEE_TYPES = [
 
 const time = z
   .string()
-  .regex(/^\d{2}:\d{2}$/, "Formatas turi būti HH:MM");
+  .regex(/^\d{2}:\d{2}$/, "settings.validation.timeFormat");
 const optionalText = (max = 300) => z.string().trim().max(max).default("");
 
 export const settingsSchemas = {
@@ -80,7 +80,7 @@ export const settingsSchemas = {
     currency: z.string().min(3).max(3).default("EUR"),
     defaultLanguage: z.string().min(2).max(5).default("lt"),
     phone: optionalText(40),
-    email: z.union([z.literal(""), z.string().email("Neteisingas el. pašto formatas")]).default(""),
+    email: z.union([z.literal(""), z.string().email("settings.validation.email")]).default(""),
   }),
   stay: z.object({
     checkinFrom: time,
@@ -146,8 +146,8 @@ export const settingsSchemas = {
     reviewLink: optionalText(500),
   }),
   branding: z.object({
-    brandPrimaryColor: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Naudokite HEX formatą, pvz. #0F172A"),
-    brandSecondaryColor: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Naudokite HEX formatą, pvz. #64748B"),
+    brandPrimaryColor: z.string().regex(/^#[0-9a-fA-F]{6}$/, "settings.validation.hexColor"),
+    brandSecondaryColor: z.string().regex(/^#[0-9a-fA-F]{6}$/, "settings.validation.hexColor"),
     brandLogoUrl: optionalText(500),
     brandEmailLogoUrl: optionalText(500),
     brandPdfLogoUrl: optionalText(500),
