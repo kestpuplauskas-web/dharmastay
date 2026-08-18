@@ -525,7 +525,27 @@
     "title": "Expenses",
     "add": "Add",
     "confirmDelete": "Delete?",
-    "empty": "No expenses yet."
+    "empty": "No expenses yet.",
+    "date": "Date",
+    "category": "Category",
+    "amount": "Amount",
+    "property": "Property",
+    "note": "Note",
+    "notePlaceholder": "Note",
+    "unlinked": "Unlinked",
+    "delete": "Delete",
+    "categories": {
+      "utilities": "Utilities",
+      "cleaning": "Cleaning",
+      "maintenance": "Maintenance",
+      "insurance": "Insurance",
+      "marketing": "Marketing",
+      "office": "Office",
+      "supplies": "Supplies",
+      "taxes": "Taxes",
+      "internet": "Internet",
+      "other": "Other"
+    }
   },
   "gantt": {
     "amount": "Amount",
@@ -1118,7 +1138,8 @@
       "tvarkoma": "In progress"
     },
     "statusUpdated": "Status updated",
-    "title": "Housekeeping"
+    "title": "Housekeeping",
+    "note": "Note"
   },
   "translations": {
     "fields": {

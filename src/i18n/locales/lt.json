@@ -525,7 +525,27 @@
     "title": "Išlaidos",
     "add": "Pridėti",
     "confirmDelete": "Ištrinti?",
-    "empty": "Kol kas nėra išlaidų."
+    "empty": "Kol kas nėra išlaidų.",
+    "date": "Data",
+    "category": "Kategorija",
+    "amount": "Suma",
+    "property": "Objektas",
+    "note": "Pastaba",
+    "notePlaceholder": "Pastaba",
+    "unlinked": "Nesusieta",
+    "delete": "Šalinti",
+    "categories": {
+      "utilities": "Komunaliniai",
+      "cleaning": "Valymas",
+      "maintenance": "Priežiūra",
+      "insurance": "Draudimas",
+      "marketing": "Rinkodara",
+      "office": "Biuras",
+      "supplies": "Priemonės",
+      "taxes": "Mokesčiai",
+      "internet": "Internetas",
+      "other": "Kita"
+    }
   },
   "gantt": {
     "amount": "Suma",
@@ -1118,7 +1138,8 @@
       "tvarkoma": "Tvarkoma"
     },
     "statusUpdated": "Būsena atnaujinta",
-    "title": "Kambarių tvarkymas"
+    "title": "Kambarių tvarkymas",
+    "note": "Pastaba"
   },
   "translations": {
     "fields": {
