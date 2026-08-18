@@ -164,11 +164,11 @@ export function ContentTemplateCard({
             <div className="flex items-center gap-2">
               {dirty && (
                 <Badge variant="outline" className="text-xs">
-                  Neišsaugota
+                  {t("content.ui.unsavedBadge")}
                 </Badge>
               )}
               <Label htmlFor={`enabled-${dirtyKey}`} className="text-xs text-muted-foreground">
-                {values.isEnabled ? "Įjungta" : "Išjungta"}
+                {values.isEnabled ? t("content.ui.enabled") : t("content.ui.disabled")}
               </Label>
               <Switch
                 id={`enabled-${dirtyKey}`}
@@ -187,7 +187,7 @@ export function ContentTemplateCard({
         <CardContent className="space-y-4">
           {def.hasSubject && (
             <div className="space-y-1.5">
-              <Label htmlFor={`subject-${dirtyKey}`}>Laiško tema</Label>
+              <Label htmlFor={`subject-${dirtyKey}`}>{t("content.ui.subject")}</Label>
               <Input
                 id={`subject-${dirtyKey}`}
                 disabled={disabled}
@@ -202,7 +202,7 @@ export function ContentTemplateCard({
 
           {(def.fields ?? []).map((f) => (
             <div key={f.name} className="space-y-1.5">
-              <Label htmlFor={`f-${dirtyKey}-${f.name}`}>{f.label}</Label>
+              <Label htmlFor={`f-${dirtyKey}-${f.name}`}>{t(f.labelKey)}</Label>
               {f.type === "textarea" ? (
                 <Textarea
                   id={`f-${dirtyKey}-${f.name}`}
@@ -230,7 +230,7 @@ export function ContentTemplateCard({
 
           {def.hasRichText && (
             <div className="space-y-1.5">
-              <Label>Turinys</Label>
+              <Label>{t("content.ui.body")}</Label>
               <RichTextEditor
                 value={values.content ?? ""}
                 disabled={disabled}
@@ -248,7 +248,7 @@ export function ContentTemplateCard({
 
           {!def.hasRichText && def.category === "whatsapp" && (
             <div className="space-y-1.5">
-              <Label htmlFor={`content-${dirtyKey}`}>Žinutės tekstas</Label>
+              <Label htmlFor={`content-${dirtyKey}`}>{t("content.ui.whatsappBody")}</Label>
               <Textarea
                 id={`content-${dirtyKey}`}
                 rows={5}
@@ -278,13 +278,13 @@ export function ContentTemplateCard({
               onClick={() => window.open(linkUrl, "_blank", "noopener,noreferrer")}
             >
               <ExternalLink className="mr-2 h-4 w-4" />
-              Atidaryti nuorodą
+              {t("content.ui.openLink")}
             </Button>
           )}
           {(def.hasRichText || def.category === "whatsapp") && (
             <Button type="button" variant="outline" onClick={() => setPreviewOpen(true)}>
               <Eye className="mr-2 h-4 w-4" />
-              Peržiūra
+              {t("content.ui.preview")}
             </Button>
           )}
           {def.canTestSend && (
@@ -295,7 +295,7 @@ export function ContentTemplateCard({
               onClick={() => setTestOpen(true)}
             >
               <Send className="mr-2 h-4 w-4" />
-              Siųsti testinį laišką
+              {t("content.ui.sendTest")}
             </Button>
           )}
           {def.canTestWhatsapp && (
@@ -306,7 +306,7 @@ export function ContentTemplateCard({
               onClick={() => setWaOpen(true)}
             >
               <Send className="mr-2 h-4 w-4" />
-              Siųsti testinę WhatsApp žinutę
+              {t("content.ui.sendTestWhatsapp")}
             </Button>
           )}
           <Button type="submit" disabled={disabled}>
@@ -315,7 +315,7 @@ export function ContentTemplateCard({
             ) : (
               <Save className="mr-2 h-4 w-4" />
             )}
-            {saving ? "Saugoma…" : "Išsaugoti"}
+            {saving ? t("content.ui.saving") : t("content.ui.save")}
           </Button>
         </CardFooter>
         </>
@@ -329,9 +329,9 @@ export function ContentTemplateCard({
             entityId={record.id}
             fields={[
               ...(def.hasSubject
-                ? [{ field: "subject", label: "Laiško tema" }]
+                ? [{ field: "subject", label: t("content.ui.subject") }]
                 : []),
-              { field: "content", label: "Turinys", multiline: true, html: def.hasRichText },
+              { field: "content", label: t("content.ui.body"), multiline: true, html: def.hasRichText },
             ]}
             originals={{ subject: record.subject ?? "", content: record.content ?? "" }}
             showVariables={showVariables}
@@ -339,16 +339,16 @@ export function ContentTemplateCard({
         </div>
       ) : (
         <p className="border-t px-6 py-4 text-sm text-muted-foreground">
-          Vertimus bus galima suvesti, kai šis šablonas bus bent kartą išsaugotas.
+          {t("content.ui.translationsHint")}
         </p>
       ))}
 
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Peržiūra — {t(def.titleKey)}</DialogTitle>
+            <DialogTitle>{t("content.ui.previewTitle", { name: t(def.titleKey) })}</DialogTitle>
             <DialogDescription>
-              Kintamieji pakeisti pavyzdinėmis reikšmėmis.
+              {t("content.ui.previewDescription")}
             </DialogDescription>
           </DialogHeader>
           {def.hasSubject && (
@@ -372,24 +372,24 @@ export function ContentTemplateCard({
       <Dialog open={testOpen} onOpenChange={setTestOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Testinis laiškas</DialogTitle>
+            <DialogTitle>{t("content.ui.testTitle")}</DialogTitle>
             <DialogDescription>
-              Laiškas bus išsiųstas su pavyzdinėmis kintamųjų reikšmėmis.
+              {t("content.ui.testDescription")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-1.5">
-            <Label htmlFor={`test-${dirtyKey}`}>Gavėjo el. paštas</Label>
+            <Label htmlFor={`test-${dirtyKey}`}>{t("content.ui.recipientEmail")}</Label>
             <Input
               id={`test-${dirtyKey}`}
               type="email"
               value={testEmail}
-              placeholder="vardas@pastas.lt"
+              placeholder={t("content.ui.emailPlaceholder")}
               onChange={(e) => setTestEmail(e.target.value)}
             />
           </div>
           <DialogFooter>
             <Button variant="outline" type="button" onClick={() => setTestOpen(false)}>
-              Atšaukti
+              {t("content.ui.cancel")}
             </Button>
             <Button
               type="button"
@@ -397,7 +397,7 @@ export function ContentTemplateCard({
               onClick={async () => {
                 await onSendTest({
                   to: testEmail,
-                  subject: values.subject ?? def.title,
+                  subject: values.subject ?? t(def.titleKey),
                   html: values.content ?? "",
                 });
                 setTestOpen(false);
@@ -408,7 +408,7 @@ export function ContentTemplateCard({
               ) : (
                 <Send className="mr-2 h-4 w-4" />
               )}
-              Siųsti
+              {t("content.ui.send")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -417,23 +417,22 @@ export function ContentTemplateCard({
       <Dialog open={waOpen} onOpenChange={setWaOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Testinė WhatsApp žinutė</DialogTitle>
+            <DialogTitle>{t("content.ui.waTitle")}</DialogTitle>
             <DialogDescription>
-              Įveskite gavėjo telefono numerį — atidarysime WhatsApp su paruošta žinute
-              (kintamieji pakeisti pavyzdinėmis reikšmėmis).
+              {t("content.ui.waDescription")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-1.5">
-            <Label htmlFor={`wa-${dirtyKey}`}>Gavėjo telefono nr.</Label>
+            <Label htmlFor={`wa-${dirtyKey}`}>{t("content.ui.recipientPhone")}</Label>
             <Input
               id={`wa-${dirtyKey}`}
               type="tel"
               value={waPhone}
-              placeholder="+370 600 00000"
+              placeholder={t("content.ui.phonePlaceholder")}
               onChange={(e) => setWaPhone(e.target.value)}
             />
             <p className="text-xs text-muted-foreground">
-              Su šalies kodu, pvz. +370 600 00000.
+              {t("content.ui.phoneHint")}
             </p>
           </div>
           <p className="max-h-40 overflow-y-auto whitespace-pre-wrap rounded-md border p-3 text-sm">
@@ -441,7 +440,7 @@ export function ContentTemplateCard({
           </p>
           <DialogFooter>
             <Button variant="outline" type="button" onClick={() => setWaOpen(false)}>
-              Atšaukti
+              {t("content.ui.cancel")}
             </Button>
             <Button
               type="button"
@@ -456,7 +455,7 @@ export function ContentTemplateCard({
               }}
             >
               <Send className="mr-2 h-4 w-4" />
-              Atidaryti WhatsApp
+              {t("content.ui.openWhatsapp")}
             </Button>
           </DialogFooter>
         </DialogContent>

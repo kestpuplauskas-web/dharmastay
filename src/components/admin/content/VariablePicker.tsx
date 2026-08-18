@@ -13,7 +13,7 @@ export function VariablePicker({
   return (
     <div className="space-y-2">
       <p className="text-xs font-medium text-muted-foreground">
-        Palaikomi kintamieji — spustelėkite, kad įterptumėte
+        {t("content.ui.variablesHint")}
       </p>
       <div className="flex flex-wrap gap-1.5">
         {CONTENT_VARIABLES.map((v) => (

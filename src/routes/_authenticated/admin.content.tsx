@@ -52,7 +52,7 @@ export const Route = createFileRoute("/_authenticated/admin/content")({
 
 function ContentPage() {
   const { t } = useTranslation();
-  useBrandedTitle("Turinys");
+  useBrandedTitle(t("content.ui.title"));
   const fetchRole = useServerFn(getMyRole);
   const fetchTemplates = useServerFn(listContentTemplates);
   const saveTemplate = useServerFn(saveContentTemplate);
@@ -87,17 +87,17 @@ function ContentPage() {
     }) => saveTemplate({ data: vars }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["content-templates"] });
-      toast.success("Turinys išsaugotas.");
+      toast.success(t("content.ui.saved"));
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Nepavyko išsaugoti."),
+    onError: (e) => toast.error(e instanceof Error ? e.message : t("content.ui.saveFailed")),
   });
 
   const testSend = useMutation({
     mutationFn: (vars: { to: string; subject: string; html: string }) =>
       sendTest({ data: vars }),
-    onSuccess: () => toast.success("Testinis laiškas išsiųstas."),
+    onSuccess: () => toast.success(t("content.ui.testSent")),
     onError: (e) =>
-      toast.error(e instanceof Error ? e.message : "Nepavyko išsiųsti testinio laiško."),
+      toast.error(e instanceof Error ? e.message : t("content.ui.testFailed")),
   });
 
   const onDirtyChange = useCallback((key: string, dirty: boolean) => {
@@ -121,11 +121,10 @@ function ContentPage() {
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-semibold">
             <FileText className="h-6 w-6 text-primary" />
-            Turinys
+            {t("content.ui.title")}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Informacija, siunčiama klientams el. paštu, WhatsApp žinutėmis ar rodoma svečiui.
-            Nustatymai galioja visiems objektams.
+{t("content.ui.pageDescription")}
           </p>
         </div>
       </header>
@@ -160,7 +159,7 @@ function ContentPage() {
           {loading ? (
             <div className="flex items-center gap-2 p-6 text-sm text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" />
-              Kraunama…
+              {t("content.ui.loading")}
             </div>
           ) : (
             sectionTemplates.map((def) => (
@@ -194,14 +193,14 @@ function ContentPage() {
       <AlertDialog open={status === "blocked"}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Neišsaugoti pakeitimai</AlertDialogTitle>
+            <AlertDialogTitle>{t("content.ui.unsavedTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Turite neišsaugotų pakeitimų. Ar tikrai norite išeiti?
+              {t("content.ui.unsavedBody")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => reset?.()}>Likti</AlertDialogCancel>
-            <AlertDialogAction onClick={() => proceed?.()}>Išeiti</AlertDialogAction>
+            <AlertDialogCancel onClick={() => reset?.()}>{t("content.ui.stay")}</AlertDialogCancel>
+            <AlertDialogAction onClick={() => proceed?.()}>{t("content.ui.leave")}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
