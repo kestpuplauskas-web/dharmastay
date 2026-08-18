@@ -97,7 +97,7 @@ function PropertiesList() {
   const del = useMutation({
     mutationFn: (id: string) => remove({ data: { id } }),
     onSuccess: () => {
-      toast.success("Objektas pašalintas");
+      toast.success(t("properties.deleted"));
       refetch();
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : String(e)),
@@ -139,9 +139,9 @@ function PropertiesList() {
     try {
       const url = `${window.location.origin}/properties/${id}`;
       await navigator.clipboard.writeText(url);
-      toast.success("Nuoroda nukopijuota");
+      toast.success(t("properties.copied"));
     } catch {
-      toast.error("Nepavyko nukopijuoti");
+      toast.error(t("properties.copyFailed"));
     }
   };
 
@@ -149,15 +149,15 @@ function PropertiesList() {
     <div className="space-y-6">
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
         <div className="min-w-0">
-          <h1 className="truncate text-2xl font-semibold">Objektai</h1>
+          <h1 className="truncate text-2xl font-semibold">{t("properties.title")}</h1>
           <p className="text-sm text-muted-foreground">
-            {props.length} {props.length === 1 ? "objektas" : "objektų"} iš viso
+            {t("properties.count", { count: props.length })}
           </p>
         </div>
         <Button asChild>
           <Link to="/admin/properties/new">
             <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">Naujas objektas</span>
+            <span className="hidden sm:inline">{t("properties.new")}</span>
           </Link>
         </Button>
       </header>
@@ -168,16 +168,16 @@ function PropertiesList() {
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Ieškoti pagal pavadinimą ar miestą…"
+            placeholder={t("properties.searchPlaceholder")}
             className="pl-9"
           />
         </div>
         <Select value={typeFilter} onValueChange={setTypeFilter}>
           <SelectTrigger className="w-full sm:w-[170px]">
-            <SelectValue placeholder="Tipas" />
+            <SelectValue placeholder={t("properties.typePlaceholder")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Visi tipai</SelectItem>
+            <SelectItem value="all">{t("properties.allTypes")}</SelectItem>
             {PROPERTY_TYPES.map((ty) => (
               <SelectItem key={ty.value} value={ty.value}>
                 {t(ty.labelKey)}
@@ -187,23 +187,23 @@ function PropertiesList() {
         </Select>
         <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as StatusFilter)}>
           <SelectTrigger className="w-full sm:w-[150px]">
-            <SelectValue placeholder="Būsena" />
+            <SelectValue placeholder={t("properties.statusPlaceholder")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Visos būsenos</SelectItem>
-            <SelectItem value="active">Aktyvus</SelectItem>
-            <SelectItem value="inactive">Neaktyvus</SelectItem>
+            <SelectItem value="all">{t("properties.allStatuses")}</SelectItem>
+            <SelectItem value="active">{t("properties.active")}</SelectItem>
+            <SelectItem value="inactive">{t("properties.inactive")}</SelectItem>
           </SelectContent>
         </Select>
         <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
           <SelectTrigger className="w-full sm:w-[180px]">
-            <SelectValue placeholder="Rūšiuoti" />
+            <SelectValue placeholder={t("properties.sortPlaceholder")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="newest">Numatytas rikiavimas</SelectItem>
-            <SelectItem value="name-asc">Pavadinimas A–Z</SelectItem>
-            <SelectItem value="price-asc">Kaina ↑</SelectItem>
-            <SelectItem value="price-desc">Kaina ↓</SelectItem>
+            <SelectItem value="newest">{t("properties.sortDefault")}</SelectItem>
+            <SelectItem value="name-asc">{t("properties.sortNameAsc")}</SelectItem>
+            <SelectItem value="price-asc">{t("properties.sortPriceAsc")}</SelectItem>
+            <SelectItem value="price-desc">{t("properties.sortPriceDesc")}</SelectItem>
           </SelectContent>
         </Select>
         <ToggleGroup
@@ -213,10 +213,10 @@ function PropertiesList() {
           className="sm:ml-auto"
           variant="outline"
         >
-          <ToggleGroupItem value="grid" aria-label="Kortelės">
+          <ToggleGroupItem value="grid" aria-label={t("properties.viewGrid")}>
             <LayoutGrid className="h-4 w-4" />
           </ToggleGroupItem>
-          <ToggleGroupItem value="table" aria-label="Lentelė">
+          <ToggleGroupItem value="table" aria-label={t("properties.viewTable")}>
             <ListIcon className="h-4 w-4" />
           </ToggleGroupItem>
         </ToggleGroup>
@@ -235,18 +235,18 @@ function PropertiesList() {
       <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Šalinti objektą?</AlertDialogTitle>
+            <AlertDialogTitle>{t("properties.deleteTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {toDelete ? `„${toDelete.name}" bus negrįžtamai pašalintas.` : ""}
+              {toDelete ? t("properties.deleteDesc", { name: toDelete.name }) : ""}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Atšaukti</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => toDelete && del.mutate(toDelete.id)}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Šalinti
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -256,6 +256,7 @@ function PropertiesList() {
 }
 
 function StatusBadge({ active }: { active: boolean }) {
+  const { t } = useTranslation();
   return (
     <Badge
       variant="secondary"
@@ -266,7 +267,7 @@ function StatusBadge({ active }: { active: boolean }) {
           : "bg-muted text-muted-foreground",
       )}
     >
-      {active ? "Aktyvus" : "Neaktyvus"}
+      {active ? t("properties.active") : t("properties.inactive")}
     </Badge>
   );
 }
@@ -296,24 +297,25 @@ function RowActions({
   onDelete: (v: { id: string; name: string }) => void;
   onCopy: (id: string) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Daugiau veiksmų">
+        <Button variant="ghost" size="icon" aria-label={t("properties.moreActions")}>
           <MoreVertical className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => onCopy(p.id)}>
           <Copy className="h-4 w-4" />
-          Kopijuoti nuorodą
+          {t("properties.copyLink")}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => onDelete({ id: p.id, name: p.name })}
           className="text-destructive focus:text-destructive"
         >
           <Trash2 className="h-4 w-4" />
-          Šalinti
+          {t("common.delete")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -366,14 +368,14 @@ function GridView({
             </div>
             <div className="text-lg font-bold">
               {p.pricePerNight.toFixed(0)} €{" "}
-              <span className="text-xs font-normal text-muted-foreground">/ naktis</span>
+              <span className="text-xs font-normal text-muted-foreground">{t("properties.perNight")}</span>
             </div>
           </CardContent>
           <CardFooter className="flex items-center justify-between gap-2 border-t pt-4">
             <Button asChild variant="secondary" size="sm" className="flex-1">
               <Link to="/admin/properties/$id/edit" params={{ id: p.id }}>
                 <Pencil className="h-4 w-4" />
-                Redaguoti
+                {t("common.edit")}
               </Link>
             </Button>
             <RowActions p={p} onDelete={onDelete} onCopy={onCopy} />
@@ -400,13 +402,13 @@ function TableView({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Objektas</TableHead>
-            <TableHead>Tipas</TableHead>
-            <TableHead>Miestas</TableHead>
-            <TableHead>Talpa</TableHead>
-            <TableHead className="text-right">Kaina/naktis</TableHead>
-            <TableHead>Būsena</TableHead>
-            <TableHead className="w-[120px] text-right">Veiksmai</TableHead>
+            <TableHead>{t("properties.table.property")}</TableHead>
+            <TableHead>{t("properties.table.type")}</TableHead>
+            <TableHead>{t("properties.table.city")}</TableHead>
+            <TableHead>{t("properties.table.capacity")}</TableHead>
+            <TableHead className="text-right">{t("properties.table.price")}</TableHead>
+            <TableHead>{t("properties.table.status")}</TableHead>
+            <TableHead className="w-[120px] text-right">{t("properties.table.actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -449,7 +451,7 @@ function TableView({
                   <Button
                     variant="ghost"
                     size="icon"
-                    aria-label="Redaguoti"
+                    aria-label={t("common.edit")}
                     onClick={() =>
                       navigate({ to: "/admin/properties/$id/edit", params: { id: p.id } })
                     }
@@ -459,7 +461,7 @@ function TableView({
                   <Button
                     variant="ghost"
                     size="icon"
-                    aria-label="Šalinti"
+                    aria-label={t("common.delete")}
                     onClick={() => onDelete({ id: p.id, name: p.name })}
                     className="text-destructive hover:text-destructive"
                   >
@@ -477,14 +479,15 @@ function TableView({
 }
 
 function EmptyState() {
+  const { t } = useTranslation();
   return (
     <div className="rounded-lg border border-dashed bg-card p-10 text-center">
-      <h3 className="text-lg font-semibold">Dar nėra objektų</h3>
-      <p className="mt-1 text-sm text-muted-foreground">Pridėkite pirmą objektą, kad pradėtumėte.</p>
+      <h3 className="text-lg font-semibold">{t("properties.emptyTitle")}</h3>
+      <p className="mt-1 text-sm text-muted-foreground">{t("properties.emptyText")}</p>
       <Button asChild className="mt-4">
         <Link to="/admin/properties/new">
           <Plus className="h-4 w-4" />
-          Naujas objektas
+          {t("properties.new")}
         </Link>
       </Button>
     </div>
@@ -492,12 +495,13 @@ function EmptyState() {
 }
 
 function NoResults({ onClear }: { onClear: () => void }) {
+  const { t } = useTranslation();
   return (
     <div className="rounded-lg border border-dashed bg-card p-10 text-center">
-      <h3 className="text-lg font-semibold">Nerasta objektų pagal filtrus</h3>
-      <p className="mt-1 text-sm text-muted-foreground">Pabandykite pakeisti paiešką arba filtrus.</p>
+      <h3 className="text-lg font-semibold">{t("properties.noResultsTitle")}</h3>
+      <p className="mt-1 text-sm text-muted-foreground">{t("properties.noResultsText")}</p>
       <Button variant="outline" className="mt-4" onClick={onClear}>
-        Išvalyti filtrus
+        {t("properties.clearFilters")}
       </Button>
     </div>
   );

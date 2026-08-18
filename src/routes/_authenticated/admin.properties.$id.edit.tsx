@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -16,6 +17,7 @@ export const Route = createFileRoute("/_authenticated/admin/properties/$id/edit"
 });
 
 function EditPropertyPage() {
+  const { t } = useTranslation();
   const { id } = useParams({ from: "/_authenticated/admin/properties/$id/edit" });
   const fetchOne = useServerFn(getPropertyForEdit);
   const update = useServerFn(updateProperty);
@@ -48,14 +50,14 @@ function EditPropertyPage() {
     onSuccess: () => refetch(),
   });
 
-  if (isLoading) return <p className="text-muted-foreground">Kraunama…</p>;
-  if (!prop) return <p>Nerasta.</p>;
+  if (isLoading) return <p className="text-muted-foreground">{t("common.loading")}</p>;
+  if (!prop) return <p>{t("properties.notFound")}</p>;
 
   const extraFields: TranslatableFieldDef[] = (prop.extraServices ?? [])
     .filter((s) => s.name?.trim())
     .map((s) => ({
       field: extraServiceField(s.name),
-      label: `Papildoma paslauga: ${s.name}`,
+      label: t("properties.extraServiceLabel", { name: s.name }),
     }));
 
   const translatableFields = [...PROPERTY_TRANSLATABLE_FIELDS, ...extraFields];
@@ -74,7 +76,7 @@ function EditPropertyPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold">Redaguoti: {prop.name}</h1>
+      <h1 className="mb-6 text-2xl font-semibold">{t("properties.editTitle", { name: prop.name })}</h1>
       <PropertyForm
         initial={propertyToForm(prop)}
         onSubmit={(v) => m.mutate(v)}
@@ -87,9 +89,7 @@ function EditPropertyPage() {
         }}
       />
       <p className="mt-6 text-sm text-muted-foreground">
-        Papildomų paslaugų vertimai rišami prie išsaugotų pavadinimų. Jei ką tik
-        pridėjote ar pervadinote paslaugą, pirmiausia išsaugokite objektą — tik tada
-        ji atsiras vertimų sąraše.
+        {t("properties.translationsNote")}
       </p>
       <div className="mt-3">
         <TranslationPanel

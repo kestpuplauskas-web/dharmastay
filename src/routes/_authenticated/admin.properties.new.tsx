@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -9,6 +10,7 @@ export const Route = createFileRoute("/_authenticated/admin/properties/new")({
 });
 
 function NewPropertyPage() {
+  const { t } = useTranslation();
   const create = useServerFn(createProperty);
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -27,7 +29,7 @@ function NewPropertyPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold">Naujas objektas</h1>
+      <h1 className="mb-6 text-2xl font-semibold">{t("properties.newTitle")}</h1>
       <PropertyForm
         initial={propertyToForm(null)}
         onSubmit={(v) => m.mutate(v)}
