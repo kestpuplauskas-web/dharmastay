@@ -2,7 +2,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { listBookings, deleteBooking, rescheduleBooking, BOOKING_STATUSES } from "@/lib/bookings.functions";
+import { useTranslation } from "react-i18next";
+import {
+  listBookings,
+  deleteBooking,
+  rescheduleBooking,
+  BOOKING_STATUSES,
+  BOOKING_STATUS_LABEL_KEYS,
+  BOOKING_SOURCE_LABEL_KEYS,
+} from "@/lib/bookings.functions";
 import { listAllProperties } from "@/lib/properties.functions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,24 +27,11 @@ export const Route = createFileRoute("/_authenticated/admin/bookings/")({
   component: BookingsPage,
 });
 
-const STATUS_LABELS: Record<string, string> = {
-  confirmed: "Apmokėta",
-  pending: "Laukiama apmokėjimo",
-  completed: "Užbaigta",
-  cancelled: "Atšaukta",
-};
 const STATUS_CLASS: Record<string, string> = {
   confirmed: "bg-primary/15 text-primary border-primary/30",
   pending: "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30",
   completed: "bg-muted text-muted-foreground border-border",
   cancelled: "bg-destructive/15 text-destructive border-destructive/30",
-};
-const SOURCE_LABELS: Record<string, string> = {
-  phone: "Telefonas",
-  whatsapp: "WhatsApp",
-  direct: "Tiesiogiai",
-  website: "Svetainė",
-  other: "Kita",
 };
 
 function durationDays(from?: string | null, to?: string | null) {
