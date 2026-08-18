@@ -31,6 +31,7 @@ export const Route = createFileRoute("/api/public/v1/bookings")({
               company_code: z.string().trim().max(50).default(""),
               company_vat_code: z.string().trim().max(50).default(""),
               company_address: z.string().trim().max(300).default(""),
+              language: z.string().trim().max(5).optional(),
             }).superRefine((d, ctx) => {
               if (d.is_company) {
                 if (!d.company_name.trim()) {
@@ -83,6 +84,21 @@ export const Route = createFileRoute("/api/public/v1/bookings")({
             }
 
             const { computeQuote } = await import("@/lib/booking-pricing");
+            const { loadDefaultLanguage, loadTranslations, buildExtraNameResolver } = await import(
+              "@/lib/translations.server"
+            );
+            const defaultLang = await loadDefaultLanguage();
+            const lang = d.language ?? defaultLang;
+
+            // Išverstus paslaugų pavadinimus paverčiame atgal į originalius —
+            // kainos skaičiuojamos pagal properties.extra_services[].name.
+            let selectedExtras = d.extras;
+            if (lang !== defaultLang) {
+              const tr = await loadTranslations("property", [d.property_id], lang);
+              const toOriginal = buildExtraNameResolver(tr[d.property_id]);
+              selectedExtras = d.extras.map((e) => ({ ...e, name: toOriginal(e.name) }));
+            }
+
             const quote = computeQuote({
               pricePerNight: Number(prop.price_per_night),
               priceTiers: (prop.price_tiers as never) ?? [],
@@ -92,7 +108,7 @@ export const Route = createFileRoute("/api/public/v1/bookings")({
               adults: d.adults,
               children: d.children,
               infants: d.infants,
-              selectedExtras: d.extras,
+              selectedExtras,
             });
 
             const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -127,6 +143,7 @@ export const Route = createFileRoute("/api/public/v1/bookings")({
                 bic: d.bic ?? null,
                 expires_at: expiresAt,
                 booking_number: "",
+                language: lang,
                 extras: quote.extras,
                 extras_total: quote.extras_total,
               })

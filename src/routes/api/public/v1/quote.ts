@@ -22,6 +22,7 @@ export const Route = createFileRoute("/api/public/v1/quote")({
               children: z.number().int().min(0).max(50).default(0),
               infants: z.number().int().min(0).max(50).default(0),
               extras: z.array(z.object({ name: z.string().trim().min(1).max(100) })).max(20).default([]),
+              language: z.string().trim().max(5).optional(),
             });
             let body: unknown;
             try {
@@ -54,6 +55,24 @@ export const Route = createFileRoute("/api/public/v1/quote")({
             }
 
             const { computeQuote } = await import("@/lib/booking-pricing");
+            const { loadDefaultLanguage, loadTranslations, buildExtraNameResolver } = await import(
+              "@/lib/translations.server"
+            );
+            const defaultLang = await loadDefaultLanguage();
+            const lang = d.language ?? defaultLang;
+
+            // Kai naršoma ne originalo kalba, klientas atsiunčia IŠVERSTUS paslaugų
+            // pavadinimus. Juos būtina paversti atgal į originalius, nes kainos
+            // skaičiuojamos lyginant su properties.extra_services[].name.
+            let selectedExtras = d.extras;
+            let extraTr: Record<string, string> | undefined;
+            if (lang !== defaultLang) {
+              const tr = await loadTranslations("property", [d.property_id], lang);
+              extraTr = tr[d.property_id];
+              const toOriginal = buildExtraNameResolver(extraTr);
+              selectedExtras = d.extras.map((e) => ({ ...e, name: toOriginal(e.name) }));
+            }
+
             const quote = computeQuote({
               pricePerNight: Number(prop.price_per_night),
               priceTiers: (prop.price_tiers as never) ?? [],
@@ -63,7 +82,7 @@ export const Route = createFileRoute("/api/public/v1/quote")({
               adults: d.adults,
               children: d.children,
               infants: d.infants,
-              selectedExtras: d.extras,
+              selectedExtras,
             });
 
             const { occupiedRangesFor, rangesOverlap } = await import("@/lib/api-public.server");
@@ -72,7 +91,18 @@ export const Route = createFileRoute("/api/public/v1/quote")({
               rangesOverlap(d.date_from, d.date_to, o.date_from, o.date_to),
             );
 
-            return apiJson({ data: { ...quote, currency: "EUR", available } }, 200, headers);
+            const { extraServiceField } = await import("@/lib/translations");
+            const quoteOut = extraTr
+              ? {
+                  ...quote,
+                  extras: quote.extras.map((e) => {
+                    const t = extraTr![extraServiceField(e.name)];
+                    return t?.trim() ? { ...e, name: t } : e;
+                  }),
+                }
+              : quote;
+
+            return apiJson({ data: { ...quoteOut, currency: "EUR", available } }, 200, headers);
           },
           { rateLimit: 120 },
         );
