@@ -7,7 +7,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
+import { getPublicBranding } from "@/lib/property-settings.functions";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { PLATFORM_NAME } from "@/lib/brand";
 import { useTranslation } from "react-i18next";
@@ -22,6 +23,12 @@ function LoginPage() {
   const navigate = useNavigate();
   const fetchRole = useServerFn(getMyRole);
   const sendReset = useServerFn(requestPasswordReset);
+  const fetchBranding = useServerFn(getPublicBranding);
+  const { data: branding } = useQuery({
+    queryKey: ["public-branding"],
+    queryFn: () => fetchBranding(),
+    staleTime: 5 * 60 * 1000,
+  });
   const [mode, setMode] = useState<"login" | "forgot">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -70,53 +77,92 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen grid place-items-center bg-background px-4">
-      <Card className="w-full max-w-md">
-        <CardContent className="p-6 space-y-5">
+    <div className="min-h-screen bg-background lg:grid lg:grid-cols-2">
+      {/* Kairė pusė — prisijungimas */}
+      <div className="flex min-h-screen items-center justify-center px-6 py-12 lg:min-h-0">
+        <div className="w-full max-w-sm space-y-6">
           <div>
-            <h1 className="text-2xl font-bold">
+            <h1 className="text-3xl font-bold tracking-tight">
               {mode === "login" ? t("auth.loginTitle") : t("auth.forgotTitle")}
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              {mode === "forgot"
-                ? t("auth.forgotSubtitle")
-                : t("auth.loginSubtitle")}
+            <p className="mt-2 text-sm text-muted-foreground">
+              {mode === "forgot" ? t("auth.forgotSubtitle") : t("auth.loginSubtitle")}
             </p>
           </div>
-          <form onSubmit={submit} className="space-y-3">
+          <form onSubmit={submit} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="email">{t("auth.email")}</Label>
-              <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
             {mode !== "forgot" && (
               <div className="space-y-1.5">
                 <Label htmlFor="pw">{t("auth.password")}</Label>
-                <Input id="pw" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
+                <Input
+                  id="pw"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  minLength={6}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
               </div>
             )}
-            <Button type="submit" className="w-full" disabled={busy}>
+            <Button type="submit" className="w-full" size="lg" disabled={busy}>
               {busy ? t("auth.busy") : mode === "login" ? t("auth.submitLogin") : t("auth.submitReset")}
             </Button>
           </form>
-          <div className="text-sm text-center text-muted-foreground space-y-2">
-            {mode === "login" && (
-              <div>
-                <button type="button" className="underline" onClick={() => setMode("forgot")}>
-                  {t("auth.forgotLink")}
-                </button>
-              </div>
-            )}
-            {mode === "forgot" && (
+          <div className="space-y-2 text-center text-sm text-muted-foreground">
+            {mode === "login" ? (
+              <button type="button" className="underline" onClick={() => setMode("forgot")}>
+                {t("auth.forgotLink")}
+              </button>
+            ) : (
               <button type="button" className="underline" onClick={() => setMode("login")}>
                 {t("auth.backToLogin")}
               </button>
             )}
+            <div>
+              <Link to="/" className="text-xs hover:underline">
+                {t("auth.home")}
+              </Link>
+            </div>
           </div>
-          <div className="text-center">
-            <Link to="/" className="text-xs text-muted-foreground hover:underline">{t("auth.home")}</Link>
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+
+      {/* Dešinė pusė — prekės ženklo logotipas */}
+      <div className="relative hidden items-center justify-center overflow-hidden bg-muted lg:flex">
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,color-mix(in_oklab,var(--primary)_22%,transparent),transparent_60%),radial-gradient(circle_at_80%_80%,color-mix(in_oklab,var(--primary)_14%,transparent),transparent_55%)]"
+        />
+        <div className="relative flex flex-col items-center gap-6 px-12 text-center">
+          {branding?.logoUrl ? (
+            <img
+              src={branding.logoUrl}
+              alt={branding.displayName || PLATFORM_NAME}
+              className="max-h-40 w-auto max-w-[22rem] object-contain drop-shadow-sm"
+            />
+          ) : (
+            <span className="text-4xl font-bold tracking-tight text-foreground">
+              {branding?.displayName || PLATFORM_NAME}
+            </span>
+          )}
+          {branding?.logoUrl && branding.displayName ? (
+            <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground">
+              {branding.displayName}
+            </p>
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 }
