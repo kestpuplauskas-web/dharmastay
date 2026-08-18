@@ -320,7 +320,7 @@ export function ContentTemplateCard({
         )}
       </form>
 
-      {record?.id ? (
+      {open && (record?.id ? (
         <div className="border-t p-6 pt-6">
           <TranslationPanel
             entityType="content_template"
@@ -329,7 +329,7 @@ export function ContentTemplateCard({
               ...(def.hasSubject
                 ? [{ field: "subject", label: "Laiško tema" }]
                 : []),
-              { field: "content", label: "Turinys", multiline: true },
+              { field: "content", label: "Turinys", multiline: true, html: def.hasRichText },
             ]}
             originals={{ subject: record.subject ?? "", content: record.content ?? "" }}
           />
@@ -338,7 +338,7 @@ export function ContentTemplateCard({
         <p className="border-t px-6 py-4 text-sm text-muted-foreground">
           Vertimus bus galima suvesti, kai šis šablonas bus bent kartą išsaugotas.
         </p>
-      )}
+      ))}
 
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
         <DialogContent className="max-w-2xl">
