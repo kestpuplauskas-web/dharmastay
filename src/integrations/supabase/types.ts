@@ -323,6 +323,39 @@ export type Database = {
         }
         Relationships: []
       }
+      content_translations: {
+        Row: {
+          entity_id: string
+          entity_type: string
+          field: string
+          id: string
+          lang: string
+          updated_at: string
+          updated_by: string | null
+          value: string
+        }
+        Insert: {
+          entity_id: string
+          entity_type: string
+          field: string
+          id?: string
+          lang: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: string
+        }
+        Update: {
+          entity_id?: string
+          entity_type?: string
+          field?: string
+          id?: string
+          lang?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: string
+        }
+        Relationships: []
+      }
       contract_templates: {
         Row: {
           content: string
