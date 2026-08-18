@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { getPropertySettings } from "@/lib/property-settings.functions";
+import { useDefaultLanguage } from "@/hooks/useDefaultLanguage";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
@@ -14,6 +15,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 function AdminLayout() {
   const { t } = useTranslation();
+  useDefaultLanguage();
   const fetchRole = useServerFn(getMyRole);
   const { data: role, isLoading } = useQuery({
     queryKey: ["my-role"],
