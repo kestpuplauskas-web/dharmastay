@@ -3,6 +3,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Pencil } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { BOOKING_STATUS_LABEL_KEYS } from "@/lib/bookings.functions";
 
 type Booking = {
   id: string;
@@ -39,14 +41,6 @@ type BarDrag = {
   fromISO: string;
   toISO: string;
   moved: boolean;
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  confirmed: "Apmokėta",
-  pending: "Laukiama apmokėjimo",
-  completed: "Užbaigta",
-  cancelled: "Atšaukta",
-  blocked_external: "Išorinė / užblokuota",
 };
 
 const STATUS_CLASSES: Record<string, string> = {
