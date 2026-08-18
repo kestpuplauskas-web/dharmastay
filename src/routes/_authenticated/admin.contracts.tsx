@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -37,18 +38,18 @@ export const Route = createFileRoute("/_authenticated/admin/contracts")({
   component: ContractsPage,
 });
 
-const VARIABLES: { key: string; label: string }[] = [
-  { key: "{{kliento_vardas}}", label: "Kliento vardas" },
-  { key: "{{objektas}}", label: "Objektas" },
-  { key: "{{vieta}}", label: "Vieta" },
-  { key: "{{nuo}}", label: "Nuo" },
-  { key: "{{iki}}", label: "Iki" },
-  { key: "{{naktys}}", label: "Naktų skaičius" },
-  { key: "{{sveciai}}", label: "Svečių skaičius" },
-  { key: "{{suma}}", label: "Suma €" },
-  { key: "{{rezervacijos_nr}}", label: "Rezervacijos Nr." },
-  { key: "{{data}}", label: "Data (šiandien)" },
-];
+const VARIABLES: { key: string; labelKey: string }[] = [
+  "kliento_vardas",
+  "objektas",
+  "vieta",
+  "nuo",
+  "iki",
+  "naktys",
+  "sveciai",
+  "suma",
+  "rezervacijos_nr",
+  "data",
+].map((k) => ({ key: `{{${k}}}`, labelKey: `contracts.vars.${k}` }));
 
 type Template = {
   id: string;
@@ -60,13 +61,14 @@ type Template = {
   created_at: string;
 };
 
-const KIND_LABEL: Record<string, string> = {
-  rental: "Nuomos sutartis",
-  privacy: "Privatumo politika",
+const KIND_LABEL_KEYS: Record<string, string> = {
+  rental: "contracts.kindRental",
+  privacy: "contracts.kindPrivacy",
 };
 
 function ContractsPage() {
-  useBrandedTitle("Sutartys");
+  const { t: tr } = useTranslation();
+  useBrandedTitle(tr("contracts.title"));
   const fetchList = useServerFn(listContractTemplates);
   const upsertFn = useServerFn(upsertContractTemplate);
   const deleteFn = useServerFn(deleteContractTemplate);
@@ -86,17 +88,17 @@ function ContractsPage() {
   const saveM = useMutation({
     mutationFn: (data: any) => upsertFn({ data }),
     onSuccess: (_r, vars: any) => {
-      toast.success(vars?.id ? "Šablonas atnaujintas" : "Šablonas sukurtas");
+      toast.success(vars?.id ? tr("contracts.updated") : tr("contracts.created_toast"));
       invalidate();
       setCreating(false);
       setEditing(null);
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Klaida"),
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("contracts.error")),
   });
   const deleteM = useMutation({
     mutationFn: (id: string) => deleteFn({ data: { id } }),
-    onSuccess: () => { toast.success("Šablonas ištrintas"); invalidate(); },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Klaida"),
+    onSuccess: () => { toast.success(tr("contracts.deleted")); invalidate(); },
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("contracts.error")),
   });
 
   const rows = (q.data as Template[] | undefined) ?? [];
@@ -104,21 +106,21 @@ function ContractsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Sutartys</h1>
-        <p className="text-sm text-muted-foreground">Nuomos sutarties šablonai.</p>
+        <h1 className="text-2xl font-bold">{tr("contracts.title")}</h1>
+        <p className="text-sm text-muted-foreground">{tr("contracts.subtitle")}</p>
       </div>
 
       <section className="rounded-lg border bg-card">
         <header className="p-5 border-b">
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div>
-              <h2 className="text-lg font-semibold">Sutarčių šablonai</h2>
+              <h2 className="text-lg font-semibold">{tr("contracts.sectionTitle")}</h2>
               <p className="text-sm text-muted-foreground">
-                Redaguokite nuomos sutarties tekstą kurį klientas pasirašys rezervacijos metu.
+                {tr("contracts.sectionDesc")}
               </p>
             </div>
             <Button onClick={() => setCreating(true)}>
-              <Plus className="h-4 w-4 mr-1" /> Naujas šablonas
+              <Plus className="h-4 w-4 mr-1" /> {tr("contracts.new")}
             </Button>
           </div>
         </header>
@@ -127,48 +129,48 @@ function ContractsPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Pavadinimas</TableHead>
-                <TableHead>Tipas</TableHead>
-                <TableHead>Kalba</TableHead>
-                <TableHead>Sukurta</TableHead>
-                <TableHead>Statusas</TableHead>
-                <TableHead className="text-right w-40">Veiksmai</TableHead>
+                <TableHead>{tr("contracts.name")}</TableHead>
+                <TableHead>{tr("contracts.kind")}</TableHead>
+                <TableHead>{tr("contracts.language")}</TableHead>
+                <TableHead>{tr("contracts.created")}</TableHead>
+                <TableHead>{tr("contracts.status")}</TableHead>
+                <TableHead className="text-right w-40">{tr("contracts.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {q.isLoading && (
-                <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">Kraunama...</TableCell></TableRow>
+                <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">{tr("contracts.loading")}</TableCell></TableRow>
               )}
               {!q.isLoading && rows.length === 0 && (
-                <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">Šablonų dar nėra. Sukurkite pirmąjį.</TableCell></TableRow>
+                <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">{tr("contracts.empty")}</TableCell></TableRow>
               )}
               {rows.map((t) => (
                 <TableRow key={t.id}>
                   <TableCell className="font-medium">{t.name}</TableCell>
-                  <TableCell className="text-sm">{KIND_LABEL[t.kind] ?? t.kind}</TableCell>
+                  <TableCell className="text-sm">{KIND_LABEL_KEYS[t.kind] ? tr(KIND_LABEL_KEYS[t.kind]) : t.kind}</TableCell>
                   <TableCell className="uppercase text-xs">{t.language}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {t.created_at ? new Date(t.created_at).toLocaleDateString("lt-LT") : "—"}
                   </TableCell>
                   <TableCell>
                     {t.is_active ? (
-                      <Badge className="bg-primary/15 text-primary border-primary/30" variant="outline">Aktyvus</Badge>
+                      <Badge className="bg-primary/15 text-primary border-primary/30" variant="outline">{tr("contracts.active")}</Badge>
                     ) : (
-                      <Badge variant="outline" className="text-muted-foreground">Neaktyvus</Badge>
+                      <Badge variant="outline" className="text-muted-foreground">{tr("contracts.inactive")}</Badge>
                     )}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="inline-flex items-center gap-1">
-                      <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setPreviewing(t)} title="Peržiūrėti">
+                      <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setPreviewing(t)} title={tr("contracts.preview")}>
                         <Eye className="h-4 w-4" />
                       </Button>
-                      <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setEditing(t)} title="Redaguoti">
+                      <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setEditing(t)} title={tr("contracts.edit")}>
                         <Pencil className="h-4 w-4" />
                       </Button>
                       <Button
                         size="icon" variant="ghost" className="h-8 w-8"
-                        onClick={() => { if (confirm(`Ištrinti šabloną "${t.name}"?`)) deleteM.mutate(t.id); }}
-                        title="Trinti"
+                        onClick={() => { if (confirm(tr("contracts.confirmDelete", { name: t.name }))) deleteM.mutate(t.id); }}
+                        title={tr("contracts.delete")}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
@@ -209,6 +211,7 @@ function TemplateDialog({
   onSubmit: (data: { name: string; language: "lt" | "en"; kind: "rental" | "privacy"; content: string; is_active: boolean }) => void;
   submitting: boolean;
 }) {
+  const { t: tr } = useTranslation();
   const [name, setName] = useState(initial?.name ?? "");
   const [language, setLanguage] = useState<"lt" | "en">(initial?.language ?? "lt");
   const [kind, setKind] = useState<"rental" | "privacy">(initial?.kind ?? "rental");
@@ -231,7 +234,7 @@ function TemplateDialog({
   };
 
   const submit = () => {
-    if (!name.trim()) { toast.error("Įveskite pavadinimą"); return; }
+    if (!name.trim()) { toast.error(tr("contracts.nameRequired")); return; }
     const content = editor?.getHTML() ?? "";
     onSubmit({ name: name.trim(), language, kind, content, is_active: isActive });
   };
@@ -240,31 +243,31 @@ function TemplateDialog({
     <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{initial ? "Redaguoti šabloną" : "Naujas šablonas"}</DialogTitle>
+          <DialogTitle>{initial ? tr("contracts.editTitle") : tr("contracts.newTitle")}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="md:col-span-2 space-y-1">
-              <Label>Pavadinimas</Label>
-              <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="pvz. Standartinė nuomos sutartis LT" />
+              <Label>{tr("contracts.name")}</Label>
+              <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={tr("contracts.namePlaceholder")} />
             </div>
             <div className="space-y-1">
-              <Label>Tipas</Label>
+              <Label>{tr("contracts.kind")}</Label>
               <Select value={kind} onValueChange={(v) => setKind(v as "rental" | "privacy")}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="rental">Nuomos sutartis</SelectItem>
-                  <SelectItem value="privacy">Privatumo politika</SelectItem>
+                  <SelectItem value="rental">{tr("contracts.kindRental")}</SelectItem>
+                  <SelectItem value="privacy">{tr("contracts.kindPrivacy")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1">
-              <Label>Kalba</Label>
+              <Label>{tr("contracts.language")}</Label>
               <Select value={language} onValueChange={(v) => setLanguage(v as "lt" | "en")}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="lt">Lietuvių</SelectItem>
+                  <SelectItem value="lt">{tr("contracts.langLt")}</SelectItem>
                   <SelectItem value="en">English</SelectItem>
                 </SelectContent>
               </Select>
@@ -273,11 +276,11 @@ function TemplateDialog({
 
           <div className="flex items-center gap-2 rounded-md border p-3">
             <Switch checked={isActive} onCheckedChange={setIsActive} />
-            <Label className="text-sm">Aktyvus šablonas (tik vienas tos pačios kalbos ir tipo)</Label>
+            <Label className="text-sm">{tr("contracts.activeHint")}</Label>
           </div>
 
           <div className="space-y-2">
-            <Label>Kintamieji</Label>
+            <Label>{tr("contracts.variables")}</Label>
             <div className="flex flex-wrap gap-1.5">
               {VARIABLES.map((v) => (
                 <button
@@ -285,7 +288,7 @@ function TemplateDialog({
                   type="button"
                   onClick={() => insertVariable(v.key)}
                   className="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-mono hover:bg-primary hover:text-primary-foreground transition"
-                  title={v.label}
+                  title={tr(v.labelKey)}
                 >
                   {v.key}
                 </button>
@@ -294,7 +297,7 @@ function TemplateDialog({
           </div>
 
           <div className="space-y-2">
-            <Label>Sutarties tekstas</Label>
+            <Label>{tr("contracts.body")}</Label>
             <EditorToolbar editor={editor} />
             <div className="rounded-md border min-h-[300px] bg-background">
               <EditorContent
@@ -306,8 +309,8 @@ function TemplateDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Atšaukti</Button>
-          <Button onClick={submit} disabled={submitting}>{submitting ? "Saugoma..." : "Išsaugoti"}</Button>
+          <Button variant="outline" onClick={onClose}>{tr("contracts.cancel")}</Button>
+          <Button onClick={submit} disabled={submitting}>{submitting ? tr("contracts.saving") : tr("contracts.save")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -315,6 +318,7 @@ function TemplateDialog({
 }
 
 function EditorToolbar({ editor }: { editor: Editor | null }) {
+  const { t: tr } = useTranslation();
   if (!editor) return null;
   const Btn = ({ active, onClick, children, title }: any) => (
     <button
@@ -328,27 +332,27 @@ function EditorToolbar({ editor }: { editor: Editor | null }) {
   );
   return (
     <div className="flex items-center gap-1 rounded-md border bg-muted/30 p-1">
-      <Btn title="Pastraipa" active={editor.isActive("paragraph")} onClick={() => editor.chain().focus().setParagraph().run()}>
+      <Btn title={tr("contracts.toolbar.paragraph")} active={editor.isActive("paragraph")} onClick={() => editor.chain().focus().setParagraph().run()}>
         <Pilcrow className="h-4 w-4" />
       </Btn>
-      <Btn title="Antraštė 1" active={editor.isActive("heading", { level: 1 })} onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}>
+      <Btn title={tr("contracts.toolbar.h1")} active={editor.isActive("heading", { level: 1 })} onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}>
         <Heading1 className="h-4 w-4" />
       </Btn>
-      <Btn title="Antraštė 2" active={editor.isActive("heading", { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
+      <Btn title={tr("contracts.toolbar.h2")} active={editor.isActive("heading", { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
         <Heading2 className="h-4 w-4" />
       </Btn>
       <div className="w-px h-5 bg-border mx-1" />
-      <Btn title="Bold" active={editor.isActive("bold")} onClick={() => editor.chain().focus().toggleBold().run()}>
+      <Btn title={tr("contracts.toolbar.bold")} active={editor.isActive("bold")} onClick={() => editor.chain().focus().toggleBold().run()}>
         <Bold className="h-4 w-4" />
       </Btn>
-      <Btn title="Italic" active={editor.isActive("italic")} onClick={() => editor.chain().focus().toggleItalic().run()}>
+      <Btn title={tr("contracts.toolbar.italic")} active={editor.isActive("italic")} onClick={() => editor.chain().focus().toggleItalic().run()}>
         <Italic className="h-4 w-4" />
       </Btn>
       <div className="w-px h-5 bg-border mx-1" />
-      <Btn title="Sąrašas" active={editor.isActive("bulletList")} onClick={() => editor.chain().focus().toggleBulletList().run()}>
+      <Btn title={tr("contracts.toolbar.bulletList")} active={editor.isActive("bulletList")} onClick={() => editor.chain().focus().toggleBulletList().run()}>
         <ListIcon className="h-4 w-4" />
       </Btn>
-      <Btn title="Numeruotas sąrašas" active={editor.isActive("orderedList")} onClick={() => editor.chain().focus().toggleOrderedList().run()}>
+      <Btn title={tr("contracts.toolbar.orderedList")} active={editor.isActive("orderedList")} onClick={() => editor.chain().focus().toggleOrderedList().run()}>
         <ListOrdered className="h-4 w-4" />
       </Btn>
     </div>
