@@ -290,26 +290,38 @@ export function defaultsFor(def: ContentTemplateDef): ContentTemplateRecord {
   };
 }
 
-export function buildFormSchema(def: ContentTemplateDef) {
+export function buildFormSchema(
+  def: ContentTemplateDef,
+  t: (key: string, opts?: Record<string, unknown>) => string = (k) => k,
+) {
   const shape: Record<string, z.ZodTypeAny> = { isEnabled: z.boolean() };
 
   shape["subject"] = def.hasSubject
-    ? z.string().trim().min(1, "Laiško tema privaloma.").max(300, "Per ilga tema.")
+    ? z
+        .string()
+        .trim()
+        .min(1, t("content.validation.subjectRequired"))
+        .max(300, t("content.validation.subjectTooLong"))
     : z.string().max(300);
 
   const needsContent = def.hasRichText || def.category === "whatsapp";
   shape["content"] = needsContent
-    ? z.string().trim().min(1, "Turinys privalomas.").max(20000, "Per ilgas turinys.")
+    ? z
+        .string()
+        .trim()
+        .min(1, t("content.validation.contentRequired"))
+        .max(20000, t("content.validation.contentTooLong"))
     : z.string().max(20000);
 
   const fieldShape: Record<string, z.ZodTypeAny> = {};
   for (const f of def.fields ?? []) {
     if (f.type === "url") {
-      const url = z.string().trim().url("Neteisingas nuorodos formatas.");
+      const url = z.string().trim().url(t("content.validation.invalidUrl"));
       fieldShape[f.name] = f.required ? url : z.union([z.literal(""), url]);
     } else {
       let s = z.string().trim().max(2000);
-      if (f.required) s = s.min(1, `${f.label} privalomas.`);
+      if (f.required)
+        s = s.min(1, t("content.validation.fieldRequired", { field: t(f.labelKey) }));
       fieldShape[f.name] = s;
     }
   }
