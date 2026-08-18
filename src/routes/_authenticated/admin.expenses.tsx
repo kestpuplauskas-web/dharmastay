@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/_authenticated/admin/expenses")({
 });
 
 function ExpensesPage() {
+  const { t } = useTranslation();
   const fetchExp = useServerFn(listExpenses);
   const create = useServerFn(createExpense);
   const remove = useServerFn(deleteExpense);
@@ -53,7 +55,7 @@ function ExpensesPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold">Išlaidos</h1>
+      <h1 className="text-2xl font-semibold">{t("expenses.title")}</h1>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -105,7 +107,7 @@ function ExpensesPage() {
           className="rounded border px-2 py-1 text-sm"
         />
         <button className="rounded-md bg-primary px-3 py-1 text-sm text-primary-foreground">
-          Pridėti
+          {t("expenses.add")}
         </button>
       </form>
 
@@ -131,7 +133,7 @@ function ExpensesPage() {
                 <td className="p-2 text-xs text-muted-foreground">{e.note}</td>
                 <td className="p-2 text-right">
                   <button
-                    onClick={() => confirm("Ištrinti?") && del.mutate(e.id)}
+                    onClick={() => confirm(t("expenses.confirmDelete")) && del.mutate(e.id)}
                     className="text-destructive underline"
                   >
                     Šalinti
@@ -142,7 +144,7 @@ function ExpensesPage() {
             {expenses.length === 0 && (
               <tr>
                 <td colSpan={6} className="p-4 text-center text-muted-foreground">
-                  Kol kas nėra išlaidų.
+                  {t("expenses.empty")}
                 </td>
               </tr>
             )}

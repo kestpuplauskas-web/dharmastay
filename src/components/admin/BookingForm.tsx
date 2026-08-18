@@ -250,12 +250,12 @@ export function BookingForm({
       {/* 1. Rezervacijos informacija */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Rezervacijos informacija</CardTitle>
-          <CardDescription>Objektas, datos ir svečiai</CardDescription>
+          <CardTitle className="text-base">{tr("bookings.form.sectionInfo")}</CardTitle>
+          <CardDescription>{tr("bookings.form.sectionInfoDesc")}</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6">
           <div className="grid gap-2">
-            <Label htmlFor="property">Objektas *</Label>
+            <Label htmlFor="property">{tr("bookings.form.property")}</Label>
             <Select
               value={v.property_id || undefined}
               onValueChange={(val) =>
@@ -263,7 +263,7 @@ export function BookingForm({
               }
             >
               <SelectTrigger id="property" className="w-full">
-                <SelectValue placeholder="Pasirinkite objektą" />
+                <SelectValue placeholder={tr("bookings.form.selectProperty")} />
               </SelectTrigger>
               <SelectContent>
                 {properties.map((p) => (
@@ -276,10 +276,10 @@ export function BookingForm({
           </div>
 
           <div className="grid gap-2">
-            <Label>Atvykimo – išvykimo datos *</Label>
+            <Label>{tr("bookings.form.dates")}</Label>
             <DateRangePicker
               value={range}
-              placeholder="Pasirinkite datas"
+              placeholder={tr("bookings.form.selectDates")}
               allowPast
               disabledDates={occupiedDates}
               onChange={(r) =>
@@ -293,22 +293,22 @@ export function BookingForm({
               }
             />
             {nights > 0 && (
-              <p className="text-xs text-muted-foreground">Naktų skaičius: {nights}</p>
+              <p className="text-xs text-muted-foreground">{tr("bookings.form.nights", { count: nights })}</p>
             )}
             {hasConflict && (
               <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                Šios datos šiam objektui jau užimtos:{" "}
-                {conflicts
-                  .map((c: any) => `${c.customer_name || "—"} (${c.date_from} → ${c.date_to})`)
-                  .join(", ")}
-                . Pasirinkite kitas datas arba kitą objektą.
+                {tr("bookings.form.conflict", {
+                  list: conflicts
+                    .map((c: any) => `${c.customer_name || "—"} (${c.date_from} → ${c.date_to})`)
+                    .join(", "),
+                })}
               </p>
             )}
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="grid gap-2">
-              <Label htmlFor="check-in">Atvykimo laikas</Label>
+              <Label htmlFor="check-in">{tr("bookings.form.checkIn")}</Label>
               <TimeInput
                 id="check-in"
                 placeholder="15:00"
@@ -317,7 +317,7 @@ export function BookingForm({
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="check-out">Išvykimo laikas</Label>
+              <Label htmlFor="check-out">{tr("bookings.form.checkOut")}</Label>
               <TimeInput
                 id="check-out"
                 placeholder="11:00"
@@ -328,7 +328,7 @@ export function BookingForm({
           </div>
 
           <div className="grid gap-2 sm:max-w-xs">
-            <Label>Svečių skaičius</Label>
+            <Label>{tr("bookings.form.guestsCount")}</Label>
             <GuestsPicker
               value={{ adults: v.adults_count, children: v.children_count, infants: v.infants_count }}
               onChange={(g) =>
@@ -351,12 +351,12 @@ export function BookingForm({
       {/* 2. Kliento duomenys */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Kliento duomenys</CardTitle>
-          <CardDescription>Kontaktinė ir sąskaitos informacija</CardDescription>
+          <CardTitle className="text-base">{tr("bookings.form.sectionClient")}</CardTitle>
+          <CardDescription>{tr("bookings.form.sectionClientDesc")}</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6">
           <div className="grid gap-2">
-            <Label>Kliento tipas</Label>
+            <Label>{tr("bookings.form.clientType")}</Label>
             <ToggleGroup
               type="single"
               value={v.client_type}
@@ -367,60 +367,60 @@ export function BookingForm({
               className="w-fit"
             >
               <ToggleGroupItem value="person" className="px-4">
-                Fizinis asmuo
+                {tr("bookings.form.person")}
               </ToggleGroupItem>
               <ToggleGroupItem value="company" className="px-4">
-                Juridinis asmuo
+                {tr("bookings.form.company")}
               </ToggleGroupItem>
             </ToggleGroup>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="grid gap-2">
-              <Label htmlFor="name">Vardas Pavardė {isCompany ? "" : "*"}</Label>
+              <Label htmlFor="name">{tr("bookings.form.name")} {isCompany ? "" : "*"}</Label>
               <Input
                 id="name"
                 required={!isCompany}
-                placeholder="Vardenis Pavardenis"
+                placeholder={tr("bookings.form.namePlaceholder")}
                 value={v.customer_name}
                 onChange={(e) => set("customer_name", e.target.value)}
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="email">El. paštas *</Label>
+              <Label htmlFor="email">{tr("bookings.form.email")}</Label>
               <Input
                 id="email"
                 type="email"
                 required
-                placeholder="vardas@pastas.lt"
+                placeholder={tr("bookings.form.emailPlaceholder")}
                 value={v.customer_email}
                 onChange={(e) => set("customer_email", e.target.value)}
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="phone">Telefonas *</Label>
+              <Label htmlFor="phone">{tr("bookings.form.phone")}</Label>
               <Input
                 id="phone"
                 required
-                placeholder="+370 600 00000"
+                placeholder={tr("bookings.form.phonePlaceholder")}
                 value={v.customer_phone}
                 onChange={(e) => set("customer_phone", e.target.value)}
               />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="address">
-                {isCompany ? "Įmonės buveinės adresas" : "Adresas"}
+                {isCompany ? tr("bookings.form.companyAddress") : tr("bookings.form.address")}
               </Label>
               <Input
                 id="address"
-                placeholder="Gatvė 1, Vilnius"
+                placeholder={tr("bookings.form.addressPlaceholder")}
                 value={v.customer_address}
                 onChange={(e) => set("customer_address", e.target.value)}
               />
             </div>
             {!isCompany && (
               <div className="grid gap-2">
-                <Label>Gimimo data</Label>
+                <Label>{tr("bookings.form.birthDate")}</Label>
                 <DatePicker
                   value={v.birth_date ?? ""}
                   onChange={(val) => set("birth_date", val || null)}
@@ -428,10 +428,10 @@ export function BookingForm({
               </div>
             )}
             <div className="grid gap-2">
-              <Label htmlFor="country">Valstybė</Label>
+              <Label htmlFor="country">{tr("bookings.form.country")}</Label>
               <Input
                 id="country"
-                placeholder="Lietuva"
+                placeholder={tr("bookings.form.countryPlaceholder")}
                 value={v.customer_country}
                 onChange={(e) => set("customer_country", e.target.value)}
               />
@@ -441,17 +441,17 @@ export function BookingForm({
           {isCompany && (
             <div className="grid gap-4 rounded-lg border bg-muted/30 p-4 sm:grid-cols-2">
               <div className="grid gap-2">
-                <Label htmlFor="company-name">Įmonės pavadinimas *</Label>
+                <Label htmlFor="company-name">{tr("bookings.form.companyName")}</Label>
                 <Input
                   id="company-name"
                   required
-                  placeholder="UAB „Pavyzdys“"
+                  placeholder={tr("bookings.form.companyNamePlaceholder")}
                   value={v.company_name}
                   onChange={(e) => set("company_name", e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="company-code">Įmonės kodas *</Label>
+                <Label htmlFor="company-code">{tr("bookings.form.companyCode")}</Label>
                 <Input
                   id="company-code"
                   required
@@ -467,12 +467,12 @@ export function BookingForm({
                   onCheckedChange={(c) => set("is_vat_payer", c === true)}
                 />
                 <Label htmlFor="vat" className="font-normal">
-                  Ar PVM mokėtojas
+                  {tr("bookings.form.isVatPayer")}
                 </Label>
               </div>
               {v.is_vat_payer && (
                 <div className="grid gap-2">
-                  <Label htmlFor="vat-number">PVM mokėtojo kodas *</Label>
+                  <Label htmlFor="vat-number">{tr("bookings.form.vatNumber")}</Label>
                   <Input
                     id="vat-number"
                     required
@@ -490,16 +490,15 @@ export function BookingForm({
       {/* 3. Finansai ir sistemos parametrai */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Finansai ir sistemos parametrai</CardTitle>
-          <CardDescription>Paslaugos, kaina ir rezervacijos būsena</CardDescription>
+          <CardTitle className="text-base">{tr("bookings.form.sectionFinance")}</CardTitle>
+          <CardDescription>{tr("bookings.form.sectionFinanceDesc")}</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6">
           {availableExtras.length > 0 && (
             <div className="rounded-lg border p-4">
-              <div className="text-sm font-medium">Papildomos paslaugos</div>
+              <div className="text-sm font-medium">{tr("bookings.form.extras")}</div>
               <p className="mt-0.5 text-xs text-muted-foreground">
-                Skaičiuojama pagal naktų skaičių ({nights}) ir svečius. Kūdikiai iki 3 m.
-                neįskaičiuojami.
+                {tr("bookings.form.extrasHint", { nights })}
               </p>
               <div className="mt-2 divide-y">
                 {availableExtras.map((svc) => {
@@ -516,7 +515,7 @@ export function BookingForm({
                       <span className="font-medium">{svc.name}</span>
                       <span className="text-xs text-muted-foreground">
                         {EXTRA_CALC_LABEL_KEYS[svc.calc] ? tr(EXTRA_CALC_LABEL_KEYS[svc.calc]) : svc.calc} ·{" "}
-                        {Number(svc.pricePerDay).toFixed(2)} €/d.
+                        {Number(svc.pricePerDay).toFixed(2)} {tr("bookings.form.perDay")}
                       </span>
                       <span className="ml-auto tabular-nums">{lineAmount(svc).toFixed(2)} €</span>
                     </label>
@@ -524,17 +523,17 @@ export function BookingForm({
                 })}
               </div>
               <div className="mt-2 text-right text-sm font-medium">
-                Paslaugų suma: {(v.extras_total ?? 0).toFixed(2)} €
+                {tr("bookings.form.extrasTotal", { amount: (v.extras_total ?? 0).toFixed(2) })}
               </div>
             </div>
           )}
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="grid gap-2">
-              <Label htmlFor="source">Šaltinis</Label>
+              <Label htmlFor="source">{tr("bookings.form.source")}</Label>
               <Select value={v.source} onValueChange={(val) => set("source", val as any)}>
                 <SelectTrigger id="source" className="w-full">
-                  <SelectValue placeholder="Pasirinkite šaltinį" />
+                  <SelectValue placeholder={tr("bookings.form.selectSource")} />
                 </SelectTrigger>
                 <SelectContent>
                   {(BOOKING_SOURCES as readonly string[])
@@ -548,10 +547,10 @@ export function BookingForm({
               </Select>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="status">Statusas</Label>
+              <Label htmlFor="status">{tr("bookings.form.status")}</Label>
               <Select value={v.status} onValueChange={(val) => set("status", val as any)}>
                 <SelectTrigger id="status" className="w-full">
-                  <SelectValue placeholder="Pasirinkite statusą" />
+                  <SelectValue placeholder={tr("bookings.form.selectStatus")} />
                 </SelectTrigger>
                 <SelectContent>
                   {BOOKING_STATUSES.map((s) => (
@@ -565,7 +564,7 @@ export function BookingForm({
           </div>
 
           <div className="grid gap-2 sm:max-w-xs">
-            <Label htmlFor="total">Suma (€)</Label>
+            <Label htmlFor="total">{tr("bookings.form.total")}</Label>
             <div className="relative">
               <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
                 €
@@ -586,13 +585,18 @@ export function BookingForm({
             </div>
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
               <span>
-                Apskaičiuota: {totals.computed.toFixed(2)} € (nakvynė{" "}
-                {totals.stayTotal.toFixed(2)} € · {Number(totals.nightly || 0).toFixed(2)} €/naktis ×{" "}
-                {totals.days}
-                {totals.extras_total > 0
-                  ? ` + paslaugos ${totals.extras_total.toFixed(2)} €`
-                  : ""}
-                )
+                {tr("bookings.form.computed", {
+                  total: totals.computed.toFixed(2),
+                  stay: totals.stayTotal.toFixed(2),
+                  nightly: Number(totals.nightly || 0).toFixed(2),
+                  days: totals.days,
+                  extras:
+                    totals.extras_total > 0
+                      ? tr("bookings.form.computedExtras", {
+                          amount: totals.extras_total.toFixed(2),
+                        })
+                      : "",
+                })}
               </span>
               {manualTotal && (
                 <Button
@@ -605,18 +609,18 @@ export function BookingForm({
                     setV((s) => recalc(s, true));
                   }}
                 >
-                  Perskaičiuoti
+                  {tr("bookings.form.recalculate")}
                 </Button>
               )}
             </div>
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="note">Pastaba</Label>
+            <Label htmlFor="note">{tr("bookings.form.note")}</Label>
             <Textarea
               id="note"
               rows={3}
-              placeholder="Vidinė pastaba apie rezervaciją…"
+              placeholder={tr("bookings.form.notePlaceholder")}
               value={v.note}
               onChange={(e) => set("note", e.target.value)}
             />
@@ -627,7 +631,7 @@ export function BookingForm({
       <div className="flex flex-col items-end gap-2">
         {hasConflict && (
           <p className="text-sm text-destructive">
-            Negalima išsaugoti – datos kertasi su esama rezervacija.
+            {tr("bookings.form.conflictSave")}
           </p>
         )}
         <div className="flex justify-end gap-3">
@@ -636,10 +640,10 @@ export function BookingForm({
             variant="secondary"
             onClick={() => navigate({ to: "/admin/bookings" })}
           >
-            Atšaukti
+            {tr("bookings.form.cancel")}
           </Button>
           <Button type="submit" disabled={submitting || hasConflict}>
-            {submitting ? "Saugoma…" : "Išsaugoti rezervaciją"}
+            {submitting ? tr("bookings.form.saving") : tr("bookings.form.submit")}
           </Button>
         </div>
       </div>
