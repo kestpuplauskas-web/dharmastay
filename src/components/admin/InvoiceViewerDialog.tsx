@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Download, Eye } from "lucide-react";
 import type { jsPDF } from "jspdf";
 import { Button } from "@/components/ui/button";
@@ -53,6 +54,7 @@ function toDocData(row: InvoiceRow): InvoiceDocData {
 }
 
 export function InvoiceViewerDialog({ invoice }: { invoice: InvoiceRow }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [bytes, setBytes] = useState<Uint8Array | null>(null);
   const [pdfDoc, setPdfDoc] = useState<jsPDF | null>(null);
@@ -77,12 +79,14 @@ export function InvoiceViewerDialog({ invoice }: { invoice: InvoiceRow }) {
       <DialogTrigger asChild>
         <Button type="button" variant="outline">
           <Eye className="mr-2 h-4 w-4" />
-          Peržiūrėti sąskaitą Nr. {invoice.full_number}
+          {t("bookings.invoice.viewNumbered", { number: invoice.full_number })}
         </Button>
       </DialogTrigger>
       <DialogContent className="flex max-h-[90vh] max-w-3xl flex-col">
         <DialogHeader>
-          <DialogTitle>Sąskaita Nr. {invoice.full_number}</DialogTitle>
+          <DialogTitle>
+            {t("bookings.invoice.titleNumbered", { number: invoice.full_number })}
+          </DialogTitle>
           <DialogDescription>Sugeneruota {invoice.issue_date}.</DialogDescription>
         </DialogHeader>
         <div className="max-h-[70vh] overflow-y-auto">
@@ -95,7 +99,7 @@ export function InvoiceViewerDialog({ invoice }: { invoice: InvoiceRow }) {
           className="mt-2 w-fit"
         >
           <Download className="mr-2 h-4 w-4" />
-          Atsisiųsti PDF
+          {t("common.downloadPdf")}
         </Button>
       </DialogContent>
     </Dialog>
