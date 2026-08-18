@@ -14,6 +14,7 @@ export async function assertAdmin(ctx: { supabase: any; userId: string }) {
 
 export function rowToRecord(row: Record<string, unknown>): ContentTemplateRecord {
   return {
+    id: (row["id"] as string | undefined) ?? null,
     category: row["category"] as ContentTemplateRecord["category"],
     templateName: String(row["template_name"] ?? ""),
     subject: String(row["subject"] ?? ""),

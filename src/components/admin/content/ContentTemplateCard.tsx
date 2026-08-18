@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/dialog";
 import { RichTextEditor } from "./RichTextEditor";
 import { VariablePicker } from "./VariablePicker";
+import { TranslationPanel } from "@/components/admin/TranslationPanel";
 
 type FormValues = {
   subject: string;
@@ -318,6 +319,26 @@ export function ContentTemplateCard({
         </>
         )}
       </form>
+
+      {record?.id ? (
+        <div className="border-t p-6 pt-6">
+          <TranslationPanel
+            entityType="content_template"
+            entityId={record.id}
+            fields={[
+              ...(def.hasSubject
+                ? [{ field: "subject", label: "Laiško tema" }]
+                : []),
+              { field: "content", label: "Turinys", multiline: true },
+            ]}
+            originals={{ subject: record.subject ?? "", content: record.content ?? "" }}
+          />
+        </div>
+      ) : (
+        <p className="border-t px-6 py-4 text-sm text-muted-foreground">
+          Vertimus bus galima suvesti, kai šis šablonas bus bent kartą išsaugotas.
+        </p>
+      )}
 
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
         <DialogContent className="max-w-2xl">

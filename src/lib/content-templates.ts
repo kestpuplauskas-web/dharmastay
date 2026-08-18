@@ -250,6 +250,8 @@ export const contentTemplateSchema = z.object({
 });
 
 export type ContentTemplateRecord = {
+  /** DB eilutės ID; null, kai šablonas dar neišsaugotas. */
+  id: string | null;
   category: ContentCategory;
   templateName: string;
   subject: string;
@@ -263,6 +265,7 @@ export function defaultsFor(def: ContentTemplateDef): ContentTemplateRecord {
   const fields: Record<string, string> = {};
   for (const f of def.fields ?? []) fields[f.name] = f.defaultValue ?? "";
   return {
+    id: null,
     category: def.category,
     templateName: def.name,
     subject: def.defaultSubject ?? "",
