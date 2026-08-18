@@ -49,7 +49,7 @@ type NavId = SettingsSectionId | "integrations" | "api" | "users";
 
 function PropertySettingsPage() {
   const { t } = useTranslation();
-  useBrandedTitle("Bendrieji nustatymai");
+  useBrandedTitle(t("settings.title"));
   const fetchProperties = useServerFn(listAllProperties);
   const fetchRole = useServerFn(getMyRole);
   const fetchSettings = useServerFn(getPropertySettings);
