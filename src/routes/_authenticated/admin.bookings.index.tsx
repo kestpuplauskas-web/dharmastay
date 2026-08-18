@@ -2,7 +2,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { listBookings, deleteBooking, rescheduleBooking, BOOKING_STATUSES } from "@/lib/bookings.functions";
+import { useTranslation } from "react-i18next";
+import {
+  listBookings,
+  deleteBooking,
+  rescheduleBooking,
+  BOOKING_STATUSES,
+  BOOKING_STATUS_LABEL_KEYS,
+  BOOKING_SOURCE_LABEL_KEYS,
+} from "@/lib/bookings.functions";
 import { listAllProperties } from "@/lib/properties.functions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,24 +27,11 @@ export const Route = createFileRoute("/_authenticated/admin/bookings/")({
   component: BookingsPage,
 });
 
-const STATUS_LABELS: Record<string, string> = {
-  confirmed: "Apmokėta",
-  pending: "Laukiama apmokėjimo",
-  completed: "Užbaigta",
-  cancelled: "Atšaukta",
-};
 const STATUS_CLASS: Record<string, string> = {
   confirmed: "bg-primary/15 text-primary border-primary/30",
   pending: "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30",
   completed: "bg-muted text-muted-foreground border-border",
   cancelled: "bg-destructive/15 text-destructive border-destructive/30",
-};
-const SOURCE_LABELS: Record<string, string> = {
-  phone: "Telefonas",
-  whatsapp: "WhatsApp",
-  direct: "Tiesiogiai",
-  website: "Svetainė",
-  other: "Kita",
 };
 
 function durationDays(from?: string | null, to?: string | null) {
@@ -48,6 +43,7 @@ function durationDays(from?: string | null, to?: string | null) {
 }
 
 function BookingsPage() {
+  const { t } = useTranslation();
   const fetchBookings = useServerFn(listBookings);
   const fetchProps = useServerFn(listAllProperties);
   const del = useServerFn(deleteBooking);
@@ -64,49 +60,49 @@ function BookingsPage() {
   const delM = useMutation({
     mutationFn: (id: string) => del({ data: { id } }),
     onSuccess: () => {
-      toast.success("Ištrinta");
+      toast.success(t("bookings.deleted"));
       qc.invalidateQueries({ queryKey: ["admin-bookings"] });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Klaida"),
+    onError: (e) => toast.error(e instanceof Error ? e.message : t("bookings.error")),
   });
 
   const rescheduleM = useMutation({
     mutationFn: (v: { id: string; property_id: string; date_from: string; date_to: string }) =>
       reschedule({ data: v }),
     onSuccess: () => {
-      toast.success("Rezervacija perkelta");
+      toast.success(t("bookings.rescheduled"));
       qc.invalidateQueries({ queryKey: ["admin-bookings"] });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Klaida"),
+    onError: (e) => toast.error(e instanceof Error ? e.message : t("bookings.error")),
   });
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold">Rezervacijos</h1>
+          <h1 className="text-2xl font-bold">{t("bookings.title")}</h1>
           <p className="text-sm text-muted-foreground">
-            {q.data ? `${q.data.length} rastos` : "Kraunama..."}
+            {q.data ? t("bookings.found", { count: q.data.length }) : t("common.loading")}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <div className="inline-flex rounded-md border bg-card p-0.5">
             <Button size="sm" variant={view === "timeline" ? "default" : "ghost"} onClick={() => setView("timeline")} className="h-8">
-              <LayoutGrid className="h-4 w-4 mr-1" /> Kalendorius
+              <LayoutGrid className="h-4 w-4 mr-1" /> {t("bookings.viewCalendar")}
             </Button>
             <Button size="sm" variant={view === "list" ? "default" : "ghost"} onClick={() => setView("list")} className="h-8">
-              <List className="h-4 w-4 mr-1" /> Sąrašas
+              <List className="h-4 w-4 mr-1" /> {t("bookings.viewList")}
             </Button>
           </div>
           <Button asChild>
-            <Link to="/admin/bookings/new"><Plus className="h-4 w-4 mr-1" /> Nauja rezervacija</Link>
+            <Link to="/admin/bookings/new"><Plus className="h-4 w-4 mr-1" /> {t("bookings.new")}</Link>
           </Button>
         </div>
       </div>
 
       {view === "timeline" ? (
         <>
-          {q.isLoading && <div className="text-muted-foreground">Kraunama...</div>}
+          {q.isLoading && <div className="text-muted-foreground">{t("common.loading")}</div>}
           {q.error && <div className="text-destructive">{(q.error as Error).message}</div>}
           {propsQ.data && q.data && (
             <BookingsGantt
@@ -126,7 +122,7 @@ function BookingsPage() {
           rows={(q.data as any[]) ?? []}
           loading={q.isLoading}
           onDelete={(id, name) => {
-            if (confirm(`Ištrinti rezervaciją ${name || ""}?`)) delM.mutate(id);
+            if (confirm(t("bookings.confirmDelete", { name: name || "" }))) delM.mutate(id);
           }}
         />
       )}
@@ -140,17 +136,17 @@ type ColKey =
 
 type Row = any;
 
-const COLUMNS: { key: ColKey; label: string; align?: "left" | "right"; type: "set" | "text" | "date" | "number" }[] = [
-  { key: "status", label: "Statusas", type: "set" },
-  { key: "booking_number", label: "Užsakymo Nr", type: "set" },
-  { key: "property", label: "Objektas", type: "set" },
-  { key: "customer_name", label: "Klientas", type: "set" },
-  { key: "customer_phone", label: "Telefonas", type: "text" },
-  { key: "customer_email", label: "El. paštas", type: "text" },
-  { key: "date_from", label: "Užsakymas nuo", type: "date" },
-  { key: "date_to", label: "Užsakymas iki", type: "date" },
-  { key: "duration", label: "Trukmė (d.)", type: "number", align: "right" },
-  { key: "total_amount", label: "Suma (€)", type: "number", align: "right" },
+const COLUMNS: { key: ColKey; labelKey: string; align?: "left" | "right"; type: "set" | "text" | "date" | "number" }[] = [
+  { key: "status", labelKey: "bookings.cols.status", type: "set" },
+  { key: "booking_number", labelKey: "bookings.cols.booking_number", type: "set" },
+  { key: "property", labelKey: "bookings.cols.property", type: "set" },
+  { key: "customer_name", labelKey: "bookings.cols.customer_name", type: "set" },
+  { key: "customer_phone", labelKey: "bookings.cols.customer_phone", type: "text" },
+  { key: "customer_email", labelKey: "bookings.cols.customer_email", type: "text" },
+  { key: "date_from", labelKey: "bookings.cols.date_from", type: "date" },
+  { key: "date_to", labelKey: "bookings.cols.date_to", type: "date" },
+  { key: "duration", labelKey: "bookings.cols.duration", type: "number", align: "right" },
+  { key: "total_amount", labelKey: "bookings.cols.total_amount", type: "number", align: "right" },
 ];
 
 function getCell(b: Row, key: ColKey): any {
@@ -181,6 +177,7 @@ function isFilterActive(f?: AnyFilter) {
 }
 
 function BookingsTable({ rows, loading, onDelete }: { rows: Row[]; loading: boolean; onDelete: (id: string, name: string) => void }) {
+  const { t } = useTranslation();
   const [sort, setSort] = useState<{ key: ColKey; dir: "asc" | "desc" } | null>(null);
   const [filters, setFilters] = useState<Record<string, AnyFilter>>({});
   const [viewRow, setViewRow] = useState<Row | null>(null);
@@ -233,7 +230,7 @@ function BookingsTable({ rows, loading, onDelete }: { rows: Row[]; loading: bool
     <div className="space-y-3">
       {anyFilter && (
         <div className="flex justify-end">
-          <Button size="sm" variant="outline" onClick={() => setFilters({})}>Išvalyti visus filtrus</Button>
+          <Button size="sm" variant="outline" onClick={() => setFilters({})}>{t("bookings.clearAllFilters")}</Button>
         </div>
       )}
 
@@ -249,7 +246,7 @@ function BookingsTable({ rows, loading, onDelete }: { rows: Row[]; loading: bool
                       className="inline-flex items-center gap-1 font-medium hover:text-primary"
                       onClick={() => toggleSort(c.key)}
                     >
-                      {c.label}
+                      {t(c.labelKey)}
                       {sort?.key === c.key && (sort.dir === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />)}
                     </button>
                     <ColumnFilter
@@ -265,20 +262,22 @@ function BookingsTable({ rows, loading, onDelete }: { rows: Row[]; loading: bool
                   </div>
                 </TableHead>
               ))}
-              <TableHead className="text-right w-32">Veiksmai</TableHead>
+              <TableHead className="text-right w-32">{t("bookings.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="[&_tr:nth-child(even)]:bg-muted/30">
             {loading && (
-              <TableRow><TableCell colSpan={COLUMNS.length + 1} className="text-center text-muted-foreground py-8">Kraunama...</TableCell></TableRow>
+              <TableRow><TableCell colSpan={COLUMNS.length + 1} className="text-center text-muted-foreground py-8">{t("common.loading")}</TableCell></TableRow>
             )}
             {!loading && filtered.length === 0 && (
-              <TableRow><TableCell colSpan={COLUMNS.length + 1} className="text-center text-muted-foreground py-8">Rezervacijų nerasta</TableCell></TableRow>
+              <TableRow><TableCell colSpan={COLUMNS.length + 1} className="text-center text-muted-foreground py-8">{t("bookings.notFound")}</TableCell></TableRow>
             )}
             {filtered.map((b) => (
               <TableRow key={b.id} className="hover:bg-muted/60">
                 <TableCell>
-                  <Badge variant="outline" className={STATUS_CLASS[b.status] ?? ""}>{STATUS_LABELS[b.status] ?? b.status}</Badge>
+                  <Badge variant="outline" className={STATUS_CLASS[b.status] ?? ""}>
+                    {BOOKING_STATUS_LABEL_KEYS[b.status] ? t(BOOKING_STATUS_LABEL_KEYS[b.status]) : b.status}
+                  </Badge>
                 </TableCell>
                 <TableCell className="font-mono text-xs">{b.booking_number ?? "—"}</TableCell>
                 <TableCell className="font-medium">{b.properties?.name ?? "—"}</TableCell>
@@ -291,13 +290,13 @@ function BookingsTable({ rows, loading, onDelete }: { rows: Row[]; loading: bool
                 <TableCell className="text-right font-semibold text-primary">{Number(b.total_amount ?? 0).toFixed(2)}</TableCell>
                 <TableCell className="text-right">
                   <div className="inline-flex items-center gap-1">
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setViewRow(b)} title="Peržiūrėti">
+                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setViewRow(b)} title={t("bookings.view")}>
                       <Eye className="h-4 w-4" />
                     </Button>
-                    <Button asChild size="icon" variant="ghost" className="h-8 w-8" title="Redaguoti">
+                    <Button asChild size="icon" variant="ghost" className="h-8 w-8" title={t("bookings.edit")}>
                       <Link to="/admin/bookings/$id" params={{ id: b.id }}><Pencil className="h-4 w-4" /></Link>
                     </Button>
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => onDelete(b.id, b.customer_name)} title="Trinti">
+                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => onDelete(b.id, b.customer_name)} title={t("bookings.delete")}>
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
                   </div>
@@ -308,7 +307,7 @@ function BookingsTable({ rows, loading, onDelete }: { rows: Row[]; loading: bool
           <TableFooter className="bg-muted">
             <TableRow>
               <TableCell colSpan={COLUMNS.length + 1} className="text-right font-medium">
-                Viso: {filtered.length} rezervacijų | {total.toFixed(2)}€
+                {t("bookings.totalRow", { count: filtered.length, sum: total.toFixed(2) })}
               </TableCell>
             </TableRow>
           </TableFooter>
@@ -326,6 +325,7 @@ function ColumnFilter({ col, rows, filter, onChange }: {
   filter?: AnyFilter;
   onChange: (f: AnyFilter | null) => void;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const active = isFilterActive(filter);
   const [search, setSearch] = useState("");
@@ -344,7 +344,8 @@ function ColumnFilter({ col, rows, filter, onChange }: {
     return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [rows, col]);
 
-  const displayLabel = (val: string) => (col.key === "status" ? STATUS_LABELS[val] ?? val : val);
+  const displayLabel = (val: string) =>
+    col.key === "status" && BOOKING_STATUS_LABEL_KEYS[val] ? t(BOOKING_STATUS_LABEL_KEYS[val]) : val;
   const filteredOptions = uniqueValues.filter((v) => displayLabel(v).toLowerCase().includes(search.toLowerCase()));
 
   const apply = () => {
@@ -382,7 +383,7 @@ function ColumnFilter({ col, rows, filter, onChange }: {
         <button
           type="button"
           className={`inline-flex h-6 w-6 items-center justify-center rounded hover:bg-background ${active ? "text-primary" : "text-muted-foreground"}`}
-          title="Filtras"
+          title={t("bookings.filter")}
         >
           <Filter className="h-3 w-3" />
         </button>
@@ -390,9 +391,9 @@ function ColumnFilter({ col, rows, filter, onChange }: {
       <PopoverContent align="start" className="w-64 p-3 space-y-2">
         {col.type === "set" && (
           <>
-            <Input placeholder="Ieškoti..." value={search} onChange={(e) => setSearch(e.target.value)} className="h-8" />
+            <Input placeholder={t("common.search")} value={search} onChange={(e) => setSearch(e.target.value)} className="h-8" />
             <div className="max-h-56 overflow-y-auto space-y-1 border rounded p-2">
-              {filteredOptions.length === 0 && <div className="text-xs text-muted-foreground">Nėra reikšmių</div>}
+              {filteredOptions.length === 0 && <div className="text-xs text-muted-foreground">{t("bookings.noValues")}</div>}
               {filteredOptions.map((v) => {
                 const checked = draftValues.includes(v);
                 return (
@@ -409,23 +410,23 @@ function ColumnFilter({ col, rows, filter, onChange }: {
           </>
         )}
         {col.type === "text" && (
-          <Input placeholder="Ieškoti..." value={draftText} onChange={(e) => setDraftText(e.target.value)} className="h-8" />
+          <Input placeholder={t("common.search")} value={draftText} onChange={(e) => setDraftText(e.target.value)} className="h-8" />
         )}
         {(col.type === "date" || col.type === "number") && (
           <div className="space-y-2">
             <div>
-              <div className="text-xs text-muted-foreground mb-1">Nuo</div>
+              <div className="text-xs text-muted-foreground mb-1">{t("bookings.from")}</div>
               <Input type={col.type === "date" ? "date" : "number"} value={draftMin} onChange={(e) => setDraftMin(e.target.value)} className="h-8" />
             </div>
             <div>
-              <div className="text-xs text-muted-foreground mb-1">Iki</div>
+              <div className="text-xs text-muted-foreground mb-1">{t("bookings.to")}</div>
               <Input type={col.type === "date" ? "date" : "number"} value={draftMax} onChange={(e) => setDraftMax(e.target.value)} className="h-8" />
             </div>
           </div>
         )}
         <div className="flex gap-2 pt-1">
-          <Button size="sm" className="flex-1" onClick={apply}>Pritaikyti</Button>
-          <Button size="sm" variant="outline" className="flex-1" onClick={clear}>Išvalyti</Button>
+          <Button size="sm" className="flex-1" onClick={apply}>{t("bookings.apply")}</Button>
+          <Button size="sm" variant="outline" className="flex-1" onClick={clear}>{t("bookings.clear")}</Button>
         </div>
       </PopoverContent>
     </Popover>
@@ -433,31 +434,36 @@ function ColumnFilter({ col, rows, filter, onChange }: {
 }
 
 function BookingViewDialog({ row, onClose }: { row: Row | null; onClose: () => void }) {
+  const { t } = useTranslation();
   return (
     <Dialog open={!!row} onOpenChange={(o) => { if (!o) onClose(); }}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Rezervacijos peržiūra</DialogTitle>
+          <DialogTitle>{t("bookings.dialog.title")}</DialogTitle>
         </DialogHeader>
         {row && (
           <div className="space-y-3 text-sm">
             <div className="flex items-center gap-2 flex-wrap">
               {row.booking_number && <span className="font-mono text-xs px-2 py-0.5 rounded bg-muted">{row.booking_number}</span>}
-              <Badge variant="outline" className={STATUS_CLASS[row.status] ?? ""}>{STATUS_LABELS[row.status] ?? row.status}</Badge>
-              <Badge variant="outline">{SOURCE_LABELS[row.source] ?? row.source}</Badge>
+              <Badge variant="outline" className={STATUS_CLASS[row.status] ?? ""}>
+                {BOOKING_STATUS_LABEL_KEYS[row.status] ? t(BOOKING_STATUS_LABEL_KEYS[row.status]) : row.status}
+              </Badge>
+              <Badge variant="outline">
+                {BOOKING_SOURCE_LABEL_KEYS[row.source] ? t(BOOKING_SOURCE_LABEL_KEYS[row.source]) : row.source}
+              </Badge>
             </div>
-            <FieldRow label="Objektas" value={row.properties?.name ?? "—"} />
-            <FieldRow label="Klientas" value={row.customer_name || "—"} />
-            <FieldRow label="Telefonas" value={row.customer_phone || "—"} />
-            <FieldRow label="El. paštas" value={row.customer_email || "—"} />
-            <FieldRow label="Adresas" value={row.customer_address || "—"} />
-            <FieldRow label="Asmens kodas" value={row.customer_id_code || "—"} />
-            <FieldRow label="Nuo" value={`${row.date_from}${row.check_in_time ? ` ${row.check_in_time}` : ""}`} />
-            <FieldRow label="Iki" value={`${row.date_to}${row.check_out_time ? ` ${row.check_out_time}` : ""}`} />
-            <FieldRow label="Trukmė" value={`${durationDays(row.date_from, row.date_to)} d.`} />
-            <FieldRow label="Vieta" value={row.location || "—"} />
-            <FieldRow label="Svečių" value={String(row.guests ?? "—")} />
-            <FieldRow label="Suma" value={`${Number(row.total_amount ?? 0).toFixed(2)} €`} />
+            <FieldRow label={t("bookings.dialog.property")} value={row.properties?.name ?? "—"} />
+            <FieldRow label={t("bookings.dialog.customer")} value={row.customer_name || "—"} />
+            <FieldRow label={t("bookings.dialog.phone")} value={row.customer_phone || "—"} />
+            <FieldRow label={t("bookings.dialog.email")} value={row.customer_email || "—"} />
+            <FieldRow label={t("bookings.dialog.address")} value={row.customer_address || "—"} />
+            <FieldRow label={t("bookings.dialog.idCode")} value={row.customer_id_code || "—"} />
+            <FieldRow label={t("bookings.dialog.from")} value={`${row.date_from}${row.check_in_time ? ` ${row.check_in_time}` : ""}`} />
+            <FieldRow label={t("bookings.dialog.to")} value={`${row.date_to}${row.check_out_time ? ` ${row.check_out_time}` : ""}`} />
+            <FieldRow label={t("bookings.dialog.duration")} value={t("bookings.dialog.days", { value: durationDays(row.date_from, row.date_to) })} />
+            <FieldRow label={t("bookings.dialog.location")} value={row.location || "—"} />
+            <FieldRow label={t("bookings.dialog.guests")} value={String(row.guests ?? "—")} />
+            <FieldRow label={t("bookings.dialog.amount")} value={`${Number(row.total_amount ?? 0).toFixed(2)} €`} />
             {row.note && <div className="pt-2 border-t italic text-muted-foreground">„{row.note}"</div>}
           </div>
         )}

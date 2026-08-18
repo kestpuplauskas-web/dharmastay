@@ -3,6 +3,66 @@
     "noAdminText": "Susisiekite su sistemos administratoriumi, kad jums būtų suteiktos teisės.",
     "noAdminTitle": "Neturite administratoriaus teisių"
   },
+  "bookings": {
+    "actions": "Veiksmai",
+    "apply": "Pritaikyti",
+    "clear": "Išvalyti",
+    "clearAllFilters": "Išvalyti visus filtrus",
+    "cols": {
+      "booking_number": "Užsakymo Nr",
+      "customer_email": "El. paštas",
+      "customer_name": "Klientas",
+      "customer_phone": "Telefonas",
+      "date_from": "Užsakymas nuo",
+      "date_to": "Užsakymas iki",
+      "duration": "Trukmė (d.)",
+      "property": "Objektas",
+      "status": "Statusas",
+      "total_amount": "Suma (€)"
+    },
+    "confirmDelete": "Ištrinti rezervaciją {{name}}?",
+    "delete": "Trinti",
+    "deleted": "Ištrinta",
+    "detail": {
+      "generateInvoice": "Generuoti sąskaitą",
+      "invoiceAuto": "Sąskaita bus sugeneruota automatiškai, kai rezervacija taps „Apmokėta“.",
+      "invoiceError": "Nepavyko sugeneruoti sąskaitos.",
+      "invoiceGenerated": "Sąskaita sugeneruota.",
+      "title": "Rezervacija {{number}}"
+    },
+    "dialog": {
+      "address": "Adresas",
+      "amount": "Suma",
+      "customer": "Klientas",
+      "days": "{{value}} d.",
+      "duration": "Trukmė",
+      "email": "El. paštas",
+      "from": "Nuo",
+      "guests": "Svečių",
+      "idCode": "Asmens kodas",
+      "location": "Vieta",
+      "phone": "Telefonas",
+      "property": "Objektas",
+      "title": "Rezervacijos peržiūra",
+      "to": "Iki"
+    },
+    "edit": "Redaguoti",
+    "error": "Klaida",
+    "filter": "Filtras",
+    "found_one": "{{count}} rasta",
+    "found_other": "{{count}} rastos",
+    "from": "Nuo",
+    "new": "Nauja rezervacija",
+    "noValues": "Nėra reikšmių",
+    "notFound": "Rezervacijų nerasta",
+    "rescheduled": "Rezervacija perkelta",
+    "title": "Rezervacijos",
+    "to": "Iki",
+    "totalRow": "Viso: {{count}} rezervacijų | {{sum}}€",
+    "view": "Peržiūrėti",
+    "viewCalendar": "Kalendorius",
+    "viewList": "Sąrašas"
+  },
   "common": {
     "back": "Atgal",
     "cancel": "Atšaukti",
@@ -109,6 +169,43 @@
     }
   },
   "dashboard": {
+    "biz": {
+      "avgStay": "Vid. viešnagė",
+      "days": "{{value}} d.",
+      "expenses": "Išlaidos",
+      "expensesByCategory": "Išlaidos pagal kategoriją",
+      "netProfit": "Grynasis pelnas",
+      "noExpenses": "Nėra išlaidų.",
+      "revenue": "Pajamos"
+    },
+    "checkinsToday": "Atvykimai šiandien",
+    "checkoutsToday": "Išvykimai šiandien",
+    "emptyList": "Nieko nėra.",
+    "fleet": {
+      "activeHint_one": "{{count}} aktyvus",
+      "activeHint_other": "{{count}} aktyvūs",
+      "avgPrice": "Vid. paros kaina",
+      "byType": "Objektai pagal tipą",
+      "empty": "Nėra objektų.",
+      "missingDescription": "Be aprašymo",
+      "missingPhotos": "Be nuotraukų",
+      "total": "Viso objektų"
+    },
+    "noRecent": "Naujų rezervacijų nėra.",
+    "ops": {
+      "abv": "ABV",
+      "abvHint": "Vidutinė rezervacija",
+      "awaitingPayment": "Laukia apmokėjimo",
+      "awaitingPaymentHint_one": "{{count}} rezervacija",
+      "awaitingPaymentHint_other": "{{count}} rezervacijos",
+      "confirmed30d": "30d patvirtinta",
+      "confirmed30dHint": "Ateinančios rezervacijos",
+      "freeToday": "Laisvi šiandien",
+      "revenue": "Pajamos",
+      "revenueHint": "Pasirinktas laikotarpis",
+      "utilization": "Užimtumas",
+      "utilizationHint": "Parko užimtumas"
+    },
     "period": {
       "all": "Visas laikotarpis",
       "custom": "Pasirinktas laikotarpis",
@@ -119,7 +216,15 @@
       "today": "Šiandien",
       "yesterday": "Vakar",
       "ytd": "Šie metai"
-    }
+    },
+    "recent24h": "Naujausios rezervacijos (24h)",
+    "subtitle": "Verslo valdymo centras — viskas vienoje vietoje.",
+    "tabs": {
+      "biz": "Verslas",
+      "fleet": "Objektai",
+      "ops": "Operacijos"
+    },
+    "title": "Skydelis"
   },
   "enums": {
     "amenities": {
@@ -221,6 +326,24 @@
       "bedroom_4": "Miegamasis 4",
       "living_room": "Svetainė"
     }
+  },
+  "gantt": {
+    "amount": "Suma",
+    "back": "Atgal",
+    "booking": "Rezervacija",
+    "confirm": "Patvirtinti",
+    "confirmTitle": "Patvirtinti pakeitimą",
+    "customer": "Klientas",
+    "dragHint": "Vilkite rezervacijos juostą, kad perkeltumėte į kitą objektą ar datas; tempkite juostos kraštus, kad pakeistumėte trukmę.",
+    "email": "El. paštas",
+    "forward": "Pirmyn",
+    "location": "Vieta",
+    "noProperties": "Nėra objektų",
+    "period": "Laikotarpis",
+    "phone": "Telefonas",
+    "property": "Objektas",
+    "status": "Statusas",
+    "today": "Šiandien"
   },
   "language": {
     "en": "English",

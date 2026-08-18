@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useTranslation } from "react-i18next";
 import { Loader2, Receipt } from "lucide-react";
 import { toast } from "sonner";
 import { listAllProperties } from "@/lib/properties.functions";
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/_authenticated/admin/bookings/$id")({
 });
 
 function EditBookingPage() {
+  const { t } = useTranslation();
   const { id } = useParams({ from: "/_authenticated/admin/bookings/$id" });
   const fetchOne = useServerFn(getBooking);
   const fetchProps = useServerFn(listAllProperties);
@@ -44,10 +46,10 @@ function EditBookingPage() {
     mutationFn: () => ensureInvoice({ data: { bookingId: id } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-invoice", id] });
-      toast.success("Sąskaita sugeneruota.");
+      toast.success(t("bookings.detail.invoiceGenerated"));
     },
     onError: (e) =>
-      toast.error(e instanceof Error ? e.message : "Nepavyko sugeneruoti sąskaitos."),
+      toast.error(e instanceof Error ? e.message : t("bookings.detail.invoiceError")),
   });
 
   const m = useMutation({
@@ -63,8 +65,8 @@ function EditBookingPage() {
     },
   });
 
-  if (isLoading) return <p>Kraunama…</p>;
-  if (!booking) return <p>Nerasta.</p>;
+  if (isLoading) return <p>{t("common.loading")}</p>;
+  if (!booking) return <p>{t("common.notFound")}</p>;
 
   const initial: BookingFormValues = {
     ...defaultBookingForm(props),
@@ -103,7 +105,9 @@ function EditBookingPage() {
 
   return (
     <div>
-      <h1 className="mb-4 text-2xl font-semibold">Rezervacija {booking.booking_number}</h1>
+      <h1 className="mb-4 text-2xl font-semibold">
+        {t("bookings.detail.title", { number: booking.booking_number })}
+      </h1>
       <div className="mb-4">
         {invoice ? (
           <InvoiceViewerDialog invoice={invoice as unknown as InvoiceRow} />
@@ -119,11 +123,11 @@ function EditBookingPage() {
             ) : (
               <Receipt className="mr-2 h-4 w-4" />
             )}
-            Generuoti sąskaitą
+            {t("bookings.detail.generateInvoice")}
           </Button>
         ) : (
           <p className="text-sm text-muted-foreground">
-            Sąskaita bus sugeneruota automatiškai, kai rezervacija taps „Apmokėta“.
+            {t("bookings.detail.invoiceAuto")}
           </p>
         )}
       </div>

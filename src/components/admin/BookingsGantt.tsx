@@ -3,6 +3,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Pencil } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { BOOKING_STATUS_LABEL_KEYS } from "@/lib/bookings.functions";
 
 type Booking = {
   id: string;
@@ -39,14 +41,6 @@ type BarDrag = {
   fromISO: string;
   toISO: string;
   moved: boolean;
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  confirmed: "Apmokėta",
-  pending: "Laukiama apmokėjimo",
-  completed: "Užbaigta",
-  cancelled: "Atšaukta",
-  blocked_external: "Išorinė / užblokuota",
 };
 
 const STATUS_CLASSES: Record<string, string> = {
@@ -93,6 +87,7 @@ export function BookingsGantt({
   onReschedule?: (input: RescheduleInput) => void;
   rescheduling?: boolean;
 }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
@@ -264,13 +259,13 @@ export function BookingsGantt({
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2">
           <Button size="sm" variant="outline" onClick={() => setStartDate(addDays(startDate, -navStep))}>
-            <ChevronLeft className="h-4 w-4 mr-1" /> Atgal
+            <ChevronLeft className="h-4 w-4 mr-1" /> {t("gantt.back")}
           </Button>
           <Button size="sm" variant="outline" onClick={() => setStartDate(todayStart)}>
-            <CalendarIcon className="h-4 w-4 mr-1" /> Šiandien
+            <CalendarIcon className="h-4 w-4 mr-1" /> {t("gantt.today")}
           </Button>
           <Button size="sm" variant="outline" onClick={() => setStartDate(addDays(startDate, navStep))}>
-            Pirmyn <ChevronRight className="h-4 w-4 ml-1" />
+            {t("gantt.forward")} <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
         </div>
         <div className="text-sm text-muted-foreground">
@@ -279,15 +274,15 @@ export function BookingsGantt({
       </div>
 
       <div className="flex flex-wrap items-center gap-3 text-xs">
-        <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-yellow-400 border border-yellow-600" /> Laukiama apmokėjimo</span>
-        <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-green-500 border border-green-700" /> Apmokėta</span>
-        <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-red-500 border border-red-700" /> Atšaukta</span>
-        <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-gray-400 border border-gray-600" /> Užbaigta</span>
+        <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-yellow-400 border border-yellow-600" /> {t("enums.bookingStatus.pending")}</span>
+        <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-green-500 border border-green-700" /> {t("enums.bookingStatus.confirmed")}</span>
+        <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-red-500 border border-red-700" /> {t("enums.bookingStatus.cancelled")}</span>
+        <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-gray-400 border border-gray-600" /> {t("enums.bookingStatus.completed")}</span>
       </div>
 
       {canDrag && (
         <p className="text-xs text-muted-foreground">
-          Vilkite rezervacijos juostą, kad perkeltumėte į kitą objektą ar datas; tempkite juostos kraštus, kad pakeistumėte trukmę.
+          {t("gantt.dragHint")}
         </p>
       )}
 
@@ -297,7 +292,7 @@ export function BookingsGantt({
             className="grid border-b bg-muted/40 sticky top-0 z-10"
             style={{ gridTemplateColumns: gridTemplate }}
           >
-            <div style={{ gridColumn: 1, gridRow: 1 }} className="px-3 py-2 text-xs font-semibold text-muted-foreground border-r">Objektas</div>
+            <div style={{ gridColumn: 1, gridRow: 1 }} className="px-3 py-2 text-xs font-semibold text-muted-foreground border-r">{t("gantt.property")}</div>
             {days.map((d, i) => {
               const isWeekStart = i % 7 === 0;
               const isWeekend = d.getDay() === 0 || d.getDay() === 6;
@@ -440,7 +435,7 @@ export function BookingsGantt({
           })}
 
           {properties.length === 0 && (
-            <div className="p-8 text-center text-muted-foreground">Nėra objektų</div>
+            <div className="p-8 text-center text-muted-foreground">{t("gantt.noProperties")}</div>
           )}
         </div>
       </div>
@@ -452,29 +447,29 @@ export function BookingsGantt({
               {selected?.booking_number && (
                 <span className="font-mono text-xs px-2 py-0.5 rounded bg-muted">{selected.booking_number}</span>
               )}
-              <span>{selected?.properties?.name ?? "Rezervacija"}</span>
+              <span>{selected?.properties?.name ?? t("gantt.booking")}</span>
             </DialogTitle>
           </DialogHeader>
           {selected && (
             <div className="space-y-2 text-sm">
-              <div><span className="text-muted-foreground">Statusas:</span> {STATUS_LABELS[selected.status] ?? selected.status}</div>
-              <div><span className="text-muted-foreground">Klientas:</span> {selected.customer_name || "—"}</div>
-              {selected.customer_phone && <div><span className="text-muted-foreground">Telefonas:</span> {selected.customer_phone}</div>}
-              {selected.customer_email && <div><span className="text-muted-foreground">El. paštas:</span> {selected.customer_email}</div>}
+              <div><span className="text-muted-foreground">{t("gantt.status")}:</span> {BOOKING_STATUS_LABEL_KEYS[selected.status] ? t(BOOKING_STATUS_LABEL_KEYS[selected.status]) : selected.status}</div>
+              <div><span className="text-muted-foreground">{t("gantt.customer")}:</span> {selected.customer_name || "—"}</div>
+              {selected.customer_phone && <div><span className="text-muted-foreground">{t("gantt.phone")}:</span> {selected.customer_phone}</div>}
+              {selected.customer_email && <div><span className="text-muted-foreground">{t("gantt.email")}:</span> {selected.customer_email}</div>}
               <div>
-                <span className="text-muted-foreground">Laikotarpis:</span>{" "}
+                <span className="text-muted-foreground">{t("gantt.period")}:</span>{" "}
                 {selected.date_from} {selected.check_in_time} → {selected.date_to} {selected.check_out_time}
               </div>
-              {selected.location && <div><span className="text-muted-foreground">Vieta:</span> {selected.location}</div>}
-              <div><span className="text-muted-foreground">Suma:</span> <span className="font-semibold text-primary">{Number(selected.total_amount).toFixed(2)}€</span></div>
+              {selected.location && <div><span className="text-muted-foreground">{t("gantt.location")}:</span> {selected.location}</div>}
+              <div><span className="text-muted-foreground">{t("gantt.amount")}:</span> <span className="font-semibold text-primary">{Number(selected.total_amount).toFixed(2)}€</span></div>
               {selected.note && <div className="italic text-muted-foreground">„{selected.note}"</div>}
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setSelected(null)}>Uždaryti</Button>
+            <Button variant="outline" onClick={() => setSelected(null)}>{t("common.close")}</Button>
             {selected && (
               <Button onClick={() => { const id = selected.id; setSelected(null); navigate({ to: "/admin/bookings/$id", params: { id } }); }}>
-                <Pencil className="h-4 w-4 mr-1" /> Redaguoti
+                <Pencil className="h-4 w-4 mr-1" /> {t("common.edit")}
               </Button>
             )}
           </DialogFooter>
@@ -484,17 +479,17 @@ export function BookingsGantt({
       <Dialog open={!!pending} onOpenChange={(o) => !o && setPending(null)}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Patvirtinti pakeitimą</DialogTitle>
+            <DialogTitle>{t("gantt.confirmTitle")}</DialogTitle>
           </DialogHeader>
           {pending && (
             <div className="space-y-2 text-sm">
               <div>
-                <span className="text-muted-foreground">Rezervacija:</span>{" "}
+                <span className="text-muted-foreground">{t("gantt.booking")}:</span>{" "}
                 {pending.booking.booking_number ? `${pending.booking.booking_number} · ` : ""}
                 {pending.booking.customer_name || "—"}
               </div>
               <div>
-                <span className="text-muted-foreground">Objektas:</span>{" "}
+                <span className="text-muted-foreground">{t("gantt.property")}:</span>{" "}
                 {pending.property_id === pending.booking.property_id ? (
                   propertyName(pending.property_id)
                 ) : (
@@ -505,7 +500,7 @@ export function BookingsGantt({
                 )}
               </div>
               <div>
-                <span className="text-muted-foreground">Laikotarpis:</span>{" "}
+                <span className="text-muted-foreground">{t("gantt.period")}:</span>{" "}
                 <span className="line-through opacity-70">
                   {pending.booking.date_from} → {pending.booking.date_to}
                 </span>{" "}
@@ -515,7 +510,7 @@ export function BookingsGantt({
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setPending(null)} disabled={rescheduling}>
-              Atšaukti
+              {t("common.cancel")}
             </Button>
             <Button
               disabled={rescheduling}
@@ -530,7 +525,7 @@ export function BookingsGantt({
                 setPending(null);
               }}
             >
-              Patvirtinti
+              {t("gantt.confirm")}
             </Button>
           </DialogFooter>
         </DialogContent>

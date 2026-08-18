@@ -3,6 +3,66 @@
     "noAdminText": "Please contact the system administrator to be granted access.",
     "noAdminTitle": "You don't have administrator rights"
   },
+  "bookings": {
+    "actions": "Actions",
+    "apply": "Apply",
+    "clear": "Clear",
+    "clearAllFilters": "Clear all filters",
+    "cols": {
+      "booking_number": "Booking no.",
+      "customer_email": "Email",
+      "customer_name": "Guest",
+      "customer_phone": "Phone",
+      "date_from": "Check-in",
+      "date_to": "Check-out",
+      "duration": "Nights",
+      "property": "Property",
+      "status": "Status",
+      "total_amount": "Amount (€)"
+    },
+    "confirmDelete": "Delete booking {{name}}?",
+    "delete": "Delete",
+    "deleted": "Deleted",
+    "detail": {
+      "generateInvoice": "Generate invoice",
+      "invoiceAuto": "The invoice will be generated automatically once the booking is marked as paid.",
+      "invoiceError": "Could not generate the invoice.",
+      "invoiceGenerated": "Invoice generated.",
+      "title": "Booking {{number}}"
+    },
+    "dialog": {
+      "address": "Address",
+      "amount": "Amount",
+      "customer": "Guest",
+      "days": "{{value}} nights",
+      "duration": "Duration",
+      "email": "Email",
+      "from": "From",
+      "guests": "Guests",
+      "idCode": "ID code",
+      "location": "Location",
+      "phone": "Phone",
+      "property": "Property",
+      "title": "Booking details",
+      "to": "To"
+    },
+    "edit": "Edit",
+    "error": "Error",
+    "filter": "Filter",
+    "found_one": "{{count}} found",
+    "found_other": "{{count}} found",
+    "from": "From",
+    "new": "New booking",
+    "noValues": "No values",
+    "notFound": "No bookings found",
+    "rescheduled": "Booking moved",
+    "title": "Bookings",
+    "to": "To",
+    "totalRow": "Total: {{count}} bookings | {{sum}}€",
+    "view": "View",
+    "viewCalendar": "Calendar",
+    "viewList": "List"
+  },
   "common": {
     "back": "Back",
     "cancel": "Cancel",
@@ -109,6 +169,43 @@
     }
   },
   "dashboard": {
+    "biz": {
+      "avgStay": "Avg. stay",
+      "days": "{{value}} nights",
+      "expenses": "Expenses",
+      "expensesByCategory": "Expenses by category",
+      "netProfit": "Net profit",
+      "noExpenses": "No expenses.",
+      "revenue": "Revenue"
+    },
+    "checkinsToday": "Check-ins today",
+    "checkoutsToday": "Check-outs today",
+    "emptyList": "Nothing here.",
+    "fleet": {
+      "activeHint_one": "{{count}} active",
+      "activeHint_other": "{{count}} active",
+      "avgPrice": "Avg. nightly rate",
+      "byType": "Properties by type",
+      "empty": "No properties.",
+      "missingDescription": "Without description",
+      "missingPhotos": "Without photos",
+      "total": "Total properties"
+    },
+    "noRecent": "No new bookings.",
+    "ops": {
+      "abv": "ABV",
+      "abvHint": "Average booking value",
+      "awaitingPayment": "Awaiting payment",
+      "awaitingPaymentHint_one": "{{count}} booking",
+      "awaitingPaymentHint_other": "{{count}} bookings",
+      "confirmed30d": "Confirmed 30d",
+      "confirmed30dHint": "Upcoming bookings",
+      "freeToday": "Free today",
+      "revenue": "Revenue",
+      "revenueHint": "Selected period",
+      "utilization": "Occupancy",
+      "utilizationHint": "Portfolio occupancy"
+    },
     "period": {
       "all": "All time",
       "custom": "Custom period",
@@ -119,7 +216,15 @@
       "today": "Today",
       "yesterday": "Yesterday",
       "ytd": "This year"
-    }
+    },
+    "recent24h": "Latest bookings (24h)",
+    "subtitle": "Your business control centre — everything in one place.",
+    "tabs": {
+      "biz": "Business",
+      "fleet": "Properties",
+      "ops": "Operations"
+    },
+    "title": "Dashboard"
   },
   "enums": {
     "amenities": {
@@ -221,6 +326,24 @@
       "bedroom_4": "Bedroom 4",
       "living_room": "Living room"
     }
+  },
+  "gantt": {
+    "amount": "Amount",
+    "back": "Back",
+    "booking": "Booking",
+    "confirm": "Confirm",
+    "confirmTitle": "Confirm change",
+    "customer": "Guest",
+    "dragHint": "Drag a booking bar to move it to another property or dates; drag the bar edges to change its length.",
+    "email": "Email",
+    "forward": "Forward",
+    "location": "Location",
+    "noProperties": "No properties",
+    "period": "Period",
+    "phone": "Phone",
+    "property": "Property",
+    "status": "Status",
+    "today": "Today"
   },
   "language": {
     "en": "English",
