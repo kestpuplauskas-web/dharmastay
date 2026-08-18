@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { createProperty } from "@/lib/properties.functions";
 import { PropertyForm, propertyToForm, type PropertyFormValues } from "@/components/admin/PropertyForm";
@@ -11,9 +11,18 @@ export const Route = createFileRoute("/_authenticated/admin/properties/new")({
 function NewPropertyPage() {
   const create = useServerFn(createProperty);
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const m = useMutation({
     mutationFn: (v: PropertyFormValues) => create({ data: v }),
-    onSuccess: () => navigate({ to: "/admin/properties" }),
+    onSuccess: async () => {
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["admin-all-properties"] }),
+        qc.invalidateQueries({ queryKey: ["admin-props"] }),
+        qc.invalidateQueries({ queryKey: ["admin-props-all"] }),
+        qc.invalidateQueries({ queryKey: ["admin-properties-settings"] }),
+      ]);
+      navigate({ to: "/admin/properties" });
+    },
   });
 
   return (
