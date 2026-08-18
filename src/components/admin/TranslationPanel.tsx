@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useBlocker } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -28,6 +28,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import DOMPurify from "dompurify";
 import { RichTextEditor } from "@/components/admin/content/RichTextEditor";
+import { VariablePicker } from "@/components/admin/content/VariablePicker";
+import type { Editor } from "@tiptap/react";
 import { translationLanguagesFor } from "@/lib/languages";
 import { useDefaultLanguage } from "@/hooks/useDefaultLanguage";
 import { getTranslations, saveTranslations } from "@/lib/translations.functions";
@@ -38,12 +40,15 @@ export function TranslationPanel({
   entityId,
   fields,
   originals,
+  showVariables,
 }: {
   entityType: TranslatableEntity;
   entityId: string;
   fields: TranslatableFieldDef[];
   /** Originalo tekstai, rodomi šalia kaip nuoroda. */
   originals: Record<string, string>;
+  /** Rodyti kintamųjų ({{...}}) įterpimo juostą po kiekvienu lauku. */
+  showVariables?: boolean;
 }) {
   const fetchTranslations = useServerFn(getTranslations);
   const save = useServerFn(saveTranslations);
@@ -56,6 +61,8 @@ export function TranslationPanel({
   const [activeLang, setActiveLang] = useState("");
   const [draft, setDraft] = useState<Record<string, string>>({});
   const [dirty, setDirty] = useState(false);
+  const editorsRef = useRef<Record<string, Editor | null>>({});
+  const inputsRef = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
 
   // Objekto formos „Išsaugoti" mygtukas išmeta iš puslapio — įspėjame.
   const { proceed, reset, status } = useBlocker({
@@ -90,6 +97,29 @@ export function TranslationPanel({
   const edit = (field: string, value: string) => {
     setDirty(true);
     setDraft((s) => ({ ...s, [field]: value }));
+  };
+
+  const insertToken = (field: string, isHtml: boolean, token: string) => {
+    if (isHtml) {
+      const ed = editorsRef.current[field];
+      if (ed) {
+        ed.chain().focus().insertContent(token).run();
+        return;
+      }
+    }
+    const el = inputsRef.current[field];
+    const current = draft[field] ?? "";
+    if (!el) {
+      edit(field, `${current}${token}`);
+      return;
+    }
+    const start = el.selectionStart ?? current.length;
+    const end = el.selectionEnd ?? current.length;
+    edit(field, `${current.slice(0, start)}${token}${current.slice(end)}`);
+    requestAnimationFrame(() => {
+      el.focus();
+      el.setSelectionRange(start + token.length, start + token.length);
+    });
   };
 
   const m = useMutation({
@@ -165,20 +195,34 @@ export function TranslationPanel({
               {f.html ? (
                 <RichTextEditor
                   value={draft[f.field] ?? ""}
+                  onEditorReady={(ed) => {
+                    editorsRef.current[f.field] = ed;
+                  }}
                   onChange={(html) => edit(f.field, html === "<p></p>" ? "" : html)}
                 />
               ) : f.multiline ? (
                 <Textarea
                   rows={3}
+                  ref={(el) => {
+                    inputsRef.current[f.field] = el;
+                  }}
                   value={draft[f.field] ?? ""}
                   placeholder={`${activeLang.toUpperCase()} vertimas`}
                   onChange={(e) => edit(f.field, e.target.value)}
                 />
               ) : (
                 <Input
+                  ref={(el) => {
+                    inputsRef.current[f.field] = el;
+                  }}
                   value={draft[f.field] ?? ""}
                   placeholder={`${activeLang.toUpperCase()} vertimas`}
                   onChange={(e) => edit(f.field, e.target.value)}
+                />
+              )}
+              {showVariables && (
+                <VariablePicker
+                  onInsert={(token) => insertToken(f.field, Boolean(f.html), token)}
                 />
               )}
             </div>
