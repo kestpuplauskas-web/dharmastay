@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { EditorContent, useEditor, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Bold, Italic, List, ListOrdered, Heading2, Undo2, Redo2 } from "lucide-react";
@@ -46,6 +47,7 @@ export function RichTextEditor({
   invalid?: boolean;
   onEditorReady?: (editor: Editor | null) => void;
 }) {
+  const { t } = useTranslation();
   const editor = useEditor({
     extensions: [StarterKit],
     content: value || "",
@@ -86,7 +88,7 @@ export function RichTextEditor({
     >
       <div className="flex flex-wrap items-center gap-1 border-b bg-muted/40 px-1.5 py-1">
         <ToolbarButton
-          label="Paryškinti"
+          label={t("content.ui.editor.bold")}
           disabled={disabled}
           active={editor.isActive("bold")}
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -94,7 +96,7 @@ export function RichTextEditor({
           <Bold className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
-          label="Pasvirasis"
+          label={t("content.ui.editor.italic")}
           disabled={disabled}
           active={editor.isActive("italic")}
           onClick={() => editor.chain().focus().toggleItalic().run()}
@@ -102,7 +104,7 @@ export function RichTextEditor({
           <Italic className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
-          label="Antraštė"
+          label={t("content.ui.editor.heading")}
           disabled={disabled}
           active={editor.isActive("heading", { level: 2 })}
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
@@ -110,7 +112,7 @@ export function RichTextEditor({
           <Heading2 className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
-          label="Sąrašas"
+          label={t("content.ui.editor.bulletList")}
           disabled={disabled}
           active={editor.isActive("bulletList")}
           onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -118,7 +120,7 @@ export function RichTextEditor({
           <List className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
-          label="Numeruotas sąrašas"
+          label={t("content.ui.editor.orderedList")}
           disabled={disabled}
           active={editor.isActive("orderedList")}
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
@@ -127,14 +129,14 @@ export function RichTextEditor({
         </ToolbarButton>
         <div className="ml-auto flex items-center gap-1">
           <ToolbarButton
-            label="Atšaukti"
+            label={t("content.ui.editor.undo")}
             disabled={disabled}
             onClick={() => editor.chain().focus().undo().run()}
           >
             <Undo2 className="h-4 w-4" />
           </ToolbarButton>
           <ToolbarButton
-            label="Pakartoti"
+            label={t("content.ui.editor.redo")}
             disabled={disabled}
             onClick={() => editor.chain().focus().redo().run()}
           >
