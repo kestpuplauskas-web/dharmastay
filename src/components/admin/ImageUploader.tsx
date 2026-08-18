@@ -298,6 +298,7 @@ function SortableImage({
   isCover: boolean;
   onRemove: () => void;
 }) {
+  const { t } = useTranslation();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: url,
   });
@@ -322,7 +323,7 @@ function SortableImage({
       >
         <img
           src={url}
-          alt={`Nuotrauka ${index + 1}`}
+          alt={t("properties.images.alt", { index: index + 1 })}
           loading="lazy"
           decoding="async"
           draggable={false}
@@ -338,7 +339,7 @@ function SortableImage({
           onClick={onRemove}
           onPointerDown={(e) => e.stopPropagation()}
           className="rounded-md bg-black/60 p-1 text-white hover:bg-black/80"
-          aria-label="Pašalinti"
+          aria-label={t("properties.images.remove")}
         >
           <X className="h-4 w-4" />
         </button>
@@ -352,7 +353,7 @@ function SortableImage({
       </span>
       {isCover && (
         <span className="absolute bottom-2 left-2 rounded bg-primary px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-primary-foreground">
-          Viršelis
+          {t("properties.images.cover")}
         </span>
       )}
     </div>
