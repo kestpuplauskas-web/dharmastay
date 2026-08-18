@@ -87,7 +87,7 @@ export function InvoiceViewerDialog({ invoice }: { invoice: InvoiceRow }) {
           <DialogTitle>
             {t("bookings.invoice.titleNumbered", { number: invoice.full_number })}
           </DialogTitle>
-          <DialogDescription>Sugeneruota {invoice.issue_date}.</DialogDescription>
+          <DialogDescription>{t("bookings.invoice.issuedOn", { date: invoice.issue_date })}</DialogDescription>
         </DialogHeader>
         <div className="max-h-[70vh] overflow-y-auto">
           <PdfPreview data={bytes} />
