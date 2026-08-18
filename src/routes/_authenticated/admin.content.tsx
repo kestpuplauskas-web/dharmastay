@@ -32,13 +32,13 @@ export const Route = createFileRoute("/_authenticated/admin/content")({
   component: ContentPage,
   head: () => ({
     meta: [
-      { title: "Turinys · Rentivo Admin" },
+      { title: "Turinys · Dharma Stay" },
       {
         name: "description",
         content:
           "Klientams siunčiamų el. laiškų, WhatsApp žinučių ir svečiams skirtos informacijos šablonų valdymas.",
       },
-      { property: "og:title", content: "Turinys · Rentivo Admin" },
+      { property: "og:title", content: "Turinys · Dharma Stay" },
       {
         property: "og:description",
         content: "El. laiškų, WhatsApp žinučių ir svečių informacijos šablonai vienoje vietoje.",
