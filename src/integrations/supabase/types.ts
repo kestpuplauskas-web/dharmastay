@@ -168,6 +168,7 @@ export type Database = {
           id: string
           infants_count: number
           is_vat_payer: boolean
+          language: string
           location: string
           note: string | null
           payment_amount: number
@@ -213,6 +214,7 @@ export type Database = {
           id?: string
           infants_count?: number
           is_vat_payer?: boolean
+          language?: string
           location?: string
           note?: string | null
           payment_amount?: number
@@ -258,6 +260,7 @@ export type Database = {
           id?: string
           infants_count?: number
           is_vat_payer?: boolean
+          language?: string
           location?: string
           note?: string | null
           payment_amount?: number
