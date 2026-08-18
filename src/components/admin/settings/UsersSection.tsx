@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -27,10 +28,10 @@ import {
 import { Trash2 } from "lucide-react";
 import { deleteUser, inviteUser, listUsersWithRoles } from "@/lib/users.functions";
 
-const ROLE_LABEL: Record<string, string> = {
-  admin: "Administratorius",
-  housekeeper: "Kambarių tvarkytoja",
-  user: "Vartotojas",
+const ROLE_LABEL_KEYS: Record<string, string> = {
+  admin: "settings.users.roleAdmin",
+  housekeeper: "settings.users.roleHousekeeper",
+  user: "settings.users.roleUser",
 };
 
 function fmt(value: string | null | undefined, withTime = false) {
@@ -42,6 +43,7 @@ function fmt(value: string | null | undefined, withTime = false) {
 }
 
 export function UsersSection({ canEdit }: { canEdit: boolean }) {
+  const { t } = useTranslation();
   const invite = useServerFn(inviteUser);
   const fetchUsers = useServerFn(listUsersWithRoles);
   const removeUser = useServerFn(deleteUser);
@@ -68,27 +70,27 @@ export function UsersSection({ canEdit }: { canEdit: boolean }) {
         },
       }),
     onSuccess: () => {
-      toast.success("Kvietimas išsiųstas.");
+      toast.success(t("settings.users.inviteSent"));
       setEmail("");
       qc.invalidateQueries({ queryKey: ["users-with-roles"] });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Nepavyko pakviesti."),
+    onError: (e) => toast.error(e instanceof Error ? e.message : t("settings.users.inviteFailed")),
   });
 
   const del = useMutation({
     mutationFn: (userId: string) => removeUser({ data: { userId } }),
     onSuccess: () => {
-      toast.success("Vartotojas ištrintas.");
+      toast.success(t("settings.users.deleted"));
       qc.invalidateQueries({ queryKey: ["users-with-roles"] });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Nepavyko ištrinti."),
+    onError: (e) => toast.error(e instanceof Error ? e.message : t("settings.users.deleteFailed")),
   });
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Pakviesti darbuotoją</CardTitle>
+          <CardTitle className="text-base">{t("settings.users.inviteTitle")}</CardTitle>
         </CardHeader>
         <CardContent>
           <form
@@ -99,7 +101,7 @@ export function UsersSection({ canEdit }: { canEdit: boolean }) {
             }}
           >
             <div className="flex-1 space-y-1.5">
-              <Label htmlFor="invite-email">El. paštas</Label>
+              <Label htmlFor="invite-email">{t("settings.users.email")}</Label>
               <Input
                 id="invite-email"
                 type="email"
@@ -110,7 +112,7 @@ export function UsersSection({ canEdit }: { canEdit: boolean }) {
               />
             </div>
             <div className="space-y-1.5 sm:w-56">
-              <Label>Rolė</Label>
+              <Label>{t("settings.users.role")}</Label>
               <Select
                 value={role}
                 onValueChange={(v) => setRole(v as "admin" | "housekeeper")}
@@ -120,40 +122,39 @@ export function UsersSection({ canEdit }: { canEdit: boolean }) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="admin">Administratorius</SelectItem>
-                  <SelectItem value="housekeeper">Kambarių tvarkytoja</SelectItem>
+                  <SelectItem value="admin">{t("settings.users.roleAdmin")}</SelectItem>
+                  <SelectItem value="housekeeper">{t("settings.users.roleHousekeeper")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <Button type="submit" disabled={!canEdit || m.isPending}>
-              {m.isPending ? "Siunčiama…" : "Pakviesti"}
+              {m.isPending ? t("settings.users.sending") : t("settings.users.invite")}
             </Button>
           </form>
           <p className="mt-3 text-xs text-muted-foreground">
-            Pakviestasis gaus el. laišką su nuoroda, kurioje pats susikurs slaptažodį. Viešos
-            registracijos nėra.
+            {t("settings.users.inviteHint")}
           </p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Vartotojai</CardTitle>
+          <CardTitle className="text-base">{t("settings.users.listTitle")}</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <p className="text-sm text-muted-foreground">Kraunama…</p>
+            <p className="text-sm text-muted-foreground">{t("settings.users.loading")}</p>
           ) : (users ?? []).length === 0 ? (
-            <p className="text-sm text-muted-foreground">Vartotojų nėra.</p>
+            <p className="text-sm text-muted-foreground">{t("settings.users.empty")}</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-left text-muted-foreground">
-                    <th className="py-2 font-medium">El. paštas</th>
-                    <th className="py-2 font-medium">Rolė</th>
-                    <th className="py-2 font-medium">Pridėtas</th>
-                    <th className="py-2 font-medium">Paskutinis prisijungimas</th>
+                    <th className="py-2 font-medium">{t("settings.users.email")}</th>
+                    <th className="py-2 font-medium">{t("settings.users.role")}</th>
+                    <th className="py-2 font-medium">{t("settings.users.colAdded")}</th>
+                    <th className="py-2 font-medium">{t("settings.users.colLastSignIn")}</th>
                     <th className="py-2" />
                   </tr>
                 </thead>
@@ -161,10 +162,10 @@ export function UsersSection({ canEdit }: { canEdit: boolean }) {
                   {(users ?? []).map((u) => (
                     <tr key={`${u.userId}-${u.role}`} className="border-t">
                       <td className="py-2">{u.email || u.userId}</td>
-                      <td className="py-2">{ROLE_LABEL[u.role] ?? u.role}</td>
+                      <td className="py-2">{ROLE_LABEL_KEYS[u.role] ? t(ROLE_LABEL_KEYS[u.role]) : u.role}</td>
                       <td className="py-2 text-muted-foreground">{fmt(u.createdAt)}</td>
                       <td className="py-2 text-muted-foreground">
-                        {u.lastSignInAt ? fmt(u.lastSignInAt, true) : "Neprisijungė"}
+                        {u.lastSignInAt ? fmt(u.lastSignInAt, true) : t("settings.users.neverSignedIn")}
                       </td>
                       <td className="py-2 text-right">
                         <AlertDialog>
@@ -173,23 +174,22 @@ export function UsersSection({ canEdit }: { canEdit: boolean }) {
                               variant="ghost"
                               size="icon"
                               disabled={!canEdit || del.isPending}
-                              aria-label="Ištrinti vartotoją"
+                              aria-label={t("settings.users.deleteAria")}
                             >
                               <Trash2 className="h-4 w-4 text-destructive" />
                             </Button>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Ištrinti vartotoją?</AlertDialogTitle>
+                              <AlertDialogTitle>{t("settings.users.deleteTitle")}</AlertDialogTitle>
                               <AlertDialogDescription>
-                                {u.email || u.userId} paskyra bus visam laikui ištrinta kartu su
-                                visomis rolėmis. Veiksmo atšaukti negalima.
+                                {t("settings.users.deleteDesc", { name: u.email || u.userId })}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Atšaukti</AlertDialogCancel>
+                              <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
                               <AlertDialogAction onClick={() => del.mutate(u.userId)}>
-                                Ištrinti
+                                {t("common.delete")}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
