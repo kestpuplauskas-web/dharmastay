@@ -195,20 +195,34 @@ export function TranslationPanel({
               {f.html ? (
                 <RichTextEditor
                   value={draft[f.field] ?? ""}
+                  onEditorReady={(ed) => {
+                    editorsRef.current[f.field] = ed;
+                  }}
                   onChange={(html) => edit(f.field, html === "<p></p>" ? "" : html)}
                 />
               ) : f.multiline ? (
                 <Textarea
                   rows={3}
+                  ref={(el) => {
+                    inputsRef.current[f.field] = el;
+                  }}
                   value={draft[f.field] ?? ""}
                   placeholder={`${activeLang.toUpperCase()} vertimas`}
                   onChange={(e) => edit(f.field, e.target.value)}
                 />
               ) : (
                 <Input
+                  ref={(el) => {
+                    inputsRef.current[f.field] = el;
+                  }}
                   value={draft[f.field] ?? ""}
                   placeholder={`${activeLang.toUpperCase()} vertimas`}
                   onChange={(e) => edit(f.field, e.target.value)}
+                />
+              )}
+              {showVariables && (
+                <VariablePicker
+                  onInsert={(token) => insertToken(f.field, Boolean(f.html), token)}
                 />
               )}
             </div>
