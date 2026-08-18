@@ -36,6 +36,25 @@ Authorization: Bearer <API raktas>
 Be šios antraštės grąžinamas `401 unauthorized`. CORS leidžiamas tik tiems domenams,
 kurie nurodyti API rakto įraše Core administratoriaus panelėje.
 
+## 2a. Kalba
+
+Visi turinio endpoint'ai priima neprivalomą kalbos parametrą:
+
+- `GET /properties?language=en`
+- `GET /properties/{id}?language=en`
+- `GET /bookings/{number}?language=en`
+- `POST /quote` — laukas `language` užklausos kūne
+- `POST /bookings` — laukas `language` užklausos kūne (išsaugoma rezervacijoje)
+- `GET /legal?language=en` (veikia jau seniai)
+
+Nenurodžius, naudojama objekto numatytoji kalba. Atsakymo laukų pavadinimai
+nesikeičia — `name` lieka `name`, tik turinys ateina prašyta kalba. Jei kurio
+nors lauko vertimo nėra, grąžinamas tekstas originalo kalba (niekada ne tuščias).
+
+SVARBU dėl papildomų paslaugų: `POST /quote` ir `POST /bookings` `extras[].name`
+lauke galima siųsti ir originalų, ir išverstą pavadinimą — Core atpažįsta abu.
+Rezervacijoje ir administratoriaus panelėje visada saugomas originalus pavadinimas.
+
 ## 3. Endpoint'ai
 
 ### GET `/properties`

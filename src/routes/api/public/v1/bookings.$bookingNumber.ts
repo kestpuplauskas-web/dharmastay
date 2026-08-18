@@ -24,13 +24,36 @@ export const Route = createFileRoute("/api/public/v1/bookings/$bookingNumber")({
             const { data, error } = await supabaseAdmin
               .from("bookings")
               .select(
-                "booking_number, property_id, date_from, date_to, status, payment_status, total_amount, customer_email, extras, extras_total",
+                "booking_number, property_id, date_from, date_to, status, payment_status, total_amount, customer_email, extras, extras_total, language",
               )
               .eq("booking_number", bookingNumber)
               .maybeSingle();
             if (error) throw new Error(error.message);
             if (!data || (data.customer_email ?? "").trim().toLowerCase() !== email) {
               return apiError("not_found", "Booking not found", 404, headers);
+            }
+
+            // Paslaugų pavadinimai grąžinami prašyta kalba; DB lieka originalai.
+            const { loadDefaultLanguage, loadTranslations } = await import(
+              "@/lib/translations.server"
+            );
+            const defaultLang = await loadDefaultLanguage();
+            const lang =
+              url.searchParams.get("language")?.trim() ||
+              (data as { language?: string }).language ||
+              defaultLang;
+
+            let extras = (data.extras ?? []) as Array<Record<string, unknown>>;
+            if (lang !== defaultLang && Array.isArray(extras) && extras.length > 0) {
+              const { extraServiceField } = await import("@/lib/translations");
+              const tr = await loadTranslations("property", [data.property_id], lang);
+              const map = tr[data.property_id];
+              if (map) {
+                extras = extras.map((e) => {
+                  const t = map[extraServiceField(String(e["name"] ?? ""))];
+                  return t?.trim() ? { ...e, name: t } : e;
+                });
+              }
             }
 
             return apiJson(
@@ -44,7 +67,7 @@ export const Route = createFileRoute("/api/public/v1/bookings/$bookingNumber")({
                   payment_status: data.payment_status,
                   total_amount: Number(data.total_amount),
                   currency: "EUR",
-                  extras: data.extras ?? [],
+                  extras,
                   extras_total: Number(data.extras_total ?? 0),
                 },
               },
