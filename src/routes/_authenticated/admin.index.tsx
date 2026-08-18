@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useTranslation } from "react-i18next";
 import { KeyRound, DoorOpen, CreditCard, Sparkles } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { KpiCard } from "@/components/admin/KpiCard";
@@ -9,20 +10,14 @@ import { PeriodFilter } from "@/components/admin/PeriodFilter";
 import { BookingsTimeline } from "@/components/admin/BookingsTimeline";
 import { getDashboardStats } from "@/lib/dashboard.functions";
 import { resolvePeriod, type PeriodKey } from "@/lib/dashboard-period";
+import { propertyTypeLabelKey } from "@/lib/properties";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   component: AdminDashboard,
 });
 
-const PROPERTY_TYPE_LABELS: Record<string, string> = {
-  apartment: "Apartamentai",
-  hotel: "Viešbučiai",
-  villa: "Vilos",
-  cottage: "Atostogų nameliai",
-  guesthouse: "Svečių namai",
-};
-
 function AdminDashboard() {
+  const { t } = useTranslation();
   const [period, setPeriod] = useState<{ period: PeriodKey; from: string | null; to: string | null }>(() => {
     const r = resolvePeriod("mtd");
     return { period: "mtd", from: r.from, to: r.to };
@@ -38,8 +33,8 @@ function AdminDashboard() {
     <div>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold">Skydelis</h1>
-          <p className="text-sm text-muted-foreground">Verslo valdymo centras — viskas vienoje vietoje.</p>
+          <h1 className="text-2xl font-semibold">{t("dashboard.title")}</h1>
+          <p className="text-sm text-muted-foreground">{t("dashboard.subtitle")}</p>
         </div>
         <PeriodFilter
           value={period}
@@ -49,62 +44,68 @@ function AdminDashboard() {
 
       <Tabs defaultValue="ops" className="mt-6">
         <TabsList>
-          <TabsTrigger value="ops">Operacijos</TabsTrigger>
-          <TabsTrigger value="fleet">Objektai</TabsTrigger>
-          <TabsTrigger value="biz">Verslas</TabsTrigger>
+          <TabsTrigger value="ops">{t("dashboard.tabs.ops")}</TabsTrigger>
+          <TabsTrigger value="fleet">{t("dashboard.tabs.fleet")}</TabsTrigger>
+          <TabsTrigger value="biz">{t("dashboard.tabs.biz")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="ops" className="mt-4">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             <KpiCard
-              label="Pajamos"
+              label={t("dashboard.ops.revenue")}
               value={`${(data?.operations.revenue ?? 0).toFixed(0)} €`}
-              hint="Pasirinktas laikotarpis"
+              hint={t("dashboard.ops.revenueHint")}
             />
             <KpiCard
-              label="Užimtumas"
+              label={t("dashboard.ops.utilization")}
               value={`${Math.round((data?.operations.utilization ?? 0) * 100)}%`}
-              hint="Parko užimtumas"
+              hint={t("dashboard.ops.utilizationHint")}
             />
             <KpiCard
-              label="Laisvi šiandien"
+              label={t("dashboard.ops.freeToday")}
               value={`${data?.operations.freeToday ?? 0} / ${data?.operations.totalActive ?? 0}`}
             />
             <KpiCard
-              label="30d patvirtinta"
+              label={t("dashboard.ops.confirmed30d")}
               value={data?.operations.confirmed30d ?? 0}
-              hint="Ateinančios rezervacijos"
+              hint={t("dashboard.ops.confirmed30dHint")}
             />
             <KpiCard
-              label="Laukia apmokėjimo"
+              label={t("dashboard.ops.awaitingPayment")}
               value={`${(data?.operations.awaitingPayment.total ?? 0).toFixed(0)} €`}
-              hint={`${data?.operations.awaitingPayment.count ?? 0} rezervacijos`}
+              hint={t("dashboard.ops.awaitingPaymentHint", {
+                count: data?.operations.awaitingPayment.count ?? 0,
+              })}
             />
             <KpiCard
-              label="ABV"
+              label={t("dashboard.ops.abv")}
               value={`${(data?.operations.avgBookingValue ?? 0).toFixed(0)} €`}
-              hint="Vidutinė rezervacija"
+              hint={t("dashboard.ops.abvHint")}
             />
           </div>
         </TabsContent>
 
         <TabsContent value="fleet" className="mt-4">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-            <KpiCard label="Viso objektų" value={data?.fleet.total ?? 0} hint={`${data?.fleet.active ?? 0} aktyvūs`} />
-            <KpiCard label="Vid. paros kaina" value={`${(data?.fleet.avgPrice ?? 0).toFixed(0)} €`} />
-            <KpiCard label="Be nuotraukų" value={data?.fleet.missingPhotos ?? 0} />
-            <KpiCard label="Be aprašymo" value={data?.fleet.missingDescription ?? 0} />
+            <KpiCard
+              label={t("dashboard.fleet.total")}
+              value={data?.fleet.total ?? 0}
+              hint={t("dashboard.fleet.activeHint", { count: data?.fleet.active ?? 0 })}
+            />
+            <KpiCard label={t("dashboard.fleet.avgPrice")} value={`${(data?.fleet.avgPrice ?? 0).toFixed(0)} €`} />
+            <KpiCard label={t("dashboard.fleet.missingPhotos")} value={data?.fleet.missingPhotos ?? 0} />
+            <KpiCard label={t("dashboard.fleet.missingDescription")} value={data?.fleet.missingDescription ?? 0} />
           </div>
           <div className="mt-4 rounded-lg border bg-card p-4">
-            <h3 className="text-sm font-medium">Objektai pagal tipą</h3>
+            <h3 className="text-sm font-medium">{t("dashboard.fleet.byType")}</h3>
             <div className="mt-3 flex flex-wrap gap-2 text-sm">
               {Object.entries(data?.fleet.byType ?? {}).map(([k, v]) => (
                 <span key={k} className="rounded-full border px-3 py-1">
-                  {PROPERTY_TYPE_LABELS[k] ?? k}: <strong>{v as number}</strong>
+                  {t(propertyTypeLabelKey(k))}: <strong>{v as number}</strong>
                 </span>
               ))}
               {Object.keys(data?.fleet.byType ?? {}).length === 0 ? (
-                <span className="text-muted-foreground">Nėra objektų.</span>
+                <span className="text-muted-foreground">{t("dashboard.fleet.empty")}</span>
               ) : null}
             </div>
           </div>
@@ -112,16 +113,16 @@ function AdminDashboard() {
 
         <TabsContent value="biz" className="mt-4">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <KpiCard label="Grynasis pelnas" value={`${(data?.business.netProfit ?? 0).toFixed(0)} €`} />
-            <KpiCard label="Pajamos" value={`${(data?.business.revenue ?? 0).toFixed(0)} €`} />
-            <KpiCard label="Išlaidos" value={`${(data?.business.expensesTotal ?? 0).toFixed(0)} €`} />
+            <KpiCard label={t("dashboard.biz.netProfit")} value={`${(data?.business.netProfit ?? 0).toFixed(0)} €`} />
+            <KpiCard label={t("dashboard.biz.revenue")} value={`${(data?.business.revenue ?? 0).toFixed(0)} €`} />
+            <KpiCard label={t("dashboard.biz.expenses")} value={`${(data?.business.expensesTotal ?? 0).toFixed(0)} €`} />
             <KpiCard
-              label="Vid. viešnagė"
-              value={`${(data?.business.avgStayNights ?? 0).toFixed(1)} d.`}
+              label={t("dashboard.biz.avgStay")}
+              value={t("dashboard.biz.days", { value: (data?.business.avgStayNights ?? 0).toFixed(1) })}
             />
           </div>
           <div className="mt-4 rounded-lg border bg-card p-4">
-            <h3 className="text-sm font-medium">Išlaidos pagal kategoriją</h3>
+            <h3 className="text-sm font-medium">{t("dashboard.biz.expensesByCategory")}</h3>
             <div className="mt-3 space-y-2 text-sm">
               {Object.entries(data?.business.expensesByCategory ?? {}).map(([k, v]) => (
                 <div key={k} className="flex items-center justify-between border-b pb-1 last:border-none">
@@ -130,7 +131,7 @@ function AdminDashboard() {
                 </div>
               ))}
               {Object.keys(data?.business.expensesByCategory ?? {}).length === 0 ? (
-                <span className="text-muted-foreground">Nėra išlaidų.</span>
+                <span className="text-muted-foreground">{t("dashboard.biz.noExpenses")}</span>
               ) : null}
             </div>
           </div>
@@ -139,17 +140,17 @@ function AdminDashboard() {
 
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
         <BookingsTimeline
-          title="Atvykimai šiandien"
+          title={t("dashboard.checkinsToday")}
           icon={<KeyRound className="h-4 w-4 text-primary" />}
           bookings={data?.checkinsToday ?? []}
         />
         <BookingsTimeline
-          title="Išvykimai šiandien"
+          title={t("dashboard.checkoutsToday")}
           icon={<DoorOpen className="h-4 w-4 text-primary" />}
           bookings={data?.checkoutsToday ?? []}
         />
         <BookingsTimeline
-          title="Laukia apmokėjimo"
+          title={t("dashboard.ops.awaitingPayment")}
           icon={<CreditCard className="h-4 w-4 text-primary" />}
           bookings={data?.awaitingPaymentList ?? []}
           showAmount
@@ -159,12 +160,12 @@ function AdminDashboard() {
       <div className="mt-6 rounded-lg border bg-card p-4">
         <h3 className="flex items-center gap-2 text-sm font-medium">
           <Sparkles className="h-4 w-4 text-primary" />
-          Naujausios rezervacijos (24h)
+          {t("dashboard.recent24h")}
         </h3>
         <div className="mt-3 space-y-2">
           {(data?.recent24h ?? []).length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              {isLoading ? "Kraunama…" : "Naujų rezervacijų nėra."}
+              {isLoading ? t("common.loading") : t("dashboard.noRecent")}
             </p>
           ) : (
             (data?.recent24h ?? []).map((b: any) => (
