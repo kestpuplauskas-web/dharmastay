@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { PLATFORM_NAME } from "@/lib/brand";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: `Prisijungimas | ${PLATFORM_NAME}` }] }),
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 function LoginPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const fetchRole = useServerFn(getMyRole);
   const sendReset = useServerFn(requestPasswordReset);
@@ -53,15 +55,15 @@ function LoginPage() {
       if (mode === "login") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        toast.success("Prisijungta");
+        toast.success(t("auth.signedIn"));
       } else {
         await sendReset({
           data: { email, redirectTo: `${window.location.origin}/reset-password` },
         });
-        toast.success("Slaptažodžio atstatymo nuoroda išsiųsta į el. paštą.");
+        toast.success(t("auth.resetSent"));
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Klaida");
+      toast.error(err instanceof Error ? err.message : t("auth.error"));
     } finally {
       setBusy(false);
     }
@@ -73,45 +75,45 @@ function LoginPage() {
         <CardContent className="p-6 space-y-5">
           <div>
             <h1 className="text-2xl font-bold">
-              {mode === "login" ? "Prisijungimas" : "Slaptažodžio atstatymas"}
+              {mode === "login" ? t("auth.loginTitle") : t("auth.forgotTitle")}
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
               {mode === "forgot"
-                ? "Įvesk el. paštą — atsiųsime nuorodą naujam slaptažodžiui nustatyti."
-                : "Prieiga tik pakviestiems vartotojams."}
+                ? t("auth.forgotSubtitle")
+                : t("auth.loginSubtitle")}
             </p>
           </div>
           <form onSubmit={submit} className="space-y-3">
             <div className="space-y-1.5">
-              <Label htmlFor="email">El. paštas</Label>
+              <Label htmlFor="email">{t("auth.email")}</Label>
               <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             {mode !== "forgot" && (
               <div className="space-y-1.5">
-                <Label htmlFor="pw">Slaptažodis</Label>
+                <Label htmlFor="pw">{t("auth.password")}</Label>
                 <Input id="pw" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
               </div>
             )}
             <Button type="submit" className="w-full" disabled={busy}>
-              {busy ? "Vykdoma..." : mode === "login" ? "Prisijungti" : "Siųsti nuorodą"}
+              {busy ? t("auth.busy") : mode === "login" ? t("auth.submitLogin") : t("auth.submitReset")}
             </Button>
           </form>
           <div className="text-sm text-center text-muted-foreground space-y-2">
             {mode === "login" && (
               <div>
                 <button type="button" className="underline" onClick={() => setMode("forgot")}>
-                  Pamiršai slaptažodį?
+                  {t("auth.forgotLink")}
                 </button>
               </div>
             )}
             {mode === "forgot" && (
               <button type="button" className="underline" onClick={() => setMode("login")}>
-                ← Atgal į prisijungimą
+                {t("auth.backToLogin")}
               </button>
             )}
           </div>
           <div className="text-center">
-            <Link to="/" className="text-xs text-muted-foreground hover:underline">← Į pradžią</Link>
+            <Link to="/" className="text-xs text-muted-foreground hover:underline">{t("auth.home")}</Link>
           </div>
         </CardContent>
       </Card>

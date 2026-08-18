@@ -5,6 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface DateInputProps {
   value?: string; // yyyy-MM-dd
@@ -29,6 +30,7 @@ export function DateInput({
   disabled,
   id,
 }: DateInputProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = React.useState(false);
   const [text, setText] = React.useState(value ?? "");
 
@@ -116,7 +118,7 @@ export function DateInput({
             size="icon"
             disabled={disabled}
             className="h-9 w-9 shrink-0"
-            aria-label="Pasirinkti datą"
+            aria-label={t("auth.pickDate")}
           >
             <CalendarIcon className="h-4 w-4 opacity-70" />
           </Button>

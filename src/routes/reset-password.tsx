@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { PLATFORM_NAME } from "@/lib/brand";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/reset-password")({
   head: () => ({ meta: [{ title: `Naujas slaptažodis | ${PLATFORM_NAME}` }] }),
@@ -14,6 +15,7 @@ export const Route = createFileRoute("/reset-password")({
 });
 
 function ResetPasswordPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -33,17 +35,17 @@ function ResetPasswordPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirm) {
-      toast.error("Slaptažodžiai nesutampa");
+      toast.error(t("auth.mismatch"));
       return;
     }
     setBusy(true);
     try {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
-      toast.success("Slaptažodis atnaujintas");
+      toast.success(t("auth.updated"));
       navigate({ to: "/admin" });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Klaida");
+      toast.error(err instanceof Error ? err.message : t("auth.error"));
     } finally {
       setBusy(false);
     }
@@ -54,30 +56,30 @@ function ResetPasswordPage() {
       <Card className="w-full max-w-md">
         <CardContent className="p-6 space-y-5">
           <div>
-            <h1 className="text-2xl font-bold">Naujas slaptažodis</h1>
+            <h1 className="text-2xl font-bold">{t("auth.newPasswordTitle")}</h1>
             <p className="text-sm text-muted-foreground mt-1">
               {ready
-                ? "Įvesk naują slaptažodį."
-                : "Atveriama nuoroda... Jei nieko nevyksta, atidaryk nuorodą iš el. laiško dar kartą."}
+                ? t("auth.newPasswordReady")
+                : t("auth.newPasswordPending")}
             </p>
           </div>
           {ready && (
             <form onSubmit={submit} className="space-y-3">
               <div className="space-y-1.5">
-                <Label htmlFor="pw">Naujas slaptažodis</Label>
+                <Label htmlFor="pw">{t("auth.newPassword")}</Label>
                 <Input id="pw" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="pw2">Pakartok slaptažodį</Label>
+                <Label htmlFor="pw2">{t("auth.repeatPassword")}</Label>
                 <Input id="pw2" type="password" required minLength={6} value={confirm} onChange={(e) => setConfirm(e.target.value)} />
               </div>
               <Button type="submit" className="w-full" disabled={busy}>
-                {busy ? "Atnaujinama..." : "Išsaugoti"}
+                {busy ? t("auth.saving") : t("auth.save")}
               </Button>
             </form>
           )}
           <div className="text-center">
-            <Link to="/auth" className="text-xs text-muted-foreground hover:underline">← Į prisijungimą</Link>
+            <Link to="/auth" className="text-xs text-muted-foreground hover:underline">{t("auth.toLogin")}</Link>
           </div>
         </CardContent>
       </Card>

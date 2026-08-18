@@ -6,6 +6,7 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   /** ISO data formatu YYYY-MM-DD (arba tuščia) */
@@ -35,6 +36,7 @@ export function DatePicker({
   inputClassName,
   id,
 }: Props) {
+  const { t } = useTranslation();
   const [open, setOpen] = React.useState(false);
   const [text, setText] = React.useState(value ?? "");
 
@@ -88,7 +90,7 @@ export function DatePicker({
           <button
             type="button"
             disabled={disabled}
-            aria-label="Atidaryti kalendorių"
+            aria-label={t("auth.openCalendar")}
             className="absolute inset-y-0 right-0 flex w-8 items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-50"
           >
             <CalendarIcon className="h-4 w-4" />
