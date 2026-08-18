@@ -1,27 +1,27 @@
 import { z } from "zod";
 
 export const CONTENT_VARIABLES = [
-  { token: "{{guest_name}}", label: "Svečio vardas" },
-  { token: "{{guest_name_vocative}}", label: "Svečio vardas (kreipinys)" },
-  { token: "{{property_name}}", label: "Objekto pavadinimas" },
-  { token: "{{location}}", label: "Vieta" },
-  { token: "{{room_name}}", label: "Kambario pavadinimas" },
-  { token: "{{booking_number}}", label: "Rezervacijos nr." },
-  { token: "{{date_from}}", label: "Atvykimo data" },
-  { token: "{{date_to}}", label: "Išvykimo data" },
-  { token: "{{check_in}}", label: "Atvykimo laikas" },
-  { token: "{{check_out}}", label: "Išvykimo laikas" },
-  { token: "{{check_in_until}}", label: "Check-in iki" },
-  { token: "{{quiet_hours_from}}", label: "Ramybės laikas nuo" },
-  { token: "{{quiet_hours_to}}", label: "Ramybės laikas iki" },
-  { token: "{{door_code}}", label: "Durų kodas" },
-  { token: "{{wifi_name}}", label: "WiFi pavadinimas" },
-  { token: "{{wifi_password}}", label: "WiFi slaptažodis" },
-  { token: "{{total_amount}}", label: "Bendra suma" },
-  { token: "{{currency}}", label: "Valiuta" },
-  { token: "{{phone}}", label: "Telefonas" },
-  { token: "{{email}}", label: "El. paštas" },
-  { token: "{{review_link}}", label: "Atsiliepimo nuoroda" },
+  { token: "{{guest_name}}", labelKey: "content.variables.guest_name" },
+  { token: "{{guest_name_vocative}}", labelKey: "content.variables.guest_name_vocative" },
+  { token: "{{property_name}}", labelKey: "content.variables.property_name" },
+  { token: "{{location}}", labelKey: "content.variables.location" },
+  { token: "{{room_name}}", labelKey: "content.variables.room_name" },
+  { token: "{{booking_number}}", labelKey: "content.variables.booking_number" },
+  { token: "{{date_from}}", labelKey: "content.variables.date_from" },
+  { token: "{{date_to}}", labelKey: "content.variables.date_to" },
+  { token: "{{check_in}}", labelKey: "content.variables.check_in" },
+  { token: "{{check_out}}", labelKey: "content.variables.check_out" },
+  { token: "{{check_in_until}}", labelKey: "content.variables.check_in_until" },
+  { token: "{{quiet_hours_from}}", labelKey: "content.variables.quiet_hours_from" },
+  { token: "{{quiet_hours_to}}", labelKey: "content.variables.quiet_hours_to" },
+  { token: "{{door_code}}", labelKey: "content.variables.door_code" },
+  { token: "{{wifi_name}}", labelKey: "content.variables.wifi_name" },
+  { token: "{{wifi_password}}", labelKey: "content.variables.wifi_password" },
+  { token: "{{total_amount}}", labelKey: "content.variables.total_amount" },
+  { token: "{{currency}}", labelKey: "content.variables.currency" },
+  { token: "{{phone}}", labelKey: "content.variables.phone" },
+  { token: "{{email}}", labelKey: "content.variables.email" },
+  { token: "{{review_link}}", labelKey: "content.variables.review_link" },
 ] as const;
 
 export const PREVIEW_SAMPLE: Record<string, string> = {
@@ -59,6 +59,8 @@ export type ContentCategory = "email" | "whatsapp" | "guest_info";
 
 export type ContentFieldDef = {
   name: string;
+  labelKey: string;
+  /** Etiketė serverio/atsarginiam naudojimui (be i18n konteksto). */
   label: string;
   type: "text" | "textarea" | "url";
   defaultValue?: string;
@@ -68,8 +70,10 @@ export type ContentFieldDef = {
 export type ContentTemplateDef = {
   category: ContentCategory;
   name: string;
+  titleKey: string;
+  descriptionKey: string;
+  /** Originali lietuviška antraštė — naudojama serveryje (laiškų žurnale). */
   title: string;
-  description: string;
   hasSubject: boolean;
   hasRichText: boolean;
   canTestSend?: boolean;
