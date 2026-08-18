@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -18,7 +19,7 @@ import {
   Plus,
 } from "lucide-react";
 import { listAllProperties, deleteProperty } from "@/lib/properties.functions";
-import { PROPERTY_TYPES, propertyTypeLabel, hasOnlySingleBeds, type Property } from "@/lib/properties";
+import { PROPERTY_TYPES, propertyTypeLabelKey, hasOnlySingleBeds, type Property } from "@/lib/properties";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -176,9 +177,9 @@ function PropertiesList() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Visi tipai</SelectItem>
-            {PROPERTY_TYPES.map((t) => (
-              <SelectItem key={t.value} value={t.value}>
-                {t.label}
+            {PROPERTY_TYPES.map((ty) => (
+              <SelectItem key={ty.value} value={ty.value}>
+                {t(ty.labelKey)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -341,7 +342,7 @@ function GridView({
             <div className="min-w-0">
               <h3 className="truncate font-semibold">{p.name}</h3>
               <p className="truncate text-xs text-muted-foreground">
-                {propertyTypeLabel(p.propertyType)}
+                {t(propertyTypeLabelKey(p.propertyType))}
                 {p.city ? ` • ${p.city}` : ""}
               </p>
             </div>
@@ -419,7 +420,7 @@ function TableView({
                 </div>
               </TableCell>
               <TableCell className="text-muted-foreground">
-                {propertyTypeLabel(p.propertyType)}
+                {t(propertyTypeLabelKey(p.propertyType))}
               </TableCell>
               <TableCell className="text-muted-foreground">{p.city || "—"}</TableCell>
               <TableCell>

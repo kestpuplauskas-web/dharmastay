@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -162,7 +163,7 @@ function PropertySettingsPage() {
   }, [properties]);
 
   const navItems: { id: NavId; icon: string; title: string }[] = [
-    ...SETTINGS_SECTIONS.map((s) => ({ id: s.id as NavId, icon: s.icon, title: s.title })),
+    ...SETTINGS_SECTIONS.map((s) => ({ id: s.id as NavId, icon: s.icon, title: t(s.titleKey) })),
     { id: "integrations", icon: "🔌", title: "Integracijos" },
     { id: "api", icon: "🔑", title: "API prieiga" },
     { id: "users", icon: "👥", title: "Vartotojai" },
