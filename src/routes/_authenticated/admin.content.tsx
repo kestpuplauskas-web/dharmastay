@@ -51,6 +51,7 @@ export const Route = createFileRoute("/_authenticated/admin/content")({
 });
 
 function ContentPage() {
+  const { t } = useTranslation();
   useBrandedTitle("Turinys");
   const fetchRole = useServerFn(getMyRole);
   const fetchTemplates = useServerFn(listContentTemplates);

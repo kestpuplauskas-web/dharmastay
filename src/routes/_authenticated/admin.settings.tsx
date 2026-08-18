@@ -48,6 +48,7 @@ export const Route = createFileRoute("/_authenticated/admin/settings")({
 type NavId = SettingsSectionId | "integrations" | "api" | "users";
 
 function PropertySettingsPage() {
+  const { t } = useTranslation();
   useBrandedTitle("Bendrieji nustatymai");
   const fetchProperties = useServerFn(listAllProperties);
   const fetchRole = useServerFn(getMyRole);

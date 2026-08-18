@@ -70,6 +70,7 @@ type SortKey = "name-asc" | "price-asc" | "price-desc" | "newest";
 const VIEW_STORAGE_KEY = "admin-properties-view";
 
 function PropertiesList() {
+  const { t } = useTranslation();
   const fetchAll = useServerFn(listAllProperties);
   const remove = useServerFn(deleteProperty);
   const { data: props = [], refetch } = useQuery({
@@ -328,6 +329,7 @@ function GridView({
   onDelete: (v: { id: string; name: string }) => void;
   onCopy: (id: string) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {items.map((p) => (
@@ -391,6 +393,7 @@ function TableView({
   onDelete: (v: { id: string; name: string }) => void;
   onCopy: (id: string) => void;
 }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   return (
     <div className="overflow-x-auto rounded-lg border bg-card">
