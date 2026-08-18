@@ -27,6 +27,9 @@ export function extraServiceField(ltName: string): string {
 
 /** Ar šis laukas apskritai gali būti verčiamas? */
 export function isAllowedField(entityType: TranslatableEntity, field: string): boolean {
+  if (entityType === "content_template") {
+    return field === "subject" || field === "content";
+  }
   if (entityType !== "property") return true; // kiti tipai bus pridėti vėlesniuose etapuose
   if (PROPERTY_TRANSLATABLE_FIELDS.some((f) => f.field === field)) return true;
   return (
