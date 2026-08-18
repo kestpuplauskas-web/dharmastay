@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { Minus, Plus, Users } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -9,19 +10,11 @@ export type GuestCounts = {
   infants: number;
 };
 
-function plural(n: number, one: string, few: string, many: string) {
-  const mod100 = n % 100;
-  const mod10 = n % 10;
-  if (mod10 === 0 || (mod100 >= 11 && mod100 <= 19)) return many;
-  if (mod10 === 1) return one;
-  return few;
-}
-
-export function guestsSummary(v: GuestCounts) {
+export function guestsSummary(v: GuestCounts, t: (key: string, opts?: Record<string, unknown>) => string) {
   const parts: string[] = [];
-  parts.push(`${v.adults} ${plural(v.adults, "suaugęs", "suaugusieji", "suaugusiųjų")}`);
-  if (v.children > 0) parts.push(`${v.children} ${plural(v.children, "vaikas", "vaikai", "vaikų")}`);
-  if (v.infants > 0) parts.push(`${v.infants} ${plural(v.infants, "kūdikis", "kūdikiai", "kūdikių")}`);
+  parts.push(t("guests.summaryAdults", { count: v.adults }));
+  if (v.children > 0) parts.push(t("guests.summaryChildren", { count: v.children }));
+  if (v.infants > 0) parts.push(t("guests.summaryInfants", { count: v.infants }));
   return parts.join(", ");
 }
 
@@ -40,6 +33,7 @@ function Row({
   max?: number;
   onChange: (n: number) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center justify-between gap-4 py-2">
       <div>
@@ -49,7 +43,7 @@ function Row({
       <div className="flex items-center gap-2">
         <button
           type="button"
-          aria-label={`Sumažinti: ${title}`}
+          aria-label={t("guests.decrease", { title })}
           disabled={value <= min}
           onClick={() => onChange(Math.max(min, value - 1))}
           className="flex h-8 w-8 items-center justify-center rounded-full border text-foreground disabled:opacity-40"
@@ -59,7 +53,7 @@ function Row({
         <span className="w-6 text-center text-sm tabular-nums">{value}</span>
         <button
           type="button"
-          aria-label={`Padidinti: ${title}`}
+          aria-label={t("guests.increase", { title })}
           disabled={value >= max}
           onClick={() => onChange(Math.min(max, value + 1))}
           className="flex h-8 w-8 items-center justify-center rounded-full border text-foreground disabled:opacity-40"
@@ -84,6 +78,7 @@ export function GuestsPicker({
   buttonClassName?: string;
   maxTotal?: number;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = React.useState(false);
   const set = (k: keyof GuestCounts, n: number) => onChange({ ...value, [k]: n });
 
@@ -99,28 +94,28 @@ export function GuestsPicker({
             )}
           >
             <Users className="h-4 w-4 shrink-0 text-muted-foreground" />
-            <span className="truncate">{guestsSummary(value)}</span>
+            <span className="truncate">{guestsSummary(value, t)}</span>
           </button>
         </PopoverTrigger>
         <PopoverContent className="w-[320px] p-3" align="start" sideOffset={8}>
           <Row
-            title="Suaugusieji"
-            subtitle="Amžius 12+ m."
+            title={t("guests.adults")}
+            subtitle={t("guests.adultsHint")}
             value={value.adults}
             min={1}
             max={maxTotal}
             onChange={(n) => set("adults", n)}
           />
           <Row
-            title="Vaikai"
-            subtitle="Amžius 3–11 m."
+            title={t("guests.children")}
+            subtitle={t("guests.childrenHint")}
             value={value.children}
             max={maxTotal}
             onChange={(n) => set("children", n)}
           />
           <Row
-            title="Kūdikiai / maži vaikai"
-            subtitle="Iki 3 m. · Maitinimas nemokamas"
+            title={t("guests.infants")}
+            subtitle={t("guests.infantsHint")}
             value={value.infants}
             max={maxTotal}
             onChange={(n) => set("infants", n)}
