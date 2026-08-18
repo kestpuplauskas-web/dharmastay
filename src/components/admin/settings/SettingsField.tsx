@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import type { FieldDef } from "@/lib/property-settings";
@@ -27,6 +28,7 @@ export function SettingsField({
   disabled?: boolean;
   error?: string;
 }) {
+  const { t } = useTranslation();
   const id = `field-${field.name}`;
   const span = field.colSpan === 2 ? "md:col-span-2" : "";
 
@@ -42,10 +44,10 @@ export function SettingsField({
             <div className={`flex items-start justify-between gap-4 rounded-lg border p-3 ${span}`}>
               <div className="min-w-0">
                 <Label htmlFor={id} className="text-sm font-medium">
-                  {field.label}
+                  {t(field.labelKey)}
                 </Label>
-                {field.help && (
-                  <p className="mt-1 text-xs text-muted-foreground">{field.help}</p>
+                {field.helpKey && (
+                  <p className="mt-1 text-xs text-muted-foreground">{t(field.helpKey)}</p>
                 )}
               </div>
               <Switch
@@ -62,7 +64,7 @@ export function SettingsField({
           const selected: string[] = Array.isArray(rhf.value) ? rhf.value : [];
           return (
             <div className={`space-y-2 ${span}`}>
-              <Label className="text-sm font-medium">{field.label}</Label>
+              <Label className="text-sm font-medium">{t(field.labelKey)}</Label>
               <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {(field.options ?? []).map((o) => (
                   <label
@@ -80,11 +82,11 @@ export function SettingsField({
                         )
                       }
                     />
-                    {o.label}
+                    {o.labelKey ? t(o.labelKey) : o.label}
                   </label>
                 ))}
               </div>
-              {field.help && <p className="text-xs text-muted-foreground">{field.help}</p>}
+              {field.helpKey && <p className="text-xs text-muted-foreground">{t(field.helpKey)}</p>}
               {error && <p className="text-xs text-destructive">{error}</p>}
             </div>
           );
@@ -93,9 +95,9 @@ export function SettingsField({
         return (
           <div className={`space-y-1.5 ${span}`}>
             <Label htmlFor={id} className="flex items-center gap-2 text-sm font-medium">
-              {field.label}
-              {field.unit && (
-                <span className="text-xs font-normal text-muted-foreground">({field.unit})</span>
+              {t(field.labelKey)}
+              {field.unitKey && (
+                <span className="text-xs font-normal text-muted-foreground">({t(field.unitKey)})</span>
               )}
             </Label>
 
@@ -111,7 +113,7 @@ export function SettingsField({
                 <SelectContent>
                   {(field.options ?? []).map((o) => (
                     <SelectItem key={o.value} value={o.value}>
-                      {o.label}
+                      {o.labelKey ? t(o.labelKey) : o.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -183,7 +185,7 @@ export function SettingsField({
               />
             )}
 
-            {field.help && <p className="text-xs text-muted-foreground">{field.help}</p>}
+            {field.helpKey && <p className="text-xs text-muted-foreground">{t(field.helpKey)}</p>}
             {error && <p className="text-xs text-destructive">{error}</p>}
           </div>
         );
