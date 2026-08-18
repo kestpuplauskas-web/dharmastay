@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
+import { PLATFORM_NAME } from "@/lib/brand";
 
 export const Route = createFileRoute("/reset-password")({
-  head: () => ({ meta: [{ title: "Naujas slaptažodis | Rentivo" }] }),
+  head: () => ({ meta: [{ title: `Naujas slaptažodis | ${PLATFORM_NAME}` }] }),
   component: ResetPasswordPage,
 });
 

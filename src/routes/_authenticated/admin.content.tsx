@@ -17,6 +17,8 @@ import {
   type ContentCategory,
 } from "@/lib/content-templates";
 import { ContentTemplateCard } from "@/components/admin/content/ContentTemplateCard";
+import { PLATFORM_NAME } from "@/lib/brand";
+import { useBrandedTitle } from "@/hooks/useBrandedTitle";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,13 +34,13 @@ export const Route = createFileRoute("/_authenticated/admin/content")({
   component: ContentPage,
   head: () => ({
     meta: [
-      { title: "Turinys · Dharma Stay" },
+      { title: `Turinys | ${PLATFORM_NAME}` },
       {
         name: "description",
         content:
           "Klientams siunčiamų el. laiškų, WhatsApp žinučių ir svečiams skirtos informacijos šablonų valdymas.",
       },
-      { property: "og:title", content: "Turinys · Dharma Stay" },
+      { property: "og:title", content: `Turinys | ${PLATFORM_NAME}` },
       {
         property: "og:description",
         content: "El. laiškų, WhatsApp žinučių ir svečių informacijos šablonai vienoje vietoje.",
@@ -48,6 +50,7 @@ export const Route = createFileRoute("/_authenticated/admin/content")({
 });
 
 function ContentPage() {
+  useBrandedTitle("Turinys");
   const fetchRole = useServerFn(getMyRole);
   const fetchTemplates = useServerFn(listContentTemplates);
   const saveTemplate = useServerFn(saveContentTemplate);

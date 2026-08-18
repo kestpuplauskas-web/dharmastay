@@ -22,17 +22,20 @@ import {
 import { ApiAccessSection } from "@/components/admin/settings/ApiAccessSection";
 import { EmailTestSection } from "@/components/admin/settings/EmailTestSection";
 import { UsersSection } from "@/components/admin/settings/UsersSection";
+import { PLATFORM_NAME } from "@/lib/brand";
+import { useBrandedTitle } from "@/hooks/useBrandedTitle";
+
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   component: PropertySettingsPage,
   head: () => ({
     meta: [
-      { title: "Bendrieji nustatymai · Dharma Stay" },
+      { title: `Bendrieji nustatymai | ${PLATFORM_NAME}` },
       {
         name: "description",
         content:
           "Objekto bendrieji nustatymai: viešnagės taisyklės, mokesčiai, mokėjimai, sąskaitos, pranešimai ir integracijos.",
       },
-      { property: "og:title", content: "Bendrieji nustatymai · Dharma Stay" },
+      { property: "og:title", content: `Bendrieji nustatymai | ${PLATFORM_NAME}` },
       {
         property: "og:description",
         content: "Centrinė objekto konfigūracijos vieta viešbučių valdymo sistemoje.",
@@ -44,6 +47,7 @@ export const Route = createFileRoute("/_authenticated/admin/settings")({
 type NavId = SettingsSectionId | "integrations" | "api" | "users";
 
 function PropertySettingsPage() {
+  useBrandedTitle("Bendrieji nustatymai");
   const fetchProperties = useServerFn(listAllProperties);
   const fetchRole = useServerFn(getMyRole);
   const fetchSettings = useServerFn(getPropertySettings);
