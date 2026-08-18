@@ -250,6 +250,8 @@ export const contentTemplateSchema = z.object({
 });
 
 export type ContentTemplateRecord = {
+  /** DB eilutės ID; null, kai šablonas dar neišsaugotas. */
+  id: string | null;
   category: ContentCategory;
   templateName: string;
   subject: string;
