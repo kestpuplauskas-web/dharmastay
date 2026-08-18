@@ -106,16 +106,34 @@ export async function loadGlobalSettings(): Promise<PropertySettings> {
   return out as PropertySettings;
 }
 
-async function loadTemplate(name: string) {
+async function loadTemplate(name: string, lang?: string) {
   const db = await admin();
   const { data } = await db
     .from("content_templates")
-    .select("subject, content, is_enabled, fields")
+    .select("id, subject, content, is_enabled, fields")
     .eq("category", "email")
     .eq("template_name", name)
     .maybeSingle();
   if (data) {
-    return data as { subject: string; content: string; is_enabled: boolean; fields: Record<string, string> };
+    const tpl = data as {
+      id: string;
+      subject: string;
+      content: string;
+      is_enabled: boolean;
+      fields: Record<string, string>;
+    };
+    if (lang) {
+      const { loadDefaultLanguage, loadTranslations } = await import("./translations.server");
+      const defaultLang = await loadDefaultLanguage();
+      if (lang !== defaultLang) {
+        const tr = await loadTranslations("content_template", [tpl.id], lang);
+        const t = tr[tpl.id];
+        // Trūkstamas vertimas -> lieka originalas. Niekada nesiunčiame tuščio laiško.
+        if (t?.["subject"]?.trim()) tpl.subject = t["subject"];
+        if (t?.["content"]?.trim()) tpl.content = t["content"];
+      }
+    }
+    return tpl;
   }
   // Jei administratorius dar neišsaugojo šablono — naudojamas numatytasis tekstas.
   const { CONTENT_TEMPLATES } = await import("./content-templates");
@@ -275,7 +293,9 @@ export async function notifyBookingEvent(
     if (!opts?.force && flag && !settings[flag]) return;
 
     const tokens = await buildTokens(booking as Record<string, any>, settings);
-    const tpl = await loadTemplate(kind);
+    // Svečio laiško kalba — ta, kuria jis rezervavo.
+    const guestLang = String((booking as any).language ?? "").trim() || undefined;
+    const tpl = await loadTemplate(kind, guestLang);
 
     // 1) Svečiui
     const guestEmail = String((booking as any).customer_email ?? "").trim();
