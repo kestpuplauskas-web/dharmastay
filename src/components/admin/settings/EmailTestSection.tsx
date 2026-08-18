@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { AlertCircle, CheckCircle2, Loader2, Mail } from "lucide-react";
@@ -16,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { getEmailDiagnostics, sendResendTestEmail } from "@/lib/email-test.functions";
 
 export function EmailTestSection({ canEdit }: { canEdit: boolean }) {
+  const { t } = useTranslation();
   const fetchDiag = useServerFn(getEmailDiagnostics);
   const sendTest = useServerFn(sendResendTestEmail);
   const [to, setTo] = useState("");
@@ -36,14 +38,14 @@ export function EmailTestSection({ canEdit }: { canEdit: boolean }) {
       setResult({
         ok: r.ok,
         text: r.ok
-          ? `Laiškas priimtas siuntimui iš ${r.from}. ${r.detail}`
-          : `Klaida (${r.status}) siunčiant iš ${r.from}: ${r.detail}`,
+          ? t("settings.email.accepted", { from: r.from, detail: r.detail })
+          : t("settings.email.error", { status: r.status, from: r.from, detail: r.detail }),
       });
-      if (r.ok) toast.success("Testinis laiškas išsiųstas.");
-      else toast.error("Nepavyko išsiųsti testinio laiško.");
+      if (r.ok) toast.success(t("settings.email.sent"));
+      else toast.error(t("settings.email.sendFailed"));
     },
     onError: (e) => {
-      const text = e instanceof Error ? e.message : "Nežinoma klaida.";
+      const text = e instanceof Error ? e.message : t("settings.email.unknownError");
       setResult({ ok: false, text });
       toast.error(text);
     },
@@ -54,23 +56,23 @@ export function EmailTestSection({ canEdit }: { canEdit: boolean }) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
           <Mail className="h-5 w-5 text-primary" />
-          El. pašto patikra
+          {t("settings.email.title")}
         </CardTitle>
         <CardDescription>
-          Išsiųskite testinį laišką ir patikrinkite, ar laiškų siuntimas veikia.
+          {t("settings.email.description")}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {isLoading ? (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin" />
-            Kraunama…
+            {t("settings.email.loading")}
           </div>
         ) : (
           <div className="grid gap-1 rounded-lg border p-3 text-xs text-muted-foreground">
             <div>
-              Siuntėjas: <span className="font-medium text-foreground">{diag?.from}</span>
-              {diag?.usesFallbackFrom && " (naudojamas testinis Resend adresas — laiškai pasiekia tik paskyros savininką)"}
+              {t("settings.email.sender")} <span className="font-medium text-foreground">{diag?.from}</span>
+              {diag?.usesFallbackFrom && t("settings.email.fallbackFrom")}
             </div>
             <div>
               {diag?.hasResendKey ? "Resend_API ✓" : "Resend_API ✗"}{" "}
@@ -80,7 +82,7 @@ export function EmailTestSection({ canEdit }: { canEdit: boolean }) {
         )}
 
         <div className="grid gap-2 sm:max-w-md">
-          <Label htmlFor="email-test-to">Gavėjo el. paštas</Label>
+          <Label htmlFor="email-test-to">{t("settings.email.to")}</Label>
           <Input
             id="email-test-to"
             type="email"
@@ -97,7 +99,7 @@ export function EmailTestSection({ canEdit }: { canEdit: boolean }) {
           disabled={!canEdit || send.isPending || !to.trim()}
         >
           {send.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Siųsti testinį laišką
+          {t("settings.email.send")}
         </Button>
 
         {result && (

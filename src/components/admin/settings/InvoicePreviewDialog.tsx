@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PdfPreview } from "@/components/admin/PdfPreview";
@@ -98,6 +99,7 @@ export function InvoicePreviewDialog({
   currency: string;
   vatRate: number;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [bytes, setBytes] = useState<Uint8Array | null>(null);
 
@@ -121,16 +123,14 @@ export function InvoicePreviewDialog({
       <DialogTrigger asChild>
         <Button type="button" variant="outline">
           <Eye className="mr-2 h-4 w-4" />
-          Peržiūrėti sąskaitą
+          {t("settings.invoicePreview.open")}
         </Button>
       </DialogTrigger>
       <DialogContent className="flex max-h-[90vh] max-w-3xl flex-col">
         <DialogHeader>
-          <DialogTitle>Sąskaitos peržiūra</DialogTitle>
+          <DialogTitle>{t("settings.invoicePreview.title")}</DialogTitle>
           <DialogDescription>
-            Pavyzdys su testiniais rezervacijos duomenimis — atsinaujina pagal formoje įvestas
-            (dar neišsaugotas) reikšmes. Realiai sąskaitai bus naudojami tikros rezervacijos
-            duomenys.
+            {t("settings.invoicePreview.description")}
           </DialogDescription>
         </DialogHeader>
         <div className="max-h-[70vh] overflow-y-auto">

@@ -62,7 +62,7 @@ export function SettingsSectionForm({
           async (values) => {
             await onSave(values as Record<string, unknown>);
           },
-          () => toast.error("Patikrinkite pažymėtus laukus."),
+          () => toast.error(t("settings.form.invalid")),
         )}
       >
         <CardHeader>
@@ -88,8 +88,8 @@ export function SettingsSectionForm({
         <CardFooter className="flex flex-col items-stretch gap-2 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-muted-foreground">
             {canEdit
-              ? "Pakeitimai išsaugomi tik šiai skilčiai."
-              : "Neturite teisių keisti nustatymų — rodomas tik peržiūros režimas."}
+              ? t("settings.form.sectionOnly")
+              : t("settings.form.readOnly")}
           </p>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             {section.id === "invoicing" && (
@@ -107,7 +107,7 @@ export function SettingsSectionForm({
             ) : (
               <Save className="mr-2 h-4 w-4" />
             )}
-            {saving ? "Saugoma…" : "Išsaugoti"}
+            {saving ? t("common.saving") : t("common.save")}
             </Button>
           </div>
         </CardFooter>

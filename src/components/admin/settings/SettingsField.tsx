@@ -108,7 +108,7 @@ export function SettingsField({
                 disabled={disabled}
               >
                 <SelectTrigger id={id} aria-invalid={Boolean(error)}>
-                  <SelectValue placeholder="Pasirinkite…" />
+                  <SelectValue placeholder={t("settings.selectPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
                   {(field.options ?? []).map((o) => (
