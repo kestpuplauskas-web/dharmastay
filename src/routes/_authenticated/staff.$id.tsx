@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -8,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   callStaffApi,
   STAFF_STATUS_CLASS,
-  STAFF_STATUS_LABEL,
+  STAFF_STATUS_LABEL_KEYS,
   type StaffRoom,
   type StaffRoomStatus,
 } from "@/lib/staff-api-client";
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/_authenticated/staff/$id")({
 });
 
 function RoomDetail() {
+  const { t } = useTranslation();
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -71,7 +73,7 @@ function RoomDetail() {
         <span
           className={`mt-2 inline-block rounded-full border px-2.5 py-0.5 text-xs ${STAFF_STATUS_CLASS[room.status]}`}
         >
-          {STAFF_STATUS_LABEL[room.status]}
+          {t(STAFF_STATUS_LABEL_KEYS[room.status])}
         </span>
       </div>
 
@@ -103,7 +105,7 @@ function RoomDetail() {
             disabled={setStatus.isPending}
             onClick={() => setStatus.mutate(s)}
           >
-            {STAFF_STATUS_LABEL[s]}
+            {t(STAFF_STATUS_LABEL_KEYS[s])}
           </Button>
         ))}
       </div>

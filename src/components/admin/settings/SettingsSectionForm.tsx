@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -39,6 +40,7 @@ export function SettingsSectionForm({
   saving: boolean;
   onSave: (values: Record<string, unknown>) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const form = useForm({
     resolver: zodResolver(settingsSchemas[section.id] as never),
     defaultValues: pick(section, settings),
@@ -66,9 +68,9 @@ export function SettingsSectionForm({
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
             <span aria-hidden>{section.icon}</span>
-            {section.title}
+            {t(section.titleKey)}
           </CardTitle>
-          <CardDescription>{section.description}</CardDescription>
+          <CardDescription>{t(section.descriptionKey)}</CardDescription>
         </CardHeader>
 
         <CardContent className="grid gap-4 md:grid-cols-2">

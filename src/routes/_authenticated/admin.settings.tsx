@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -47,6 +48,7 @@ export const Route = createFileRoute("/_authenticated/admin/settings")({
 type NavId = SettingsSectionId | "integrations" | "api" | "users";
 
 function PropertySettingsPage() {
+  const { t } = useTranslation();
   useBrandedTitle("Bendrieji nustatymai");
   const fetchProperties = useServerFn(listAllProperties);
   const fetchRole = useServerFn(getMyRole);
@@ -162,7 +164,7 @@ function PropertySettingsPage() {
   }, [properties]);
 
   const navItems: { id: NavId; icon: string; title: string }[] = [
-    ...SETTINGS_SECTIONS.map((s) => ({ id: s.id as NavId, icon: s.icon, title: s.title })),
+    ...SETTINGS_SECTIONS.map((s) => ({ id: s.id as NavId, icon: s.icon, title: t(s.titleKey) })),
     { id: "integrations", icon: "🔌", title: "Integracijos" },
     { id: "api", icon: "🔑", title: "API prieiga" },
     { id: "users", icon: "👥", title: "Vartotojai" },

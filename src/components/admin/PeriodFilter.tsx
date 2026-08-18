@@ -1,10 +1,11 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { DatePicker } from "@/components/DatePicker";
 import {
   PERIOD_KEYS,
-  PERIOD_LABELS,
+  PERIOD_LABEL_KEYS,
   formatPeriodLabel,
   resolvePeriod,
   type PeriodKey,
@@ -18,9 +19,10 @@ export function PeriodFilter({
   value: { period: PeriodKey; from?: string | null; to?: string | null };
   onChange: (v: { period: PeriodKey; from?: string | null; to?: string | null; range: ResolvedRange }) => void;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const range = resolvePeriod(value.period, value.from, value.to);
-  const label = formatPeriodLabel(value.period, range);
+  const label = formatPeriodLabel(value.period, range, t);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -44,7 +46,7 @@ export function PeriodFilter({
                 setOpen(false);
               }}
             >
-              {PERIOD_LABELS[k]}
+              {t(PERIOD_LABEL_KEYS[k])}
             </button>
           ))}
           <div className="mt-2 border-t pt-2">

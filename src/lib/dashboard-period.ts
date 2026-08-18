@@ -17,16 +17,16 @@ export const PERIOD_KEYS = [
 
 export type PeriodKey = (typeof PERIOD_KEYS)[number];
 
-export const PERIOD_LABELS: Record<PeriodKey, string> = {
-  today: "Šiandien",
-  yesterday: "Vakar",
-  last7: "Paskutinės 7 dienos",
-  last30: "Paskutinės 30 dienų",
-  mtd: "Šis mėnuo",
-  prev_month: "Praėjęs mėnuo",
-  ytd: "Šie metai",
-  all: "Visas laikotarpis",
-  custom: "Pasirinktas laikotarpis",
+export const PERIOD_LABEL_KEYS: Record<PeriodKey, string> = {
+  today: "dashboard.period.today",
+  yesterday: "dashboard.period.yesterday",
+  last7: "dashboard.period.last7",
+  last30: "dashboard.period.last30",
+  mtd: "dashboard.period.mtd",
+  prev_month: "dashboard.period.prev_month",
+  ytd: "dashboard.period.ytd",
+  all: "dashboard.period.all",
+  custom: "dashboard.period.custom",
 };
 
 export type ResolvedRange = { from: string | null; to: string | null };
@@ -96,8 +96,9 @@ function inclusiveTo(toExclusive: string): string {
 export function formatPeriodLabel(
   period: PeriodKey,
   range: ResolvedRange,
+  t: (key: string) => string,
 ): string {
-  const base = PERIOD_LABELS[period];
+  const base = t(PERIOD_LABEL_KEYS[period]);
   if (period === "all") return base;
   if (!range.from) return base;
   // Custom — vartotojas pasirinko savo `from` / `to` (nuomos sutarties stilius),

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { format, parse } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
@@ -6,9 +7,9 @@ import { useNavigate } from "@tanstack/react-router";
 import type { Property } from "@/lib/properties";
 import {
   BOOKING_SOURCES,
-  BOOKING_SOURCE_LABELS,
+  BOOKING_SOURCE_LABEL_KEYS,
   BOOKING_STATUSES,
-  BOOKING_STATUS_LABELS,
+  BOOKING_STATUS_LABEL_KEYS,
   BOOKING_SOURCE_VALUES,
   checkBookingConflicts,
   listOccupiedRanges,
@@ -33,7 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EXTRA_CALC_LABELS, priceForNights } from "@/lib/properties";
+import { EXTRA_CALC_LABEL_KEYS, priceForNights } from "@/lib/properties";
 import { extraLineTotal, nightsBetweenDates, type ExtraCalcKind } from "@/lib/booking-extras";
 
 export type BookingFormValues = Omit<BookingInput, "source" | "status"> & {
@@ -120,6 +121,7 @@ export function BookingForm({
   submitting?: boolean;
   bookingId?: string;
 }) {
+  const { t: tr } = useTranslation();
   const [v, setV] = useState<BookingFormValues>(() => {
     if (Number(initial.total_amount) > 0) return initial;
     const t = computeTotalsFor(initial, properties);
@@ -513,7 +515,7 @@ export function BookingForm({
                       />
                       <span className="font-medium">{svc.name}</span>
                       <span className="text-xs text-muted-foreground">
-                        {EXTRA_CALC_LABELS[svc.calc] ?? svc.calc} ·{" "}
+                        {EXTRA_CALC_LABEL_KEYS[svc.calc] ? tr(EXTRA_CALC_LABEL_KEYS[svc.calc]) : svc.calc} ·{" "}
                         {Number(svc.pricePerDay).toFixed(2)} €/d.
                       </span>
                       <span className="ml-auto tabular-nums">{lineAmount(svc).toFixed(2)} €</span>
@@ -539,7 +541,7 @@ export function BookingForm({
                     .concat(v.source === "direct" ? ["direct"] : [])
                     .map((s) => (
                       <SelectItem key={s} value={s}>
-                        {BOOKING_SOURCE_LABELS[s] ?? s}
+                        {BOOKING_SOURCE_LABEL_KEYS[s] ? tr(BOOKING_SOURCE_LABEL_KEYS[s]) : s}
                       </SelectItem>
                     ))}
                 </SelectContent>
@@ -554,7 +556,7 @@ export function BookingForm({
                 <SelectContent>
                   {BOOKING_STATUSES.map((s) => (
                     <SelectItem key={s} value={s}>
-                      {BOOKING_STATUS_LABELS[s] ?? s}
+                      {BOOKING_STATUS_LABEL_KEYS[s] ? tr(BOOKING_STATUS_LABEL_KEYS[s]) : s}
                     </SelectItem>
                   ))}
                 </SelectContent>

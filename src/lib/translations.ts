@@ -3,6 +3,8 @@ export type TranslatableEntity = "property" | "content_template" | "property_set
 export type TranslatableFieldDef = {
   /** Rakto reikšmė DB stulpelyje `field`. */
   field: string;
+  /** Vertimo raktas etiketei; jei nėra — naudojamas `label`. */
+  labelKey?: string;
   label: string;
   multiline?: boolean;
   /** Laukas saugo HTML — rodyti/redaguoti su teksto redaktoriumi. */
@@ -11,10 +13,10 @@ export type TranslatableFieldDef = {
 
 /** Objekto laukai, kuriuos galima versti. */
 export const PROPERTY_TRANSLATABLE_FIELDS: TranslatableFieldDef[] = [
-  { field: "name", label: "Pavadinimas" },
-  { field: "description", label: "Aprašymas", multiline: true },
-  { field: "location_note", label: "Vietos pastabos", multiline: true },
-  { field: "rooms_notes", label: "Kambarių pastabos", multiline: true },
+  { field: "name", label: "Pavadinimas", labelKey: "translations.fields.name" },
+  { field: "description", label: "Aprašymas", labelKey: "translations.fields.description", multiline: true },
+  { field: "location_note", label: "Vietos pastabos", labelKey: "translations.fields.location_note", multiline: true },
+  { field: "rooms_notes", label: "Kambarių pastabos", labelKey: "translations.fields.rooms_notes", multiline: true },
 ];
 
 /**

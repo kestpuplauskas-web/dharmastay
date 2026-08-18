@@ -10,22 +10,22 @@ export const BOOKING_STATUSES = ["confirmed", "pending", "completed", "cancelled
 /** Visi galimi statusai, įskaitant importuotus iš išorinių kalendorių (nerodomi formoje). */
 export const ALL_BOOKING_STATUSES = [...BOOKING_STATUSES, "blocked_external"] as const;
 
-export const BOOKING_SOURCE_LABELS: Record<string, string> = {
-  phone: "Telefonu",
-  whatsapp: "WhatsApp",
-  website: "Svetainė",
-  booking: "Booking",
-  airbnb: "Airbnb",
-  other: "Kita",
-  direct: "Tiesioginis",
+export const BOOKING_SOURCE_LABEL_KEYS: Record<string, string> = {
+  phone: "enums.bookingSource.phone",
+  whatsapp: "enums.bookingSource.whatsapp",
+  website: "enums.bookingSource.website",
+  booking: "enums.bookingSource.booking",
+  airbnb: "enums.bookingSource.airbnb",
+  other: "enums.bookingSource.other",
+  direct: "enums.bookingSource.direct",
 };
 
-export const BOOKING_STATUS_LABELS: Record<string, string> = {
-  confirmed: "Apmokėta",
-  pending: "Laukiama apmokėjimo",
-  completed: "Užbaigta",
-  cancelled: "Atšaukta",
-  blocked_external: "Išorinė / užblokuota",
+export const BOOKING_STATUS_LABEL_KEYS: Record<string, string> = {
+  confirmed: "enums.bookingStatus.confirmed",
+  pending: "enums.bookingStatus.pending",
+  completed: "enums.bookingStatus.completed",
+  cancelled: "enums.bookingStatus.cancelled",
+  blocked_external: "enums.bookingStatus.blocked_external",
 };
 
 const bookingInput = z.object({

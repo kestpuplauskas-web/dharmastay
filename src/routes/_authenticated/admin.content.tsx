@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useCallback, useMemo, useState } from "react";
 import { createFileRoute, useBlocker } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -50,6 +51,7 @@ export const Route = createFileRoute("/_authenticated/admin/content")({
 });
 
 function ContentPage() {
+  const { t } = useTranslation();
   useBrandedTitle("Turinys");
   const fetchRole = useServerFn(getMyRole);
   const fetchTemplates = useServerFn(listContentTemplates);
@@ -143,7 +145,7 @@ function ContentPage() {
                 }`}
               >
                 <span aria-hidden>{s.icon}</span>
-                {s.title}
+                {t(s.titleKey)}
               </button>
             ))}
           </div>
@@ -151,8 +153,8 @@ function ContentPage() {
 
         <div className="min-w-0 flex-1 space-y-4">
           <div>
-            <h2 className="text-lg font-semibold">{activeSection.title}</h2>
-            <p className="text-sm text-muted-foreground">{activeSection.description}</p>
+            <h2 className="text-lg font-semibold">{t(activeSection.titleKey)}</h2>
+            <p className="text-sm text-muted-foreground">{t(activeSection.descriptionKey)}</p>
           </div>
 
           {loading ? (

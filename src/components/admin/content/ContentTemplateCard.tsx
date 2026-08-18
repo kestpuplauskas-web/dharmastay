@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -80,7 +81,8 @@ export function ContentTemplateCard({
   onSendTest: (args: { to: string; subject: string; html: string }) => Promise<void>;
   onDirtyChange: (key: string, dirty: boolean) => void;
 }) {
-  const schema = useMemo(() => buildFormSchema(def), [def]);
+  const { t } = useTranslation();
+  const schema = useMemo(() => buildFormSchema(def, t), [def, t]);
   const form = useForm<FormValues>({
     resolver: zodResolver(schema as never),
     defaultValues: toValues(def, record),
@@ -155,8 +157,8 @@ export function ContentTemplateCard({
                 className={`mt-1 h-4 w-4 shrink-0 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
               />
               <span className="min-w-0">
-                <CardTitle className="text-base sm:text-lg">{def.title}</CardTitle>
-                <CardDescription>{def.description}</CardDescription>
+                <CardTitle className="text-base sm:text-lg">{t(def.titleKey)}</CardTitle>
+                <CardDescription>{t(def.descriptionKey)}</CardDescription>
               </span>
             </button>
             <div className="flex items-center gap-2">
@@ -344,7 +346,7 @@ export function ContentTemplateCard({
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Peržiūra — {def.title}</DialogTitle>
+            <DialogTitle>Peržiūra — {t(def.titleKey)}</DialogTitle>
             <DialogDescription>
               Kintamieji pakeisti pavyzdinėmis reikšmėmis.
             </DialogDescription>

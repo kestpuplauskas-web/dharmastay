@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -18,7 +19,7 @@ import {
   Plus,
 } from "lucide-react";
 import { listAllProperties, deleteProperty } from "@/lib/properties.functions";
-import { PROPERTY_TYPES, propertyTypeLabel, hasOnlySingleBeds, type Property } from "@/lib/properties";
+import { PROPERTY_TYPES, propertyTypeLabelKey, hasOnlySingleBeds, type Property } from "@/lib/properties";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -69,6 +70,7 @@ type SortKey = "name-asc" | "price-asc" | "price-desc" | "newest";
 const VIEW_STORAGE_KEY = "admin-properties-view";
 
 function PropertiesList() {
+  const { t } = useTranslation();
   const fetchAll = useServerFn(listAllProperties);
   const remove = useServerFn(deleteProperty);
   const { data: props = [], refetch } = useQuery({
@@ -176,9 +178,9 @@ function PropertiesList() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Visi tipai</SelectItem>
-            {PROPERTY_TYPES.map((t) => (
-              <SelectItem key={t.value} value={t.value}>
-                {t.label}
+            {PROPERTY_TYPES.map((ty) => (
+              <SelectItem key={ty.value} value={ty.value}>
+                {t(ty.labelKey)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -327,6 +329,7 @@ function GridView({
   onDelete: (v: { id: string; name: string }) => void;
   onCopy: (id: string) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {items.map((p) => (
@@ -341,7 +344,7 @@ function GridView({
             <div className="min-w-0">
               <h3 className="truncate font-semibold">{p.name}</h3>
               <p className="truncate text-xs text-muted-foreground">
-                {propertyTypeLabel(p.propertyType)}
+                {t(propertyTypeLabelKey(p.propertyType))}
                 {p.city ? ` • ${p.city}` : ""}
               </p>
             </div>
@@ -390,6 +393,7 @@ function TableView({
   onDelete: (v: { id: string; name: string }) => void;
   onCopy: (id: string) => void;
 }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   return (
     <div className="overflow-x-auto rounded-lg border bg-card">
@@ -419,7 +423,7 @@ function TableView({
                 </div>
               </TableCell>
               <TableCell className="text-muted-foreground">
-                {propertyTypeLabel(p.propertyType)}
+                {t(propertyTypeLabelKey(p.propertyType))}
               </TableCell>
               <TableCell className="text-muted-foreground">{p.city || "—"}</TableCell>
               <TableCell>

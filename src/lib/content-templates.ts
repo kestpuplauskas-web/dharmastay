@@ -1,27 +1,27 @@
 import { z } from "zod";
 
 export const CONTENT_VARIABLES = [
-  { token: "{{guest_name}}", label: "Svečio vardas" },
-  { token: "{{guest_name_vocative}}", label: "Svečio vardas (kreipinys)" },
-  { token: "{{property_name}}", label: "Objekto pavadinimas" },
-  { token: "{{location}}", label: "Vieta" },
-  { token: "{{room_name}}", label: "Kambario pavadinimas" },
-  { token: "{{booking_number}}", label: "Rezervacijos nr." },
-  { token: "{{date_from}}", label: "Atvykimo data" },
-  { token: "{{date_to}}", label: "Išvykimo data" },
-  { token: "{{check_in}}", label: "Atvykimo laikas" },
-  { token: "{{check_out}}", label: "Išvykimo laikas" },
-  { token: "{{check_in_until}}", label: "Check-in iki" },
-  { token: "{{quiet_hours_from}}", label: "Ramybės laikas nuo" },
-  { token: "{{quiet_hours_to}}", label: "Ramybės laikas iki" },
-  { token: "{{door_code}}", label: "Durų kodas" },
-  { token: "{{wifi_name}}", label: "WiFi pavadinimas" },
-  { token: "{{wifi_password}}", label: "WiFi slaptažodis" },
-  { token: "{{total_amount}}", label: "Bendra suma" },
-  { token: "{{currency}}", label: "Valiuta" },
-  { token: "{{phone}}", label: "Telefonas" },
-  { token: "{{email}}", label: "El. paštas" },
-  { token: "{{review_link}}", label: "Atsiliepimo nuoroda" },
+  { token: "{{guest_name}}", labelKey: "content.variables.guest_name" },
+  { token: "{{guest_name_vocative}}", labelKey: "content.variables.guest_name_vocative" },
+  { token: "{{property_name}}", labelKey: "content.variables.property_name" },
+  { token: "{{location}}", labelKey: "content.variables.location" },
+  { token: "{{room_name}}", labelKey: "content.variables.room_name" },
+  { token: "{{booking_number}}", labelKey: "content.variables.booking_number" },
+  { token: "{{date_from}}", labelKey: "content.variables.date_from" },
+  { token: "{{date_to}}", labelKey: "content.variables.date_to" },
+  { token: "{{check_in}}", labelKey: "content.variables.check_in" },
+  { token: "{{check_out}}", labelKey: "content.variables.check_out" },
+  { token: "{{check_in_until}}", labelKey: "content.variables.check_in_until" },
+  { token: "{{quiet_hours_from}}", labelKey: "content.variables.quiet_hours_from" },
+  { token: "{{quiet_hours_to}}", labelKey: "content.variables.quiet_hours_to" },
+  { token: "{{door_code}}", labelKey: "content.variables.door_code" },
+  { token: "{{wifi_name}}", labelKey: "content.variables.wifi_name" },
+  { token: "{{wifi_password}}", labelKey: "content.variables.wifi_password" },
+  { token: "{{total_amount}}", labelKey: "content.variables.total_amount" },
+  { token: "{{currency}}", labelKey: "content.variables.currency" },
+  { token: "{{phone}}", labelKey: "content.variables.phone" },
+  { token: "{{email}}", labelKey: "content.variables.email" },
+  { token: "{{review_link}}", labelKey: "content.variables.review_link" },
 ] as const;
 
 export const PREVIEW_SAMPLE: Record<string, string> = {
@@ -59,6 +59,8 @@ export type ContentCategory = "email" | "whatsapp" | "guest_info";
 
 export type ContentFieldDef = {
   name: string;
+  labelKey: string;
+  /** Etiketė serverio/atsarginiam naudojimui (be i18n konteksto). */
   label: string;
   type: "text" | "textarea" | "url";
   defaultValue?: string;
@@ -68,8 +70,10 @@ export type ContentFieldDef = {
 export type ContentTemplateDef = {
   category: ContentCategory;
   name: string;
+  titleKey: string;
+  descriptionKey: string;
+  /** Originali lietuviška antraštė — naudojama serveryje (laiškų žurnale). */
   title: string;
-  description: string;
   hasSubject: boolean;
   hasRichText: boolean;
   canTestSend?: boolean;
@@ -88,7 +92,8 @@ export const CONTENT_TEMPLATES: ContentTemplateDef[] = [
     category: "email",
     name: "booking_confirmation",
     title: "Rezervacijos patvirtinimas",
-    description: "Siunčiama klientui, kai rezervacija patvirtinama.",
+    titleKey: "content.templates.booking_confirmation.title",
+    descriptionKey: "content.templates.booking_confirmation.description",
     hasSubject: true,
     hasRichText: true,
     canTestSend: true,
@@ -100,7 +105,8 @@ export const CONTENT_TEMPLATES: ContentTemplateDef[] = [
     category: "email",
     name: "booking_cancellation",
     title: "Rezervacijos atšaukimas",
-    description: "Siunčiama klientui, kai rezervacija atšaukiama.",
+    titleKey: "content.templates.booking_cancellation.title",
+    descriptionKey: "content.templates.booking_cancellation.description",
     hasSubject: true,
     hasRichText: true,
     canTestSend: true,
@@ -112,7 +118,8 @@ export const CONTENT_TEMPLATES: ContentTemplateDef[] = [
     category: "email",
     name: "booking_change",
     title: "Rezervacijos pakeitimas",
-    description: "Siunčiama, kai pasikeičia rezervacijos duomenys.",
+    titleKey: "content.templates.booking_change.title",
+    descriptionKey: "content.templates.booking_change.description",
     hasSubject: true,
     hasRichText: true,
     canTestSend: true,
@@ -124,7 +131,8 @@ export const CONTENT_TEMPLATES: ContentTemplateDef[] = [
     category: "email",
     name: "checkin_reminder",
     title: "Priminimas prieš atvykimą",
-    description: "Priminimas svečiui likus kelioms dienoms iki atvykimo.",
+    titleKey: "content.templates.checkin_reminder.title",
+    descriptionKey: "content.templates.checkin_reminder.description",
     hasSubject: true,
     hasRichText: true,
     canTestSend: true,
@@ -136,7 +144,8 @@ export const CONTENT_TEMPLATES: ContentTemplateDef[] = [
     category: "email",
     name: "review_request",
     title: "Prašymas palikti atsiliepimą",
-    description: "Siunčiama svečiui po išvykimo.",
+    titleKey: "content.templates.review_request.title",
+    descriptionKey: "content.templates.review_request.description",
     hasSubject: true,
     hasRichText: true,
     canTestSend: true,
@@ -148,7 +157,8 @@ export const CONTENT_TEMPLATES: ContentTemplateDef[] = [
     category: "whatsapp",
     name: "door_code",
     title: "Durų kodas",
-    description: "WhatsApp žinutė su atvykimo instrukcijomis ir durų kodu.",
+    titleKey: "content.templates.door_code.title",
+    descriptionKey: "content.templates.door_code.description",
     hasSubject: false,
     hasRichText: false,
     canTestWhatsapp: true,
@@ -159,19 +169,21 @@ export const CONTENT_TEMPLATES: ContentTemplateDef[] = [
     category: "guest_info",
     name: "wifi",
     title: "WiFi",
-    description: "Interneto prisijungimo duomenys, rodomi svečiui.",
+    titleKey: "content.templates.wifi.title",
+    descriptionKey: "content.templates.wifi.description",
     hasSubject: false,
     hasRichText: false,
     fields: [
-      { name: "wifiName", label: "WiFi pavadinimas", type: "text", required: true },
-      { name: "wifiPassword", label: "WiFi slaptažodis", type: "text", required: true },
+      { name: "wifiName", label: "WiFi pavadinimas", labelKey: "content.fields.wifiName", type: "text", required: true },
+      { name: "wifiPassword", label: "WiFi slaptažodis", labelKey: "content.fields.wifiPassword", type: "text", required: true },
     ],
   },
   {
     category: "guest_info",
     name: "restaurant",
     title: "Restorano informacija",
-    description: "Informacija apie pusryčius, restoraną ar maitinimą.",
+    titleKey: "content.templates.restaurant.title",
+    descriptionKey: "content.templates.restaurant.description",
     hasSubject: false,
     hasRichText: true,
   },
@@ -179,20 +191,22 @@ export const CONTENT_TEMPLATES: ContentTemplateDef[] = [
     category: "guest_info",
     name: "eturistas",
     title: "E. turistas",
-    description: "Svečių registracijos forma E. turisto sistemoje.",
+    titleKey: "content.templates.eturistas.title",
+    descriptionKey: "content.templates.eturistas.description",
     hasSubject: false,
     hasRichText: false,
     openLinkField: "url",
     fields: [
-      { name: "title", label: "Pavadinimas", type: "text", defaultValue: "E. turistas", required: true },
+      { name: "title", label: "Pavadinimas", labelKey: "content.fields.title", type: "text", defaultValue: "E. turistas", required: true },
       {
         name: "description",
         label: "Aprašymas",
+        labelKey: "content.fields.description",
         type: "textarea",
         defaultValue:
           "Prieš atvykstant prašome užpildyti svečio registracijos formą E. turisto sistemoje.",
       },
-      { name: "url", label: "Nuoroda", type: "url", defaultValue: ETURISTAS_DEFAULT_URL, required: true },
+      { name: "url", label: "Nuoroda", labelKey: "content.fields.url", type: "url", defaultValue: ETURISTAS_DEFAULT_URL, required: true },
     ],
   },
 ];
@@ -200,26 +214,26 @@ export const CONTENT_TEMPLATES: ContentTemplateDef[] = [
 export const CONTENT_SECTIONS: {
   id: ContentCategory;
   icon: string;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
 }[] = [
   {
     id: "email",
     icon: "✉️",
-    title: "Pranešimai el. paštu",
-    description: "Automatiniai laiškai, siunčiami klientams rezervacijos metu.",
+    titleKey: "content.sections.email.title",
+    descriptionKey: "content.sections.email.description",
   },
   {
     id: "whatsapp",
     icon: "💬",
-    title: "WhatsApp",
-    description: "Trumposios žinutės svečiams prieš atvykimą.",
+    titleKey: "content.sections.whatsapp.title",
+    descriptionKey: "content.sections.whatsapp.description",
   },
   {
     id: "guest_info",
     icon: "🛎️",
-    title: "Informacija svečiams",
-    description: "Praktinė informacija, pasiekiama svečiui apsilankymo metu.",
+    titleKey: "content.sections.guest_info.title",
+    descriptionKey: "content.sections.guest_info.description",
   },
 ];
 
@@ -276,26 +290,38 @@ export function defaultsFor(def: ContentTemplateDef): ContentTemplateRecord {
   };
 }
 
-export function buildFormSchema(def: ContentTemplateDef) {
+export function buildFormSchema(
+  def: ContentTemplateDef,
+  t: (key: string, opts?: Record<string, unknown>) => string = (k) => k,
+) {
   const shape: Record<string, z.ZodTypeAny> = { isEnabled: z.boolean() };
 
   shape["subject"] = def.hasSubject
-    ? z.string().trim().min(1, "Laiško tema privaloma.").max(300, "Per ilga tema.")
+    ? z
+        .string()
+        .trim()
+        .min(1, t("content.validation.subjectRequired"))
+        .max(300, t("content.validation.subjectTooLong"))
     : z.string().max(300);
 
   const needsContent = def.hasRichText || def.category === "whatsapp";
   shape["content"] = needsContent
-    ? z.string().trim().min(1, "Turinys privalomas.").max(20000, "Per ilgas turinys.")
+    ? z
+        .string()
+        .trim()
+        .min(1, t("content.validation.contentRequired"))
+        .max(20000, t("content.validation.contentTooLong"))
     : z.string().max(20000);
 
   const fieldShape: Record<string, z.ZodTypeAny> = {};
   for (const f of def.fields ?? []) {
     if (f.type === "url") {
-      const url = z.string().trim().url("Neteisingas nuorodos formatas.");
+      const url = z.string().trim().url(t("content.validation.invalidUrl"));
       fieldShape[f.name] = f.required ? url : z.union([z.literal(""), url]);
     } else {
       let s = z.string().trim().max(2000);
-      if (f.required) s = s.min(1, `${f.label} privalomas.`);
+      if (f.required)
+        s = s.min(1, t("content.validation.fieldRequired", { field: t(f.labelKey) }));
       fieldShape[f.name] = s;
     }
   }
