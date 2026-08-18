@@ -19,9 +19,10 @@ export function PeriodFilter({
   value: { period: PeriodKey; from?: string | null; to?: string | null };
   onChange: (v: { period: PeriodKey; from?: string | null; to?: string | null; range: ResolvedRange }) => void;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const range = resolvePeriod(value.period, value.from, value.to);
-  const label = formatPeriodLabel(value.period, range);
+  const label = formatPeriodLabel(value.period, range, t);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
