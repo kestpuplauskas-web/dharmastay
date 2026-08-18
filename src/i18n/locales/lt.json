@@ -137,6 +137,7 @@
     "found_other": "{{count}} rastos",
     "from": "Nuo",
     "invoice": {
+      "issuedOn": "Sugeneruota {{date}}.",
       "titleNumbered": "Sąskaita Nr. {{number}}",
       "viewNumbered": "Peržiūrėti sąskaitą Nr. {{number}}"
     },

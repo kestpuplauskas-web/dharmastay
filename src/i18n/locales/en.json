@@ -137,6 +137,7 @@
     "found_other": "{{count}} found",
     "from": "From",
     "invoice": {
+      "issuedOn": "Generated {{date}}.",
       "titleNumbered": "Invoice No. {{number}}",
       "viewNumbered": "View invoice No. {{number}}"
     },
