@@ -88,7 +88,7 @@ function RoomDetail() {
       </div>
 
       <div className="space-y-2">
-        <p className="text-sm font-medium">Pastaba</p>
+        <p className="text-sm font-medium">{t("staff.note")}</p>
         <Textarea
           value={note}
           maxLength={500}

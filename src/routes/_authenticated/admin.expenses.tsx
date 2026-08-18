@@ -70,7 +70,7 @@ function ExpensesPage() {
         >
           {EXPENSE_CATEGORIES.map((c) => (
             <option key={c} value={c}>
-              {c}
+              {t(`expenses.categories.${c}`)}
             </option>
           ))}
         </select>
@@ -93,7 +93,7 @@ function ExpensesPage() {
           onChange={(e) => setForm({ ...form, property_id: e.target.value })}
           className="rounded border px-2 py-1 text-sm"
         >
-          <option value="">Nesusieta</option>
+          <option value="">{t("expenses.unlinked")}</option>
           {props.map((p) => (
             <option key={p.id} value={p.id}>
               {p.name}
@@ -101,7 +101,7 @@ function ExpensesPage() {
           ))}
         </select>
         <input
-          placeholder="Pastaba"
+          placeholder={t("expenses.notePlaceholder")}
           value={form.note}
           onChange={(e) => setForm({ ...form, note: e.target.value })}
           className="rounded border px-2 py-1 text-sm"
@@ -115,11 +115,11 @@ function ExpensesPage() {
         <table className="w-full text-sm">
           <thead className="bg-muted">
             <tr className="text-left">
-              <th className="p-2">Data</th>
-              <th className="p-2">Kategorija</th>
-              <th className="p-2">Suma</th>
-              <th className="p-2">Objektas</th>
-              <th className="p-2">Pastaba</th>
+              <th className="p-2">{t("expenses.date")}</th>
+              <th className="p-2">{t("expenses.category")}</th>
+              <th className="p-2">{t("expenses.amount")}</th>
+              <th className="p-2">{t("expenses.property")}</th>
+              <th className="p-2">{t("expenses.note")}</th>
               <th className="p-2"></th>
             </tr>
           </thead>
@@ -127,7 +127,7 @@ function ExpensesPage() {
             {expenses.map((e: any) => (
               <tr key={e.id} className="border-t">
                 <td className="p-2 text-xs">{e.expense_date}</td>
-                <td className="p-2">{e.category}</td>
+                <td className="p-2">{t(`expenses.categories.${e.category}`)}</td>
                 <td className="p-2">{Number(e.amount ?? 0).toFixed(2)} €</td>
                 <td className="p-2">{e.properties?.name ?? "—"}</td>
                 <td className="p-2 text-xs text-muted-foreground">{e.note}</td>
@@ -136,7 +136,7 @@ function ExpensesPage() {
                     onClick={() => confirm(t("expenses.confirmDelete")) && del.mutate(e.id)}
                     className="text-destructive underline"
                   >
-                    Šalinti
+                    {t("expenses.delete")}
                   </button>
                 </td>
               </tr>
