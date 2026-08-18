@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPropertyForEdit, updateProperty } from "@/lib/properties.functions";
 import { syncPropertyIcal } from "@/lib/ical.functions";
@@ -14,6 +14,7 @@ function EditPropertyPage() {
   const fetchOne = useServerFn(getPropertyForEdit);
   const update = useServerFn(updateProperty);
   const navigate = useNavigate();
+  const qc = useQueryClient();
 
   const syncIcal = useServerFn(syncPropertyIcal);
 
@@ -24,7 +25,16 @@ function EditPropertyPage() {
 
   const m = useMutation({
     mutationFn: (v: PropertyFormValues) => update({ data: { id, patch: v } }),
-    onSuccess: () => navigate({ to: "/admin/properties" }),
+    onSuccess: async () => {
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["property-edit", id] }),
+        qc.invalidateQueries({ queryKey: ["admin-all-properties"] }),
+        qc.invalidateQueries({ queryKey: ["admin-props"] }),
+        qc.invalidateQueries({ queryKey: ["admin-props-all"] }),
+        qc.invalidateQueries({ queryKey: ["admin-properties-settings"] }),
+      ]);
+      navigate({ to: "/admin/properties" });
+    },
   });
 
   const sync = useMutation({

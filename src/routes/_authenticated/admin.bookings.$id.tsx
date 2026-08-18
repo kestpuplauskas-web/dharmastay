@@ -52,7 +52,15 @@ function EditBookingPage() {
 
   const m = useMutation({
     mutationFn: (v: BookingFormValues) => update({ data: { id, ...v } }),
-    onSuccess: () => navigate({ to: "/admin/bookings" }),
+    onSuccess: async () => {
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["admin-bookings"] }),
+        qc.invalidateQueries({ queryKey: ["admin-booking", id] }),
+        qc.invalidateQueries({ queryKey: ["admin-invoice", id] }),
+        qc.invalidateQueries({ queryKey: ["dashboard-stats"] }),
+      ]);
+      navigate({ to: "/admin/bookings" });
+    },
   });
 
   if (isLoading) return <p>Kraunama…</p>;
