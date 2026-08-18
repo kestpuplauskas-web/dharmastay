@@ -273,6 +273,66 @@
       "wifi_password": "WiFi password"
     }
   },
+  "contracts": {
+    "title": "Contracts",
+    "subtitle": "Rental agreement templates.",
+    "sectionTitle": "Contract templates",
+    "sectionDesc": "Edit the rental agreement text the guest signs when booking.",
+    "new": "New template",
+    "name": "Name",
+    "kind": "Type",
+    "language": "Language",
+    "created": "Created",
+    "status": "Status",
+    "actions": "Actions",
+    "loading": "Loading...",
+    "empty": "No templates yet. Create the first one.",
+    "active": "Active",
+    "inactive": "Inactive",
+    "preview": "Preview",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Delete template “{{name}}”?",
+    "created_toast": "Template created",
+    "updated": "Template updated",
+    "deleted": "Template deleted",
+    "error": "Error",
+    "nameRequired": "Enter a name",
+    "editTitle": "Edit template",
+    "newTitle": "New template",
+    "namePlaceholder": "e.g. Standard rental agreement EN",
+    "kindRental": "Rental agreement",
+    "kindPrivacy": "Privacy policy",
+    "langLt": "Lithuanian",
+    "langEn": "English",
+    "activeHint": "Active template (only one per language and type)",
+    "variables": "Variables",
+    "body": "Agreement text",
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "save": "Save",
+    "toolbar": {
+      "paragraph": "Paragraph",
+      "h1": "Heading 1",
+      "h2": "Heading 2",
+      "bold": "Bold",
+      "italic": "Italic",
+      "bulletList": "Bullet list",
+      "orderedList": "Numbered list"
+    },
+    "vars": {
+      "kliento_vardas": "Guest name",
+      "objektas": "Property",
+      "vieta": "Location",
+      "nuo": "From",
+      "iki": "To",
+      "naktys": "Number of nights",
+      "sveciai": "Number of guests",
+      "suma": "Amount €",
+      "rezervacijos_nr": "Booking no.",
+      "data": "Date (today)"
+    }
+  },
   "dashboard": {
     "biz": {
       "avgStay": "Avg. stay",
@@ -431,6 +491,12 @@
       "bedroom_4": "Bedroom 4",
       "living_room": "Living room"
     }
+  },
+  "expenses": {
+    "title": "Expenses",
+    "add": "Add",
+    "confirmDelete": "Delete?",
+    "empty": "No expenses yet."
   },
   "gantt": {
     "amount": "Amount",
@@ -1009,14 +1075,20 @@
     }
   },
   "staff": {
+    "arrivingToday": "Arriving today",
+    "leavingToday": "Departing today",
     "noAccessText": "Please contact the administrator to be granted the housekeeper role.",
     "noAccessTitle": "Access denied",
+    "noRooms": "No rooms found.",
+    "notePlaceholder": "Note (optional)",
+    "occupied": "Occupied",
     "roomStatus": {
       "problema": "Issue",
       "reikia_tvarkyti": "Needs cleaning",
       "svaru": "Clean",
       "tvarkoma": "In progress"
     },
+    "statusUpdated": "Status updated",
     "title": "Housekeeping"
   },
   "translations": {

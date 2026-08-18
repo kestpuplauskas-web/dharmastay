@@ -273,6 +273,66 @@
       "wifi_password": "WiFi slaptažodis"
     }
   },
+  "contracts": {
+    "title": "Sutartys",
+    "subtitle": "Nuomos sutarties šablonai.",
+    "sectionTitle": "Sutarčių šablonai",
+    "sectionDesc": "Redaguokite nuomos sutarties tekstą kurį klientas pasirašys rezervacijos metu.",
+    "new": "Naujas šablonas",
+    "name": "Pavadinimas",
+    "kind": "Tipas",
+    "language": "Kalba",
+    "created": "Sukurta",
+    "status": "Statusas",
+    "actions": "Veiksmai",
+    "loading": "Kraunama...",
+    "empty": "Šablonų dar nėra. Sukurkite pirmąjį.",
+    "active": "Aktyvus",
+    "inactive": "Neaktyvus",
+    "preview": "Peržiūrėti",
+    "edit": "Redaguoti",
+    "delete": "Trinti",
+    "confirmDelete": "Ištrinti šabloną „{{name}}“?",
+    "created_toast": "Šablonas sukurtas",
+    "updated": "Šablonas atnaujintas",
+    "deleted": "Šablonas ištrintas",
+    "error": "Klaida",
+    "nameRequired": "Įveskite pavadinimą",
+    "editTitle": "Redaguoti šabloną",
+    "newTitle": "Naujas šablonas",
+    "namePlaceholder": "pvz. Standartinė nuomos sutartis LT",
+    "kindRental": "Nuomos sutartis",
+    "kindPrivacy": "Privatumo politika",
+    "langLt": "Lietuvių",
+    "langEn": "English",
+    "activeHint": "Aktyvus šablonas (tik vienas tos pačios kalbos ir tipo)",
+    "variables": "Kintamieji",
+    "body": "Sutarties tekstas",
+    "cancel": "Atšaukti",
+    "saving": "Saugoma...",
+    "save": "Išsaugoti",
+    "toolbar": {
+      "paragraph": "Pastraipa",
+      "h1": "Antraštė 1",
+      "h2": "Antraštė 2",
+      "bold": "Bold",
+      "italic": "Italic",
+      "bulletList": "Sąrašas",
+      "orderedList": "Numeruotas sąrašas"
+    },
+    "vars": {
+      "kliento_vardas": "Kliento vardas",
+      "objektas": "Objektas",
+      "vieta": "Vieta",
+      "nuo": "Nuo",
+      "iki": "Iki",
+      "naktys": "Naktų skaičius",
+      "sveciai": "Svečių skaičius",
+      "suma": "Suma €",
+      "rezervacijos_nr": "Rezervacijos Nr.",
+      "data": "Data (šiandien)"
+    }
+  },
   "dashboard": {
     "biz": {
       "avgStay": "Vid. viešnagė",
@@ -431,6 +491,12 @@
       "bedroom_4": "Miegamasis 4",
       "living_room": "Svetainė"
     }
+  },
+  "expenses": {
+    "title": "Išlaidos",
+    "add": "Pridėti",
+    "confirmDelete": "Ištrinti?",
+    "empty": "Kol kas nėra išlaidų."
   },
   "gantt": {
     "amount": "Suma",
@@ -1009,14 +1075,20 @@
     }
   },
   "staff": {
+    "arrivingToday": "Atvyksta šiandien",
+    "leavingToday": "Išvyksta šiandien",
     "noAccessText": "Susisiekite su administratoriumi, kad jums būtų suteikta tvarkytojos rolė.",
     "noAccessTitle": "Prieiga negalima",
+    "noRooms": "Kambarių nerasta.",
+    "notePlaceholder": "Pastaba (nebūtina)",
+    "occupied": "Užimta",
     "roomStatus": {
       "problema": "Problema",
       "reikia_tvarkyti": "Reikia tvarkyti",
       "svaru": "Švaru",
       "tvarkoma": "Tvarkoma"
     },
+    "statusUpdated": "Būsena atnaujinta",
     "title": "Kambarių tvarkymas"
   },
   "translations": {
