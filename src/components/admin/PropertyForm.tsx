@@ -107,6 +107,7 @@ export function PropertyForm({
     syncing?: boolean;
   };
 }) {
+  const { t } = useTranslation();
   const [v, setV] = useState<PropertyFormValues>(initial);
   // Kai iš serverio ateina šviežesni duomenys, forma persikrauna (jei vartotojas dar neredagavo).
   const dirtyRef = useRef(false);
