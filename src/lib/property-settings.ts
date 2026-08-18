@@ -5,10 +5,10 @@ import { z } from "zod";
 /* ------------------------------------------------------------------ */
 
 export const CURRENCIES = [
-  { value: "EUR", label: "EUR — Euras" },
-  { value: "USD", label: "USD — JAV doleris" },
-  { value: "GBP", label: "GBP — Svaras sterlingų" },
-  { value: "PLN", label: "PLN — Lenkijos zlotas" },
+  { value: "EUR", labelKey: "enums.currency.EUR" },
+  { value: "USD", labelKey: "enums.currency.USD" },
+  { value: "GBP", labelKey: "enums.currency.GBP" },
+  { value: "PLN", labelKey: "enums.currency.PLN" },
 ] as const;
 
 export const LANGUAGES = [
@@ -29,33 +29,33 @@ export const TIMEZONES = [
 ] as const;
 
 export const COUNTRIES = [
-  { value: "LT", label: "Lietuva" },
-  { value: "LV", label: "Latvija" },
-  { value: "EE", label: "Estija" },
-  { value: "PL", label: "Lenkija" },
-  { value: "DE", label: "Vokietija" },
-  { value: "GB", label: "Jungtinė Karalystė" },
+  { value: "LT", labelKey: "enums.country.LT" },
+  { value: "LV", labelKey: "enums.country.LV" },
+  { value: "EE", labelKey: "enums.country.EE" },
+  { value: "PL", labelKey: "enums.country.PL" },
+  { value: "DE", labelKey: "enums.country.DE" },
+  { value: "GB", labelKey: "enums.country.GB" },
 ] as const;
 
 export const PAYMENT_METHODS = [
-  { value: "cash", label: "Grynaisiais" },
-  { value: "bank_transfer", label: "Banko pavedimu" },
-  { value: "card", label: "Banko kortele" },
+  { value: "cash", labelKey: "enums.paymentMethod.cash" },
+  { value: "bank_transfer", labelKey: "enums.paymentMethod.bank_transfer" },
+  { value: "card", labelKey: "enums.paymentMethod.card" },
   { value: "stripe", label: "Stripe" },
   { value: "paysera", label: "Paysera" },
   { value: "paypal", label: "PayPal" },
 ] as const;
 
 export const DEPOSIT_TYPES = [
-  { value: "full", label: "Visa suma" },
-  { value: "percent", label: "Procentas" },
-  { value: "fixed", label: "Fiksuota suma" },
+  { value: "full", labelKey: "enums.depositType.full" },
+  { value: "percent", labelKey: "enums.depositType.percent" },
+  { value: "fixed", labelKey: "enums.depositType.fixed" },
 ] as const;
 
 export const FEE_TYPES = [
-  { value: "percent", label: "Procentas nuo sumos" },
-  { value: "fixed", label: "Fiksuota suma" },
-  { value: "first_night", label: "Pirmos nakties kaina" },
+  { value: "percent", labelKey: "enums.feeType.percent" },
+  { value: "fixed", labelKey: "enums.feeType.fixed" },
+  { value: "first_night", labelKey: "enums.feeType.first_night" },
 ] as const;
 
 /* ------------------------------------------------------------------ */
@@ -335,13 +335,15 @@ export type FieldType =
   | "color"
   | "checkboxGroup";
 
+export type SelectOption = { value: string; label?: string; labelKey?: string };
+
 export type FieldDef = {
   name: keyof PropertySettings;
-  label: string;
+  labelKey: string;
   type: FieldType;
-  help?: string;
-  unit?: string;
-  options?: readonly { value: string; label: string }[];
+  helpKey?: string;
+  unitKey?: string;
+  options?: readonly SelectOption[];
   step?: number;
   min?: number;
   max?: number;
@@ -352,8 +354,8 @@ export type FieldDef = {
 export type SectionDef = {
   id: SettingsSectionId;
   icon: string;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   fields: FieldDef[];
 };
 
