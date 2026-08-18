@@ -63,22 +63,21 @@ export const savePropertySettings = createServerFn({ method: "POST" })
   });
 /** Vieša (be autentifikacijos) prekės ženklo informacija prisijungimo puslapiui. */
 export const getPublicBranding = createServerFn({ method: "GET" }).handler(
-  async (): Promise<{ displayName: string; logoUrl: string; tagline: string }> => {
+  async (): Promise<{ displayName: string; logoUrl: string }> => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
       .from("property_settings")
-      .select("display_name, brand_logo_url, brand_tagline")
+      .select("display_name, brand_logo_url")
       .eq("scope", "global")
       .maybeSingle();
     if (error) {
       console.error("[getPublicBranding]", error.message);
-      return { displayName: "", logoUrl: "", tagline: "" };
+      return { displayName: "", logoUrl: "" };
     }
     const row = (data ?? {}) as Record<string, unknown>;
     return {
       displayName: String(row["display_name"] ?? ""),
       logoUrl: String(row["brand_logo_url"] ?? ""),
-      tagline: String(row["brand_tagline"] ?? ""),
     };
   },
 );
