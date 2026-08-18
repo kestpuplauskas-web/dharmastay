@@ -332,6 +332,7 @@ export function ContentTemplateCard({
               { field: "content", label: "Turinys", multiline: true, html: def.hasRichText },
             ]}
             originals={{ subject: record.subject ?? "", content: record.content ?? "" }}
+            showVariables={showVariables}
           />
         </div>
       ) : (
