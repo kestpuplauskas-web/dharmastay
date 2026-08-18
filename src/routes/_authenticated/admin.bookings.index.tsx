@@ -434,31 +434,36 @@ function ColumnFilter({ col, rows, filter, onChange }: {
 }
 
 function BookingViewDialog({ row, onClose }: { row: Row | null; onClose: () => void }) {
+  const { t } = useTranslation();
   return (
     <Dialog open={!!row} onOpenChange={(o) => { if (!o) onClose(); }}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Rezervacijos peržiūra</DialogTitle>
+          <DialogTitle>{t("bookings.dialog.title")}</DialogTitle>
         </DialogHeader>
         {row && (
           <div className="space-y-3 text-sm">
             <div className="flex items-center gap-2 flex-wrap">
               {row.booking_number && <span className="font-mono text-xs px-2 py-0.5 rounded bg-muted">{row.booking_number}</span>}
-              <Badge variant="outline" className={STATUS_CLASS[row.status] ?? ""}>{STATUS_LABELS[row.status] ?? row.status}</Badge>
-              <Badge variant="outline">{SOURCE_LABELS[row.source] ?? row.source}</Badge>
+              <Badge variant="outline" className={STATUS_CLASS[row.status] ?? ""}>
+                {BOOKING_STATUS_LABEL_KEYS[row.status] ? t(BOOKING_STATUS_LABEL_KEYS[row.status]) : row.status}
+              </Badge>
+              <Badge variant="outline">
+                {BOOKING_SOURCE_LABEL_KEYS[row.source] ? t(BOOKING_SOURCE_LABEL_KEYS[row.source]) : row.source}
+              </Badge>
             </div>
-            <FieldRow label="Objektas" value={row.properties?.name ?? "—"} />
-            <FieldRow label="Klientas" value={row.customer_name || "—"} />
-            <FieldRow label="Telefonas" value={row.customer_phone || "—"} />
-            <FieldRow label="El. paštas" value={row.customer_email || "—"} />
-            <FieldRow label="Adresas" value={row.customer_address || "—"} />
-            <FieldRow label="Asmens kodas" value={row.customer_id_code || "—"} />
-            <FieldRow label="Nuo" value={`${row.date_from}${row.check_in_time ? ` ${row.check_in_time}` : ""}`} />
-            <FieldRow label="Iki" value={`${row.date_to}${row.check_out_time ? ` ${row.check_out_time}` : ""}`} />
-            <FieldRow label="Trukmė" value={`${durationDays(row.date_from, row.date_to)} d.`} />
-            <FieldRow label="Vieta" value={row.location || "—"} />
-            <FieldRow label="Svečių" value={String(row.guests ?? "—")} />
-            <FieldRow label="Suma" value={`${Number(row.total_amount ?? 0).toFixed(2)} €`} />
+            <FieldRow label={t("bookings.dialog.property")} value={row.properties?.name ?? "—"} />
+            <FieldRow label={t("bookings.dialog.customer")} value={row.customer_name || "—"} />
+            <FieldRow label={t("bookings.dialog.phone")} value={row.customer_phone || "—"} />
+            <FieldRow label={t("bookings.dialog.email")} value={row.customer_email || "—"} />
+            <FieldRow label={t("bookings.dialog.address")} value={row.customer_address || "—"} />
+            <FieldRow label={t("bookings.dialog.idCode")} value={row.customer_id_code || "—"} />
+            <FieldRow label={t("bookings.dialog.from")} value={`${row.date_from}${row.check_in_time ? ` ${row.check_in_time}` : ""}`} />
+            <FieldRow label={t("bookings.dialog.to")} value={`${row.date_to}${row.check_out_time ? ` ${row.check_out_time}` : ""}`} />
+            <FieldRow label={t("bookings.dialog.duration")} value={t("bookings.dialog.days", { value: durationDays(row.date_from, row.date_to) })} />
+            <FieldRow label={t("bookings.dialog.location")} value={row.location || "—"} />
+            <FieldRow label={t("bookings.dialog.guests")} value={String(row.guests ?? "—")} />
+            <FieldRow label={t("bookings.dialog.amount")} value={`${Number(row.total_amount ?? 0).toFixed(2)} €`} />
             {row.note && <div className="pt-2 border-t italic text-muted-foreground">„{row.note}"</div>}
           </div>
         )}
