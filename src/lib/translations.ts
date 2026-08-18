@@ -5,6 +5,8 @@ export type TranslatableFieldDef = {
   field: string;
   label: string;
   multiline?: boolean;
+  /** Laukas saugo HTML — rodyti/redaguoti su teksto redaktoriumi. */
+  html?: boolean;
 };
 
 /** Objekto laukai, kuriuos galima versti. */

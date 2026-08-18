@@ -26,6 +26,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import DOMPurify from "dompurify";
+import { RichTextEditor } from "@/components/admin/content/RichTextEditor";
 import { translationLanguagesFor } from "@/lib/languages";
 import { useDefaultLanguage } from "@/hooks/useDefaultLanguage";
 import { getTranslations, saveTranslations } from "@/lib/translations.functions";
@@ -148,10 +150,24 @@ export function TranslationPanel({
           fields.map((f) => (
             <div key={f.field} className="space-y-1.5">
               <Label>{f.label}</Label>
-              <div className="rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground whitespace-pre-wrap">
-                {originals[f.field]?.trim() || "(tuščias)"}
-              </div>
-              {f.multiline ? (
+              {f.html ? (
+                <div
+                  className="prose prose-sm dark:prose-invert max-w-none rounded-md bg-muted px-3 py-2 text-muted-foreground"
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(originals[f.field]?.trim() || "<p>(tuščias)</p>"),
+                  }}
+                />
+              ) : (
+                <div className="rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground whitespace-pre-wrap">
+                  {originals[f.field]?.trim() || "(tuščias)"}
+                </div>
+              )}
+              {f.html ? (
+                <RichTextEditor
+                  value={draft[f.field] ?? ""}
+                  onChange={(html) => edit(f.field, html === "<p></p>" ? "" : html)}
+                />
+              ) : f.multiline ? (
                 <Textarea
                   rows={3}
                   value={draft[f.field] ?? ""}
