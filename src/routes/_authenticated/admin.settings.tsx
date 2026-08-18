@@ -26,13 +26,13 @@ export const Route = createFileRoute("/_authenticated/admin/settings")({
   component: PropertySettingsPage,
   head: () => ({
     meta: [
-      { title: "Bendrieji nustatymai · Rentivo Admin" },
+      { title: "Bendrieji nustatymai · Dharma Stay" },
       {
         name: "description",
         content:
           "Objekto bendrieji nustatymai: viešnagės taisyklės, mokesčiai, mokėjimai, sąskaitos, pranešimai ir integracijos.",
       },
-      { property: "og:title", content: "Bendrieji nustatymai · Rentivo Admin" },
+      { property: "og:title", content: "Bendrieji nustatymai · Dharma Stay" },
       {
         property: "og:description",
         content: "Centrinė objekto konfigūracijos vieta viešbučių valdymo sistemoje.",

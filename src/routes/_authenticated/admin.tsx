@@ -50,7 +50,7 @@ function AdminLayout() {
       <aside className="flex w-60 shrink-0 flex-col border-r bg-card">
         <div className="flex items-center gap-2 px-4 py-4 font-semibold">
           <Building2 className="h-5 w-5 text-primary" />
-          <span>Rentivo Admin</span>
+          <span>Dharma Stay</span>
         </div>
         <nav className="flex-1 space-y-1 px-2">
           {links.map((l) => {
