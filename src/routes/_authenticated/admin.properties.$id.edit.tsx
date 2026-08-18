@@ -4,6 +4,12 @@ import { useServerFn } from "@tanstack/react-start";
 import { getPropertyForEdit, updateProperty } from "@/lib/properties.functions";
 import { syncPropertyIcal } from "@/lib/ical.functions";
 import { PropertyForm, propertyToForm, type PropertyFormValues } from "@/components/admin/PropertyForm";
+import { TranslationPanel } from "@/components/admin/TranslationPanel";
+import {
+  PROPERTY_TRANSLATABLE_FIELDS,
+  extraServiceField,
+  type TranslatableFieldDef,
+} from "@/lib/translations";
 
 export const Route = createFileRoute("/_authenticated/admin/properties/$id/edit")({
   component: EditPropertyPage,
@@ -45,6 +51,27 @@ function EditPropertyPage() {
   if (isLoading) return <p className="text-muted-foreground">Kraunama…</p>;
   if (!prop) return <p>Nerasta.</p>;
 
+  const extraFields: TranslatableFieldDef[] = (prop.extraServices ?? [])
+    .filter((s) => s.name?.trim())
+    .map((s) => ({
+      field: extraServiceField(s.name),
+      label: `Papildoma paslauga: ${s.name}`,
+    }));
+
+  const translatableFields = [...PROPERTY_TRANSLATABLE_FIELDS, ...extraFields];
+
+  const originals: Record<string, string> = {
+    name: prop.name ?? "",
+    description: prop.description ?? "",
+    location_note: prop.locationNote ?? "",
+    rooms_notes: prop.rooms?.notes ?? "",
+    ...Object.fromEntries(
+      (prop.extraServices ?? [])
+        .filter((s) => s.name?.trim())
+        .map((s) => [extraServiceField(s.name), s.name]),
+    ),
+  };
+
   return (
     <div>
       <h1 className="mb-6 text-2xl font-semibold">Redaguoti: {prop.name}</h1>
@@ -59,6 +86,19 @@ function EditPropertyPage() {
           syncing: sync.isPending,
         }}
       />
+      <p className="mt-6 text-sm text-muted-foreground">
+        Papildomų paslaugų vertimai rišami prie išsaugotų pavadinimų. Jei ką tik
+        pridėjote ar pervadinote paslaugą, pirmiausia išsaugokite objektą — tik tada
+        ji atsiras vertimų sąraše.
+      </p>
+      <div className="mt-3">
+        <TranslationPanel
+          entityType="property"
+          entityId={id}
+          fields={translatableFields}
+          originals={originals}
+        />
+      </div>
       {m.error && (
         <p className="mt-3 text-sm text-destructive">
           {m.error instanceof Error ? m.error.message : String(m.error)}
