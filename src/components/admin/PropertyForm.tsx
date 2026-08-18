@@ -1,14 +1,15 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
 import { Trash2 } from "lucide-react";
 import {
   AMENITIES,
-  AMENITY_LABELS,
+  AMENITY_LABEL_KEYS,
   BED_TYPES,
   PROPERTY_TYPES,
   ROOM_KINDS,
   EXTRA_SERVICE_PRESETS,
   EXTRA_CALCS,
-  EXTRA_CALC_LABELS,
+  EXTRA_CALC_LABEL_KEYS,
   type ExtraService,
   type ExtraCalc,
   type Property,
@@ -166,9 +167,9 @@ export function PropertyForm({
             onChange={(e) => set("propertyType", e.target.value)}
             className="mt-1 w-full rounded border px-2 py-1"
           >
-            {PROPERTY_TYPES.map((t) => (
-              <option key={t.value} value={t.value}>
-                {t.label}
+            {PROPERTY_TYPES.map((ty) => (
+              <option key={ty.value} value={ty.value}>
+                {t(ty.labelKey)}
               </option>
             ))}
           </select>
@@ -361,7 +362,7 @@ export function PropertyForm({
                   )
                 }
               />
-              {AMENITY_LABELS[a] ?? a}
+              {AMENITY_LABEL_KEYS[a] ? t(AMENITY_LABEL_KEYS[a]) : a}
             </label>
           ))}
         </div>
@@ -588,7 +589,7 @@ export function PropertyForm({
               >
                 {EXTRA_CALCS.map((c) => (
                   <option key={c} value={c}>
-                    {EXTRA_CALC_LABELS[c]}
+                    {t(EXTRA_CALC_LABEL_KEYS[c])}
                   </option>
                 ))}
               </select>
