@@ -201,6 +201,7 @@ export const CONTENT_TEMPLATES: ContentTemplateDef[] = [
       {
         name: "description",
         label: "Aprašymas",
+        labelKey: "content.fields.description",
         type: "textarea",
         defaultValue:
           "Prieš atvykstant prašome užpildyti svečio registracijos formą E. turisto sistemoje.",
