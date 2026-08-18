@@ -87,7 +87,7 @@ export function SettingsField({
                 ))}
               </div>
               {field.helpKey && <p className="text-xs text-muted-foreground">{t(field.helpKey)}</p>}
-              {error && <p className="text-xs text-destructive">{error}</p>}
+              {error && <p className="text-xs text-destructive">{t(error)}</p>}
             </div>
           );
         }
@@ -186,7 +186,7 @@ export function SettingsField({
             )}
 
             {field.helpKey && <p className="text-xs text-muted-foreground">{t(field.helpKey)}</p>}
-            {error && <p className="text-xs text-destructive">{error}</p>}
+            {error && <p className="text-xs text-destructive">{t(error)}</p>}
           </div>
         );
       }}
