@@ -325,6 +325,7 @@ function ColumnFilter({ col, rows, filter, onChange }: {
   filter?: AnyFilter;
   onChange: (f: AnyFilter | null) => void;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const active = isFilterActive(filter);
   const [search, setSearch] = useState("");
@@ -343,7 +344,8 @@ function ColumnFilter({ col, rows, filter, onChange }: {
     return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [rows, col]);
 
-  const displayLabel = (val: string) => (col.key === "status" ? STATUS_LABELS[val] ?? val : val);
+  const displayLabel = (val: string) =>
+    col.key === "status" && BOOKING_STATUS_LABEL_KEYS[val] ? t(BOOKING_STATUS_LABEL_KEYS[val]) : val;
   const filteredOptions = uniqueValues.filter((v) => displayLabel(v).toLowerCase().includes(search.toLowerCase()));
 
   const apply = () => {
@@ -381,7 +383,7 @@ function ColumnFilter({ col, rows, filter, onChange }: {
         <button
           type="button"
           className={`inline-flex h-6 w-6 items-center justify-center rounded hover:bg-background ${active ? "text-primary" : "text-muted-foreground"}`}
-          title="Filtras"
+          title={t("bookings.filter")}
         >
           <Filter className="h-3 w-3" />
         </button>
@@ -389,9 +391,9 @@ function ColumnFilter({ col, rows, filter, onChange }: {
       <PopoverContent align="start" className="w-64 p-3 space-y-2">
         {col.type === "set" && (
           <>
-            <Input placeholder="Ieškoti..." value={search} onChange={(e) => setSearch(e.target.value)} className="h-8" />
+            <Input placeholder={t("common.search")} value={search} onChange={(e) => setSearch(e.target.value)} className="h-8" />
             <div className="max-h-56 overflow-y-auto space-y-1 border rounded p-2">
-              {filteredOptions.length === 0 && <div className="text-xs text-muted-foreground">Nėra reikšmių</div>}
+              {filteredOptions.length === 0 && <div className="text-xs text-muted-foreground">{t("bookings.noValues")}</div>}
               {filteredOptions.map((v) => {
                 const checked = draftValues.includes(v);
                 return (
@@ -408,23 +410,23 @@ function ColumnFilter({ col, rows, filter, onChange }: {
           </>
         )}
         {col.type === "text" && (
-          <Input placeholder="Ieškoti..." value={draftText} onChange={(e) => setDraftText(e.target.value)} className="h-8" />
+          <Input placeholder={t("common.search")} value={draftText} onChange={(e) => setDraftText(e.target.value)} className="h-8" />
         )}
         {(col.type === "date" || col.type === "number") && (
           <div className="space-y-2">
             <div>
-              <div className="text-xs text-muted-foreground mb-1">Nuo</div>
+              <div className="text-xs text-muted-foreground mb-1">{t("bookings.from")}</div>
               <Input type={col.type === "date" ? "date" : "number"} value={draftMin} onChange={(e) => setDraftMin(e.target.value)} className="h-8" />
             </div>
             <div>
-              <div className="text-xs text-muted-foreground mb-1">Iki</div>
+              <div className="text-xs text-muted-foreground mb-1">{t("bookings.to")}</div>
               <Input type={col.type === "date" ? "date" : "number"} value={draftMax} onChange={(e) => setDraftMax(e.target.value)} className="h-8" />
             </div>
           </div>
         )}
         <div className="flex gap-2 pt-1">
-          <Button size="sm" className="flex-1" onClick={apply}>Pritaikyti</Button>
-          <Button size="sm" variant="outline" className="flex-1" onClick={clear}>Išvalyti</Button>
+          <Button size="sm" className="flex-1" onClick={apply}>{t("bookings.apply")}</Button>
+          <Button size="sm" variant="outline" className="flex-1" onClick={clear}>{t("bookings.clear")}</Button>
         </div>
       </PopoverContent>
     </Popover>
