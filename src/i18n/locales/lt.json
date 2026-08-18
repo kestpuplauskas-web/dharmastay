@@ -1161,7 +1161,19 @@
       "saved": "Vertimai išsaugoti.",
       "stay": "Likti puslapyje",
       "title": "Vertimai",
-      "unsaved": "Yra neišsaugotų vertimų."
+      "unsaved": "Yra neišsaugotų vertimų.",
+      "autoTranslate": "Išversti automatiškai",
+      "autoDone": "Automatiškai išversta laukų: {{count}}. Nepamirškite išsaugoti.",
+      "autoNothing": "Nėra ką versti — visi laukai jau užpildyti.",
+      "autoFailed": "Nepavyko automatiškai išversti."
+    },
+    "bulk": {
+      "button": "Išversti viską į {{lang}}",
+      "confirmTitle": "Automatinis vertimas į {{lang}}",
+      "confirmDesc": "Bus automatiškai išversti visų objektų ir turinio šablonų tekstai, kurių vertimų dar nėra. Esami vertimai nebus perrašyti. Tai gali užtrukti kelias minutes.",
+      "start": "Pradėti vertimą",
+      "running": "Verčiama…",
+      "done": "Išversta laukų: {{translated}}, praleista: {{skipped}}, nepavyko: {{failed}}."
     }
   }
 }

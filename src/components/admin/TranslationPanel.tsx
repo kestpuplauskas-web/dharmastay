@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useBlocker } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Languages, Loader2, Save } from "lucide-react";
+import { Languages, Loader2, Save, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -34,6 +34,7 @@ import type { Editor } from "@tiptap/react";
 import { translationLanguagesFor } from "@/lib/languages";
 import { useDefaultLanguage } from "@/hooks/useDefaultLanguage";
 import { getTranslations, saveTranslations } from "@/lib/translations.functions";
+import { autoTranslateFields } from "@/lib/auto-translate.functions";
 import type { TranslatableEntity, TranslatableFieldDef } from "@/lib/translations";
 
 export function TranslationPanel({
@@ -54,6 +55,7 @@ export function TranslationPanel({
   const { t } = useTranslation();
   const fetchTranslations = useServerFn(getTranslations);
   const save = useServerFn(saveTranslations);
+  const autoTranslate = useServerFn(autoTranslateFields);
   const qc = useQueryClient();
 
   // Verčiamos visos kalbos, IŠSKYRUS objekto numatytąją.
@@ -134,6 +136,31 @@ export function TranslationPanel({
     },
     onError: (e) =>
       toast.error(e instanceof Error ? e.message : t("translations.panel.saveFailed")),
+  });
+
+  const auto = useMutation({
+    mutationFn: async (mode: "empty" | "all") => {
+      const items = fields
+        .filter((f) => (originals[f.field] ?? "").trim() !== "")
+        .filter((f) => mode === "all" || (draft[f.field] ?? "").trim() === "")
+        .map((f) => ({ field: f.field, text: originals[f.field] ?? "", html: Boolean(f.html) }));
+      if (items.length === 0) return {} as Record<string, string>;
+      return await autoTranslate({
+        data: { entityType, fromLang: defaultLang, toLang: activeLang, items },
+      });
+    },
+    onSuccess: (out) => {
+      const entries = Object.entries(out ?? {});
+      if (entries.length === 0) {
+        toast.info(t("translations.panel.autoNothing"));
+        return;
+      }
+      setDraft((s) => ({ ...s, ...Object.fromEntries(entries) }));
+      setDirty(true);
+      toast.success(t("translations.panel.autoDone", { count: entries.length }));
+    },
+    onError: (e) =>
+      toast.error(e instanceof Error ? e.message : t("translations.panel.autoFailed")),
   });
 
   if (languages.length === 0 || !activeLang) return null;
@@ -243,6 +270,19 @@ export function TranslationPanel({
             <Save className="mr-2 h-4 w-4" />
           )}
           {t("translations.panel.save")}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => auto.mutate("empty")}
+          disabled={auto.isPending}
+        >
+          {auto.isPending ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Sparkles className="mr-2 h-4 w-4" />
+          )}
+          {t("translations.panel.autoTranslate")}
         </Button>
         {dirty && (
           <span className="text-sm text-muted-foreground">{t("translations.panel.unsaved")}</span>

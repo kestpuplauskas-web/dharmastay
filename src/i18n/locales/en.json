@@ -1161,7 +1161,19 @@
       "saved": "Translations saved.",
       "stay": "Stay on page",
       "title": "Translations",
-      "unsaved": "There are unsaved translations."
+      "unsaved": "There are unsaved translations.",
+      "autoTranslate": "Auto-translate",
+      "autoDone": "Auto-translated {{count}} field(s). Don’t forget to save.",
+      "autoNothing": "Nothing to translate — all fields are filled.",
+      "autoFailed": "Auto-translation failed."
+    },
+    "bulk": {
+      "button": "Translate all to {{lang}}",
+      "confirmTitle": "Auto-translate to {{lang}}",
+      "confirmDesc": "All property and content template texts without a translation will be translated automatically. Existing translations are kept. This may take a few minutes.",
+      "start": "Start translating",
+      "running": "Translating…",
+      "done": "Translated {{translated}} field(s), skipped {{skipped}}, failed {{failed}}."
     }
   }
 }

@@ -57,6 +57,7 @@ import {
 } from "@/components/ui/table";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { toast } from "sonner";
+import { AutoTranslateAllButton } from "@/components/admin/AutoTranslateAllButton";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/admin/properties/")({
@@ -154,12 +155,15 @@ function PropertiesList() {
             {t("properties.count", { count: props.length })}
           </p>
         </div>
-        <Button asChild>
+        <div className="flex items-center gap-2">
+          <AutoTranslateAllButton />
+          <Button asChild>
           <Link to="/admin/properties/new">
             <Plus className="h-4 w-4" />
             <span className="hidden sm:inline">{t("properties.new")}</span>
           </Link>
-        </Button>
+          </Button>
+        </div>
       </header>
 
       <div className="flex flex-col gap-3 rounded-lg border bg-card p-3 sm:flex-row sm:flex-wrap sm:items-center">
