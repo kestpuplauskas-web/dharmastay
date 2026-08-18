@@ -1,11 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 
 export function BookingsTimeline({
   title,
   icon,
   bookings,
-  empty = "Nieko nėra.",
+  empty,
   showAmount = false,
 }: {
   title: string;
@@ -14,6 +15,7 @@ export function BookingsTimeline({
   empty?: string;
   showAmount?: boolean;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="rounded-lg border bg-card p-4 shadow-sm">
       <div className="flex items-center justify-between">
@@ -27,7 +29,7 @@ export function BookingsTimeline({
       </div>
       <div className="mt-3 space-y-2">
         {bookings.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{empty}</p>
+          <p className="text-sm text-muted-foreground">{empty ?? t("dashboard.emptyList")}</p>
         ) : (
           bookings.map((b: any) => (
             <Link
