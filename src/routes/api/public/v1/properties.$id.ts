@@ -17,6 +17,9 @@ export const Route = createFileRoute("/api/public/v1/properties/$id")({
           }
           const { publicApiClient, publicProperty, PROPERTY_PUBLIC_COLUMNS, occupiedRangesFor } =
             await import("@/lib/api-public.server");
+          const { loadDefaultLanguage, loadTranslations, applyPropertyTranslations } = await import(
+            "@/lib/translations.server"
+          );
           const supabase = publicApiClient();
           const { data, error } = await supabase
             .from("properties")
@@ -26,12 +29,19 @@ export const Route = createFileRoute("/api/public/v1/properties/$id")({
             .maybeSingle();
           if (error) throw new Error(error.message);
           if (!data) return apiError("not_found", "Property not found", 404, headers);
+
+          const base = publicProperty(data as never);
+          const defaultLang = await loadDefaultLanguage();
+          const lang = new URL(request.url).searchParams.get("language") ?? defaultLang;
+
+          let translated = base;
+          if (lang !== defaultLang) {
+            const tr = await loadTranslations("property", [base.id], lang);
+            translated = applyPropertyTranslations(base, tr[base.id]);
+          }
+
           const occupied = await occupiedRangesFor(parsed.data);
-          return apiJson(
-            { data: { ...publicProperty(data as never), occupied } },
-            200,
-            headers,
-          );
+          return apiJson({ data: { ...translated, occupied } }, 200, headers);
         });
       },
     },
