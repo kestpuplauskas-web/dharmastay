@@ -478,6 +478,100 @@
     "viewTable": "Table"
   },
   "settings": {
+    "api": {
+      "active": "Active",
+      "altLabel": "Alternative — stable technical address (does not change if the project is renamed)",
+      "close": "Close",
+      "confirmDelete": "Delete key “{{name}}”?",
+      "copied": "Copied.",
+      "copy": "Copy",
+      "copyFailed": "Could not copy automatically — select the text and copy manually.",
+      "create": "Create key",
+      "createFailed": "Could not create the key.",
+      "created": "API key created. Copy it now.",
+      "createdAt": "created {{date}}",
+      "deleteFailed": "Could not delete.",
+      "deleted": "Key deleted.",
+      "description": "Keys for the external client website that calls this project's public API. Use the key on the server side only.",
+      "devHint": "Must contain “-dev”. Without it tests write to real data.",
+      "devLabel": "Test (preview) environment",
+      "disable": "Disable",
+      "disabled": "Disabled",
+      "domains": "Domains: {{list}}",
+      "empty": "No keys yet.",
+      "enable": "Enable",
+      "envHint": "Pass these two variables to the client website.",
+      "loading": "Loading…",
+      "name": "Name",
+      "namePlaceholder": "Client website",
+      "nameRequired": "Enter a key name.",
+      "neverUsed": "not used yet",
+      "newKeyTitle": "New key (shown only once)",
+      "origins": "Allowed domains (optional)",
+      "previewWarning": "You are in the preview window — do not copy the browser address, use the production address above.",
+      "prodHint": "This address is used by real clients.",
+      "prodLabel": "Production environment (published version)",
+      "title": "API access",
+      "updateFailed": "Could not update.",
+      "usedAt": "used {{date}}"
+    },
+    "email": {
+      "accepted": "Email accepted for delivery from {{from}}. {{detail}}",
+      "description": "Send a test email and verify that email delivery works.",
+      "error": "Error ({{status}}) sending from {{from}}: {{detail}}",
+      "fallbackFrom": " (a test Resend address is used — emails only reach the account owner)",
+      "loading": "Loading…",
+      "send": "Send test email",
+      "sendFailed": "Could not send the test email.",
+      "sender": "Sender:",
+      "sent": "Test email sent.",
+      "title": "Email check",
+      "to": "Recipient email",
+      "unknownError": "Unknown error."
+    },
+    "form": {
+      "invalid": "Please check the highlighted fields.",
+      "readOnly": "You do not have permission to change settings — view-only mode.",
+      "sectionOnly": "Changes are saved for this section only."
+    },
+    "integrations": {
+      "apiDetail": "Managed in the “API access” section",
+      "apiName": "API keys",
+      "comingSoon": "Coming soon",
+      "connected": "Active",
+      "description": "Connecting external systems. New integrations will appear in this section.",
+      "icalConnected": "iCal linked on {{count}} property(-ies)",
+      "icalNotConnected": "The iCal link is set on the property card",
+      "icalSyncedSuffix": " · synced {{date}}",
+      "items": {
+        "airbnb": "Occupancy import via iCal calendar.",
+        "api": "Access keys for external systems.",
+        "booking": "Occupancy import via iCal calendar.",
+        "gcal": "Booking synchronisation with Google Calendar.",
+        "landing": "Landing page that bookings come from.",
+        "paysera": "Payments via Lithuanian banks.",
+        "sms": "SMS reminders for guests.",
+        "smtp": "Outgoing email server.",
+        "stripe": "Card payments and deposit collection.",
+        "webhook": "Event notifications to an external system."
+      },
+      "landingName": "Client website",
+      "smsName": "SMS provider",
+      "title": "Integrations",
+      "webhookName": "Webhook URL"
+    },
+    "invoicePreview": {
+      "description": "An example with test booking data — it updates according to the values entered in the form (not yet saved). Real invoices will use actual booking data.",
+      "open": "Preview invoice",
+      "title": "Invoice preview"
+    },
+    "nav": {
+      "api": "API access",
+      "integrations": "Integrations",
+      "users": "Users"
+    },
+    "saveFailed": "Could not save settings.",
+    "saved": "Settings saved.",
     "sections": {
       "branding": {
         "description": "Colours and logos used on the website, in emails and PDF documents.",
@@ -748,6 +842,9 @@
         "title": "Taxes"
       }
     },
+    "selectPlaceholder": "Select…",
+    "subtitle": "General settings that apply to all properties.",
+    "title": "General settings",
     "units": {
       "days": "days",
       "daysBeforeArrival": "days before arrival",
@@ -758,6 +855,30 @@
       "percent": "%",
       "percentOrEur": "% or €",
       "years": "years"
+    },
+    "users": {
+      "colAdded": "Added",
+      "colLastSignIn": "Last sign-in",
+      "deleteAria": "Delete user",
+      "deleteDesc": "The {{name}} account will be permanently deleted together with all roles. This action cannot be undone.",
+      "deleteFailed": "Could not delete.",
+      "deleteTitle": "Delete user?",
+      "deleted": "User deleted.",
+      "email": "Email",
+      "empty": "No users.",
+      "invite": "Invite",
+      "inviteFailed": "Could not invite.",
+      "inviteHint": "The invitee will receive an email with a link to set their own password. There is no public registration.",
+      "inviteSent": "Invitation sent.",
+      "inviteTitle": "Invite an employee",
+      "listTitle": "Users",
+      "loading": "Loading…",
+      "neverSignedIn": "Never signed in",
+      "role": "Role",
+      "roleAdmin": "Administrator",
+      "roleHousekeeper": "Housekeeper",
+      "roleUser": "User",
+      "sending": "Sending…"
     }
   },
   "staff": {

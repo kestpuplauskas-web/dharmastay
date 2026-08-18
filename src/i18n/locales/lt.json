@@ -478,6 +478,100 @@
     "viewTable": "Lentelė"
   },
   "settings": {
+    "api": {
+      "active": "Aktyvus",
+      "altLabel": "Alternatyva — stabilus techninis adresas (nesikeis pervadinus projektą)",
+      "close": "Uždaryti",
+      "confirmDelete": "Ištrinti raktą „{{name}}“?",
+      "copied": "Nukopijuota.",
+      "copy": "Kopijuoti",
+      "copyFailed": "Nepavyko nukopijuoti automatiškai — pažymėkite tekstą ir kopijuokite ranka.",
+      "create": "Sukurti raktą",
+      "createFailed": "Nepavyko sukurti rakto.",
+      "created": "API raktas sukurtas. Nukopijuokite jį dabar.",
+      "createdAt": "sukurta {{date}}",
+      "deleteFailed": "Nepavyko ištrinti.",
+      "deleted": "Raktas ištrintas.",
+      "description": "Raktai išorinei klientinei svetainei, kuri kviečia šio projekto viešą API. Raktą naudokite tik serverio pusėje.",
+      "devHint": "Privalo turėti „-dev“. Be jo testai rašys į realius duomenis.",
+      "devLabel": "Testavimo (peržiūros) aplinka",
+      "disable": "Išjungti",
+      "disabled": "Išjungtas",
+      "domains": "Domenai: {{list}}",
+      "empty": "Raktų kol kas nėra.",
+      "enable": "Įjungti",
+      "envHint": "Šiuos du kintamuosius perduokite klientinei svetainei.",
+      "loading": "Kraunama…",
+      "name": "Pavadinimas",
+      "namePlaceholder": "Klientinė svetainė",
+      "nameRequired": "Įveskite rakto pavadinimą.",
+      "neverUsed": "dar nenaudotas",
+      "newKeyTitle": "Naujas raktas (rodomas tik vieną kartą)",
+      "origins": "Leidžiami domenai (nebūtina)",
+      "previewWarning": "Dabar esate peržiūros lange — nekopijuokite naršyklės adreso, naudokite gamybinį adresą aukščiau.",
+      "prodHint": "Šį adresą naudoja realūs klientai.",
+      "prodLabel": "Gamybinė aplinka (publikuota versija)",
+      "title": "API prieiga",
+      "updateFailed": "Nepavyko atnaujinti.",
+      "usedAt": "naudota {{date}}"
+    },
+    "email": {
+      "accepted": "Laiškas priimtas siuntimui iš {{from}}. {{detail}}",
+      "description": "Išsiųskite testinį laišką ir patikrinkite, ar laiškų siuntimas veikia.",
+      "error": "Klaida ({{status}}) siunčiant iš {{from}}: {{detail}}",
+      "fallbackFrom": " (naudojamas testinis Resend adresas — laiškai pasiekia tik paskyros savininką)",
+      "loading": "Kraunama…",
+      "send": "Siųsti testinį laišką",
+      "sendFailed": "Nepavyko išsiųsti testinio laiško.",
+      "sender": "Siuntėjas:",
+      "sent": "Testinis laiškas išsiųstas.",
+      "title": "El. pašto patikra",
+      "to": "Gavėjo el. paštas",
+      "unknownError": "Nežinoma klaida."
+    },
+    "form": {
+      "invalid": "Patikrinkite pažymėtus laukus.",
+      "readOnly": "Neturite teisių keisti nustatymų — rodomas tik peržiūros režimas.",
+      "sectionOnly": "Pakeitimai išsaugomi tik šiai skilčiai."
+    },
+    "integrations": {
+      "apiDetail": "Valdoma skiltyje „API prieiga“",
+      "apiName": "API raktai",
+      "comingSoon": "Greitai",
+      "connected": "Veikia",
+      "description": "Išorinių sistemų prijungimas. Naujos integracijos atsiras šioje skiltyje.",
+      "icalConnected": "iCal susietas {{count}} objekt(-uose)",
+      "icalNotConnected": "iCal nuoroda nurodoma objekto kortelėje",
+      "icalSyncedSuffix": " · sinchronizuota {{date}}",
+      "items": {
+        "airbnb": "Užimtumo importas per iCal kalendorių.",
+        "api": "Prieigos raktai išorinėms sistemoms.",
+        "booking": "Užimtumo importas per iCal kalendorių.",
+        "gcal": "Rezervacijų sinchronizacija su Google kalendoriumi.",
+        "landing": "Landing page, per kurią ateina rezervacijos.",
+        "paysera": "Mokėjimai per Lietuvos bankus.",
+        "sms": "SMS priminimai svečiams.",
+        "smtp": "Išeinančių el. laiškų siuntimo serveris.",
+        "stripe": "Kortelių mokėjimai ir avansų surinkimas.",
+        "webhook": "Įvykių pranešimai į išorinę sistemą."
+      },
+      "landingName": "Klientinė svetainė",
+      "smsName": "SMS paslaugų teikėjas",
+      "title": "Integracijos",
+      "webhookName": "Webhook URL"
+    },
+    "invoicePreview": {
+      "description": "Pavyzdys su testiniais rezervacijos duomenimis — atsinaujina pagal formoje įvestas (dar neišsaugotas) reikšmes. Realiai sąskaitai bus naudojami tikros rezervacijos duomenys.",
+      "open": "Peržiūrėti sąskaitą",
+      "title": "Sąskaitos peržiūra"
+    },
+    "nav": {
+      "api": "API prieiga",
+      "integrations": "Integracijos",
+      "users": "Vartotojai"
+    },
+    "saveFailed": "Nepavyko išsaugoti nustatymų.",
+    "saved": "Nustatymai išsaugoti.",
     "sections": {
       "branding": {
         "description": "Spalvos ir logotipai, naudojami svetainėje, laiškuose ir PDF dokumentuose.",
@@ -748,6 +842,9 @@
         "title": "Mokesčiai"
       }
     },
+    "selectPlaceholder": "Pasirinkite…",
+    "subtitle": "Bendrieji nustatymai, galiojantys visiems objektams.",
+    "title": "Bendrieji nustatymai",
     "units": {
       "days": "dienos",
       "daysBeforeArrival": "dienos iki atvykimo",
@@ -758,6 +855,30 @@
       "percent": "%",
       "percentOrEur": "% arba €",
       "years": "metų"
+    },
+    "users": {
+      "colAdded": "Pridėtas",
+      "colLastSignIn": "Paskutinis prisijungimas",
+      "deleteAria": "Ištrinti vartotoją",
+      "deleteDesc": "{{name}} paskyra bus visam laikui ištrinta kartu su visomis rolėmis. Veiksmo atšaukti negalima.",
+      "deleteFailed": "Nepavyko ištrinti.",
+      "deleteTitle": "Ištrinti vartotoją?",
+      "deleted": "Vartotojas ištrintas.",
+      "email": "El. paštas",
+      "empty": "Vartotojų nėra.",
+      "invite": "Pakviesti",
+      "inviteFailed": "Nepavyko pakviesti.",
+      "inviteHint": "Pakviestasis gaus el. laišką su nuoroda, kurioje pats susikurs slaptažodį. Viešos registracijos nėra.",
+      "inviteSent": "Kvietimas išsiųstas.",
+      "inviteTitle": "Pakviesti darbuotoją",
+      "listTitle": "Vartotojai",
+      "loading": "Kraunama…",
+      "neverSignedIn": "Neprisijungė",
+      "role": "Rolė",
+      "roleAdmin": "Administratorius",
+      "roleHousekeeper": "Kambarių tvarkytoja",
+      "roleUser": "Vartotojas",
+      "sending": "Siunčiama…"
     }
   },
   "staff": {
