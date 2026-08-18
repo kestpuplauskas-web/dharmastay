@@ -1,40 +1,543 @@
 {
-  "language": {
-    "label": "Language",
-    "lt": "Lietuvių",
-    "en": "English"
+  "admin": {
+    "noAdminText": "Please contact the system administrator to be granted access.",
+    "noAdminTitle": "You don't have administrator rights"
   },
   "common": {
-    "loading": "Loading…",
-    "save": "Save",
-    "saving": "Saving…",
+    "back": "Back",
     "cancel": "Cancel",
     "close": "Close",
-    "back": "Back",
     "delete": "Delete",
     "edit": "Edit",
-    "search": "Search",
+    "loading": "Loading…",
+    "noPermission": "You don't have permission.",
     "notFound": "Not found.",
-    "noPermission": "You don't have permission."
+    "save": "Save",
+    "saving": "Saving…",
+    "search": "Search"
+  },
+  "content": {
+    "fields": {
+      "description": "Description",
+      "title": "Name",
+      "url": "Link",
+      "wifiName": "WiFi name",
+      "wifiPassword": "WiFi password"
+    },
+    "sections": {
+      "email": {
+        "description": "Automated emails sent to guests during the booking process.",
+        "title": "Email notifications"
+      },
+      "guest_info": {
+        "description": "Practical information available to the guest during the stay.",
+        "title": "Guest information"
+      },
+      "whatsapp": {
+        "description": "Short messages to guests before arrival.",
+        "title": "WhatsApp"
+      }
+    },
+    "templates": {
+      "booking_cancellation": {
+        "description": "Sent to the guest when a booking is cancelled.",
+        "title": "Booking cancellation"
+      },
+      "booking_change": {
+        "description": "Sent when booking details change.",
+        "title": "Booking change"
+      },
+      "booking_confirmation": {
+        "description": "Sent to the guest when a booking is confirmed.",
+        "title": "Booking confirmation"
+      },
+      "checkin_reminder": {
+        "description": "Reminder to the guest a few days before arrival.",
+        "title": "Pre-arrival reminder"
+      },
+      "door_code": {
+        "description": "WhatsApp message with arrival instructions and the door code.",
+        "title": "Door code"
+      },
+      "eturistas": {
+        "description": "Guest registration form in the E-tourist system.",
+        "title": "E-tourist"
+      },
+      "restaurant": {
+        "description": "Information about breakfast, the restaurant or catering.",
+        "title": "Restaurant information"
+      },
+      "review_request": {
+        "description": "Sent to the guest after check-out.",
+        "title": "Review request"
+      },
+      "wifi": {
+        "description": "Internet access details shown to the guest.",
+        "title": "WiFi"
+      }
+    },
+    "validation": {
+      "contentRequired": "Content is required.",
+      "contentTooLong": "Content is too long.",
+      "fieldRequired": "{{field}} is required.",
+      "invalidUrl": "Invalid link format.",
+      "subjectRequired": "Subject is required.",
+      "subjectTooLong": "Subject is too long."
+    },
+    "variables": {
+      "booking_number": "Booking no.",
+      "check_in": "Check-in time",
+      "check_in_until": "Check-in until",
+      "check_out": "Check-out time",
+      "currency": "Currency",
+      "date_from": "Arrival date",
+      "date_to": "Departure date",
+      "door_code": "Door code",
+      "email": "Email",
+      "guest_name": "Guest name",
+      "guest_name_vocative": "Guest name (vocative)",
+      "location": "Location",
+      "phone": "Phone",
+      "property_name": "Property name",
+      "quiet_hours_from": "Quiet hours from",
+      "quiet_hours_to": "Quiet hours until",
+      "review_link": "Review link",
+      "room_name": "Room name",
+      "total_amount": "Total amount",
+      "wifi_name": "WiFi name",
+      "wifi_password": "WiFi password"
+    }
+  },
+  "dashboard": {
+    "period": {
+      "all": "All time",
+      "custom": "Custom period",
+      "last30": "Last 30 days",
+      "last7": "Last 7 days",
+      "mtd": "This month",
+      "prev_month": "Previous month",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "ytd": "This year"
+    }
+  },
+  "enums": {
+    "amenities": {
+      "air_conditioning": "Air conditioning",
+      "balcony": "Balcony",
+      "bbq": "BBQ",
+      "coffee_machine": "Coffee machine",
+      "extra_baby_bed": "Extra baby bed in the room",
+      "first_aid": "First aid kit",
+      "hair_dryer": "Hair dryer",
+      "hot_tub": "Hot tub",
+      "iron": "Iron",
+      "kitchen": "Kitchenette",
+      "parking": "Parking space",
+      "pet_friendly": "Pet friendly",
+      "pool": "Pool",
+      "sauna": "Sauna",
+      "smoke_alarm": "Smoke alarm",
+      "terrace": "Terrace",
+      "tv": "TV",
+      "washing_machine": "Washing machine",
+      "wifi": "Wi‑Fi",
+      "workspace": "Workspace"
+    },
+    "bedType": {
+      "double": "Standard double bed",
+      "extra_large_double": "Extra large double bed",
+      "large_double": "Large double bed",
+      "single": "Single bed",
+      "sofa_bed": "Sofa bed"
+    },
+    "bookingSource": {
+      "airbnb": "Airbnb",
+      "booking": "Booking",
+      "direct": "Direct",
+      "other": "Other",
+      "phone": "Phone",
+      "website": "Website",
+      "whatsapp": "WhatsApp"
+    },
+    "bookingStatus": {
+      "blocked_external": "External / blocked",
+      "cancelled": "Cancelled",
+      "completed": "Completed",
+      "confirmed": "Paid",
+      "pending": "Awaiting payment"
+    },
+    "country": {
+      "DE": "Germany",
+      "EE": "Estonia",
+      "GB": "United Kingdom",
+      "LT": "Lithuania",
+      "LV": "Latvia",
+      "PL": "Poland"
+    },
+    "currency": {
+      "EUR": "EUR — Euro",
+      "GBP": "GBP — Pound sterling",
+      "PLN": "PLN — Polish zloty",
+      "USD": "USD — US dollar"
+    },
+    "depositType": {
+      "fixed": "Fixed amount",
+      "full": "Full amount",
+      "percent": "Percentage"
+    },
+    "extraCalc": {
+      "flat_per_day": "Flat rate per day",
+      "per_child": "Per child",
+      "per_person": "Per person (children under 3 free)"
+    },
+    "extraServices": {
+      "babyBed": "Baby bed",
+      "breakfast": "Breakfast",
+      "dinner": "Dinner",
+      "hotTub": "Hot tub rental",
+      "lunch": "Lunch",
+      "sauna": "Sauna rental"
+    },
+    "feeType": {
+      "first_night": "First night price",
+      "fixed": "Fixed amount",
+      "percent": "Percentage of the total"
+    },
+    "paymentMethod": {
+      "bank_transfer": "Bank transfer",
+      "card": "Bank card",
+      "cash": "Cash"
+    },
+    "propertyType": {
+      "cottage": "Cabin with sauna and hot tub",
+      "standard": "Standard apartments",
+      "terrace": "Apartments with terrace"
+    },
+    "roomKind": {
+      "bedroom_1": "Bedroom 1",
+      "bedroom_2": "Bedroom 2",
+      "bedroom_3": "Bedroom 3",
+      "bedroom_4": "Bedroom 4",
+      "living_room": "Living room"
+    }
+  },
+  "language": {
+    "en": "English",
+    "label": "Language",
+    "lt": "Lietuvių"
   },
   "nav": {
-    "dashboard": "Dashboard",
     "bookings": "Bookings",
-    "properties": "Properties",
-    "contracts": "Contracts",
-    "expenses": "Finances",
-    "settings": "General settings",
     "content": "Content",
-    "website": "Website",
-    "signOut": "Sign out"
+    "contracts": "Contracts",
+    "dashboard": "Dashboard",
+    "expenses": "Finances",
+    "properties": "Properties",
+    "settings": "General settings",
+    "signOut": "Sign out",
+    "website": "Website"
   },
-  "admin": {
-    "noAdminTitle": "You don't have administrator rights",
-    "noAdminText": "Please contact the system administrator to be granted access."
+  "settings": {
+    "sections": {
+      "branding": {
+        "description": "Colours and logos used on the website, in emails and PDF documents.",
+        "fields": {
+          "brandEmailLogoUrl": {
+            "label": "Email logo"
+          },
+          "brandLogoUrl": {
+            "label": "Logo"
+          },
+          "brandPdfLogoUrl": {
+            "label": "PDF document logo"
+          },
+          "brandPrimaryColor": {
+            "label": "Primary colour"
+          },
+          "brandSecondaryColor": {
+            "label": "Secondary colour"
+          }
+        },
+        "title": "Branding"
+      },
+      "cancellation": {
+        "description": "Terms applied when a booking is cancelled or the guest does not arrive.",
+        "fields": {
+          "cancellationFee": {
+            "label": "Cancellation fee"
+          },
+          "cancellationFeeType": {
+            "label": "Cancellation fee type"
+          },
+          "cancellationPolicyText": {
+            "help": "Text shown to the guest during booking and in the confirmation email.",
+            "label": "Cancellation terms"
+          },
+          "freeCancellationDays": {
+            "label": "Free cancellation period"
+          },
+          "noShowFee": {
+            "label": "No-show fee"
+          }
+        },
+        "title": "Cancellation policy"
+      },
+      "general": {
+        "description": "General operator details used in invoices, emails and the website (applies to all properties).",
+        "fields": {
+          "address": {
+            "help": "Street and house number.",
+            "label": "Address"
+          },
+          "city": {
+            "label": "City"
+          },
+          "country": {
+            "label": "Country"
+          },
+          "currency": {
+            "label": "Currency"
+          },
+          "defaultLanguage": {
+            "label": "Default language"
+          },
+          "displayName": {
+            "help": "Shown to guests and in documents.",
+            "label": "Name"
+          },
+          "email": {
+            "help": "Notifications are sent from this address.",
+            "label": "Email"
+          },
+          "lat": {
+            "help": "E.g. 54.687157",
+            "label": "GPS latitude"
+          },
+          "lng": {
+            "help": "E.g. 25.279652",
+            "label": "GPS longitude"
+          },
+          "phone": {
+            "help": "Contact number for guests.",
+            "label": "Phone"
+          },
+          "postalCode": {
+            "label": "Postal code"
+          },
+          "timezone": {
+            "help": "Used for check-in times and reminders.",
+            "label": "Time zone"
+          }
+        },
+        "title": "Property information"
+      },
+      "guests": {
+        "description": "Rules for children, pets and quiet hours.",
+        "fields": {
+          "childrenFreeUntilAge": {
+            "label": "Children stay free until"
+          },
+          "minGuestAge": {
+            "label": "Minimum guest age"
+          },
+          "partiesAllowed": {
+            "label": "Parties allowed"
+          },
+          "petsAllowed": {
+            "label": "Pets allowed"
+          },
+          "quietHoursFrom": {
+            "label": "Quiet hours from"
+          },
+          "quietHoursTo": {
+            "label": "Quiet hours until"
+          }
+        },
+        "title": "Guest policy"
+      },
+      "invoicing": {
+        "description": "Company details and numbering used when generating invoices.",
+        "fields": {
+          "bankName": {
+            "label": "Bank name"
+          },
+          "companyAddress": {
+            "label": "Company address"
+          },
+          "companyCode": {
+            "label": "Company code"
+          },
+          "companyName": {
+            "label": "Company name"
+          },
+          "companyVatCode": {
+            "label": "VAT code"
+          },
+          "iban": {
+            "label": "IBAN"
+          },
+          "invoiceIssuerName": {
+            "help": "Optional — shown at the bottom of the invoice.",
+            "label": "Invoice issued by (full name)"
+          },
+          "invoiceLogoUrl": {
+            "help": "Link to the logo image.",
+            "label": "Invoice logo"
+          },
+          "invoiceNextNumber": {
+            "label": "Next number"
+          },
+          "invoiceNotes": {
+            "label": "Invoice notes"
+          },
+          "invoiceSeries": {
+            "help": "E.g. RNT",
+            "label": "Invoice series"
+          }
+        },
+        "title": "Invoice settings"
+      },
+      "notifications": {
+        "description": "Which emails the system sends to guests automatically.",
+        "fields": {
+          "checkinReminderHoursBefore": {
+            "label": "Check-in reminder before"
+          },
+          "notifyBookingChange": {
+            "label": "Booking change"
+          },
+          "notifyBookingConfirmation": {
+            "label": "Booking confirmation"
+          },
+          "notifyCancellationConfirmation": {
+            "label": "Cancellation confirmation"
+          },
+          "notifyCheckinReminder": {
+            "label": "Check-in reminder"
+          },
+          "notifyReviewRequest": {
+            "label": "Review request"
+          },
+          "reviewLink": {
+            "help": "Use the {{review_link}} variable in the review request email.",
+            "label": "Review collection link"
+          },
+          "reviewRequestHoursAfter": {
+            "label": "Review request after check-out"
+          }
+        },
+        "title": "Automated notifications"
+      },
+      "payments": {
+        "description": "Deposit requirements and accepted payment methods.",
+        "fields": {
+          "autoRefundDeposit": {
+            "label": "Refund deposit automatically"
+          },
+          "depositAmount": {
+            "help": "Depends on the selected deposit type.",
+            "label": "Deposit amount"
+          },
+          "depositRequired": {
+            "label": "Deposit required"
+          },
+          "depositType": {
+            "label": "Deposit type"
+          },
+          "paymentDueDays": {
+            "label": "Payment due"
+          },
+          "paymentMethods": {
+            "label": "Allowed payment methods"
+          }
+        },
+        "title": "Payments"
+      },
+      "stay": {
+        "description": "Check-in and check-out times and booking limits.",
+        "fields": {
+          "autoConfirmBookings": {
+            "help": "New bookings immediately get the confirmed status.",
+            "label": "Confirm bookings automatically"
+          },
+          "checkinFrom": {
+            "label": "Check-in from"
+          },
+          "checkinUntil": {
+            "label": "Check-in until"
+          },
+          "checkoutUntil": {
+            "label": "Check-out until"
+          },
+          "maxAdvanceDays": {
+            "help": "How many days ahead guests can book.",
+            "label": "Booking window ahead"
+          },
+          "maxNights": {
+            "label": "Maximum nights"
+          },
+          "minNights": {
+            "label": "Minimum nights"
+          },
+          "requireEmail": {
+            "label": "Email required for booking"
+          },
+          "requirePhone": {
+            "label": "Phone number required for booking"
+          }
+        },
+        "title": "Stay rules"
+      },
+      "taxes": {
+        "description": "Taxes applied when calculating the final booking price.",
+        "fields": {
+          "cityTax": {
+            "label": "City tax"
+          },
+          "cityTaxMinAge": {
+            "help": "Younger guests are exempt from the tax.",
+            "label": "City tax age limit"
+          },
+          "extraGuestFee": {
+            "label": "Extra guest fee"
+          },
+          "vatRate": {
+            "label": "VAT rate"
+          }
+        },
+        "title": "Taxes"
+      }
+    },
+    "units": {
+      "days": "days",
+      "daysBeforeArrival": "days before arrival",
+      "hours": "h",
+      "nights": "nights",
+      "perGuestNight": "€ / guest per night",
+      "perNight": "€ / night",
+      "percent": "%",
+      "percentOrEur": "% or €",
+      "years": "years"
+    }
   },
   "staff": {
-    "title": "Housekeeping",
+    "noAccessText": "Please contact the administrator to be granted the housekeeper role.",
     "noAccessTitle": "Access denied",
-    "noAccessText": "Please contact the administrator to be granted the housekeeper role."
+    "roomStatus": {
+      "problema": "Issue",
+      "reikia_tvarkyti": "Needs cleaning",
+      "svaru": "Clean",
+      "tvarkoma": "In progress"
+    },
+    "title": "Housekeeping"
+  },
+  "translations": {
+    "fields": {
+      "description": "Description",
+      "location_note": "Location notes",
+      "name": "Name",
+      "rooms_notes": "Room notes"
+    }
   }
 }

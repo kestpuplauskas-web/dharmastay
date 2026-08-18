@@ -1,40 +1,543 @@
 {
-  "language": {
-    "label": "Kalba",
-    "lt": "Lietuvių",
-    "en": "English"
+  "admin": {
+    "noAdminText": "Susisiekite su sistemos administratoriumi, kad jums būtų suteiktos teisės.",
+    "noAdminTitle": "Neturite administratoriaus teisių"
   },
   "common": {
-    "loading": "Kraunama…",
-    "save": "Išsaugoti",
-    "saving": "Saugoma…",
+    "back": "Atgal",
     "cancel": "Atšaukti",
     "close": "Uždaryti",
-    "back": "Atgal",
     "delete": "Ištrinti",
     "edit": "Redaguoti",
-    "search": "Ieškoti",
+    "loading": "Kraunama…",
+    "noPermission": "Neturite teisių.",
     "notFound": "Nerasta.",
-    "noPermission": "Neturite teisių."
+    "save": "Išsaugoti",
+    "saving": "Saugoma…",
+    "search": "Ieškoti"
+  },
+  "content": {
+    "fields": {
+      "description": "Aprašymas",
+      "title": "Pavadinimas",
+      "url": "Nuoroda",
+      "wifiName": "WiFi pavadinimas",
+      "wifiPassword": "WiFi slaptažodis"
+    },
+    "sections": {
+      "email": {
+        "description": "Automatiniai laiškai, siunčiami klientams rezervacijos metu.",
+        "title": "Pranešimai el. paštu"
+      },
+      "guest_info": {
+        "description": "Praktinė informacija, pasiekiama svečiui apsilankymo metu.",
+        "title": "Informacija svečiams"
+      },
+      "whatsapp": {
+        "description": "Trumposios žinutės svečiams prieš atvykimą.",
+        "title": "WhatsApp"
+      }
+    },
+    "templates": {
+      "booking_cancellation": {
+        "description": "Siunčiama klientui, kai rezervacija atšaukiama.",
+        "title": "Rezervacijos atšaukimas"
+      },
+      "booking_change": {
+        "description": "Siunčiama, kai pasikeičia rezervacijos duomenys.",
+        "title": "Rezervacijos pakeitimas"
+      },
+      "booking_confirmation": {
+        "description": "Siunčiama klientui, kai rezervacija patvirtinama.",
+        "title": "Rezervacijos patvirtinimas"
+      },
+      "checkin_reminder": {
+        "description": "Priminimas svečiui likus kelioms dienoms iki atvykimo.",
+        "title": "Priminimas prieš atvykimą"
+      },
+      "door_code": {
+        "description": "WhatsApp žinutė su atvykimo instrukcijomis ir durų kodu.",
+        "title": "Durų kodas"
+      },
+      "eturistas": {
+        "description": "Svečių registracijos forma E. turisto sistemoje.",
+        "title": "E. turistas"
+      },
+      "restaurant": {
+        "description": "Informacija apie pusryčius, restoraną ar maitinimą.",
+        "title": "Restorano informacija"
+      },
+      "review_request": {
+        "description": "Siunčiama svečiui po išvykimo.",
+        "title": "Prašymas palikti atsiliepimą"
+      },
+      "wifi": {
+        "description": "Interneto prisijungimo duomenys, rodomi svečiui.",
+        "title": "WiFi"
+      }
+    },
+    "validation": {
+      "contentRequired": "Turinys privalomas.",
+      "contentTooLong": "Per ilgas turinys.",
+      "fieldRequired": "{{field}} privalomas.",
+      "invalidUrl": "Neteisingas nuorodos formatas.",
+      "subjectRequired": "Laiško tema privaloma.",
+      "subjectTooLong": "Per ilga tema."
+    },
+    "variables": {
+      "booking_number": "Rezervacijos nr.",
+      "check_in": "Atvykimo laikas",
+      "check_in_until": "Check-in iki",
+      "check_out": "Išvykimo laikas",
+      "currency": "Valiuta",
+      "date_from": "Atvykimo data",
+      "date_to": "Išvykimo data",
+      "door_code": "Durų kodas",
+      "email": "El. paštas",
+      "guest_name": "Svečio vardas",
+      "guest_name_vocative": "Svečio vardas (kreipinys)",
+      "location": "Vieta",
+      "phone": "Telefonas",
+      "property_name": "Objekto pavadinimas",
+      "quiet_hours_from": "Ramybės laikas nuo",
+      "quiet_hours_to": "Ramybės laikas iki",
+      "review_link": "Atsiliepimo nuoroda",
+      "room_name": "Kambario pavadinimas",
+      "total_amount": "Bendra suma",
+      "wifi_name": "WiFi pavadinimas",
+      "wifi_password": "WiFi slaptažodis"
+    }
+  },
+  "dashboard": {
+    "period": {
+      "all": "Visas laikotarpis",
+      "custom": "Pasirinktas laikotarpis",
+      "last30": "Paskutinės 30 dienų",
+      "last7": "Paskutinės 7 dienos",
+      "mtd": "Šis mėnuo",
+      "prev_month": "Praėjęs mėnuo",
+      "today": "Šiandien",
+      "yesterday": "Vakar",
+      "ytd": "Šie metai"
+    }
+  },
+  "enums": {
+    "amenities": {
+      "air_conditioning": "Oro kondicionierius",
+      "balcony": "Balkonas",
+      "bbq": "Kepsninė",
+      "coffee_machine": "Kavos aparatas",
+      "extra_baby_bed": "Papildoma lovytė kambaryje (vaikui)",
+      "first_aid": "Pirmosios pagalbos rinkinys",
+      "hair_dryer": "Plaukų džiovintuvas",
+      "hot_tub": "Kubilas",
+      "iron": "Lygintuvas",
+      "kitchen": "Virtuvėlė",
+      "parking": "Vieta automobiliui",
+      "pet_friendly": "Su augintiniais",
+      "pool": "Baseinas",
+      "sauna": "Sauna",
+      "smoke_alarm": "Dūmų detektorius",
+      "terrace": "Terasa",
+      "tv": "Televizorius",
+      "washing_machine": "Skalbimo mašina",
+      "wifi": "Wi‑Fi",
+      "workspace": "Darbo vieta"
+    },
+    "bedType": {
+      "double": "Standartinė dvigulė lova",
+      "extra_large_double": "Labai didelė dvigulė lova",
+      "large_double": "Didelė dvigulė lova",
+      "single": "Vienvietė lova",
+      "sofa_bed": "Miegamoji sofa"
+    },
+    "bookingSource": {
+      "airbnb": "Airbnb",
+      "booking": "Booking",
+      "direct": "Tiesioginis",
+      "other": "Kita",
+      "phone": "Telefonu",
+      "website": "Svetainė",
+      "whatsapp": "WhatsApp"
+    },
+    "bookingStatus": {
+      "blocked_external": "Išorinė / užblokuota",
+      "cancelled": "Atšaukta",
+      "completed": "Užbaigta",
+      "confirmed": "Apmokėta",
+      "pending": "Laukiama apmokėjimo"
+    },
+    "country": {
+      "DE": "Vokietija",
+      "EE": "Estija",
+      "GB": "Jungtinė Karalystė",
+      "LT": "Lietuva",
+      "LV": "Latvija",
+      "PL": "Lenkija"
+    },
+    "currency": {
+      "EUR": "EUR — Euras",
+      "GBP": "GBP — Svaras sterlingų",
+      "PLN": "PLN — Lenkijos zlotas",
+      "USD": "USD — JAV doleris"
+    },
+    "depositType": {
+      "fixed": "Fiksuota suma",
+      "full": "Visa suma",
+      "percent": "Procentas"
+    },
+    "extraCalc": {
+      "flat_per_day": "Fiksuota už dieną",
+      "per_child": "Pagal vaikų sk.",
+      "per_person": "Pagal asmenų sk. (vaikai iki 3 m. nemokamai)"
+    },
+    "extraServices": {
+      "babyBed": "Vaikiška lovytė",
+      "breakfast": "Pusryčiai",
+      "dinner": "Vakarienė",
+      "hotTub": "Kubilo nuoma",
+      "lunch": "Pietūs",
+      "sauna": "Pirties nuoma"
+    },
+    "feeType": {
+      "first_night": "Pirmos nakties kaina",
+      "fixed": "Fiksuota suma",
+      "percent": "Procentas nuo sumos"
+    },
+    "paymentMethod": {
+      "bank_transfer": "Banko pavedimu",
+      "card": "Banko kortele",
+      "cash": "Grynaisiais"
+    },
+    "propertyType": {
+      "cottage": "Namelis su pirtimi ir kubilu",
+      "standard": "Standartiniai apartamentai",
+      "terrace": "Apartamentai su terasa"
+    },
+    "roomKind": {
+      "bedroom_1": "Miegamasis 1",
+      "bedroom_2": "Miegamasis 2",
+      "bedroom_3": "Miegamasis 3",
+      "bedroom_4": "Miegamasis 4",
+      "living_room": "Svetainė"
+    }
+  },
+  "language": {
+    "en": "English",
+    "label": "Kalba",
+    "lt": "Lietuvių"
   },
   "nav": {
-    "dashboard": "Skydelis",
     "bookings": "Rezervacijos",
-    "properties": "Objektai",
-    "contracts": "Sutartys",
-    "expenses": "Finansai",
-    "settings": "Bendrieji nustatymai",
     "content": "Turinys",
-    "website": "Svetainė",
-    "signOut": "Atsijungti"
+    "contracts": "Sutartys",
+    "dashboard": "Skydelis",
+    "expenses": "Finansai",
+    "properties": "Objektai",
+    "settings": "Bendrieji nustatymai",
+    "signOut": "Atsijungti",
+    "website": "Svetainė"
   },
-  "admin": {
-    "noAdminTitle": "Neturite administratoriaus teisių",
-    "noAdminText": "Susisiekite su sistemos administratoriumi, kad jums būtų suteiktos teisės."
+  "settings": {
+    "sections": {
+      "branding": {
+        "description": "Spalvos ir logotipai, naudojami svetainėje, laiškuose ir PDF dokumentuose.",
+        "fields": {
+          "brandEmailLogoUrl": {
+            "label": "El. laiškų logotipas"
+          },
+          "brandLogoUrl": {
+            "label": "Logotipas"
+          },
+          "brandPdfLogoUrl": {
+            "label": "PDF dokumentų logotipas"
+          },
+          "brandPrimaryColor": {
+            "label": "Pagrindinė spalva"
+          },
+          "brandSecondaryColor": {
+            "label": "Antrinė spalva"
+          }
+        },
+        "title": "Prekės ženklas"
+      },
+      "cancellation": {
+        "description": "Sąlygos, taikomos atšaukus rezervaciją arba neatvykus.",
+        "fields": {
+          "cancellationFee": {
+            "label": "Atšaukimo mokestis"
+          },
+          "cancellationFeeType": {
+            "label": "Atšaukimo mokesčio tipas"
+          },
+          "cancellationPolicyText": {
+            "help": "Tekstas rodomas svečiui rezervacijos metu ir patvirtinimo laiške.",
+            "label": "Atšaukimo taisyklės"
+          },
+          "freeCancellationDays": {
+            "label": "Nemokamo atšaukimo terminas"
+          },
+          "noShowFee": {
+            "label": "Neatvykimo mokestis"
+          }
+        },
+        "title": "Atšaukimo politika"
+      },
+      "general": {
+        "description": "Bendri valdytojo duomenys, naudojami sąskaitose, laiškuose ir svetainėje (galioja visiems objektams).",
+        "fields": {
+          "address": {
+            "help": "Gatvė ir namo numeris.",
+            "label": "Adresas"
+          },
+          "city": {
+            "label": "Miestas"
+          },
+          "country": {
+            "label": "Šalis"
+          },
+          "currency": {
+            "label": "Valiuta"
+          },
+          "defaultLanguage": {
+            "label": "Numatytoji kalba"
+          },
+          "displayName": {
+            "help": "Rodomas svečiams ir dokumentuose.",
+            "label": "Pavadinimas"
+          },
+          "email": {
+            "help": "Iš šio adreso siunčiami pranešimai.",
+            "label": "El. paštas"
+          },
+          "lat": {
+            "help": "Pvz. 54.687157",
+            "label": "GPS platuma"
+          },
+          "lng": {
+            "help": "Pvz. 25.279652",
+            "label": "GPS ilguma"
+          },
+          "phone": {
+            "help": "Kontaktinis numeris svečiams.",
+            "label": "Telefonas"
+          },
+          "postalCode": {
+            "label": "Pašto kodas"
+          },
+          "timezone": {
+            "help": "Naudojama atvykimo laikams ir priminimams.",
+            "label": "Laiko zona"
+          }
+        },
+        "title": "Objekto informacija"
+      },
+      "guests": {
+        "description": "Taisyklės vaikams, augintiniams ir ramybės laikui.",
+        "fields": {
+          "childrenFreeUntilAge": {
+            "label": "Vaikai gyvena nemokamai iki"
+          },
+          "minGuestAge": {
+            "label": "Minimalus svečio amžius"
+          },
+          "partiesAllowed": {
+            "label": "Leidžiami vakarėliai"
+          },
+          "petsAllowed": {
+            "label": "Leidžiami augintiniai"
+          },
+          "quietHoursFrom": {
+            "label": "Ramybės laikas nuo"
+          },
+          "quietHoursTo": {
+            "label": "Ramybės laikas iki"
+          }
+        },
+        "title": "Svečių politika"
+      },
+      "invoicing": {
+        "description": "Rekvizitai ir numeracija, naudojami generuojant sąskaitas.",
+        "fields": {
+          "bankName": {
+            "label": "Banko pavadinimas"
+          },
+          "companyAddress": {
+            "label": "Įmonės adresas"
+          },
+          "companyCode": {
+            "label": "Įmonės kodas"
+          },
+          "companyName": {
+            "label": "Įmonės pavadinimas"
+          },
+          "companyVatCode": {
+            "label": "PVM kodas"
+          },
+          "iban": {
+            "label": "IBAN"
+          },
+          "invoiceIssuerName": {
+            "help": "Neprivaloma — rodoma sąskaitos apačioje.",
+            "label": "Sąskaitą išrašo (vardas pavardė)"
+          },
+          "invoiceLogoUrl": {
+            "help": "Nuoroda į logotipo paveikslėlį.",
+            "label": "Logotipas sąskaitose"
+          },
+          "invoiceNextNumber": {
+            "label": "Sekantis numeris"
+          },
+          "invoiceNotes": {
+            "label": "Sąskaitos pastabos"
+          },
+          "invoiceSeries": {
+            "help": "Pvz. RNT",
+            "label": "Sąskaitos serija"
+          }
+        },
+        "title": "Sąskaitų nustatymai"
+      },
+      "notifications": {
+        "description": "Kokius laiškus sistema siunčia svečiams automatiškai.",
+        "fields": {
+          "checkinReminderHoursBefore": {
+            "label": "Atvykimo priminimas prieš"
+          },
+          "notifyBookingChange": {
+            "label": "Rezervacijos pakeitimas"
+          },
+          "notifyBookingConfirmation": {
+            "label": "Rezervacijos patvirtinimas"
+          },
+          "notifyCancellationConfirmation": {
+            "label": "Atšaukimo patvirtinimas"
+          },
+          "notifyCheckinReminder": {
+            "label": "Atvykimo priminimas"
+          },
+          "notifyReviewRequest": {
+            "label": "Atsiliepimo prašymas"
+          },
+          "reviewLink": {
+            "help": "Naudokite kintamąjį {{review_link}} atsiliepimo prašymo laiške.",
+            "label": "Atsiliepimų rinkimo nuoroda"
+          },
+          "reviewRequestHoursAfter": {
+            "label": "Atsiliepimo prašymas po išvykimo"
+          }
+        },
+        "title": "Automatiniai pranešimai"
+      },
+      "payments": {
+        "description": "Avanso reikalavimai ir priimami mokėjimo būdai.",
+        "fields": {
+          "autoRefundDeposit": {
+            "label": "Automatiškai grąžinti užstatą"
+          },
+          "depositAmount": {
+            "help": "Priklauso nuo pasirinkto avanso tipo.",
+            "label": "Avanso dydis"
+          },
+          "depositRequired": {
+            "label": "Reikalingas avansas"
+          },
+          "depositType": {
+            "label": "Avanso tipas"
+          },
+          "paymentDueDays": {
+            "label": "Apmokėjimo terminas"
+          },
+          "paymentMethods": {
+            "label": "Leidžiami mokėjimo būdai"
+          }
+        },
+        "title": "Mokėjimai"
+      },
+      "stay": {
+        "description": "Atvykimo ir išvykimo laikai bei rezervacijų apribojimai.",
+        "fields": {
+          "autoConfirmBookings": {
+            "help": "Naujos rezervacijos iškart gauna patvirtintos būseną.",
+            "label": "Automatiškai patvirtinti rezervacijas"
+          },
+          "checkinFrom": {
+            "label": "Check-in nuo"
+          },
+          "checkinUntil": {
+            "label": "Check-in iki"
+          },
+          "checkoutUntil": {
+            "label": "Check-out iki"
+          },
+          "maxAdvanceDays": {
+            "help": "Kiek dienų į priekį svečiai gali rezervuoti.",
+            "label": "Rezervacijos laikotarpis į priekį"
+          },
+          "maxNights": {
+            "label": "Maksimalus nakvynių skaičius"
+          },
+          "minNights": {
+            "label": "Minimalus nakvynių skaičius"
+          },
+          "requireEmail": {
+            "label": "Rezervacijai privalomas el. paštas"
+          },
+          "requirePhone": {
+            "label": "Rezervacijai privalomas telefono numeris"
+          }
+        },
+        "title": "Viešnagės taisyklės"
+      },
+      "taxes": {
+        "description": "Mokesčiai, taikomi skaičiuojant galutinę rezervacijos kainą.",
+        "fields": {
+          "cityTax": {
+            "label": "Miesto mokestis"
+          },
+          "cityTaxMinAge": {
+            "help": "Jaunesniems svečiams mokestis netaikomas.",
+            "label": "Miesto mokesčio amžiaus riba"
+          },
+          "extraGuestFee": {
+            "label": "Mokestis už papildomą svečią"
+          },
+          "vatRate": {
+            "label": "PVM tarifas"
+          }
+        },
+        "title": "Mokesčiai"
+      }
+    },
+    "units": {
+      "days": "dienos",
+      "daysBeforeArrival": "dienos iki atvykimo",
+      "hours": "val.",
+      "nights": "naktys",
+      "perGuestNight": "€ / svečiui už naktį",
+      "perNight": "€ / naktis",
+      "percent": "%",
+      "percentOrEur": "% arba €",
+      "years": "metų"
+    }
   },
   "staff": {
-    "title": "Kambarių tvarkymas",
+    "noAccessText": "Susisiekite su administratoriumi, kad jums būtų suteikta tvarkytojos rolė.",
     "noAccessTitle": "Prieiga negalima",
-    "noAccessText": "Susisiekite su administratoriumi, kad jums būtų suteikta tvarkytojos rolė."
+    "roomStatus": {
+      "problema": "Problema",
+      "reikia_tvarkyti": "Reikia tvarkyti",
+      "svaru": "Švaru",
+      "tvarkoma": "Tvarkoma"
+    },
+    "title": "Kambarių tvarkymas"
+  },
+  "translations": {
+    "fields": {
+      "description": "Aprašymas",
+      "location_note": "Vietos pastabos",
+      "name": "Pavadinimas",
+      "rooms_notes": "Kambarių pastabos"
+    }
   }
 }
