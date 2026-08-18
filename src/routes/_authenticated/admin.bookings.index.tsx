@@ -177,6 +177,7 @@ function isFilterActive(f?: AnyFilter) {
 }
 
 function BookingsTable({ rows, loading, onDelete }: { rows: Row[]; loading: boolean; onDelete: (id: string, name: string) => void }) {
+  const { t } = useTranslation();
   const [sort, setSort] = useState<{ key: ColKey; dir: "asc" | "desc" } | null>(null);
   const [filters, setFilters] = useState<Record<string, AnyFilter>>({});
   const [viewRow, setViewRow] = useState<Row | null>(null);
@@ -229,7 +230,7 @@ function BookingsTable({ rows, loading, onDelete }: { rows: Row[]; loading: bool
     <div className="space-y-3">
       {anyFilter && (
         <div className="flex justify-end">
-          <Button size="sm" variant="outline" onClick={() => setFilters({})}>Išvalyti visus filtrus</Button>
+          <Button size="sm" variant="outline" onClick={() => setFilters({})}>{t("bookings.clearAllFilters")}</Button>
         </div>
       )}
 
@@ -245,7 +246,7 @@ function BookingsTable({ rows, loading, onDelete }: { rows: Row[]; loading: bool
                       className="inline-flex items-center gap-1 font-medium hover:text-primary"
                       onClick={() => toggleSort(c.key)}
                     >
-                      {c.label}
+                      {t(c.labelKey)}
                       {sort?.key === c.key && (sort.dir === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />)}
                     </button>
                     <ColumnFilter
@@ -261,20 +262,22 @@ function BookingsTable({ rows, loading, onDelete }: { rows: Row[]; loading: bool
                   </div>
                 </TableHead>
               ))}
-              <TableHead className="text-right w-32">Veiksmai</TableHead>
+              <TableHead className="text-right w-32">{t("bookings.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="[&_tr:nth-child(even)]:bg-muted/30">
             {loading && (
-              <TableRow><TableCell colSpan={COLUMNS.length + 1} className="text-center text-muted-foreground py-8">Kraunama...</TableCell></TableRow>
+              <TableRow><TableCell colSpan={COLUMNS.length + 1} className="text-center text-muted-foreground py-8">{t("common.loading")}</TableCell></TableRow>
             )}
             {!loading && filtered.length === 0 && (
-              <TableRow><TableCell colSpan={COLUMNS.length + 1} className="text-center text-muted-foreground py-8">Rezervacijų nerasta</TableCell></TableRow>
+              <TableRow><TableCell colSpan={COLUMNS.length + 1} className="text-center text-muted-foreground py-8">{t("bookings.notFound")}</TableCell></TableRow>
             )}
             {filtered.map((b) => (
               <TableRow key={b.id} className="hover:bg-muted/60">
                 <TableCell>
-                  <Badge variant="outline" className={STATUS_CLASS[b.status] ?? ""}>{STATUS_LABELS[b.status] ?? b.status}</Badge>
+                  <Badge variant="outline" className={STATUS_CLASS[b.status] ?? ""}>
+                    {BOOKING_STATUS_LABEL_KEYS[b.status] ? t(BOOKING_STATUS_LABEL_KEYS[b.status]) : b.status}
+                  </Badge>
                 </TableCell>
                 <TableCell className="font-mono text-xs">{b.booking_number ?? "—"}</TableCell>
                 <TableCell className="font-medium">{b.properties?.name ?? "—"}</TableCell>
@@ -287,13 +290,13 @@ function BookingsTable({ rows, loading, onDelete }: { rows: Row[]; loading: bool
                 <TableCell className="text-right font-semibold text-primary">{Number(b.total_amount ?? 0).toFixed(2)}</TableCell>
                 <TableCell className="text-right">
                   <div className="inline-flex items-center gap-1">
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setViewRow(b)} title="Peržiūrėti">
+                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setViewRow(b)} title={t("bookings.view")}>
                       <Eye className="h-4 w-4" />
                     </Button>
-                    <Button asChild size="icon" variant="ghost" className="h-8 w-8" title="Redaguoti">
+                    <Button asChild size="icon" variant="ghost" className="h-8 w-8" title={t("bookings.edit")}>
                       <Link to="/admin/bookings/$id" params={{ id: b.id }}><Pencil className="h-4 w-4" /></Link>
                     </Button>
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => onDelete(b.id, b.customer_name)} title="Trinti">
+                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => onDelete(b.id, b.customer_name)} title={t("bookings.delete")}>
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
                   </div>
@@ -304,7 +307,7 @@ function BookingsTable({ rows, loading, onDelete }: { rows: Row[]; loading: bool
           <TableFooter className="bg-muted">
             <TableRow>
               <TableCell colSpan={COLUMNS.length + 1} className="text-right font-medium">
-                Viso: {filtered.length} rezervacijų | {total.toFixed(2)}€
+                {t("bookings.totalRow", { count: filtered.length, sum: total.toFixed(2) })}
               </TableCell>
             </TableRow>
           </TableFooter>
