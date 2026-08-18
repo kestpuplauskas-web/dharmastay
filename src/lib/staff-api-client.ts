@@ -36,11 +36,11 @@ export type StaffRoom = {
   updated_at: string | null;
 };
 
-export const STAFF_STATUS_LABEL: Record<StaffRoomStatus, string> = {
-  svaru: "Švaru",
-  reikia_tvarkyti: "Reikia tvarkyti",
-  tvarkoma: "Tvarkoma",
-  problema: "Problema",
+export const STAFF_STATUS_LABEL_KEYS: Record<StaffRoomStatus, string> = {
+  svaru: "staff.roomStatus.svaru",
+  reikia_tvarkyti: "staff.roomStatus.reikia_tvarkyti",
+  tvarkoma: "staff.roomStatus.tvarkoma",
+  problema: "staff.roomStatus.problema",
 };
 
 export const STAFF_STATUS_CLASS: Record<StaffRoomStatus, string> = {

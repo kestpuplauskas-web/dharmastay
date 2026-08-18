@@ -1,7 +1,7 @@
 export const PROPERTY_TYPES = [
-  { value: "standard", label: "Standartiniai apartamentai" },
-  { value: "terrace", label: "Apartamentai su terasa" },
-  { value: "cottage", label: "Namelis su pirtimi ir kubilu" },
+  { value: "standard", labelKey: "enums.propertyType.standard" },
+  { value: "terrace", labelKey: "enums.propertyType.terrace" },
+  { value: "cottage", labelKey: "enums.propertyType.cottage" },
 ] as const;
 
 export type PropertyTypeValue = (typeof PROPERTY_TYPES)[number]["value"];
@@ -29,43 +29,24 @@ export const AMENITIES = [
   "extra_baby_bed",
 ] as const;
 
-export const AMENITY_LABELS: Record<string, string> = {
-  wifi: "Wi‑Fi",
-  kitchen: "Virtuvėlė",
-  parking: "Vieta automobiliui",
-  air_conditioning: "Oro kondicionierius",
-  washing_machine: "Skalbimo mašina",
-  tv: "Televizorius",
-  workspace: "Darbo vieta",
-  terrace: "Terasa",
-  balcony: "Balkonas",
-  pool: "Baseinas",
-  sauna: "Sauna",
-  hot_tub: "Kubilas",
-  bbq: "Kepsninė",
-  pet_friendly: "Su augintiniais",
-  smoke_alarm: "Dūmų detektorius",
-  first_aid: "Pirmosios pagalbos rinkinys",
-  iron: "Lygintuvas",
-  hair_dryer: "Plaukų džiovintuvas",
-  coffee_machine: "Kavos aparatas",
-  extra_baby_bed: "Papildoma lovytė kambaryje (vaikui)",
-};
+export const AMENITY_LABEL_KEYS: Record<string, string> = Object.fromEntries(
+  AMENITIES.map((a) => [a, `enums.amenities.${a}`]),
+);
 
 export const ROOM_KINDS = [
-  { value: "bedroom_1", label: "Miegamasis 1" },
-  { value: "bedroom_2", label: "Miegamasis 2" },
-  { value: "bedroom_3", label: "Miegamasis 3" },
-  { value: "bedroom_4", label: "Miegamasis 4" },
-  { value: "living_room", label: "Svetainė" },
+  { value: "bedroom_1", label: "Miegamasis 1", labelKey: "enums.roomKind.bedroom_1" },
+  { value: "bedroom_2", label: "Miegamasis 2", labelKey: "enums.roomKind.bedroom_2" },
+  { value: "bedroom_3", label: "Miegamasis 3", labelKey: "enums.roomKind.bedroom_3" },
+  { value: "bedroom_4", label: "Miegamasis 4", labelKey: "enums.roomKind.bedroom_4" },
+  { value: "living_room", label: "Svetainė", labelKey: "enums.roomKind.living_room" },
 ] as const;
 
 export const BED_TYPES = [
-  { value: "extra_large_double", label: "Labai didelė dvigulė lova" },
-  { value: "large_double", label: "Didelė dvigulė lova" },
-  { value: "double", label: "Standartinė dvigulė lova" },
-  { value: "single", label: "Vienvietė lova" },
-  { value: "sofa_bed", label: "Miegamoji sofa" },
+  { value: "extra_large_double", label: "Labai didelė dvigulė lova", labelKey: "enums.bedType.extra_large_double" },
+  { value: "large_double", label: "Didelė dvigulė lova", labelKey: "enums.bedType.large_double" },
+  { value: "double", label: "Standartinė dvigulė lova", labelKey: "enums.bedType.double" },
+  { value: "single", label: "Vienvietė lova", labelKey: "enums.bedType.single" },
+  { value: "sofa_bed", label: "Miegamoji sofa", labelKey: "enums.bedType.sofa_bed" },
 ] as const;
 
 export type RoomConfig = { kind: string; beds: number; bedType: string };
@@ -80,19 +61,23 @@ export type PriceTier = {
 export const EXTRA_CALCS = ["per_person", "per_child", "flat_per_day"] as const;
 export type ExtraCalc = (typeof EXTRA_CALCS)[number];
 
-export const EXTRA_CALC_LABELS: Record<ExtraCalc, string> = {
-  per_person: "Pagal asmenų sk. (vaikai iki 3 m. nemokamai)",
-  per_child: "Pagal vaikų sk.",
-  flat_per_day: "Fiksuota už dieną",
+export const EXTRA_CALC_LABEL_KEYS: Record<ExtraCalc, string> = {
+  per_person: "enums.extraCalc.per_person",
+  per_child: "enums.extraCalc.per_child",
+  flat_per_day: "enums.extraCalc.flat_per_day",
 };
 
-export const EXTRA_SERVICE_PRESETS: Array<{ name: string; calc: ExtraCalc }> = [
-  { name: "Pusryčiai", calc: "per_person" },
-  { name: "Pietūs", calc: "per_person" },
-  { name: "Vakarienė", calc: "per_person" },
-  { name: "Vaikiška lovytė", calc: "per_child" },
-  { name: "Pirties nuoma", calc: "flat_per_day" },
-  { name: "Kubilo nuoma", calc: "flat_per_day" },
+/**
+ * `name` yra paslaugos identifikatorius (saugomas duomenyse ir naudojamas kainai
+ * skaičiuoti), todėl jis NEVERČIAMAS — verčiama tik rodoma etiketė `labelKey`.
+ */
+export const EXTRA_SERVICE_PRESETS: Array<{ name: string; calc: ExtraCalc; labelKey: string }> = [
+  { name: "Pusryčiai", calc: "per_person", labelKey: "enums.extraServices.breakfast" },
+  { name: "Pietūs", calc: "per_person", labelKey: "enums.extraServices.lunch" },
+  { name: "Vakarienė", calc: "per_person", labelKey: "enums.extraServices.dinner" },
+  { name: "Vaikiška lovytė", calc: "per_child", labelKey: "enums.extraServices.babyBed" },
+  { name: "Pirties nuoma", calc: "flat_per_day", labelKey: "enums.extraServices.sauna" },
+  { name: "Kubilo nuoma", calc: "flat_per_day", labelKey: "enums.extraServices.hotTub" },
 ];
 
 export type ExtraService = {
@@ -183,8 +168,9 @@ export function isPropertyAvailable(p: Property, from: Date, to: Date): boolean 
   });
 }
 
-export function propertyTypeLabel(v: string): string {
-  return PROPERTY_TYPES.find((t) => t.value === v)?.label ?? v;
+/** Grąžina vertimo raktą (arba pačią reikšmę, jei tipas nežinomas). */
+export function propertyTypeLabelKey(v: string): string {
+  return PROPERTY_TYPES.find((t) => t.value === v)?.labelKey ?? v;
 }
 
 export function hasOnlySingleBeds(rooms: Rooms | undefined | null): boolean {
