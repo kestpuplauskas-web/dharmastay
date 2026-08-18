@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useTranslation } from "react-i18next";
 import { listAllProperties } from "@/lib/properties.functions";
 import { createBooking } from "@/lib/bookings.functions";
 import {
@@ -32,6 +33,7 @@ function addDaysISO(iso: string, n: number) {
 }
 
 function NewBookingPage() {
+  const { t } = useTranslation();
   const { propertyId, from, to } = Route.useSearch();
   const fetchProps = useServerFn(listAllProperties);
   const create = useServerFn(createBooking);
@@ -51,7 +53,7 @@ function NewBookingPage() {
 
   return (
     <div>
-      <h1 className="mb-4 text-2xl font-semibold">Nauja rezervacija</h1>
+      <h1 className="mb-4 text-2xl font-semibold">{t("bookings.new")}</h1>
       <BookingForm
         key={`${initial.property_id}-${initial.date_from}-${initial.date_to}-${props.length}`}
         properties={props}
