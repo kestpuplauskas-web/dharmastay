@@ -40,6 +40,8 @@ import { Route as AuthenticatedAdminPropertiesIdEditRouteImport } from './routes
 import { Route as ApiPublicV1BookingsBookingNumberRouteImport } from './routes/api/public/v1/bookings.$bookingNumber'
 import { Route as ApiPublicV1PropertiesIdRouteImport } from './routes/api/public/v1/properties.$id'
 import { Route as ApiStaffV1RoomsIdAssignRouteImport } from './routes/api/staff/v1/rooms.$id.assign'
+import { Route as ApiStaffV1RoomsIdCommentsRouteImport } from './routes/api/staff/v1/rooms.$id.comments'
+import { Route as ApiStaffV1RoomsIdIssueRouteImport } from './routes/api/staff/v1/rooms.$id.issue'
 import { Route as ApiStaffV1RoomsIdStatusRouteImport } from './routes/api/staff/v1/rooms.$id.status'
 import { Route as ApiStaffV1RoomsIdUnassignRouteImport } from './routes/api/staff/v1/rooms.$id.unassign'
 
@@ -210,6 +212,17 @@ const ApiStaffV1RoomsIdAssignRoute = ApiStaffV1RoomsIdAssignRouteImport.update({
   path: '/$id/assign',
   getParentRoute: () => ApiStaffV1RoomsRoute,
 } as any)
+const ApiStaffV1RoomsIdCommentsRoute =
+  ApiStaffV1RoomsIdCommentsRouteImport.update({
+    id: '/$id/comments',
+    path: '/$id/comments',
+    getParentRoute: () => ApiStaffV1RoomsRoute,
+  } as any)
+const ApiStaffV1RoomsIdIssueRoute = ApiStaffV1RoomsIdIssueRouteImport.update({
+  id: '/$id/issue',
+  path: '/$id/issue',
+  getParentRoute: () => ApiStaffV1RoomsRoute,
+} as any)
 const ApiStaffV1RoomsIdStatusRoute = ApiStaffV1RoomsIdStatusRouteImport.update({
   id: '/$id/status',
   path: '/$id/status',
@@ -253,6 +266,8 @@ export interface FileRoutesByFullPath {
   '/api/public/v1/bookings/$bookingNumber': typeof ApiPublicV1BookingsBookingNumberRoute
   '/api/public/v1/properties/$id': typeof ApiPublicV1PropertiesIdRoute
   '/api/staff/v1/rooms/$id/assign': typeof ApiStaffV1RoomsIdAssignRoute
+  '/api/staff/v1/rooms/$id/comments': typeof ApiStaffV1RoomsIdCommentsRoute
+  '/api/staff/v1/rooms/$id/issue': typeof ApiStaffV1RoomsIdIssueRoute
   '/api/staff/v1/rooms/$id/status': typeof ApiStaffV1RoomsIdStatusRoute
   '/api/staff/v1/rooms/$id/unassign': typeof ApiStaffV1RoomsIdUnassignRoute
 }
@@ -285,6 +300,8 @@ export interface FileRoutesByTo {
   '/api/public/v1/bookings/$bookingNumber': typeof ApiPublicV1BookingsBookingNumberRoute
   '/api/public/v1/properties/$id': typeof ApiPublicV1PropertiesIdRoute
   '/api/staff/v1/rooms/$id/assign': typeof ApiStaffV1RoomsIdAssignRoute
+  '/api/staff/v1/rooms/$id/comments': typeof ApiStaffV1RoomsIdCommentsRoute
+  '/api/staff/v1/rooms/$id/issue': typeof ApiStaffV1RoomsIdIssueRoute
   '/api/staff/v1/rooms/$id/status': typeof ApiStaffV1RoomsIdStatusRoute
   '/api/staff/v1/rooms/$id/unassign': typeof ApiStaffV1RoomsIdUnassignRoute
 }
@@ -321,6 +338,8 @@ export interface FileRoutesById {
   '/api/public/v1/bookings/$bookingNumber': typeof ApiPublicV1BookingsBookingNumberRoute
   '/api/public/v1/properties/$id': typeof ApiPublicV1PropertiesIdRoute
   '/api/staff/v1/rooms/$id/assign': typeof ApiStaffV1RoomsIdAssignRoute
+  '/api/staff/v1/rooms/$id/comments': typeof ApiStaffV1RoomsIdCommentsRoute
+  '/api/staff/v1/rooms/$id/issue': typeof ApiStaffV1RoomsIdIssueRoute
   '/api/staff/v1/rooms/$id/status': typeof ApiStaffV1RoomsIdStatusRoute
   '/api/staff/v1/rooms/$id/unassign': typeof ApiStaffV1RoomsIdUnassignRoute
 }
@@ -357,6 +376,8 @@ export interface FileRouteTypes {
     | '/api/public/v1/bookings/$bookingNumber'
     | '/api/public/v1/properties/$id'
     | '/api/staff/v1/rooms/$id/assign'
+    | '/api/staff/v1/rooms/$id/comments'
+    | '/api/staff/v1/rooms/$id/issue'
     | '/api/staff/v1/rooms/$id/status'
     | '/api/staff/v1/rooms/$id/unassign'
   fileRoutesByTo: FileRoutesByTo
@@ -389,6 +410,8 @@ export interface FileRouteTypes {
     | '/api/public/v1/bookings/$bookingNumber'
     | '/api/public/v1/properties/$id'
     | '/api/staff/v1/rooms/$id/assign'
+    | '/api/staff/v1/rooms/$id/comments'
+    | '/api/staff/v1/rooms/$id/issue'
     | '/api/staff/v1/rooms/$id/status'
     | '/api/staff/v1/rooms/$id/unassign'
   id:
@@ -424,6 +447,8 @@ export interface FileRouteTypes {
     | '/api/public/v1/bookings/$bookingNumber'
     | '/api/public/v1/properties/$id'
     | '/api/staff/v1/rooms/$id/assign'
+    | '/api/staff/v1/rooms/$id/comments'
+    | '/api/staff/v1/rooms/$id/issue'
     | '/api/staff/v1/rooms/$id/status'
     | '/api/staff/v1/rooms/$id/unassign'
   fileRoutesById: FileRoutesById
@@ -663,6 +688,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiStaffV1RoomsIdAssignRouteImport
       parentRoute: typeof ApiStaffV1RoomsRoute
     }
+    '/api/staff/v1/rooms/$id/comments': {
+      id: '/api/staff/v1/rooms/$id/comments'
+      path: '/$id/comments'
+      fullPath: '/api/staff/v1/rooms/$id/comments'
+      preLoaderRoute: typeof ApiStaffV1RoomsIdCommentsRouteImport
+      parentRoute: typeof ApiStaffV1RoomsRoute
+    }
+    '/api/staff/v1/rooms/$id/issue': {
+      id: '/api/staff/v1/rooms/$id/issue'
+      path: '/$id/issue'
+      fullPath: '/api/staff/v1/rooms/$id/issue'
+      preLoaderRoute: typeof ApiStaffV1RoomsIdIssueRouteImport
+      parentRoute: typeof ApiStaffV1RoomsRoute
+    }
     '/api/staff/v1/rooms/$id/status': {
       id: '/api/staff/v1/rooms/$id/status'
       path: '/$id/status'
@@ -765,12 +804,16 @@ const ApiPublicV1PropertiesRouteWithChildren =
 
 interface ApiStaffV1RoomsRouteChildren {
   ApiStaffV1RoomsIdAssignRoute: typeof ApiStaffV1RoomsIdAssignRoute
+  ApiStaffV1RoomsIdCommentsRoute: typeof ApiStaffV1RoomsIdCommentsRoute
+  ApiStaffV1RoomsIdIssueRoute: typeof ApiStaffV1RoomsIdIssueRoute
   ApiStaffV1RoomsIdStatusRoute: typeof ApiStaffV1RoomsIdStatusRoute
   ApiStaffV1RoomsIdUnassignRoute: typeof ApiStaffV1RoomsIdUnassignRoute
 }
 
 const ApiStaffV1RoomsRouteChildren: ApiStaffV1RoomsRouteChildren = {
   ApiStaffV1RoomsIdAssignRoute: ApiStaffV1RoomsIdAssignRoute,
+  ApiStaffV1RoomsIdCommentsRoute: ApiStaffV1RoomsIdCommentsRoute,
+  ApiStaffV1RoomsIdIssueRoute: ApiStaffV1RoomsIdIssueRoute,
   ApiStaffV1RoomsIdStatusRoute: ApiStaffV1RoomsIdStatusRoute,
   ApiStaffV1RoomsIdUnassignRoute: ApiStaffV1RoomsIdUnassignRoute,
 }
