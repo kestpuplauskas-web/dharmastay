@@ -199,7 +199,11 @@ export function renderTokens(text: string, tokens: Record<string, string>) {
     .replace(/\{\{\s*[\w.]+\s*\}\}/g, "");
 }
 
-async function buildTokens(booking: Record<string, any>, settings: PropertySettings) {
+async function buildTokens(
+  booking: Record<string, any>,
+  settings: PropertySettings,
+  lang?: string,
+) {
   const db = await admin();
   const { data: prop } = await db
     .from("properties")
@@ -207,6 +211,23 @@ async function buildTokens(booking: Record<string, any>, settings: PropertySetti
     .eq("id", booking["property_id"])
     .maybeSingle();
   const wifi = await loadGuestInfoFields("wifi");
+
+  // Objekto pavadinimas svečio kalba (jei vertimas suvestas).
+  let propertyName = String((prop as any)?.name ?? settings.displayName ?? "");
+  const propertyId = String(booking["property_id"] ?? "");
+  if (lang && propertyId) {
+    try {
+      const { loadDefaultLanguage, loadTranslations } = await import("@/lib/translations.server");
+      const defaultLang = await loadDefaultLanguage();
+      if (lang !== defaultLang) {
+        const tr = await loadTranslations("property", [propertyId], lang);
+        const translated = tr[propertyId]?.["name"];
+        if (translated?.trim()) propertyName = translated.trim();
+      }
+    } catch (e) {
+      console.error("[buildTokens:translate]", e);
+    }
+  }
 
   // Durų kodas svečiui atskleidžiamas tik po apmokėjimo/patvirtinimo.
   const status = String(booking["status"] ?? "");
@@ -220,7 +241,7 @@ async function buildTokens(booking: Record<string, any>, settings: PropertySetti
   return {
     "{{guest_name}}": String(booking["customer_name"] ?? ""),
     "{{guest_name_vocative}}": toVocative(String(booking["customer_name"] ?? "")),
-    "{{property_name}}": String((prop as any)?.name ?? settings.displayName ?? ""),
+    "{{property_name}}": propertyName,
     "{{room_name}}": formatRoomNames((prop as any)?.rooms),
     "{{booking_number}}": String(booking["booking_number"] ?? ""),
     "{{date_from}}": String(booking["date_from"] ?? ""),
