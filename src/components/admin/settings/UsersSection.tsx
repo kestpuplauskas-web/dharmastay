@@ -25,8 +25,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2 } from "lucide-react";
-import { deleteUser, inviteUser, listUsersWithRoles } from "@/lib/users.functions";
+import { Check, Pencil, Trash2, X } from "lucide-react";
+import {
+  deleteUser,
+  inviteUser,
+  listUsersWithRoles,
+  updateUserName,
+} from "@/lib/users.functions";
 
 const ROLE_LABEL_KEYS: Record<string, string> = {
   admin: "settings.users.roleAdmin",
@@ -47,10 +52,14 @@ export function UsersSection({ canEdit }: { canEdit: boolean }) {
   const invite = useServerFn(inviteUser);
   const fetchUsers = useServerFn(listUsersWithRoles);
   const removeUser = useServerFn(deleteUser);
+  const renameUser = useServerFn(updateUserName);
   const qc = useQueryClient();
 
   const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
   const [role, setRole] = useState<"admin" | "housekeeper">("housekeeper");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
 
   const { data: users, isLoading } = useQuery({
     queryKey: ["users-with-roles"],
@@ -63,6 +72,7 @@ export function UsersSection({ canEdit }: { canEdit: boolean }) {
         data: {
           email,
           role,
+          ...(fullName.trim() ? { fullName: fullName.trim() } : {}),
           redirectTo:
             typeof window !== "undefined"
               ? `${window.location.origin}/reset-password`
@@ -72,9 +82,20 @@ export function UsersSection({ canEdit }: { canEdit: boolean }) {
     onSuccess: () => {
       toast.success(t("settings.users.inviteSent"));
       setEmail("");
+      setFullName("");
       qc.invalidateQueries({ queryKey: ["users-with-roles"] });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("settings.users.inviteFailed")),
+  });
+
+  const rename = useMutation({
+    mutationFn: (vars: { userId: string; fullName: string }) => renameUser({ data: vars }),
+    onSuccess: () => {
+      toast.success(t("settings.users.nameSaved"));
+      setEditingId(null);
+      qc.invalidateQueries({ queryKey: ["users-with-roles"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Error"),
   });
 
   const del = useMutation({
@@ -108,6 +129,16 @@ export function UsersSection({ canEdit }: { canEdit: boolean }) {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={!canEdit}
+              />
+            </div>
+            <div className="flex-1 space-y-1.5">
+              <Label htmlFor="invite-name">{t("settings.users.name")}</Label>
+              <Input
+                id="invite-name"
+                value={fullName}
+                placeholder={t("settings.users.namePlaceholder")}
+                onChange={(e) => setFullName(e.target.value)}
                 disabled={!canEdit}
               />
             </div>
@@ -151,6 +182,7 @@ export function UsersSection({ canEdit }: { canEdit: boolean }) {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-left text-muted-foreground">
+                    <th className="py-2 font-medium">{t("settings.users.name")}</th>
                     <th className="py-2 font-medium">{t("settings.users.email")}</th>
                     <th className="py-2 font-medium">{t("settings.users.role")}</th>
                     <th className="py-2 font-medium">{t("settings.users.colAdded")}</th>
@@ -161,6 +193,56 @@ export function UsersSection({ canEdit }: { canEdit: boolean }) {
                 <tbody>
                   {(users ?? []).map((u) => (
                     <tr key={`${u.userId}-${u.role}`} className="border-t">
+                      <td className="py-2">
+                        {editingId === u.userId ? (
+                          <div className="flex items-center gap-1">
+                            <Input
+                              className="h-8 w-40"
+                              value={editingName}
+                              onChange={(e) => setEditingName(e.target.value)}
+                            />
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              aria-label={t("settings.users.saveName")}
+                              disabled={rename.isPending}
+                              onClick={() =>
+                                rename.mutate({ userId: u.userId, fullName: editingName.trim() })
+                              }
+                            >
+                              <Check className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              aria-label={t("common.cancel")}
+                              onClick={() => setEditingId(null)}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-1">
+                            <span>{u.fullName || u.email || u.userId}</span>
+                            {canEdit && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7"
+                                aria-label={t("settings.users.editName")}
+                                onClick={() => {
+                                  setEditingId(u.userId);
+                                  setEditingName(u.fullName || "");
+                                }}
+                              >
+                                <Pencil className="h-3.5 w-3.5" />
+                              </Button>
+                            )}
+                          </div>
+                        )}
+                      </td>
                       <td className="py-2">{u.email || u.userId}</td>
                       <td className="py-2">{ROLE_LABEL_KEYS[u.role] ? t(ROLE_LABEL_KEYS[u.role]) : u.role}</td>
                       <td className="py-2 text-muted-foreground">{fmt(u.createdAt)}</td>
@@ -183,7 +265,9 @@ export function UsersSection({ canEdit }: { canEdit: boolean }) {
                             <AlertDialogHeader>
                               <AlertDialogTitle>{t("settings.users.deleteTitle")}</AlertDialogTitle>
                               <AlertDialogDescription>
-                                {t("settings.users.deleteDesc", { name: u.email || u.userId })}
+                                {t("settings.users.deleteDesc", {
+                                  name: u.fullName || u.email || u.userId,
+                                })}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
