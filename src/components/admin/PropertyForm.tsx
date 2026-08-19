@@ -649,13 +649,15 @@ export function PropertyForm({
         />
       </section>
 
-      <button
-        type="submit"
-        disabled={submitting}
-        className="rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
-      >
-        {submitting ? t("properties.form.saving") : t("properties.form.save")}
-      </button>
+      <div className="sticky bottom-0 z-20 -mx-4 border-t bg-background/95 px-4 py-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
+        <button
+          type="submit"
+          disabled={submitting}
+          className="w-full rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50 sm:w-auto"
+        >
+          {submitting ? t("properties.form.saving") : t("properties.form.save")}
+        </button>
+      </div>
     </form>
   );
 }

@@ -234,7 +234,41 @@ function BookingsTable({ rows, loading, onDelete }: { rows: Row[]; loading: bool
         </div>
       )}
 
-      <div className="rounded-md border bg-card overflow-x-auto">
+      {/* Mobile card list */}
+      <div className="space-y-2 md:hidden">
+        {loading && <div className="text-center text-muted-foreground py-8">{t("common.loading")}</div>}
+        {!loading && filtered.length === 0 && (
+          <div className="text-center text-muted-foreground py-8">{t("bookings.notFound")}</div>
+        )}
+        {filtered.map((b) => (
+          <Link
+            key={b.id}
+            to="/admin/bookings/$id"
+            params={{ id: b.id }}
+            className="block rounded-lg border bg-card p-3"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-mono text-xs">{b.booking_number ?? "—"}</span>
+              <Badge variant="outline" className={STATUS_CLASS[b.status] ?? ""}>
+                {BOOKING_STATUS_LABEL_KEYS[b.status] ? t(BOOKING_STATUS_LABEL_KEYS[b.status]) : b.status}
+              </Badge>
+            </div>
+            <div className="mt-1 font-medium">{b.customer_name || "—"}</div>
+            <div className="text-sm text-muted-foreground">{b.properties?.name ?? "—"}</div>
+            <div className="mt-1 flex items-center justify-between gap-2 text-sm">
+              <span className="text-muted-foreground">{b.date_from} – {b.date_to}</span>
+              <span className="font-semibold text-primary">{Number(b.total_amount ?? 0).toFixed(2)} €</span>
+            </div>
+          </Link>
+        ))}
+        {!loading && filtered.length > 0 && (
+          <div className="rounded-lg border bg-muted p-3 text-right text-sm font-medium">
+            {t("bookings.totalRow", { count: filtered.length, sum: total.toFixed(2) })}
+          </div>
+        )}
+      </div>
+
+      <div className="hidden rounded-md border bg-card overflow-x-auto md:block">
         <Table className="min-w-[1400px]">
           <TableHeader className="sticky top-0 z-10 bg-muted">
             <TableRow>
@@ -474,9 +508,9 @@ function BookingViewDialog({ row, onClose }: { row: Row | null; onClose: () => v
 
 function FieldRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid grid-cols-3 gap-2">
+    <div className="grid grid-cols-1 gap-1 sm:grid-cols-3 sm:gap-2">
       <div className="text-muted-foreground">{label}</div>
-      <div className="col-span-2 font-medium">{value}</div>
+      <div className="font-medium sm:col-span-2">{value}</div>
     </div>
   );
 }
