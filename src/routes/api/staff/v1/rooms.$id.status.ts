@@ -12,7 +12,7 @@ export const Route = createFileRoute("/api/staff/v1/rooms/$id/status")({
         return withStaffAuth(request, async ({ userId, headers }) => {
           const { z } = await import("zod");
           const schema = z.object({
-            status: z.enum(["svaru", "reikia_tvarkyti", "tvarkoma", "problema"]),
+            status: z.enum(["nesvarus", "tvarkoma", "svarus"]),
             note: z.string().max(500).optional(),
           });
           let body: unknown;
