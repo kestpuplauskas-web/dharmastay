@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import type { BookingLite } from "@/lib/housekeeping.server";
 
 export const Route = createFileRoute("/api/staff/v1/rooms")({
   server: {
@@ -12,9 +13,7 @@ export const Route = createFileRoute("/api/staff/v1/rooms")({
         return withStaffAuth(request, async ({ headers, userId }) => {
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
           const { loadGlobalSettings } = await import("@/lib/notifications.server");
-          const { localToday, computeDayWork, type BookingLite } = await import(
-            "@/lib/housekeeping.server"
-          );
+          const { localToday, computeDayWork } = await import("@/lib/housekeeping.server");
 
           const settings = await loadGlobalSettings();
           const url = new URL(request.url);
