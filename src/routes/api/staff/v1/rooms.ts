@@ -28,6 +28,12 @@ export const Route = createFileRoute("/api/staff/v1/rooms")({
           const { data: statuses } = await supabaseAdmin.from("room_status").select("*");
           const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers({ perPage: 200 });
           const emailOf = new Map((authUsers?.users ?? []).map((u) => [u.id, u.email ?? ""]));
+          const nameOf = new Map(
+            (authUsers?.users ?? []).map((u) => [
+              u.id,
+              ((u.user_metadata as { full_name?: string } | null)?.full_name ?? "").trim(),
+            ]),
+          );
 
           const byProperty = new Map<string, { date_from: string; date_to: string }[]>();
           for (const b of bookings ?? []) {
@@ -63,11 +69,16 @@ export const Route = createFileRoute("/api/staff/v1/rooms")({
               occupied_today: occupiedToday,
               next_checkin: nextCheckin,
               next_checkout: nextCheckout,
-              status: st?.status ?? "reikia_tvarkyti",
+              status: st?.status ?? "nesvarus",
               note: st?.note ?? "",
+              has_issue: st?.has_issue ?? false,
+              issue_note: st?.issue_note ?? "",
               assigned_to: st?.assigned_to ?? null,
               assigned_to_email: st?.assigned_to
                 ? emailOf.get(st.assigned_to as string) ?? null
+                : null,
+              assigned_to_name: st?.assigned_to
+                ? nameOf.get(st.assigned_to as string) || null
                 : null,
               updated_at: st?.updated_at ?? null,
             };
