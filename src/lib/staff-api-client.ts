@@ -24,19 +24,41 @@ export type StaffRoomStatus = "nesvarus" | "tvarkoma" | "svarus";
 export type StaffRoom = {
   id: string;
   name: string;
+  sort_order: number;
+  date: string;
+  work_type: "turnover" | "departure" | "pre_arrival" | "stayover" | "none";
+  priority: number;
+  departing: { guests: string; time: string | null } | null;
+  arriving: {
+    guests: string;
+    time: string | null;
+    adults: number;
+    children: number;
+    infants: number;
+    extras: string[];
+  } | null;
   checkin_today: boolean;
   checkout_today: boolean;
   occupied_today: boolean;
-  next_checkin: string | null;
-  next_checkout: string | null;
   status: StaffRoomStatus;
   note: string;
   has_issue: boolean;
   issue_note: string;
+  task_status: "laukia" | "vykdoma" | "atlikta";
   assigned_to: string | null;
   assigned_to_email: string | null;
   assigned_to_name: string | null;
+  assigned_to_me: boolean;
+  comment_count: number;
   updated_at: string | null;
+};
+
+export const WORK_TYPE_LABEL_KEYS: Record<string, string> = {
+  turnover: "staff.workType.turnover",
+  departure: "staff.workType.departure",
+  pre_arrival: "staff.workType.pre_arrival",
+  stayover: "staff.workType.stayover",
+  none: "staff.workType.none",
 };
 
 export const STAFF_STATUS_LABEL_KEYS: Record<StaffRoomStatus, string> = {
