@@ -25,7 +25,7 @@ function RoomDetail() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const [note, setNote] = useState("");
+  const [note, setNote] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["staff-rooms"],
@@ -40,7 +40,7 @@ function RoomDetail() {
     mutationFn: (status: StaffRoomStatus) =>
       callStaffApi(`/rooms/${id}/status`, {
         method: "POST",
-        body: JSON.stringify({ status, ...(note ? { note } : {}) }),
+        body: JSON.stringify({ status, ...(note !== null ? { note } : {}) }),
       }),
     onSuccess: () => {
       toast.success(t("staff.statusUpdated"));
@@ -49,12 +49,12 @@ function RoomDetail() {
     onError,
   });
   const assign = useMutation({
-    mutationFn: () => callStaffApi(`/rooms/${id}/assign`, { method: "POST" }),
+    mutationFn: () => callStaffApi(`/rooms/${id}/assign`, { method: "POST", body: "{}" }),
     onSuccess: invalidate,
     onError,
   });
   const unassign = useMutation({
-    mutationFn: () => callStaffApi(`/rooms/${id}/unassign`, { method: "POST" }),
+    mutationFn: () => callStaffApi(`/rooms/${id}/unassign`, { method: "POST", body: "{}" }),
     onSuccess: invalidate,
     onError,
   });
@@ -90,9 +90,9 @@ function RoomDetail() {
       <div className="space-y-2">
         <p className="text-sm font-medium">{t("staff.note")}</p>
         <Textarea
-          value={note}
+          value={note ?? room.note ?? ""}
           maxLength={500}
-          placeholder={room.note || t("staff.notePlaceholder")}
+          placeholder={t("staff.notePlaceholder")}
           onChange={(e) => setNote(e.target.value)}
         />
       </div>
@@ -113,18 +113,18 @@ function RoomDetail() {
       <div className="flex gap-2">
         {!room.assigned_to ? (
           <Button className="flex-1" disabled={assign.isPending} onClick={() => assign.mutate()}>
-            Priimti valyti
+            {t("staff.takeRoom")}
           </Button>
-        ) : (
+        ) : room.assigned_to_me ? (
           <Button
             variant="outline"
             className="flex-1"
             disabled={unassign.isPending}
             onClick={() => unassign.mutate()}
           >
-            Atsisakyti
+            {t("staff.releaseRoom")}
           </Button>
-        )}
+        ) : null}
       </div>
       {room.assigned_to && (
         <p className="text-center text-xs text-muted-foreground">

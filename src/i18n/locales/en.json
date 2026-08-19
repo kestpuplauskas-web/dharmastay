@@ -1156,13 +1156,22 @@
     "note": "Note",
     "notePlaceholder": "Note (optional)",
     "occupied": "Occupied",
+    "releaseRoom": "Release room",
     "roomStatus": {
       "nesvarus": "Dirty",
       "svarus": "Clean",
       "tvarkoma": "In progress"
     },
     "statusUpdated": "Status updated",
-    "title": "Housekeeping"
+    "takeRoom": "Take room",
+    "title": "Housekeeping",
+    "workType": {
+      "departure": "Departure clean",
+      "none": "Nothing needed",
+      "pre_arrival": "Pre-arrival prep",
+      "stayover": "Stayover clean",
+      "turnover": "Turnover (out and in)"
+    }
   },
   "translations": {
     "bulk": {

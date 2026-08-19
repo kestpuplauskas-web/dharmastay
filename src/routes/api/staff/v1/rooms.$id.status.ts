@@ -14,6 +14,7 @@ export const Route = createFileRoute("/api/staff/v1/rooms/$id/status")({
           const schema = z.object({
             status: z.enum(["nesvarus", "tvarkoma", "svarus"]),
             note: z.string().max(500).optional(),
+            date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
           });
           let body: unknown;
           try {
@@ -25,6 +26,13 @@ export const Route = createFileRoute("/api/staff/v1/rooms/$id/status")({
           if (!parsed.success) return apiError("bad_request", "Invalid input", 400, headers);
 
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          const { loadGlobalSettings } = await import("@/lib/notifications.server");
+          const { localToday, taskStatusForRoomStatus } = await import(
+            "@/lib/housekeeping.server"
+          );
+          const settings = await loadGlobalSettings();
+          const date = parsed.data.date ?? localToday(settings.timezone);
+
           const patch: Record<string, unknown> = {
             status: parsed.data.status,
             updated_by: userId,
@@ -37,7 +45,19 @@ export const Route = createFileRoute("/api/staff/v1/rooms/$id/status")({
             .eq("property_id", params.id);
           if (error) throw new Error(error.message);
 
-          return apiJson({ ok: true }, 200, headers);
+          // Tos dienos užduoties būsena
+          const { error: taskErr } = await supabaseAdmin.from("housekeeping_tasks").upsert(
+            {
+              property_id: params.id,
+              service_date: date,
+              status: taskStatusForRoomStatus(parsed.data.status),
+              updated_by: userId,
+            } as never,
+            { onConflict: "property_id,service_date" },
+          );
+          if (taskErr) throw new Error(taskErr.message);
+
+          return apiJson({ ok: true, date }, 200, headers);
         });
       },
     },
