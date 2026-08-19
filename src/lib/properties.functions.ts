@@ -24,9 +24,11 @@ function publicClient() {
 }
 
 type PropertyRow = Database["public"]["Tables"]["properties"]["Row"];
-/** Public/anon reads never include door_code (physical access credential). */
-const PROPERTY_PUBLIC_COLUMNS =
-  "id, name, category, year, price_per_night, cover_image_url, image_urls, price_tiers, is_active, sort_order, created_at, updated_at, status, property_type, description, address, city, country, location_note, lat, lng, area_m2, max_guests, beds, rooms, amenities, extra_services, ical_import_url, ical_last_sync_at, ical_last_status";
+/** Anon reads: no door_code, no internal notes, no iCal feed URLs. */
+const PROPERTY_ANON_COLUMNS =
+  "id, name, category, year, price_per_night, cover_image_url, image_urls, price_tiers, is_active, sort_order, created_at, updated_at, status, property_type, description, address, city, country, lat, lng, area_m2, max_guests, beds, rooms, amenities, extra_services";
+/** Authenticated admin reads: internal fields included (still no door_code). */
+const PROPERTY_PUBLIC_COLUMNS = `${PROPERTY_ANON_COLUMNS}, location_note, ical_import_url, ical_last_sync_at, ical_last_status`;
 type PublicPropertyRow = Omit<PropertyRow, "door_code" | "features"> & {
   door_code?: string | null;
   features?: PropertyRow["features"];
@@ -75,7 +77,7 @@ export const listActiveProperties = createServerFn({ method: "GET" }).handler(as
   const supabase = publicClient();
   const { data, error } = await supabase
     .from("properties")
-    .select(PROPERTY_PUBLIC_COLUMNS)
+    .select(PROPERTY_ANON_COLUMNS)
     .eq("is_active", true)
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: true });
@@ -111,7 +113,7 @@ export const getPropertyById = createServerFn({ method: "GET" })
     const supabase = publicClient();
     const { data: prop, error } = await supabase
       .from("properties")
-      .select(PROPERTY_PUBLIC_COLUMNS)
+      .select(PROPERTY_ANON_COLUMNS)
       .eq("id", data.id)
       .maybeSingle();
     if (error) {
