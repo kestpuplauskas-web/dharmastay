@@ -14,7 +14,7 @@ export async function callStaffApi<T>(path: string, init?: RequestInit): Promise
   });
   if (!res.ok) {
     const body = (await res.json().catch(() => ({}))) as { error?: { message?: string } };
-    throw new Error(body?.error?.message ?? `Klaida (${res.status})`);
+    throw new Error(body?.error?.message ?? `HTTP ${res.status}`);
   }
   return (await res.json()) as T;
 }
