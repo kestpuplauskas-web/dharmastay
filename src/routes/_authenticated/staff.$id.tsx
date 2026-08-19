@@ -128,7 +128,7 @@ function RoomDetail() {
       </div>
       {room.assigned_to && (
         <p className="text-center text-xs text-muted-foreground">
-          Priskirta: {room.assigned_to_email ?? "—"}
+          Priskirta: {room.assigned_to_name?.trim() || room.assigned_to_email || "—"}
         </p>
       )}
     </div>
