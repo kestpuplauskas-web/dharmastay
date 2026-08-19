@@ -82,7 +82,7 @@ export function InvoiceViewerDialog({ invoice }: { invoice: InvoiceRow }) {
           {t("bookings.invoice.viewNumbered", { number: invoice.full_number })}
         </Button>
       </DialogTrigger>
-      <DialogContent className="flex max-h-[90vh] max-w-3xl flex-col">
+      <DialogContent className="flex max-h-[90vh] w-[calc(100vw-1rem)] max-w-3xl flex-col overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {t("bookings.invoice.titleNumbered", { number: invoice.full_number })}

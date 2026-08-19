@@ -241,7 +241,7 @@ function TemplateDialog({
 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] w-[calc(100vw-1rem)] max-w-3xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{initial ? tr("contracts.editTitle") : tr("contracts.newTitle")}</DialogTitle>
         </DialogHeader>
@@ -363,7 +363,7 @@ function PreviewDialog({ template, onClose }: { template: Template | null; onClo
   const html = useMemo(() => DOMPurify.sanitize(template?.content ?? ""), [template]);
   return (
     <Dialog open={!!template} onOpenChange={(o) => { if (!o) onClose(); }}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] w-[calc(100vw-1rem)] max-w-3xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{template?.name}</DialogTitle>
         </DialogHeader>

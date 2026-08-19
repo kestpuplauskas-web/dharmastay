@@ -131,7 +131,7 @@ export function InvoicePreviewDialog({
           {t("settings.invoicePreview.open")}
         </Button>
       </DialogTrigger>
-      <DialogContent className="flex max-h-[90vh] max-w-3xl flex-col">
+      <DialogContent className="flex max-h-[90vh] w-[calc(100vw-1rem)] max-w-3xl flex-col overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t("settings.invoicePreview.title")}</DialogTitle>
           <DialogDescription>
