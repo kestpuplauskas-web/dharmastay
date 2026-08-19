@@ -13,8 +13,6 @@ export const getHousekeepingWeek = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { loadGlobalSettings } = await import("@/lib/notifications.server");
     const { localToday, addDays, computeDayWork } = await import("@/lib/housekeeping.server");
-    const type = await import("@/lib/housekeeping.server");
-    void type;
 
     const settings = await loadGlobalSettings();
     const start = data.startDate ?? localToday(settings.timezone);
