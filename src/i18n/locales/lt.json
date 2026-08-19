@@ -1148,10 +1148,9 @@
     "notePlaceholder": "Pastaba (nebūtina)",
     "occupied": "Užimta",
     "roomStatus": {
-      "problema": "Problema",
-      "reikia_tvarkyti": "Reikia tvarkyti",
-      "svaru": "Švaru",
-      "tvarkoma": "Tvarkoma"
+      "nesvarus": "Nešvarus",
+      "svarus": "Švarus",
+      "tvarkoma": "Tvarkomas"
     },
     "statusUpdated": "Būsena atnaujinta",
     "title": "Kambarių tvarkymas"
