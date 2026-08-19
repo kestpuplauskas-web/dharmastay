@@ -1148,9 +1148,8 @@
     "notePlaceholder": "Note (optional)",
     "occupied": "Occupied",
     "roomStatus": {
-      "problema": "Issue",
-      "reikia_tvarkyti": "Needs cleaning",
-      "svaru": "Clean",
+      "nesvarus": "Dirty",
+      "svarus": "Clean",
       "tvarkoma": "In progress"
     },
     "statusUpdated": "Status updated",
