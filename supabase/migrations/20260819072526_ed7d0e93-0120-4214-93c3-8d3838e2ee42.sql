@@ -1,0 +1,1 @@
+REVOKE SELECT (location_note, ical_import_url, ical_last_sync_at, ical_last_status) ON public.properties FROM anon;
