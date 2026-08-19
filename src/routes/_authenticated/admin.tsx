@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { getPropertySettings } from "@/lib/property-settings.functions";
 import { useDefaultLanguage } from "@/hooks/useDefaultLanguage";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
@@ -131,6 +131,7 @@ function AdminLayout() {
             </button>
           </SheetTrigger>
           <SheetContent side="left" className="flex w-72 flex-col p-0">
+            <SheetTitle className="sr-only">{brandName}</SheetTitle>
             {navContent}
           </SheetContent>
         </Sheet>
