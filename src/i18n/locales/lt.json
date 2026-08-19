@@ -594,6 +594,17 @@
     "summaryInfants_one": "{{count}} kūdikis",
     "summaryInfants_other": "{{count}} kūdikių"
   },
+  "housekeeping": {
+    "assignee": "Priskirta",
+    "commentPlaceholder": "Rašykite kambarinei…",
+    "done": "Atlikta",
+    "nextWeek": "Kita savaitė",
+    "noRooms": "Kambarių nerasta.",
+    "prevWeek": "Ankstesnė savaitė",
+    "room": "Kambarys",
+    "thisWeek": "Šiandien",
+    "unassigned": "Nepriskirta"
+  },
   "language": {
     "en": "English",
     "label": "Kalba",
@@ -605,6 +616,7 @@
     "contracts": "Sutartys",
     "dashboard": "Skydelis",
     "expenses": "Finansai",
+    "housekeeping": "Kambarių tvarkymas",
     "properties": "Objektai",
     "settings": "Bendrieji nustatymai",
     "signOut": "Atsijungti",
