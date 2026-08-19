@@ -436,6 +436,88 @@ export type Database = {
           },
         ]
       }
+      housekeeping_comments: {
+        Row: {
+          author_id: string | null
+          author_role: string
+          body: string
+          created_at: string
+          id: string
+          property_id: string
+          service_date: string
+        }
+        Insert: {
+          author_id?: string | null
+          author_role: string
+          body: string
+          created_at?: string
+          id?: string
+          property_id: string
+          service_date: string
+        }
+        Update: {
+          author_id?: string | null
+          author_role?: string
+          body?: string
+          created_at?: string
+          id?: string
+          property_id?: string
+          service_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "housekeeping_comments_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      housekeeping_tasks: {
+        Row: {
+          assigned_at: string | null
+          assigned_to: string | null
+          created_at: string
+          id: string
+          property_id: string
+          service_date: string
+          status: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          assigned_at?: string | null
+          assigned_to?: string | null
+          created_at?: string
+          id?: string
+          property_id: string
+          service_date: string
+          status?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          assigned_at?: string | null
+          assigned_to?: string | null
+          created_at?: string
+          id?: string
+          property_id?: string
+          service_date?: string
+          status?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "housekeeping_tasks_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoices: {
         Row: {
           booking_id: string
@@ -960,6 +1042,7 @@ export type Database = {
           review_link: string | null
           review_request_hours_after: number
           scope: string
+          stayover_clean_every_days: number
           timezone: string
           updated_at: string
           updated_by: string | null
@@ -1035,6 +1118,7 @@ export type Database = {
           review_link?: string | null
           review_request_hours_after?: number
           scope?: string
+          stayover_clean_every_days?: number
           timezone?: string
           updated_at?: string
           updated_by?: string | null
@@ -1110,6 +1194,7 @@ export type Database = {
           review_link?: string | null
           review_request_hours_after?: number
           scope?: string
+          stayover_clean_every_days?: number
           timezone?: string
           updated_at?: string
           updated_by?: string | null
@@ -1130,7 +1215,9 @@ export type Database = {
           assigned_at: string | null
           assigned_to: string | null
           created_at: string
+          has_issue: boolean
           id: string
+          issue_note: string
           note: string
           property_id: string
           status: string
@@ -1141,7 +1228,9 @@ export type Database = {
           assigned_at?: string | null
           assigned_to?: string | null
           created_at?: string
+          has_issue?: boolean
           id?: string
+          issue_note?: string
           note?: string
           property_id: string
           status?: string
@@ -1152,7 +1241,9 @@ export type Database = {
           assigned_at?: string | null
           assigned_to?: string | null
           created_at?: string
+          has_issue?: boolean
           id?: string
+          issue_note?: string
           note?: string
           property_id?: string
           status?: string
