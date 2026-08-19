@@ -1070,6 +1070,10 @@
           },
           "requirePhone": {
             "label": "Phone number required for booking"
+          },
+          "stayoverCleanEveryDays": {
+            "help": "How often occupied rooms are cleaned during a stay. 0 — no stayover cleaning.",
+            "label": "Stayover cleaning every"
           }
         },
         "title": "Stay rules"
@@ -1116,6 +1120,7 @@
       "deleteFailed": "Could not delete.",
       "deleteTitle": "Delete user?",
       "deleted": "User deleted.",
+      "editName": "Edit name",
       "email": "Email",
       "empty": "No users.",
       "invite": "Invite",
@@ -1125,11 +1130,15 @@
       "inviteTitle": "Invite an employee",
       "listTitle": "Users",
       "loading": "Loading…",
+      "name": "Name",
+      "namePlaceholder": "Full name",
+      "nameSaved": "Name saved",
       "neverSignedIn": "Never signed in",
       "role": "Role",
       "roleAdmin": "Administrator",
       "roleHousekeeper": "Housekeeper",
       "roleUser": "User",
+      "saveName": "Save",
       "sending": "Sending…"
     },
     "validation": {
