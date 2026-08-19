@@ -62,7 +62,7 @@ function RoomList() {
           </div>
           {r.assigned_to && (
             <p className="mt-2 text-xs text-muted-foreground">
-              Priskirta: {r.assigned_to_email ?? "—"}
+              Priskirta: {r.assigned_to_name?.trim() || r.assigned_to_email || "—"}
             </p>
           )}
         </Link>
