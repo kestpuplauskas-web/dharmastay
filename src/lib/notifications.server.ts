@@ -316,6 +316,10 @@ export async function notifyBookingEvent(
     const tokens = await buildTokens(booking as Record<string, any>, settings);
     // Svečio laiško kalba — ta, kuria jis rezervavo.
     const guestLang = String((booking as any).language ?? "").trim() || undefined;
+    // Svečiui kintamieji verčiami į jo kalbą; administratoriui lieka originalūs.
+    const guestTokens = guestLang
+      ? await buildTokens(booking as Record<string, any>, settings, guestLang)
+      : tokens;
     const tpl = await loadTemplate(kind, guestLang);
 
     // 1) Svečiui
@@ -325,8 +329,8 @@ export async function notifyBookingEvent(
       try {
         await sendEmail({
           to: guestEmail,
-          subject: renderTokens(tpl.subject, tokens),
-          html: renderTokens(tpl.content, tokens),
+          subject: renderTokens(tpl.subject, guestTokens),
+          html: renderTokens(tpl.content, guestTokens),
           ...(settings.email ? { replyTo: settings.email } : {}),
         });
         await logSend(bookingId, guestLogKind, guestEmail, "sent");
