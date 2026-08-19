@@ -190,7 +190,7 @@ function PropertySettingsPage() {
       </header>
 
       <div className="flex flex-col gap-6 lg:flex-row">
-          <nav className="lg:w-60 lg:shrink-0">
+          <nav className="sticky top-12 z-30 bg-background lg:static lg:w-60 lg:shrink-0">
             <div className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-2 lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0 lg:pb-0">
               {navItems.map((item) => {
                 const isActive = item.id === active;
