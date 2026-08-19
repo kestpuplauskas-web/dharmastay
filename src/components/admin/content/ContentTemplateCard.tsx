@@ -335,6 +335,7 @@ export function ContentTemplateCard({
             ]}
             originals={{ subject: record.subject ?? "", content: record.content ?? "" }}
             showVariables={showVariables}
+            hideOriginals
           />
         </div>
       ) : (
