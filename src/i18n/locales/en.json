@@ -594,6 +594,17 @@
     "summaryInfants_one": "{{count}} infant",
     "summaryInfants_other": "{{count}} infants"
   },
+  "housekeeping": {
+    "assignee": "Assigned to",
+    "commentPlaceholder": "Write to the housekeeper…",
+    "done": "Done",
+    "nextWeek": "Next week",
+    "noRooms": "No rooms found.",
+    "prevWeek": "Previous week",
+    "room": "Room",
+    "thisWeek": "Today",
+    "unassigned": "Unassigned"
+  },
   "language": {
     "en": "English",
     "label": "Language",
@@ -605,6 +616,7 @@
     "contracts": "Contracts",
     "dashboard": "Dashboard",
     "expenses": "Finances",
+    "housekeeping": "Housekeeping",
     "properties": "Properties",
     "settings": "General settings",
     "signOut": "Sign out",

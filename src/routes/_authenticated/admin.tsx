@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useRouterState, Navigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Home, Calendar, FileText, Wallet, LayoutDashboard, Globe, LogOut, Building2, Settings2, FileEdit } from "lucide-react";
+import { Building2, Calendar, FileEdit, FileText, Globe, Home, LayoutDashboard, LogOut, Settings2, Sparkles, Wallet } from "lucide-react";
 import { getMyRole } from "@/lib/properties.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "react-i18next";
@@ -49,6 +49,7 @@ function AdminLayout() {
     { to: "/admin", label: t("nav.dashboard"), icon: LayoutDashboard },
     { to: "/admin/bookings", label: t("nav.bookings"), icon: Calendar },
     { to: "/admin/properties", label: t("nav.properties"), icon: Home },
+    { to: "/admin/housekeeping", label: t("nav.housekeeping"), icon: Sparkles },
     { to: "/admin/contracts", label: t("nav.contracts"), icon: FileText },
     { to: "/admin/expenses", label: t("nav.expenses"), icon: Wallet },
     { to: "/admin/settings", label: t("nav.settings"), icon: Settings2 },
