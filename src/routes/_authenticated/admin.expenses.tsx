@@ -111,8 +111,8 @@ function ExpensesPage() {
         </button>
       </form>
 
-      <div className="mt-6 overflow-hidden rounded-lg border">
-        <table className="w-full text-sm">
+      <div className="mt-6 overflow-x-auto rounded-lg border">
+        <table className="w-full min-w-[640px] text-sm">
           <thead className="bg-muted">
             <tr className="text-left">
               <th className="p-2">{t("expenses.date")}</th>

@@ -474,9 +474,9 @@ function BookingViewDialog({ row, onClose }: { row: Row | null; onClose: () => v
 
 function FieldRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid grid-cols-3 gap-2">
+    <div className="grid grid-cols-1 gap-1 sm:grid-cols-3 sm:gap-2">
       <div className="text-muted-foreground">{label}</div>
-      <div className="col-span-2 font-medium">{value}</div>
+      <div className="font-medium sm:col-span-2">{value}</div>
     </div>
   );
 }
