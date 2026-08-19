@@ -10,6 +10,7 @@ export const inviteUser = createServerFn({ method: "POST" })
       .object({
         email: z.string().trim().email(),
         role: z.enum(["admin", "housekeeper"]),
+        fullName: z.string().trim().max(120).optional(),
         redirectTo: z.string().url().optional(),
       })
       .parse(d),
@@ -19,7 +20,10 @@ export const inviteUser = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const { appLink } = await import("@/lib/app-url.server");
-    const opts = { redirectTo: appLink("/reset-password", data.redirectTo) };
+    const opts = {
+      redirectTo: appLink("/reset-password", data.redirectTo),
+      ...(data.fullName ? { data: { full_name: data.fullName } } : {}),
+    };
     let link = await supabaseAdmin.auth.admin.generateLink({
       type: "invite",
       email: data.email,
@@ -38,6 +42,12 @@ export const inviteUser = createServerFn({ method: "POST" })
     const newUserId = link.data.user?.id;
     const actionLink = link.data.properties?.action_link;
     if (!newUserId) throw new Error("Nepavyko sukurti vartotojo.");
+
+    if (data.fullName) {
+      await supabaseAdmin.auth.admin.updateUserById(newUserId, {
+        user_metadata: { full_name: data.fullName },
+      });
+    }
 
     const { error: roleErr } = await supabaseAdmin
       .from("user_roles")
@@ -84,7 +94,11 @@ export const listUsersWithRoles = createServerFn({ method: "GET" })
     const info = new Map(
       (authUsers?.users ?? []).map((u) => [
         u.id,
-        { email: u.email ?? "", lastSignInAt: u.last_sign_in_at ?? null },
+        {
+          email: u.email ?? "",
+          fullName: ((u.user_metadata as { full_name?: string } | null)?.full_name ?? "").trim(),
+          lastSignInAt: u.last_sign_in_at ?? null,
+        },
       ]),
     );
 
@@ -93,8 +107,24 @@ export const listUsersWithRoles = createServerFn({ method: "GET" })
       role: r.role,
       createdAt: r.created_at,
       email: info.get(r.user_id)?.email ?? "",
+      fullName: info.get(r.user_id)?.fullName ?? "",
       lastSignInAt: info.get(r.user_id)?.lastSignInAt ?? null,
     }));
+  });
+
+export const updateUserName = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) =>
+    z.object({ userId: z.string().uuid(), fullName: z.string().trim().max(120) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(data.userId, {
+      user_metadata: { full_name: data.fullName },
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
   });
 
 export const deleteUser = createServerFn({ method: "POST" })

@@ -92,6 +92,7 @@ export const settingsSchemas = {
     autoConfirmBookings: z.boolean(),
     requirePhone: z.boolean(),
     requireEmail: z.boolean(),
+    stayoverCleanEveryDays: z.number().int().min(0).max(30),
   }),
   guests: z.object({
     childrenFreeUntilAge: z.number().int().min(0).max(18),
@@ -191,6 +192,7 @@ export const DEFAULT_PROPERTY_SETTINGS: PropertySettings = {
   autoConfirmBookings: false,
   requirePhone: true,
   requireEmail: true,
+  stayoverCleanEveryDays: 3,
 
   childrenFreeUntilAge: 3,
   petsAllowed: false,
@@ -268,6 +270,7 @@ export const SETTINGS_COLUMN_MAP: Record<keyof PropertySettings, string> = {
   autoConfirmBookings: "auto_confirm_bookings",
   requirePhone: "require_phone",
   requireEmail: "require_email",
+  stayoverCleanEveryDays: "stayover_clean_every_days",
   childrenFreeUntilAge: "children_free_until_age",
   petsAllowed: "pets_allowed",
   partiesAllowed: "parties_allowed",
@@ -395,6 +398,7 @@ export const SETTINGS_SECTIONS: SectionDef[] = [
       { name: "autoConfirmBookings", labelKey: "settings.sections.stay.fields.autoConfirmBookings.label", type: "switch", colSpan: 2, helpKey: "settings.sections.stay.fields.autoConfirmBookings.help" },
       { name: "requirePhone", labelKey: "settings.sections.stay.fields.requirePhone.label", type: "switch", colSpan: 2 },
       { name: "requireEmail", labelKey: "settings.sections.stay.fields.requireEmail.label", type: "switch", colSpan: 2 },
+      { name: "stayoverCleanEveryDays", labelKey: "settings.sections.stay.fields.stayoverCleanEveryDays.label", type: "number", unitKey: "settings.units.days", min: 0, helpKey: "settings.sections.stay.fields.stayoverCleanEveryDays.help" },
     ],
   },
   {

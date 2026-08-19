@@ -14,7 +14,7 @@ import {
   type StaffRoomStatus,
 } from "@/lib/staff-api-client";
 
-const STATUSES: StaffRoomStatus[] = ["svaru", "reikia_tvarkyti", "tvarkoma", "problema"];
+const STATUSES: StaffRoomStatus[] = ["nesvarus", "tvarkoma", "svarus"];
 
 export const Route = createFileRoute("/_authenticated/staff/$id")({
   component: RoomDetail,

@@ -19,7 +19,7 @@ export async function callStaffApi<T>(path: string, init?: RequestInit): Promise
   return (await res.json()) as T;
 }
 
-export type StaffRoomStatus = "svaru" | "reikia_tvarkyti" | "tvarkoma" | "problema";
+export type StaffRoomStatus = "nesvarus" | "tvarkoma" | "svarus";
 
 export type StaffRoom = {
   id: string;
@@ -31,21 +31,22 @@ export type StaffRoom = {
   next_checkout: string | null;
   status: StaffRoomStatus;
   note: string;
+  has_issue: boolean;
+  issue_note: string;
   assigned_to: string | null;
   assigned_to_email: string | null;
+  assigned_to_name: string | null;
   updated_at: string | null;
 };
 
 export const STAFF_STATUS_LABEL_KEYS: Record<StaffRoomStatus, string> = {
-  svaru: "staff.roomStatus.svaru",
-  reikia_tvarkyti: "staff.roomStatus.reikia_tvarkyti",
+  nesvarus: "staff.roomStatus.nesvarus",
   tvarkoma: "staff.roomStatus.tvarkoma",
-  problema: "staff.roomStatus.problema",
+  svarus: "staff.roomStatus.svarus",
 };
 
 export const STAFF_STATUS_CLASS: Record<StaffRoomStatus, string> = {
-  svaru: "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
-  reikia_tvarkyti: "border-destructive/40 bg-destructive/10 text-destructive",
+  nesvarus: "border-destructive/40 bg-destructive/10 text-destructive",
   tvarkoma: "border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-400",
-  problema: "border-violet-500/40 bg-violet-500/10 text-violet-700 dark:text-violet-400",
+  svarus: "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
 };

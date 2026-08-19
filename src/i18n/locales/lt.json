@@ -1070,6 +1070,10 @@
           },
           "requirePhone": {
             "label": "Rezervacijai privalomas telefono numeris"
+          },
+          "stayoverCleanEveryDays": {
+            "help": "Kas kiek parų tvarkomi kambariai, kuriuose svečias tebegyvena. 0 — tarpinis tvarkymas nevykdomas.",
+            "label": "Tarpinis tvarkymas kas"
           }
         },
         "title": "Viešnagės taisyklės"
@@ -1116,6 +1120,7 @@
       "deleteFailed": "Nepavyko ištrinti.",
       "deleteTitle": "Ištrinti vartotoją?",
       "deleted": "Vartotojas ištrintas.",
+      "editName": "Redaguoti vardą",
       "email": "El. paštas",
       "empty": "Vartotojų nėra.",
       "invite": "Pakviesti",
@@ -1125,11 +1130,15 @@
       "inviteTitle": "Pakviesti darbuotoją",
       "listTitle": "Vartotojai",
       "loading": "Kraunama…",
+      "name": "Vardas",
+      "namePlaceholder": "Vardas Pavardė",
+      "nameSaved": "Vardas išsaugotas",
       "neverSignedIn": "Neprisijungė",
       "role": "Rolė",
       "roleAdmin": "Administratorius",
       "roleHousekeeper": "Kambarių tvarkytoja",
       "roleUser": "Vartotojas",
+      "saveName": "Išsaugoti",
       "sending": "Siunčiama…"
     },
     "validation": {
@@ -1148,10 +1157,9 @@
     "notePlaceholder": "Pastaba (nebūtina)",
     "occupied": "Užimta",
     "roomStatus": {
-      "problema": "Problema",
-      "reikia_tvarkyti": "Reikia tvarkyti",
-      "svaru": "Švaru",
-      "tvarkoma": "Tvarkoma"
+      "nesvarus": "Nešvarus",
+      "svarus": "Švarus",
+      "tvarkoma": "Tvarkomas"
     },
     "statusUpdated": "Būsena atnaujinta",
     "title": "Kambarių tvarkymas"
