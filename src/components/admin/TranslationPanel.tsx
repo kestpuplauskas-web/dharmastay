@@ -43,6 +43,7 @@ export function TranslationPanel({
   fields,
   originals,
   showVariables,
+  hideOriginals,
 }: {
   entityType: TranslatableEntity;
   entityId: string;
@@ -51,6 +52,8 @@ export function TranslationPanel({
   originals: Record<string, string>;
   /** Rodyti kintamųjų ({{...}}) įterpimo juostą po kiekvienu lauku. */
   showVariables?: boolean;
+  /** Nerodyti užrakinto originalo teksto (naudojama Turinio šablonuose). */
+  hideOriginals?: boolean;
 }) {
   const { t } = useTranslation();
   const fetchTranslations = useServerFn(getTranslations);
@@ -212,7 +215,7 @@ export function TranslationPanel({
           fields.map((f) => (
             <div key={f.field} className="space-y-1.5">
               <Label>{f.labelKey ? t(f.labelKey) : f.label}</Label>
-              {f.html ? (
+              {hideOriginals ? null : f.html ? (
                 <div
                   className="prose prose-sm dark:prose-invert max-w-none rounded-md bg-muted px-3 py-2 text-muted-foreground"
                   dangerouslySetInnerHTML={{
