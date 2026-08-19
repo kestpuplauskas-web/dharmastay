@@ -1156,13 +1156,22 @@
     "note": "Pastaba",
     "notePlaceholder": "Pastaba (nebūtina)",
     "occupied": "Užimta",
+    "releaseRoom": "Atsisakyti",
     "roomStatus": {
       "nesvarus": "Nešvarus",
       "svarus": "Švarus",
       "tvarkoma": "Tvarkomas"
     },
     "statusUpdated": "Būsena atnaujinta",
-    "title": "Kambarių tvarkymas"
+    "takeRoom": "Priimti valyti",
+    "title": "Kambarių tvarkymas",
+    "workType": {
+      "departure": "Išvykimo tvarkymas",
+      "none": "Nieko nereikia",
+      "pre_arrival": "Paruošimas prieš atvykimą",
+      "stayover": "Tarpinis tvarkymas",
+      "turnover": "Apyvarta (išvyksta ir atvyksta)"
+    }
   },
   "translations": {
     "bulk": {
