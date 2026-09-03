@@ -3,7 +3,7 @@ import { useRouter, useRouterState } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useTranslation } from "react-i18next";
-import { ArrowRight, Loader2, MessageCircleQuestion, SendHorizonal, Trash2, X } from "lucide-react";
+import { ArrowRight, Loader2, SendHorizonal, Trash2, X } from "lucide-react";
 import evaAvatar from "@/assets/eva-avatar.jpg.asset.json";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
