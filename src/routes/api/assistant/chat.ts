@@ -92,6 +92,7 @@ async function handlePost(request: Request) {
     brandName: settings.displayName?.trim() || "Revoo",
     settingsKnowledge,
     propertiesSummary,
+    businessAnalytics,
     currentPath: input.path,
   });
 
