@@ -10,6 +10,8 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { getPropertySettings } from "@/lib/property-settings.functions";
 import { useDefaultLanguage } from "@/hooks/useDefaultLanguage";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { AssistantWidget } from "@/components/admin/assistant/AssistantWidget";
+
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
