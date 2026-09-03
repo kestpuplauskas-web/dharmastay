@@ -1,4 +1,24 @@
 {
+  "assistant": {
+    "title": "Revoo assistant",
+    "subtitle": "Explains where and how to do something. You make the changes yourself.",
+    "open": "Open assistant",
+    "clear": "Clear conversation",
+    "cleared": "Conversation cleared.",
+    "send": "Send",
+    "placeholder": "Ask how to do something…",
+    "intro": "Hi! I'll help you find your way around the admin panel. For example:",
+    "suggestions": [
+      "How do I change room photos on the website?",
+      "How do I change a room's name in English?",
+      "How do I enable automatic booking confirmation?",
+      "Where do I set the VAT rate and invoice numbering?"
+    ],
+    "disclaimer": "The assistant only advises – it never changes settings.",
+    "error": "Could not get a reply. Please try again.",
+    "empty": "No reply received – try rephrasing the question.",
+    "tooLong": "Message too long (max {{max}} characters)."
+  },
   "admin": {
     "noAdminText": "Please contact the system administrator to be granted access.",
     "noAdminTitle": "You don't have administrator rights"
