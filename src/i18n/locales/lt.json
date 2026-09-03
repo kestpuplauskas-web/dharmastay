@@ -1,4 +1,24 @@
 {
+  "assistant": {
+    "title": "Revoo Asistentas",
+    "subtitle": "\n",
+    "open": "Atidaryti pagalbininką",
+    "clear": "Išvalyti pokalbį",
+    "cleared": "Pokalbis išvalytas.",
+    "send": "Siųsti",
+    "placeholder": "Paklauskite, kaip ką nors padaryti…",
+    "intro": "Sveiki! 👋 Esu Eva –  virtuali Revoo asistentė. Galiu atsakyti į klausimus, paaiškinti, kaip atlikti užduotis šioje sistemoje ir padėti rasti reikiamą informaciją. Kuo galiu padėti?",
+    "suggestions": [
+      "Kaip pakeisti kambarių nuotraukas svetainėje?",
+      "Kaip pakeisti kambario pavadinimą anglų kalba?",
+      "Kaip įjungti automatinį rezervacijų patvirtinimą?",
+      "Kur nustatyti PVM tarifą ir sąskaitų numeraciją?"
+    ],
+    "disclaimer": "Asistentas tik pataria – nustatymų nekeičia.",
+    "error": "Nepavyko gauti atsakymo. Pabandykite dar kartą.",
+    "empty": "Atsakymo negavau – pabandykite performuluoti klausimą.",
+    "tooLong": "Žinutė per ilga (iki {{max}} simbolių)."
+  },
   "admin": {
     "noAdminText": "Susisiekite su sistemos administratoriumi, kad jums būtų suteiktos teisės.",
     "noAdminTitle": "Neturite administratoriaus teisių"
