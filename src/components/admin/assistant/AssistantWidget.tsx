@@ -3,7 +3,7 @@ import { useRouter, useRouterState } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useTranslation } from "react-i18next";
-import { ArrowRight, Loader2, MessageCircleQuestion, SendHorizonal, Trash2, X } from "lucide-react";
+import { ArrowRight, Loader2, SendHorizonal, Trash2, X } from "lucide-react";
 import evaAvatar from "@/assets/eva-avatar.jpg.asset.json";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -214,9 +214,11 @@ export function AssistantWidget() {
         type="button"
         onClick={() => setOpen(true)}
         aria-label={t("assistant.open")}
-        className="fixed bottom-5 right-5 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-transform hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
-        <MessageCircleQuestion className="h-6 w-6" />
+        <span className="block h-12 w-12 overflow-hidden rounded-full ring-2 ring-primary/30 ring-offset-2 ring-offset-background">
+          <img src={evaAvatar.url} alt="" className="h-full w-full rounded-full object-cover" />
+        </span>
       </button>
 
       <Sheet open={open} onOpenChange={setOpen}>
