@@ -113,8 +113,42 @@ Admin interface language is switched at the bottom of the left menu (LT/EN). Def
 No: Stripe/Paysera payments (shown as "coming soon"), two-way Booking/Airbnb sync (iCal read only), SMS sending, Google Calendar integration, separate settings per property (settings are shared by all properties).
 `;
 
+const BENCHMARKS_LT = `
+# Rinkos orientyrai (naudokite kaip apytikslius palyginimus, pasakykite, kad tai orientaciniai vidurkiai)
+- Lietuvos viešbučių metinis vidutinis kambarių užimtumas: ~50–60 % (Vilnius ~60–70 %, Kaunas/Klaipėda ~50–60 %, kurortai ir regionai ~40–55 %). Vasarą (birželis–rugpjūtis) kurortuose 70–90 %, žiemą 20–40 %.
+- Trumpalaikės nuomos (apartamentai, nameliai, Airbnb/Booking) sveikas metinis užimtumas: 45–65 %; virš 75–80 % paprastai reiškia, kad kaina per žema.
+- ADR (vidutinė kaina už naktį) Lietuvoje: ekonominis 40–70 €, vidutinis 70–120 €, aukštesnis/butikinis 120–250 €. RevPAR = ADR × užimtumas.
+- Gera metinė ROI trumpalaikei nuomai: 6–10 % nuo investicijos (grynasis pelnas / investicija); 4–6 % – vidutiniškai; <4 % – silpna. Atsipirkimas 10–15 m. laikomas normaliu.
+- Sveika sąnaudų dalis: valymas ir eksploatacija 20–35 % pajamų, platformų komisiniai (Booking/Airbnb) 12–18 %, tiesioginių rezervacijų dalis ≥40 % – gerai.
+- Atšaukimų dalis: iki 10–15 % normalu tiesioginėms rezervacijoms; Booking.com – 25–40 %.
+
+# Kaip interpretuoti ir ką patarti (užimtumas / kainos)
+- Užimtumas žemas (<40 %) ir žemas išankstinis užsakymas ateinančioms 30 d.: mažinti kainą 10–20 % artimiausioms datoms arba pridėti pakopą „ilgesnė viešnagė pigiau“ (Objektai → kaina ir kainų pakopos), įjungti/atnaujinti iCal kanalus (Booking/Airbnb), gerinti nuotraukas ir aprašus, siūlyti papildomas paslaugas, trumpesnį minimalų naktų skaičių (Bendrieji nustatymai → Viešnagė), nuolaidas savaitės viduryje, jei naktys pagal savaitės dieną rodo tuščias darbo dienas.
+- Užimtumas aukštas (>75–80 %) ir ateinančios 30–90 d. jau gerai užpildytos: kelti kainas 10–15 % (pirmiausia savaitgaliams / sezonui per kainų pakopas), didinti minimalų naktų skaičių piko datomis, mažinti priklausomybę nuo platformų su komisiniais.
+- Užimtumas normalus (45–70 %): koreguoti sezoniškai – kelti kainą piko datoms, mažinti ne sezono metu; sekti RevPAR, ne tik užimtumą.
+- Jei ADR gerokai žemesnis nei rinkos diapazonas panašiam segmentui – kelkite kainą; jei aukštesnis ir užimtumas krenta – mažinkite arba pridėkite vertės.
+- Visada pateikite skaičius iš „Verslo analitikos“ skyriaus ir palyginkite su orientyrais. Kur nustatyti kainas: Objektai → objektas → Redaguoti → „Kaina už naktį“ ir „Kainų pakopos“. Kur įvesti išlaidas/investicijas ROI skaičiavimui: Finansai.
+`;
+
+const BENCHMARKS_EN = `
+# Market benchmarks (use as approximate comparisons; say they are indicative averages)
+- Lithuanian hotel annual average room occupancy: ~50–60 % (Vilnius ~60–70 %, Kaunas/Klaipėda ~50–60 %, resorts and regions ~40–55 %). Summer (June–August) in resorts 70–90 %, winter 20–40 %.
+- Short-term rentals (apartments, cabins, Airbnb/Booking) healthy annual occupancy: 45–65 %; above 75–80 % usually means the price is too low.
+- ADR (average daily rate) in Lithuania: economy 40–70 €, mid-range 70–120 €, upscale/boutique 120–250 €. RevPAR = ADR × occupancy.
+- Good annual ROI for short-term rental: 6–10 % of investment (net profit / investment); 4–6 % average; <4 % weak. Payback of 10–15 years is normal.
+- Healthy cost ratios: cleaning and operations 20–35 % of revenue, platform commissions (Booking/Airbnb) 12–18 %, direct-booking share ≥40 % is good.
+- Cancellation rate: up to 10–15 % is normal for direct bookings; Booking.com 25–40 %.
+
+# How to interpret and what to advise (occupancy / pricing)
+- Low occupancy (<40 %) and weak forward bookings for the next 30 days: lower prices 10–20 % for near dates or add a "longer stay cheaper" tier (Properties → price and price tiers), enable/refresh iCal channels (Booking/Airbnb), improve photos and descriptions, offer extra services, reduce minimum nights (General settings → Stay), midweek discounts if weekday nights show empty workdays.
+- High occupancy (>75–80 %) with the next 30–90 days already well filled: raise prices 10–15 % (weekends/season first via price tiers), increase minimum nights on peak dates, reduce dependence on commission platforms.
+- Normal occupancy (45–70 %): adjust seasonally – raise for peak dates, lower off-season; track RevPAR, not only occupancy.
+- If ADR is well below the market range for a similar segment – raise the price; if above and occupancy is falling – lower it or add value.
+- Always quote numbers from the "Business analytics" section and compare with the benchmarks. Where to set prices: Properties → property → Edit → "Price per night" and "Price tiers". Where to enter expenses/investments for ROI: Finance.
+`;
+
 export function getStaticKnowledge(lang: AssistantLang): string {
-  return lang === "en" ? KNOWLEDGE_EN : KNOWLEDGE_LT;
+  return (lang === "en" ? KNOWLEDGE_EN : KNOWLEDGE_LT) + (lang === "en" ? BENCHMARKS_EN : BENCHMARKS_LT);
 }
 
 export function buildSystemPrompt(opts: {
@@ -122,23 +156,27 @@ export function buildSystemPrompt(opts: {
   brandName: string;
   settingsKnowledge: string;
   propertiesSummary: string;
+  businessAnalytics?: string;
   currentPath: string;
 }): string {
-  const { lang, brandName, settingsKnowledge, propertiesSummary, currentPath } = opts;
+  const { lang, brandName, settingsKnowledge, propertiesSummary, businessAnalytics, currentPath } = opts;
   const langName = lang === "en" ? "English" : "Lithuanian";
   return [
     `You are the in-app help assistant of "${brandName}", a hotel / short-term rental management system.`,
-    `Your ONLY job: explain to the administrator WHERE in the admin panel and HOW to do something, and what each setting does.`,
+    `Your job: (1) explain to the administrator WHERE in the admin panel and HOW to do something and what each setting does; (2) act as a business analyst – answer questions about occupancy, revenue (today, yesterday, this month, this year, all-time), ADR, RevPAR, expenses, profit, ROI, forecasts, and give concrete insights and recommendations (raise/lower prices, improve occupancy) based on the "Business analytics" data and market benchmarks.`,
     ``,
     `HARD RULES:`,
     `- You cannot change anything. You have no tools. Never claim you changed, saved, created or deleted something. The administrator does it themselves in the admin panel.`,
-    `- Stay strictly within this system's admin panel. Do not discuss source code, databases, programming, hosting, Lovable, or how the system is built. Never suggest editing code or the database.`,
+    `- Stay strictly within this system's admin panel and this property's business performance. Do not discuss source code, databases, programming, hosting, Lovable, or how the system is built. Never suggest editing code or the database.`,
     `- If a feature does not exist in the system, say so plainly. Never invent menus, buttons or features that are not in the knowledge base.`,
+    `- Use ONLY the numbers given in the "Business analytics" section; never invent figures. If a number is missing (e.g. investments), say so and explain where to enter the data.`,
+    `- Market benchmarks are indicative averages – say so when comparing.`,
     `- Off-topic questions (unrelated to running the property in this system): politely say you only help with managing the property in this admin panel.`,
     `- Answer in ${langName} only.`,
     ``,
     `ANSWER FORMAT:`,
-    `- Short. 2–5 sentences or a numbered list of at most 6 short steps. No long introductions or summaries.`,
+    `- Short. 2–6 sentences or a numbered list of at most 6 short steps. No long introductions or summaries.`,
+    `- For analytics questions: state the figure(s) with the period, compare to the benchmark, then give 1–3 concrete recommendations with the exact click path where to act.`,
     `- Give the exact click path using the menu names from the knowledge base, e.g. "Objektai → kambarys → Redaguoti → Nuotraukos → Išsaugoti".`,
     `- When a relevant page exists, add ONE link tag on its own line at the end: [[link:/admin/...|Label]] (only paths that appear in the knowledge base).`,
     `- When asked about a setting, state what it affects and its current value if known.`,
@@ -153,5 +191,8 @@ export function buildSystemPrompt(opts: {
     ``,
     `# ${lang === "en" ? "Properties in the system" : "Objektai sistemoje"}`,
     propertiesSummary,
+    ``,
+    `# ${lang === "en" ? "Business analytics (live data)" : "Verslo analitika (realūs duomenys)"}`,
+    businessAnalytics ?? (lang === "en" ? "(unavailable)" : "(nepasiekiama)"),
   ].join("\n");
 }

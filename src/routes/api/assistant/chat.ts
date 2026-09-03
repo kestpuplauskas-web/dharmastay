@@ -77,16 +77,22 @@ async function handlePost(request: Request) {
 
   // Kontekstas
   const ctx = await import("@/lib/assistant-context.server");
-  const settings = await ctx.loadSettingsForAssistant(supabase);
-  const [settingsKnowledge, propertiesSummary] = [
-    ctx.buildSettingsKnowledge(lang, settings),
-    await ctx.buildPropertiesSummary(supabase, lang),
-  ];
+  const { buildBusinessAnalytics } = await import("@/lib/assistant-analytics.server");
+  const [settings, propertiesSummary, businessAnalytics] = await Promise.all([
+    ctx.loadSettingsForAssistant(supabase),
+    ctx.buildPropertiesSummary(supabase, lang),
+    buildBusinessAnalytics(supabase, lang).catch((e) => {
+      console.error("[assistant] analytics", e);
+      return undefined;
+    }),
+  ]);
+  const settingsKnowledge = ctx.buildSettingsKnowledge(lang, settings);
   const system = buildSystemPrompt({
     lang,
     brandName: settings.displayName?.trim() || "Revoo",
     settingsKnowledge,
     propertiesSummary,
+    businessAnalytics,
     currentPath: input.path,
   });
 
