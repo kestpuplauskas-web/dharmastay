@@ -23,6 +23,7 @@ import { Route as AuthenticatedAdminHousekeepingRouteImport } from './routes/_au
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedStaffIndexRouteImport } from './routes/_authenticated/staff.index'
 import { Route as AuthenticatedStaffIdRouteImport } from './routes/_authenticated/staff.$id'
+import { Route as ApiAssistantChatRouteImport } from './routes/api/assistant/chat'
 import { Route as ApiPublicIcalSyncRouteImport } from './routes/api/public/ical-sync'
 import { Route as ApiPublicNotificationsCronRouteImport } from './routes/api/public/notifications-cron'
 import { Route as AuthenticatedAdminBookingsIndexRouteImport } from './routes/_authenticated/admin.bookings.index'
@@ -119,6 +120,11 @@ const AuthenticatedStaffIdRoute = AuthenticatedStaffIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => AuthenticatedStaffRoute,
+} as any)
+const ApiAssistantChatRoute = ApiAssistantChatRouteImport.update({
+  id: '/api/assistant/chat',
+  path: '/api/assistant/chat',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicIcalSyncRoute = ApiPublicIcalSyncRouteImport.update({
   id: '/api/public/ical-sync',
@@ -254,6 +260,7 @@ export interface FileRoutesByFullPath {
   '/admin/housekeeping': typeof AuthenticatedAdminHousekeepingRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/staff/$id': typeof AuthenticatedStaffIdRoute
+  '/api/assistant/chat': typeof ApiAssistantChatRoute
   '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
   '/api/public/notifications-cron': typeof ApiPublicNotificationsCronRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -289,6 +296,7 @@ export interface FileRoutesByTo {
   '/admin/housekeeping': typeof AuthenticatedAdminHousekeepingRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/staff/$id': typeof AuthenticatedStaffIdRoute
+  '/api/assistant/chat': typeof ApiAssistantChatRoute
   '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
   '/api/public/notifications-cron': typeof ApiPublicNotificationsCronRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -328,6 +336,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/housekeeping': typeof AuthenticatedAdminHousekeepingRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/staff/$id': typeof AuthenticatedStaffIdRoute
+  '/api/assistant/chat': typeof ApiAssistantChatRoute
   '/api/public/ical-sync': typeof ApiPublicIcalSyncRoute
   '/api/public/notifications-cron': typeof ApiPublicNotificationsCronRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -367,6 +376,7 @@ export interface FileRouteTypes {
     | '/admin/housekeeping'
     | '/admin/settings'
     | '/staff/$id'
+    | '/api/assistant/chat'
     | '/api/public/ical-sync'
     | '/api/public/notifications-cron'
     | '/admin/'
@@ -402,6 +412,7 @@ export interface FileRouteTypes {
     | '/admin/housekeeping'
     | '/admin/settings'
     | '/staff/$id'
+    | '/api/assistant/chat'
     | '/api/public/ical-sync'
     | '/api/public/notifications-cron'
     | '/admin'
@@ -440,6 +451,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/housekeeping'
     | '/_authenticated/admin/settings'
     | '/_authenticated/staff/$id'
+    | '/api/assistant/chat'
     | '/api/public/ical-sync'
     | '/api/public/notifications-cron'
     | '/_authenticated/admin/'
@@ -471,6 +483,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  ApiAssistantChatRoute: typeof ApiAssistantChatRoute
   ApiPublicIcalSyncRoute: typeof ApiPublicIcalSyncRoute
   ApiPublicNotificationsCronRoute: typeof ApiPublicNotificationsCronRoute
   ApiPublicV1AvailabilityRoute: typeof ApiPublicV1AvailabilityRoute
@@ -581,6 +594,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/staff/$id'
       preLoaderRoute: typeof AuthenticatedStaffIdRouteImport
       parentRoute: typeof AuthenticatedStaffRoute
+    }
+    '/api/assistant/chat': {
+      id: '/api/assistant/chat'
+      path: '/api/assistant/chat'
+      fullPath: '/api/assistant/chat'
+      preLoaderRoute: typeof ApiAssistantChatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/ical-sync': {
       id: '/api/public/ical-sync'
@@ -849,6 +869,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  ApiAssistantChatRoute: ApiAssistantChatRoute,
   ApiPublicIcalSyncRoute: ApiPublicIcalSyncRoute,
   ApiPublicNotificationsCronRoute: ApiPublicNotificationsCronRoute,
   ApiPublicV1AvailabilityRoute: ApiPublicV1AvailabilityRoute,
