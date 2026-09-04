@@ -39,11 +39,17 @@ export function AvailabilityCalendar({
   range,
   onRangeChange,
   className,
+  compact = false,
+  action,
 }: {
   occupied: OccupiedRange[];
   range: DateRange | undefined;
   onRangeChange: (range: DateRange | undefined) => void;
   className?: string;
+  /** Sumažinta versija: mažesni laukai ir ląstelės. */
+  compact?: boolean;
+  /** Papildomas veiksmas (pvz. „Rezervuoti“ mygtukas) kalendoriaus apačioje. */
+  action?: React.ReactNode;
 }) {
   const today = useMemo(startOfToday, []);
   const locale = useLocale();
