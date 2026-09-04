@@ -32,12 +32,8 @@ export function GuestsField({
 
   const parts = [
     `${guests.adults} ${plural(guests.adults, s.adultOne, s.adultFew, s.adultMany)}`,
-    ...(guests.children > 0
-      ? [`${guests.children} ${plural(guests.children, s.childOne, s.childFew, s.childMany)}`]
-      : []),
-    ...(guests.infants > 0
-      ? [`${guests.infants} ${plural(guests.infants, s.infantOne, s.infantFew, s.infantMany)}`]
-      : []),
+    `${guests.children} ${plural(guests.children, s.childOne, s.childFew, s.childMany)}`,
+    `${guests.infants} ${plural(guests.infants, s.infantOne, s.infantFew, s.infantMany)}`,
   ];
 
   const rows: Array<{ key: keyof Guests; label: string; hint: string; min: number }> = [
