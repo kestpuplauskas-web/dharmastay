@@ -118,20 +118,27 @@ export function AvailabilityCalendar({
         />
       </div>
 
-      <div className="mt-6 grid gap-3 border-t border-border pt-5 sm:grid-cols-2">
+      <div
+        className={cn(
+          "grid gap-3 border-t border-border sm:grid-cols-2",
+          compact ? "mt-4 pt-4" : "mt-6 pt-5",
+        )}
+      >
         <div>
           <p className="label-caps text-stone/80">{common.stays.checkin}</p>
-          <p className="mt-1 font-display text-lg font-medium text-ink">
+          <p className={cn("mt-1 font-display font-medium text-ink", compact ? "text-base" : "text-lg")}>
             {range?.from ? format(range.from, "yyyy-MM-dd") : "—"}
           </p>
         </div>
         <div>
           <p className="label-caps text-stone/80">{common.stays.checkout}</p>
-          <p className="mt-1 font-display text-lg font-medium text-ink">
+          <p className={cn("mt-1 font-display font-medium text-ink", compact ? "text-base" : "text-lg")}>
             {range?.to ? format(range.to, "yyyy-MM-dd") : "—"}
           </p>
         </div>
       </div>
+
+      {action ? <div className={compact ? "mt-4" : "mt-5"}>{action}</div> : null}
 
       <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-stone">
         <span className="flex items-center gap-2">
