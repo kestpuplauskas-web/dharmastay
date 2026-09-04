@@ -251,15 +251,6 @@ function PropertyPage({ locale }: { locale: Locale }) {
         </button>
       </PageHero>
 
-      <PropertyIntro
-        {...(view.meta ? { meta: view.meta } : {})}
-        paragraphs={paragraphs}
-        image={sideImage}
-        imageAlt={view.imageAlt}
-        facts={facts}
-        amenities={view.amenities}
-      />
-
       {grid.length ? (
         <PageSection tone="linen">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -280,31 +271,33 @@ function PropertyPage({ locale }: { locale: Locale }) {
         </PageSection>
       ) : null}
 
+      <PropertyIntro
+        {...(view.meta ? { meta: view.meta } : {})}
+        paragraphs={paragraphs}
+        image={sideImage}
+        imageAlt={view.imageAlt}
+        facts={facts}
+        amenities={view.amenities}
+      />
+
       <PageSection>
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start">
-          <Reveal direction="left">
-            <AvailabilityCalendar
-              occupied={data.occupied}
-              range={range}
-              onRangeChange={setRange}
-            />
-          </Reveal>
-          <Reveal direction="right" delay={100}>
-            <div className="rounded-md bg-linen p-8">
-              <p className="label-caps text-sage">{c.common.stays.availabilityTitle}</p>
-              <p className="mt-4 text-sm leading-relaxed text-stone">
-                {data.occupied.length ? c.common.stays.availabilityLead : c.common.stays.noOccupied}
-              </p>
+        <Reveal direction="up" className="mx-auto max-w-xl">
+          <AvailabilityCalendar
+            occupied={data.occupied}
+            range={range}
+            onRangeChange={setRange}
+            compact
+            action={
               <button
                 type="button"
                 onClick={openBooking}
-                className="mt-6 w-full rounded-md bg-sage px-6 py-3.5 text-sm font-medium text-warm-white transition-colors hover:bg-sage-deep"
+                className="w-full rounded-md bg-sage px-6 py-3 text-sm font-medium text-warm-white transition-colors hover:bg-sage-deep"
               >
                 {range?.from && range?.to ? c.common.cta.book : c.common.stays.pickDates}
               </button>
-            </div>
-          </Reveal>
-        </div>
+            }
+          />
+        </Reveal>
       </PageSection>
 
       <PageSection tone="linen">
