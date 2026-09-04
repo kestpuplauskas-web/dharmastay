@@ -39,11 +39,17 @@ export function AvailabilityCalendar({
   range,
   onRangeChange,
   className,
+  compact = false,
+  action,
 }: {
   occupied: OccupiedRange[];
   range: DateRange | undefined;
   onRangeChange: (range: DateRange | undefined) => void;
   className?: string;
+  /** Sumažinta versija: mažesni laukai ir ląstelės. */
+  compact?: boolean;
+  /** Papildomas veiksmas (pvz. „Rezervuoti“ mygtukas) kalendoriaus apačioje. */
+  action?: React.ReactNode;
 }) {
   const today = useMemo(startOfToday, []);
   const locale = useLocale();
@@ -66,11 +72,17 @@ export function AvailabilityCalendar({
     range?.from && range?.to ? differenceInCalendarDays(range.to, range.from) : 0;
 
   return (
-    <div className={cn("rounded-md bg-warm-white p-6 shadow-soft sm:p-8", className)}>
+    <div
+      className={cn(
+        "rounded-md bg-warm-white shadow-soft",
+        compact ? "p-4 sm:p-5" : "p-6 sm:p-8",
+        className,
+      )}
+    >
       <div className="flex items-start gap-4">
         <Enso className="mt-1 hidden h-8 w-8 shrink-0 text-sage sm:block" />
         <div>
-          <h2 className="font-display text-2xl font-medium text-ink">
+          <h2 className={cn("font-display font-medium text-ink", compact ? "text-xl" : "text-2xl")}>
             {common.stays.availabilityTitle}
           </h2>
           <p className="mt-2 max-w-prose text-sm leading-relaxed text-stone">
@@ -79,7 +91,7 @@ export function AvailabilityCalendar({
         </div>
       </div>
 
-      <div className="mt-6 flex justify-center">
+      <div className={cn("flex justify-center", compact ? "mt-4" : "mt-6")}>
         <Calendar
           mode="range"
           locale={locale === "en" ? enGB : lt}
@@ -93,7 +105,10 @@ export function AvailabilityCalendar({
           modifiers={{ occupied: occupiedMatchers }}
           modifiersClassNames={{ occupied: "day-occupied" }}
           startMonth={today}
-          className="pointer-events-auto w-full [--cell-size:2.6rem] sm:[--cell-size:2.9rem]"
+          className={cn(
+            "pointer-events-auto w-full",
+            compact ? "[--cell-size:2.2rem] sm:[--cell-size:2.4rem]" : "[--cell-size:2.6rem] sm:[--cell-size:2.9rem]",
+          )}
           classNames={{
             root: "w-full",
             month: "flex w-full flex-col gap-4",
@@ -103,20 +118,27 @@ export function AvailabilityCalendar({
         />
       </div>
 
-      <div className="mt-6 grid gap-3 border-t border-border pt-5 sm:grid-cols-2">
+      <div
+        className={cn(
+          "grid gap-3 border-t border-border sm:grid-cols-2",
+          compact ? "mt-4 pt-4" : "mt-6 pt-5",
+        )}
+      >
         <div>
           <p className="label-caps text-stone/80">{common.stays.checkin}</p>
-          <p className="mt-1 font-display text-lg font-medium text-ink">
+          <p className={cn("mt-1 font-display font-medium text-ink", compact ? "text-base" : "text-lg")}>
             {range?.from ? format(range.from, "yyyy-MM-dd") : "—"}
           </p>
         </div>
         <div>
           <p className="label-caps text-stone/80">{common.stays.checkout}</p>
-          <p className="mt-1 font-display text-lg font-medium text-ink">
+          <p className={cn("mt-1 font-display font-medium text-ink", compact ? "text-base" : "text-lg")}>
             {range?.to ? format(range.to, "yyyy-MM-dd") : "—"}
           </p>
         </div>
       </div>
+
+      {action ? <div className={compact ? "mt-4" : "mt-5"}>{action}</div> : null}
 
       <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-stone">
         <span className="flex items-center gap-2">
