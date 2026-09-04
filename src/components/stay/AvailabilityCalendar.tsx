@@ -72,11 +72,17 @@ export function AvailabilityCalendar({
     range?.from && range?.to ? differenceInCalendarDays(range.to, range.from) : 0;
 
   return (
-    <div className={cn("rounded-md bg-warm-white p-6 shadow-soft sm:p-8", className)}>
+    <div
+      className={cn(
+        "rounded-md bg-warm-white shadow-soft",
+        compact ? "p-4 sm:p-5" : "p-6 sm:p-8",
+        className,
+      )}
+    >
       <div className="flex items-start gap-4">
         <Enso className="mt-1 hidden h-8 w-8 shrink-0 text-sage sm:block" />
         <div>
-          <h2 className="font-display text-2xl font-medium text-ink">
+          <h2 className={cn("font-display font-medium text-ink", compact ? "text-xl" : "text-2xl")}>
             {common.stays.availabilityTitle}
           </h2>
           <p className="mt-2 max-w-prose text-sm leading-relaxed text-stone">
@@ -85,7 +91,7 @@ export function AvailabilityCalendar({
         </div>
       </div>
 
-      <div className="mt-6 flex justify-center">
+      <div className={cn("flex justify-center", compact ? "mt-4" : "mt-6")}>
         <Calendar
           mode="range"
           locale={locale === "en" ? enGB : lt}
@@ -99,7 +105,10 @@ export function AvailabilityCalendar({
           modifiers={{ occupied: occupiedMatchers }}
           modifiersClassNames={{ occupied: "day-occupied" }}
           startMonth={today}
-          className="pointer-events-auto w-full [--cell-size:2.6rem] sm:[--cell-size:2.9rem]"
+          className={cn(
+            "pointer-events-auto w-full",
+            compact ? "[--cell-size:2.2rem] sm:[--cell-size:2.4rem]" : "[--cell-size:2.6rem] sm:[--cell-size:2.9rem]",
+          )}
           classNames={{
             root: "w-full",
             month: "flex w-full flex-col gap-4",
