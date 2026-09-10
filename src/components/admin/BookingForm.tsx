@@ -117,7 +117,7 @@ export function BookingForm({
 }: {
   properties: Property[];
   initial: BookingFormValues;
-  onSubmit: (v: BookingFormValues) => void;
+  onSubmit: (v: BookingFormValues, rooms: RoomAllocation[]) => void;
   submitting?: boolean;
   bookingId?: string;
 }) {
