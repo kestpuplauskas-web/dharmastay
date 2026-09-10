@@ -444,6 +444,133 @@ export function BookingForm({
               }
             />
           </div>
+
+          {isNew && datesValid && (
+            <div className="rounded-lg border p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <div className="text-sm font-medium">{tr("bookings.form.roomsTitle")}</div>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {tr("bookings.form.roomsHint")}
+                  </p>
+                </div>
+                {manualRooms && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-7"
+                    onClick={() => setManualRooms(false)}
+                  >
+                    {tr("bookings.form.roomsAuto")}
+                  </Button>
+                )}
+              </div>
+
+              {candidates.length === 0 ? (
+                <p className="mt-3 text-sm text-muted-foreground">
+                  {tr("bookings.form.roomsNoFree")}
+                </p>
+              ) : (
+                <div className="mt-3 grid gap-2">
+                  {roomIds.map((id, index) => {
+                    const others = roomIds.filter((_, i) => i !== index);
+                    const options = properties.filter(
+                      (p) =>
+                        !others.includes(p.id) && (p.id === id || freeIds.includes(p.id)),
+                    );
+                    const alloc = allocation[index];
+                    return (
+                      <div key={`${id}-${index}`} className="flex flex-wrap items-center gap-2">
+                        <Select
+                          value={id || undefined}
+                          onValueChange={(val) => {
+                            setManualRooms(true);
+                            setRoomIds((cur) => cur.map((r, i) => (i === index ? val : r)));
+                          }}
+                        >
+                          <SelectTrigger className="w-full sm:w-72">
+                            <SelectValue placeholder={tr("bookings.form.selectProperty")} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {options.map((p) => (
+                              <SelectItem key={p.id} value={p.id}>
+                                {p.name} · {tr("bookings.form.roomsCapacity", { count: capacityOf(p) })}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <span className="text-xs text-muted-foreground">
+                          {tr("bookings.form.roomsGuests", {
+                            adults: alloc?.adults ?? 0,
+                            children: alloc?.children ?? 0,
+                          })}
+                        </span>
+                        <span className="ml-auto text-sm tabular-nums">
+                          {stayTotalFor(id).toFixed(2)} €
+                        </span>
+                        {roomIds.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="h-7"
+                            onClick={() => {
+                              setManualRooms(true);
+                              setRoomIds((cur) => cur.filter((_, i) => i !== index));
+                            }}
+                          >
+                            {tr("bookings.form.roomsRemove")}
+                          </Button>
+                        )}
+                      </div>
+                    );
+                  })}
+
+                  {(() => {
+                    const free = candidates.filter((c) => !roomIds.includes(c.id));
+                    if (free.length === 0) return null;
+                    return (
+                      <div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="h-7"
+                          onClick={() => {
+                            setManualRooms(true);
+                            setRoomIds((cur) => [...cur, free[0]!.id]);
+                          }}
+                        >
+                          {tr("bookings.form.roomsAdd")}
+                        </Button>
+                      </div>
+                    );
+                  })()}
+
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-t pt-2 text-xs text-muted-foreground">
+                    <span>
+                      {tr("bookings.form.roomsCapacityTotal", {
+                        capacity: selectedCapacity,
+                        guests: guestsToPlace,
+                      })}
+                    </span>
+                    {multiRoom && (
+                      <span className="text-sm font-medium text-foreground tabular-nums">
+                        {tr("bookings.form.roomsTotal", { amount: roomsTotal.toFixed(2) })}
+                      </span>
+                    )}
+                  </div>
+
+                  {capacityShort && (
+                    <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                      {tr("bookings.form.roomsShort")}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
 
