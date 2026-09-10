@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { format, parse } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -13,6 +13,7 @@ import {
   BOOKING_SOURCE_VALUES,
   checkBookingConflicts,
   listOccupiedRanges,
+  listFreePropertyIds,
   type BookingInput,
 } from "@/lib/bookings.functions";
 import { DateRangePicker } from "@/components/DateRangePicker";
@@ -36,6 +37,15 @@ import {
 } from "@/components/ui/select";
 import { EXTRA_CALC_LABEL_KEYS, priceForNights } from "@/lib/properties";
 import { extraLineTotal, nightsBetweenDates, type ExtraCalcKind } from "@/lib/booking-extras";
+import {
+  distributeGuests,
+  suggestRooms,
+  totalCapacity,
+  type RoomAllocation,
+  type RoomCandidate,
+} from "@/lib/room-allocation";
+
+export type { RoomAllocation } from "@/lib/room-allocation";
 
 export type BookingFormValues = Omit<BookingInput, "source" | "status"> & {
   source: (typeof BOOKING_SOURCE_VALUES)[number];
@@ -117,7 +127,7 @@ export function BookingForm({
 }: {
   properties: Property[];
   initial: BookingFormValues;
-  onSubmit: (v: BookingFormValues) => void;
+  onSubmit: (v: BookingFormValues, rooms: RoomAllocation[]) => void;
   submitting?: boolean;
   bookingId?: string;
 }) {
@@ -181,6 +191,64 @@ export function BookingForm({
     return out;
   });
 
+  // --- Kambarių parinkimas pagal svečių skaičių (tik naujai rezervacijai) ---
+  const isNew = !bookingId;
+  const datesValid = Boolean(v.date_from && v.date_to && v.date_to > v.date_from);
+  const fetchFreeIds = useServerFn(listFreePropertyIds);
+  const { data: freeIds = [] } = useQuery({
+    queryKey: ["booking-free-props", v.date_from, v.date_to, bookingId ?? ""],
+    enabled: isNew && datesValid,
+    queryFn: () =>
+      fetchFreeIds({
+        data: {
+          date_from: v.date_from,
+          date_to: v.date_to,
+          ...(bookingId ? { excludeId: bookingId } : {}),
+        },
+      }),
+  });
+
+  const capacityOf = (p: Property) => Math.max(1, Number(p.maxGuests) || 1);
+  const candidates: RoomCandidate[] = properties
+    .filter((p) => freeIds.includes(p.id))
+    .map((p) => ({ id: p.id, name: p.name, capacity: capacityOf(p) }));
+
+  const [roomIds, setRoomIds] = useState<string[]>(() =>
+    initial.property_id ? [initial.property_id] : [],
+  );
+  const [manualRooms, setManualRooms] = useState(false);
+  const guestsToPlace = v.adults_count + v.children_count;
+  const freeKey = freeIds.join(",");
+
+  useEffect(() => {
+    if (!isNew || manualRooms || !datesValid || candidates.length === 0) return;
+    const suggested = suggestRooms(candidates, guestsToPlace);
+    if (suggested.length === 0) return;
+    setRoomIds((current) =>
+      current.join(",") === suggested.join(",") ? current : suggested,
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isNew, manualRooms, datesValid, guestsToPlace, freeKey]);
+
+  useEffect(() => {
+    if (!isNew) return;
+    const first = roomIds[0];
+    if (first && first !== v.property_id) {
+      setV((s) => recalcRef.current({ ...s, property_id: first, extras: [] }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isNew, roomIds.join(",")]);
+
+  const roomObjects: RoomCandidate[] = roomIds
+    .map((id) => {
+      const p = properties.find((x) => x.id === id);
+      return p ? { id: p.id, name: p.name, capacity: capacityOf(p) } : null;
+    })
+    .filter(Boolean) as RoomCandidate[];
+  const selectedCapacity = totalCapacity(roomObjects);
+  const capacityShort = isNew && guestsToPlace > selectedCapacity;
+  const multiRoom = isNew && roomIds.length > 1;
+
   const selectedProperty = properties.find((p) => p.id === v.property_id);
   const availableExtras = selectedProperty?.extraServices ?? [];
   const nights = nightsBetweenDates(v.date_from, v.date_to);
@@ -206,7 +274,36 @@ export function BookingForm({
     };
   };
 
+  const recalcRef = useRef(recalc);
+  recalcRef.current = recalc;
+
   const totals = computeTotals(v);
+
+  const stayTotalFor = (propertyId: string) => {
+    const p = properties.find((x) => x.id === propertyId);
+    if (!p || nights <= 0) return 0;
+    const r = priceForNights(
+      { pricePerNight: p.pricePerNight, priceTiers: p.priceTiers ?? [] },
+      nights,
+    );
+    return Number((r.total || 0).toFixed(2));
+  };
+
+  const allocation = distributeGuests(
+    roomObjects,
+    v.adults_count,
+    v.children_count,
+    v.infants_count,
+  );
+  const roomsPayload: RoomAllocation[] = allocation.map((a, i) => ({
+    ...a,
+    total_amount: Number(
+      (stayTotalFor(a.property_id) + (i === 0 ? (v.extras_total ?? 0) : 0)).toFixed(2),
+    ),
+  }));
+  const roomsTotal = Number(
+    roomsPayload.reduce((s, r) => s + r.total_amount, 0).toFixed(2),
+  );
 
   const toggleExtra = (name: string, checked: boolean) =>
     setV((s) =>
@@ -222,11 +319,22 @@ export function BookingForm({
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        if (hasConflict) return;
+        if (hasConflict || capacityShort) return;
         const totals = {
           total_guests: v.adults_count + v.children_count + v.infants_count,
           guests: v.adults_count + v.children_count + v.infants_count,
         };
+        const rooms: RoomAllocation[] = multiRoom
+          ? roomsPayload
+          : [
+              {
+                property_id: v.property_id,
+                adults: v.adults_count,
+                children: v.children_count,
+                infants: v.infants_count,
+                total_amount: v.total_amount,
+              },
+            ];
         onSubmit(
           v.client_type === "company"
             ? {
@@ -243,6 +351,7 @@ export function BookingForm({
                 is_vat_payer: false,
                 vat_number: "",
               },
+          rooms,
         );
       }}
       className="mx-auto max-w-4xl space-y-6"
@@ -345,6 +454,133 @@ export function BookingForm({
               }
             />
           </div>
+
+          {isNew && datesValid && (
+            <div className="rounded-lg border p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <div className="text-sm font-medium">{tr("bookings.form.roomsTitle")}</div>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {tr("bookings.form.roomsHint")}
+                  </p>
+                </div>
+                {manualRooms && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-7"
+                    onClick={() => setManualRooms(false)}
+                  >
+                    {tr("bookings.form.roomsAuto")}
+                  </Button>
+                )}
+              </div>
+
+              {candidates.length === 0 ? (
+                <p className="mt-3 text-sm text-muted-foreground">
+                  {tr("bookings.form.roomsNoFree")}
+                </p>
+              ) : (
+                <div className="mt-3 grid gap-2">
+                  {roomIds.map((id, index) => {
+                    const others = roomIds.filter((_, i) => i !== index);
+                    const options = properties.filter(
+                      (p) =>
+                        !others.includes(p.id) && (p.id === id || freeIds.includes(p.id)),
+                    );
+                    const alloc = allocation[index];
+                    return (
+                      <div key={`${id}-${index}`} className="flex flex-wrap items-center gap-2">
+                        <Select
+                          value={id || undefined}
+                          onValueChange={(val) => {
+                            setManualRooms(true);
+                            setRoomIds((cur) => cur.map((r, i) => (i === index ? val : r)));
+                          }}
+                        >
+                          <SelectTrigger className="w-full sm:w-72">
+                            <SelectValue placeholder={tr("bookings.form.selectProperty")} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {options.map((p) => (
+                              <SelectItem key={p.id} value={p.id}>
+                                {p.name} · {tr("bookings.form.roomsCapacity", { count: capacityOf(p) })}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <span className="text-xs text-muted-foreground">
+                          {tr("bookings.form.roomsGuests", {
+                            adults: alloc?.adults ?? 0,
+                            children: alloc?.children ?? 0,
+                          })}
+                        </span>
+                        <span className="ml-auto text-sm tabular-nums">
+                          {stayTotalFor(id).toFixed(2)} €
+                        </span>
+                        {roomIds.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="h-7"
+                            onClick={() => {
+                              setManualRooms(true);
+                              setRoomIds((cur) => cur.filter((_, i) => i !== index));
+                            }}
+                          >
+                            {tr("bookings.form.roomsRemove")}
+                          </Button>
+                        )}
+                      </div>
+                    );
+                  })}
+
+                  {(() => {
+                    const free = candidates.filter((c) => !roomIds.includes(c.id));
+                    if (free.length === 0) return null;
+                    return (
+                      <div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="h-7"
+                          onClick={() => {
+                            setManualRooms(true);
+                            setRoomIds((cur) => [...cur, free[0]!.id]);
+                          }}
+                        >
+                          {tr("bookings.form.roomsAdd")}
+                        </Button>
+                      </div>
+                    );
+                  })()}
+
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-t pt-2 text-xs text-muted-foreground">
+                    <span>
+                      {tr("bookings.form.roomsCapacityTotal", {
+                        capacity: selectedCapacity,
+                        guests: guestsToPlace,
+                      })}
+                    </span>
+                    {multiRoom && (
+                      <span className="text-sm font-medium text-foreground tabular-nums">
+                        {tr("bookings.form.roomsTotal", { amount: roomsTotal.toFixed(2) })}
+                      </span>
+                    )}
+                  </div>
+
+                  {capacityShort && (
+                    <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                      {tr("bookings.form.roomsShort")}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -641,7 +877,7 @@ export function BookingForm({
           >
             {tr("bookings.form.cancel")}
           </Button>
-          <Button type="submit" className="w-full sm:w-auto" disabled={submitting || hasConflict}>
+          <Button type="submit" className="w-full sm:w-auto" disabled={submitting || hasConflict || capacityShort}>
             {submitting ? tr("bookings.form.saving") : tr("bookings.form.submit")}
           </Button>
         </div>
