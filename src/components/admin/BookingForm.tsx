@@ -264,7 +264,36 @@ export function BookingForm({
     };
   };
 
+  const recalcRef = useRef(recalc);
+  recalcRef.current = recalc;
+
   const totals = computeTotals(v);
+
+  const stayTotalFor = (propertyId: string) => {
+    const p = properties.find((x) => x.id === propertyId);
+    if (!p || nights <= 0) return 0;
+    const r = priceForNights(
+      { pricePerNight: p.pricePerNight, priceTiers: p.priceTiers ?? [] },
+      nights,
+    );
+    return Number((r.total || 0).toFixed(2));
+  };
+
+  const allocation = distributeGuests(
+    roomObjects,
+    v.adults_count,
+    v.children_count,
+    v.infants_count,
+  );
+  const roomsPayload: RoomAllocation[] = allocation.map((a, i) => ({
+    ...a,
+    total_amount: Number(
+      (stayTotalFor(a.property_id) + (i === 0 ? (v.extras_total ?? 0) : 0)).toFixed(2),
+    ),
+  }));
+  const roomsTotal = Number(
+    roomsPayload.reduce((s, r) => s + r.total_amount, 0).toFixed(2),
+  );
 
   const toggleExtra = (name: string, checked: boolean) =>
     setV((s) =>
