@@ -181,6 +181,64 @@ export function BookingForm({
     return out;
   });
 
+  // --- Kambarių parinkimas pagal svečių skaičių (tik naujai rezervacijai) ---
+  const isNew = !bookingId;
+  const datesValid = Boolean(v.date_from && v.date_to && v.date_to > v.date_from);
+  const fetchFreeIds = useServerFn(listFreePropertyIds);
+  const { data: freeIds = [] } = useQuery({
+    queryKey: ["booking-free-props", v.date_from, v.date_to, bookingId ?? ""],
+    enabled: isNew && datesValid,
+    queryFn: () =>
+      fetchFreeIds({
+        data: {
+          date_from: v.date_from,
+          date_to: v.date_to,
+          ...(bookingId ? { excludeId: bookingId } : {}),
+        },
+      }),
+  });
+
+  const capacityOf = (p: Property) => Math.max(1, Number(p.maxGuests) || 1);
+  const candidates: RoomCandidate[] = properties
+    .filter((p) => freeIds.includes(p.id))
+    .map((p) => ({ id: p.id, name: p.name, capacity: capacityOf(p) }));
+
+  const [roomIds, setRoomIds] = useState<string[]>(() =>
+    initial.property_id ? [initial.property_id] : [],
+  );
+  const [manualRooms, setManualRooms] = useState(false);
+  const guestsToPlace = v.adults_count + v.children_count;
+  const freeKey = freeIds.join(",");
+
+  useEffect(() => {
+    if (!isNew || manualRooms || !datesValid || candidates.length === 0) return;
+    const suggested = suggestRooms(candidates, guestsToPlace);
+    if (suggested.length === 0) return;
+    setRoomIds((current) =>
+      current.join(",") === suggested.join(",") ? current : suggested,
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isNew, manualRooms, datesValid, guestsToPlace, freeKey]);
+
+  useEffect(() => {
+    if (!isNew) return;
+    const first = roomIds[0];
+    if (first && first !== v.property_id) {
+      setV((s) => recalcRef.current({ ...s, property_id: first, extras: [] }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isNew, roomIds.join(",")]);
+
+  const roomObjects: RoomCandidate[] = roomIds
+    .map((id) => {
+      const p = properties.find((x) => x.id === id);
+      return p ? { id: p.id, name: p.name, capacity: capacityOf(p) } : null;
+    })
+    .filter(Boolean) as RoomCandidate[];
+  const selectedCapacity = totalCapacity(roomObjects);
+  const capacityShort = isNew && guestsToPlace > selectedCapacity;
+  const multiRoom = isNew && roomIds.length > 1;
+
   const selectedProperty = properties.find((p) => p.id === v.property_id);
   const availableExtras = selectedProperty?.extraServices ?? [];
   const nights = nightsBetweenDates(v.date_from, v.date_to);
