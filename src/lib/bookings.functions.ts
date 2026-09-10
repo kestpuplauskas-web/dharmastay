@@ -219,6 +219,39 @@ export const checkBookingConflicts = createServerFn({ method: "POST" })
     return rows ?? [];
   });
 
+/** Grąžina objektų id, kurie nurodytu laikotarpiu neturi rezervacijų. */
+export const listFreePropertyIds = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) =>
+    z
+      .object({
+        date_from: z.string().min(1),
+        date_to: z.string().min(1),
+        excludeId: z.string().uuid().optional(),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await ensureAdmin(context);
+    let q = context.supabase
+      .from("bookings")
+      .select("id, property_id")
+      .neq("status", "cancelled")
+      .lt("date_from", data.date_to)
+      .gt("date_to", data.date_from);
+    if (data.excludeId) q = q.neq("id", data.excludeId);
+    const { data: rows, error } = await q;
+    if (error) throw new Error(error.message);
+
+    const busy = new Set((rows ?? []).map((r) => String(r.property_id)));
+    const { data: props, error: propsError } = await context.supabase
+      .from("properties")
+      .select("id")
+      .eq("is_active", true);
+    if (propsError) throw new Error(propsError.message);
+    return (props ?? []).map((p) => String(p.id)).filter((id) => !busy.has(id));
+  });
+
 export const listOccupiedRanges = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) =>
