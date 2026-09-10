@@ -56,7 +56,9 @@ export function DateRangePicker({
   const rangeCrossesDisabled = (from: Date, to: Date) => {
     const a = startOfDay(from);
     const b = startOfDay(to);
-    for (let d = new Date(a); d <= b; d.setDate(d.getDate() + 1)) {
+    // Pusiau atviras intervalas [from, to) — išvykimo diena netikrinama,
+    // nes tą naktį niekas neapsistoja (leidžiama tos pačios dienos apyvarta).
+    for (let d = new Date(a); d < b; d.setDate(d.getDate() + 1)) {
       if (disabledKeys.has(format(d, "yyyy-MM-dd"))) return true;
     }
     return false;
@@ -133,6 +135,10 @@ export function DateRangePicker({
           locale={dateLocale}
           disabled={(d) => {
             if (!allowPast && d < today) return true;
+            // Renkam išvykimo (antrą) datą — užimtos dienos leistinos kaip
+            // išvykimo riba (tą naktį niekas negyvena). Tikrąjį persidengimą
+            // su užimtomis naktimis patikrina rangeCrossesDisabled handleSelect'e.
+            if (value.from && !value.to) return false;
             return disabledKeys.has(format(startOfDay(d), "yyyy-MM-dd"));
           }}
           initialFocus
