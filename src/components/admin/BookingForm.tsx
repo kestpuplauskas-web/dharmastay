@@ -309,11 +309,22 @@ export function BookingForm({
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        if (hasConflict) return;
+        if (hasConflict || capacityShort) return;
         const totals = {
           total_guests: v.adults_count + v.children_count + v.infants_count,
           guests: v.adults_count + v.children_count + v.infants_count,
         };
+        const rooms: RoomAllocation[] = multiRoom
+          ? roomsPayload
+          : [
+              {
+                property_id: v.property_id,
+                adults: v.adults_count,
+                children: v.children_count,
+                infants: v.infants_count,
+                total_amount: v.total_amount,
+              },
+            ];
         onSubmit(
           v.client_type === "company"
             ? {
@@ -330,6 +341,7 @@ export function BookingForm({
                 is_vat_payer: false,
                 vat_number: "",
               },
+          rooms,
         );
       }}
       className="mx-auto max-w-4xl space-y-6"
