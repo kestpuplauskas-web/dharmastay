@@ -391,7 +391,6 @@ export function BookingForm({
               <Input
                 id="email"
                 type="email"
-                required
                 placeholder={tr("bookings.form.emailPlaceholder")}
                 value={v.customer_email}
                 onChange={(e) => set("customer_email", e.target.value)}
@@ -401,7 +400,6 @@ export function BookingForm({
               <Label htmlFor="phone">{tr("bookings.form.phone")}</Label>
               <Input
                 id="phone"
-                required
                 placeholder={tr("bookings.form.phonePlaceholder")}
                 value={v.customer_phone}
                 onChange={(e) => set("customer_phone", e.target.value)}

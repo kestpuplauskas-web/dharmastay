@@ -89,7 +89,6 @@ const bookingInput = z.object({
   } else if (!v.customer_name) {
     ctx.addIssue({ code: "custom", path: ["customer_name"], message: "Vardas Pavardė privalomas" });
   }
-  if (!v.customer_email) ctx.addIssue({ code: "custom", path: ["customer_email"], message: "El. paštas privalomas" });
 });
 
 export type BookingInput = z.infer<typeof bookingInput>;
