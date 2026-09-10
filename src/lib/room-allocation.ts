@@ -67,6 +67,8 @@ export function distributeGuests(
   });
 }
 
+export type RoomAllocation = RoomGuests & { total_amount: number };
+
 export function totalCapacity(rooms: RoomCandidate[]): number {
   return rooms.reduce((s, r) => s + r.capacity, 0);
 }

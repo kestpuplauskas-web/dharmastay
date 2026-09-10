@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { format, parse } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -13,6 +13,7 @@ import {
   BOOKING_SOURCE_VALUES,
   checkBookingConflicts,
   listOccupiedRanges,
+  listFreePropertyIds,
   type BookingInput,
 } from "@/lib/bookings.functions";
 import { DateRangePicker } from "@/components/DateRangePicker";
@@ -36,6 +37,15 @@ import {
 } from "@/components/ui/select";
 import { EXTRA_CALC_LABEL_KEYS, priceForNights } from "@/lib/properties";
 import { extraLineTotal, nightsBetweenDates, type ExtraCalcKind } from "@/lib/booking-extras";
+import {
+  distributeGuests,
+  suggestRooms,
+  totalCapacity,
+  type RoomAllocation,
+  type RoomCandidate,
+} from "@/lib/room-allocation";
+
+export type { RoomAllocation } from "@/lib/room-allocation";
 
 export type BookingFormValues = Omit<BookingInput, "source" | "status"> & {
   source: (typeof BOOKING_SOURCE_VALUES)[number];
@@ -867,7 +877,7 @@ export function BookingForm({
           >
             {tr("bookings.form.cancel")}
           </Button>
-          <Button type="submit" className="w-full sm:w-auto" disabled={submitting || hasConflict}>
+          <Button type="submit" className="w-full sm:w-auto" disabled={submitting || hasConflict || capacityShort}>
             {submitting ? tr("bookings.form.saving") : tr("bookings.form.submit")}
           </Button>
         </div>
