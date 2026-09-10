@@ -8,6 +8,7 @@ import {
   BookingForm,
   defaultBookingForm,
   type BookingFormValues,
+  type RoomAllocation,
 } from "@/components/admin/BookingForm";
 
 type NewBookingSearch = {
@@ -40,7 +41,35 @@ function NewBookingPage() {
   const navigate = useNavigate();
   const { data: props = [] } = useQuery({ queryKey: ["admin-props"], queryFn: () => fetchProps() });
   const m = useMutation({
-    mutationFn: (v: BookingFormValues) => create({ data: v }),
+    mutationFn: async ({ v, rooms }: { v: BookingFormValues; rooms: RoomAllocation[] }) => {
+      const list = rooms.length > 0 ? rooms : [
+        {
+          property_id: v.property_id,
+          adults: v.adults_count,
+          children: v.children_count,
+          infants: v.infants_count,
+          total_amount: v.total_amount,
+        },
+      ];
+      // Kiekvienam kambariui – atskira rezervacija su tuo pačiu klientu ir datomis.
+      for (const [index, room] of list.entries()) {
+        const guests = room.adults + room.children + room.infants;
+        await create({
+          data: {
+            ...v,
+            property_id: room.property_id,
+            adults_count: room.adults,
+            children_count: room.children,
+            infants_count: room.infants,
+            total_guests: Math.max(1, guests),
+            guests: Math.max(1, guests),
+            total_amount: room.total_amount,
+            extras: index === 0 ? v.extras : [],
+            extras_total: index === 0 ? v.extras_total : 0,
+          },
+        });
+      }
+    },
     onSuccess: () => navigate({ to: "/admin/bookings" }),
   });
   const base = defaultBookingForm(props);
@@ -58,7 +87,7 @@ function NewBookingPage() {
         key={`${initial.property_id}-${initial.date_from}-${initial.date_to}-${props.length}`}
         properties={props}
         initial={initial}
-        onSubmit={(v) => m.mutate(v)}
+        onSubmit={(v, rooms) => m.mutate({ v, rooms })}
         submitting={m.isPending}
       />
       {m.error && (
