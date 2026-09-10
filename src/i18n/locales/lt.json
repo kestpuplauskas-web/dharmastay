@@ -165,6 +165,8 @@
       "vatNumber": "PVM mokėtojo kodas *"
     },
     "found_one": "{{count}} rasta",
+    "found_few": "{{count}} rastos",
+    "found_many": "{{count}} rastų",
     "found_other": "{{count}} rastos",
     "from": "Nuo",
     "invoice": {
