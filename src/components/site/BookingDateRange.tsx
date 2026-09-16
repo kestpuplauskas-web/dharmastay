@@ -51,12 +51,10 @@ export function BookingDateRange({
     [occupied],
   );
 
-  // Pusiau atviras intervalas [from, to): išvykimo diena jau laisva naujam
-  // atvykimui — kalendoriuje ji žymima kaip pusė langelio.
+  // Pusiau atviras intervalas [from, to): nakvynės nuo atvykimo dienos iki
+  // paskutinės nakties; išvykimo diena (to) klientui rodoma kaip visiškai
+  // laisva, o atvykimo — kaip pilnai užimta (check-in nuo 15:00).
   const isNight = (d: Date) => occupiedMatchers.some((r) => d >= r.from && d < r.to);
-  const isArrivalDay = (d: Date) => occupiedMatchers.some((r) => d.getTime() === r.from.getTime());
-  const isDepartureDay = (d: Date) => occupiedMatchers.some((r) => d.getTime() === r.to.getTime());
-  const isFullDay = (d: Date) => occupiedMatchers.some((r) => d > r.from && d < r.to);
 
   const selected = useMemo<DateRange | undefined>(() => {
     const from = checkin ? parseApiDate(checkin) : null;
@@ -82,11 +80,9 @@ export function BookingDateRange({
         excludeDisabled
         min={1}
         disabled={[{ before: today }, isNight]}
-        modifiers={{ occupied: isFullDay, occStart: isArrivalDay, occEnd: isDepartureDay }}
+        modifiers={{ occupied: isNight }}
         modifiersClassNames={{
           occupied: "day-occupied",
-          occStart: "day-occ-start",
-          occEnd: "day-occ-end",
         }}
         startMonth={today}
         className="pointer-events-auto w-full [--cell-size:2.2rem] sm:[--cell-size:2.5rem]"
