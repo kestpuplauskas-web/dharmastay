@@ -56,6 +56,25 @@ export function BookingDateRange({
   // laisva, o atvykimo — kaip pilnai užimta (check-in nuo 15:00).
   const isNight = (d: Date) => occupiedMatchers.some((r) => d >= r.from && d < r.to);
 
+  const selectingEnd = Boolean(checkin && !checkout);
+  // Renkant išvykimo datą leidžiame pasirinkti užimtos rezervacijos atvykimo dieną.
+  const disabledDay = (d: Date) => (selectingEnd ? false : isNight(d));
+
+  const hasConflict = (from: Date, to: Date) => {
+    for (let d = new Date(from); d < to; d.setDate(d.getDate() + 1)) {
+      if (isNight(d)) return true;
+    }
+    return false;
+  };
+
+  const handleSelect = (range: DateRange | undefined) => {
+    if (range?.from && range?.to && hasConflict(range.from, range.to)) {
+      onChange(toApiDate(range.to), "");
+      return;
+    }
+    onChange(range?.from ? toApiDate(range.from) : "", range?.to ? toApiDate(range.to) : "");
+  };
+
   const selected = useMemo<DateRange | undefined>(() => {
     const from = checkin ? parseApiDate(checkin) : null;
     const to = checkout ? parseApiDate(checkout) : null;
@@ -74,12 +93,9 @@ export function BookingDateRange({
         weekStartsOn={1}
         numberOfMonths={1}
         selected={selected}
-        onSelect={(range) =>
-          onChange(range?.from ? toApiDate(range.from) : "", range?.to ? toApiDate(range.to) : "")
-        }
-        excludeDisabled
+        onSelect={handleSelect}
         min={1}
-        disabled={[{ before: today }, isNight]}
+        disabled={[{ before: today }, disabledDay]}
         modifiers={{ occupied: isNight }}
         modifiersClassNames={{
           occupied: "day-occupied",

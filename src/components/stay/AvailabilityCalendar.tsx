@@ -74,6 +74,26 @@ export function AvailabilityCalendar({
   // todėl klientinėje dalyje puslangelių žymėjimo nenaudojame.
   const isNight = (d: Date) => occupiedMatchers.some((r) => d >= r.from && d < r.to);
 
+  const selectingEnd = Boolean(range?.from && !range?.to);
+  // Renkant išvykimo datą leidžiame pasirinkti užimtos rezervacijos atvykimo
+  // dieną (išvykimas iki 11:00, naujas atvykimas nuo 15:00).
+  const disabledDay = (d: Date) => (selectingEnd ? false : isNight(d));
+
+  const hasConflict = (from: Date, to: Date) => {
+    for (let d = new Date(from); d < to; d.setDate(d.getDate() + 1)) {
+      if (isNight(d)) return true;
+    }
+    return false;
+  };
+
+  const handleSelect = (next: DateRange | undefined) => {
+    if (next?.from && next?.to && hasConflict(next.from, next.to)) {
+      onRangeChange({ from: next.to, to: undefined });
+      return;
+    }
+    onRangeChange(next);
+  };
+
   const nights =
     range?.from && range?.to ? differenceInCalendarDays(range.to, range.from) : 0;
 
@@ -104,10 +124,9 @@ export function AvailabilityCalendar({
           weekStartsOn={1}
           numberOfMonths={1}
           selected={range}
-          onSelect={onRangeChange}
-          excludeDisabled
+          onSelect={handleSelect}
           min={1}
-          disabled={[{ before: today }, isNight]}
+          disabled={[{ before: today }, disabledDay]}
           modifiers={{ occupied: isNight }}
           modifiersClassNames={{
             occupied: "day-occupied",
