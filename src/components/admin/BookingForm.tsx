@@ -378,9 +378,11 @@ export function BookingForm({
             <Label htmlFor="property">{tr("bookings.form.property")}</Label>
             <Select
               value={v.property_id || undefined}
-              onValueChange={(val) =>
-                setV((s) => recalc({ ...s, property_id: val, extras: [] }))
-              }
+              onValueChange={(val) => {
+                setRoomIds((ids) => (ids.length > 1 ? [val, ...ids.slice(1)] : [val]));
+                setV((s) => recalc({ ...s, property_id: val, extras: [] }));
+              }}
+
             >
               <SelectTrigger id="property" className="w-full">
                 <SelectValue placeholder={tr("bookings.form.selectProperty")} />
