@@ -83,7 +83,7 @@ export function ContactForm() {
   const formSchema = buildFormSchema(kontaktaiForm);
   const [values, setValues] = useState({ name: "", email: "", phone: "", message: "" });
   const [errors, setErrors] = useState<Errors>({});
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "failed" | "invalid">("idle");
 
   const set = (key: keyof typeof values) => (value: string) =>
     setValues((current) => ({ ...current, [key]: value }));
@@ -104,6 +104,7 @@ export function ContactForm() {
         if (key && !next[key]) next[key] = issue.message;
       }
       setErrors(next);
+      setStatus("invalid");
       return;
     }
     setErrors({});
