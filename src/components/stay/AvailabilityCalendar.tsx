@@ -68,6 +68,13 @@ export function AvailabilityCalendar({
     [occupied],
   );
 
+  // Pusiau atviras intervalas [from, to): nakvynės nuo atvykimo dienos
+  // iki paskutinės nakties; išvykimo diena (to) jau laisva naujam atvykimui.
+  const isNight = (d: Date) => occupiedMatchers.some((r) => d >= r.from && d < r.to);
+  const isArrivalDay = (d: Date) => occupiedMatchers.some((r) => d.getTime() === r.from.getTime());
+  const isDepartureDay = (d: Date) => occupiedMatchers.some((r) => d.getTime() === r.to.getTime());
+  const isFullDay = (d: Date) => occupiedMatchers.some((r) => d > r.from && d < r.to);
+
   const nights =
     range?.from && range?.to ? differenceInCalendarDays(range.to, range.from) : 0;
 
@@ -101,9 +108,13 @@ export function AvailabilityCalendar({
           onSelect={onRangeChange}
           excludeDisabled
           min={1}
-          disabled={[{ before: today }, ...occupiedMatchers]}
-          modifiers={{ occupied: occupiedMatchers }}
-          modifiersClassNames={{ occupied: "day-occupied" }}
+          disabled={[{ before: today }, isNight]}
+          modifiers={{ occupied: isFullDay, occStart: isArrivalDay, occEnd: isDepartureDay }}
+          modifiersClassNames={{
+            occupied: "day-occupied",
+            occStart: "day-occ-start",
+            occEnd: "day-occ-end",
+          }}
           startMonth={today}
           className={cn(
             "pointer-events-auto w-full",
