@@ -222,13 +222,24 @@ export function BookingForm({
 
   useEffect(() => {
     if (!isNew || manualRooms || !datesValid || candidates.length === 0) return;
-    const suggested = suggestRooms(candidates, guestsToPlace);
-    if (suggested.length === 0) return;
-    setRoomIds((current) =>
-      current.join(",") === suggested.join(",") ? current : suggested,
-    );
+    setRoomIds((current) => {
+      // Administratoriaus pasirinktas objektas visada lieka pirmas.
+      const chosen = candidates.find((c) => c.id === current[0]);
+      if (chosen) {
+        const missing = guestsToPlace - chosen.capacity;
+        if (missing <= 0) return current.length === 1 ? current : [chosen.id];
+        const rest = candidates.filter((c) => c.id !== chosen.id);
+        const extra = suggestRooms(rest, missing);
+        const next = [chosen.id, ...extra];
+        return current.join(",") === next.join(",") ? current : next;
+      }
+      const suggested = suggestRooms(candidates, guestsToPlace);
+      if (suggested.length === 0) return current;
+      return current.join(",") === suggested.join(",") ? current : suggested;
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNew, manualRooms, datesValid, guestsToPlace, freeKey]);
+
 
   useEffect(() => {
     if (!isNew) return;
@@ -367,9 +378,11 @@ export function BookingForm({
             <Label htmlFor="property">{tr("bookings.form.property")}</Label>
             <Select
               value={v.property_id || undefined}
-              onValueChange={(val) =>
-                setV((s) => recalc({ ...s, property_id: val, extras: [] }))
-              }
+              onValueChange={(val) => {
+                setRoomIds((ids) => (ids.length > 1 ? [val, ...ids.slice(1)] : [val]));
+                setV((s) => recalc({ ...s, property_id: val, extras: [] }));
+              }}
+
             >
               <SelectTrigger id="property" className="w-full">
                 <SelectValue placeholder={tr("bookings.form.selectProperty")} />
