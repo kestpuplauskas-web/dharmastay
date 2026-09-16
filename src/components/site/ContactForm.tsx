@@ -74,6 +74,7 @@ function Field({
  *  failure it offers the plain e-mail route instead of losing the message. */
 export function ContactForm() {
   const { kontaktaiForm } = useContent();
+  const locale = useLocale();
   const formSchema = buildFormSchema(kontaktaiForm);
   const [values, setValues] = useState({ name: "", email: "", phone: "", message: "" });
   const [errors, setErrors] = useState<Errors>({});
