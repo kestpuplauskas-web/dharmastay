@@ -102,22 +102,35 @@ export function ContactForm() {
     setErrors({});
     setStatus("sending");
 
+    // Žinutė pirmiausia įrašoma į administravimo dėžutę; el. laiškas — papildomas
+    // kanalas. Užtenka, kad pavyktų bent vienas kelias.
+    const payload = {
+      name: parsed.data.name,
+      email: parsed.data.email,
+      ...(parsed.data.phone ? { phone: parsed.data.phone } : {}),
+      message: parsed.data.message,
+    };
+
+    let stored = false;
     try {
-      const result = await sendContactMessageFn({
-        data: {
-          name: parsed.data.name,
-          email: parsed.data.email,
-          ...(parsed.data.phone ? { phone: parsed.data.phone } : {}),
-          message: parsed.data.message,
-        },
-      });
-      if (result.delivered) {
-        setStatus("sent");
-        setValues({ name: "", email: "", phone: "", message: "" });
-      } else {
-        setStatus("failed");
-      }
-    } catch {
+      await submitInquiry({ data: { ...payload, lang: locale } });
+      stored = true;
+    } catch (error) {
+      console.error("submitInquiry failed", error);
+    }
+
+    let mailed = false;
+    try {
+      const result = await sendContactMessageFn({ data: payload });
+      mailed = result?.delivered === true;
+    } catch (error) {
+      console.error("sendContactMessage failed", error);
+    }
+
+    if (stored || mailed) {
+      setStatus("sent");
+      setValues({ name: "", email: "", phone: "", message: "" });
+    } else {
       setStatus("failed");
     }
   };
