@@ -51,7 +51,7 @@ export function distributeGuests(
 ): RoomGuests[] {
   let adultsLeft = adults;
   let childrenLeft = children;
-  return rooms.map((room, index) => {
+  const result = rooms.map((room, index) => {
     const isLast = index === rooms.length - 1;
     const a = isLast ? adultsLeft : Math.min(room.capacity, adultsLeft);
     adultsLeft -= a;
