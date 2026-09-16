@@ -68,12 +68,11 @@ export function AvailabilityCalendar({
     [occupied],
   );
 
-  // Pusiau atviras intervalas [from, to): nakvynės nuo atvykimo dienos
-  // iki paskutinės nakties; išvykimo diena (to) jau laisva naujam atvykimui.
+  // Pusiau atviras intervalas [from, to): nakvynės nuo atvykimo dienos iki
+  // paskutinės nakties. Išvykimo diena (to) klientui rodoma kaip visiškai
+  // laisva, o atvykimo diena — kaip pilnai užimta (check-in nuo 15:00),
+  // todėl klientinėje dalyje puslangelių žymėjimo nenaudojame.
   const isNight = (d: Date) => occupiedMatchers.some((r) => d >= r.from && d < r.to);
-  const isArrivalDay = (d: Date) => occupiedMatchers.some((r) => d.getTime() === r.from.getTime());
-  const isDepartureDay = (d: Date) => occupiedMatchers.some((r) => d.getTime() === r.to.getTime());
-  const isFullDay = (d: Date) => occupiedMatchers.some((r) => d > r.from && d < r.to);
 
   const nights =
     range?.from && range?.to ? differenceInCalendarDays(range.to, range.from) : 0;
@@ -109,11 +108,9 @@ export function AvailabilityCalendar({
           excludeDisabled
           min={1}
           disabled={[{ before: today }, isNight]}
-          modifiers={{ occupied: isFullDay, occStart: isArrivalDay, occEnd: isDepartureDay }}
+          modifiers={{ occupied: isNight }}
           modifiersClassNames={{
             occupied: "day-occupied",
-            occStart: "day-occ-start",
-            occEnd: "day-occ-end",
           }}
           startMonth={today}
           className={cn(
