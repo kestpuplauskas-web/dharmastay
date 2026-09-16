@@ -361,7 +361,7 @@ export function BookingsGantt({
                   <div
                     className="absolute top-0 bottom-0 w-px bg-red-500 z-20 pointer-events-none"
                     style={{
-                      left: `calc(${labelColWidth}px + ((100% - ${labelColWidth}px) * ${todayIndex} / ${dayCount}))`,
+                      left: `calc(${labelColWidth}px + ((100% - ${labelColWidth}px) * ${todayIndex} / ${dayCount}) + ((100% - ${labelColWidth}px) / ${dayCount} / 2))`,
                     }}
                   />
                 )}
