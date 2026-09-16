@@ -52,9 +52,11 @@ export function BookingDateRange({
   );
 
   // Pusiau atviras intervalas [from, to): nakvynės nuo atvykimo dienos iki
-  // paskutinės nakties; išvykimo diena (to) klientui rodoma kaip visiškai
-  // laisva, o atvykimo — kaip pilnai užimta (check-in nuo 15:00).
+  // paskutinės nakties. Išvykimo diena (to) žymima puslangeliu: kairė pusė
+  // aktyvi (pasirenkama kaip išvykimas), dešinė — užimta (atvykimas nuo 15:00).
   const isNight = (d: Date) => occupiedMatchers.some((r) => d >= r.from && d < r.to);
+  const isDepartureDay = (d: Date) =>
+    !isNight(d) && occupiedMatchers.some((r) => d.getTime() === r.to.getTime());
 
   const selectingEnd = Boolean(checkin && !checkout);
   // Renkant išvykimo datą leidžiame pasirinkti užimtos rezervacijos atvykimo dieną.
