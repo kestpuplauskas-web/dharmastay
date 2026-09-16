@@ -314,12 +314,12 @@ function BookingsTable({ rows, loading, onDelete }: { rows: Row[]; loading: bool
                   </Badge>
                 </TableCell>
                 <TableCell className="font-mono text-xs">{b.booking_number ?? "—"}</TableCell>
+                <TableCell className="whitespace-nowrap">{b.date_from}{b.check_in_time ? ` ${b.check_in_time}` : ""}</TableCell>
+                <TableCell className="whitespace-nowrap">{b.date_to}{b.check_out_time ? ` ${b.check_out_time}` : ""}</TableCell>
                 <TableCell className="font-medium">{b.properties?.name ?? "—"}</TableCell>
                 <TableCell>{b.customer_name || "—"}</TableCell>
                 <TableCell>{b.customer_phone || "—"}</TableCell>
                 <TableCell className="text-sm">{b.customer_email || "—"}</TableCell>
-                <TableCell className="whitespace-nowrap">{b.date_from}{b.check_in_time ? ` ${b.check_in_time}` : ""}</TableCell>
-                <TableCell className="whitespace-nowrap">{b.date_to}{b.check_out_time ? ` ${b.check_out_time}` : ""}</TableCell>
                 <TableCell className="text-right">{durationDays(b.date_from, b.date_to)}</TableCell>
                 <TableCell className="text-right font-semibold text-primary">{Number(b.total_amount ?? 0).toFixed(2)}</TableCell>
                 <TableCell className="text-right">
