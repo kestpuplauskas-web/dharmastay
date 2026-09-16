@@ -195,7 +195,15 @@ export function ContactForm() {
             </a>
           </p>
         ) : null}
+        {status === "invalid" ? (
+          <p className="rounded-md bg-warm-white p-4 text-sm text-destructive">
+            {locale === "en"
+              ? "Please check the highlighted fields."
+              : "Patikrinkite pažymėtus laukus."}
+          </p>
+        ) : null}
       </div>
+
 
       <button
         type="submit"
