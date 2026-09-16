@@ -129,9 +129,10 @@ export function AvailabilityCalendar({
           onSelect={handleSelect}
           min={1}
           disabled={[{ before: today }, disabledDay]}
-          modifiers={{ occupied: isNight }}
+          modifiers={{ occupied: isNight, depart: isDepartureDay }}
           modifiersClassNames={{
             occupied: "day-occupied",
+            depart: "day-depart",
           }}
           startMonth={today}
           className={cn(

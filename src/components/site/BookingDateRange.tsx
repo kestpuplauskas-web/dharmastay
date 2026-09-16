@@ -98,9 +98,10 @@ export function BookingDateRange({
         onSelect={handleSelect}
         min={1}
         disabled={[{ before: today }, disabledDay]}
-        modifiers={{ occupied: isNight }}
+        modifiers={{ occupied: isNight, depart: isDepartureDay }}
         modifiersClassNames={{
           occupied: "day-occupied",
+          depart: "day-depart",
         }}
         startMonth={today}
         className="pointer-events-auto w-full [--cell-size:2.2rem] sm:[--cell-size:2.5rem]"
