@@ -316,6 +316,18 @@ export function BookingForm({
     roomsPayload.reduce((s, r) => s + r.total_amount, 0).toFixed(2),
   );
 
+  // Kai pasirinkta daugiau nei vienas kambarys, bendra suma = visų kambarių suma
+  useEffect(() => {
+    if (!multiRoom || manualTotal) return;
+    setV((s) => (s.total_amount === roomsTotal ? s : { ...s, total_amount: roomsTotal }));
+  }, [multiRoom, manualTotal, roomsTotal]);
+
+  const displayComputed = multiRoom ? roomsTotal : totals.computed;
+  const displayStay = multiRoom
+    ? Number((roomsTotal - (v.extras_total ?? 0)).toFixed(2))
+    : totals.stayTotal;
+
+
   const toggleExtra = (name: string, checked: boolean) =>
     setV((s) =>
       recalc({
