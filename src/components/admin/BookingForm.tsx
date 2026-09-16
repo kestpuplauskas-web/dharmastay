@@ -850,10 +850,11 @@ export function BookingForm({
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
               <span>
                 {tr("bookings.form.computed", {
-                  total: totals.computed.toFixed(2),
-                  stay: totals.stayTotal.toFixed(2),
+                  total: displayComputed.toFixed(2),
+                  stay: displayStay.toFixed(2),
                   nightly: Number(totals.nightly || 0).toFixed(2),
                   days: totals.days,
+
                   extras:
                     totals.extras_total > 0
                       ? tr("bookings.form.computedExtras", {
