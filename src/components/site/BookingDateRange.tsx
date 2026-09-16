@@ -67,6 +67,13 @@ export function BookingDateRange({
     return false;
   };
 
+  // Renkant išvykimą pirmoji kitos rezervacijos atvykimo diena yra teisėta
+  // apyvartos riba: iki 11:00 išvykstama, nuo 15:00 atvyksta kitas svečias.
+  const isTurnoverCheckout = (d: Date) => {
+    const from = checkin ? parseApiDate(checkin) : null;
+    return Boolean(selectingEnd && from && isNight(d) && d > from && !hasConflict(from, d));
+  };
+
   const handleSelect = (range: DateRange | undefined) => {
     if (range?.from && range?.to && hasConflict(range.from, range.to)) {
       onChange(toApiDate(range.to), "");
@@ -96,9 +103,13 @@ export function BookingDateRange({
         onSelect={handleSelect}
         min={1}
         disabled={[{ before: today }, disabledDay]}
-        modifiers={{ occupied: isNight }}
+        modifiers={{
+          occupied: (d) => isNight(d) && !isTurnoverCheckout(d),
+          turnoverCheckout: isTurnoverCheckout,
+        }}
         modifiersClassNames={{
           occupied: "day-occupied",
+          turnoverCheckout: "day-turnover-checkout",
         }}
         startMonth={today}
         className="pointer-events-auto w-full [--cell-size:2.2rem] sm:[--cell-size:2.5rem]"
