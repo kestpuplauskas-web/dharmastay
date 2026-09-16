@@ -51,15 +51,32 @@ function AdminLayout() {
     );
   }
 
-  const links = [
-    { to: "/admin", label: t("nav.dashboard"), icon: LayoutDashboard },
-    { to: "/admin/bookings", label: t("nav.bookings"), icon: Calendar },
-    { to: "/admin/properties", label: t("nav.properties"), icon: Home },
-    { to: "/admin/housekeeping", label: t("nav.housekeeping"), icon: Sparkles },
-    { to: "/admin/contracts", label: t("nav.contracts"), icon: FileText },
-    { to: "/admin/expenses", label: t("nav.expenses"), icon: Wallet },
-    { to: "/admin/settings", label: t("nav.settings"), icon: Settings2 },
-    { to: "/admin/content", label: t("nav.content"), icon: FileEdit },
+  // Sugrupuota nuo dažniausiai naudojamo iki rečiausiai.
+  const groups = [
+    {
+      label: t("nav.groupWorkspace"),
+      links: [
+        { to: "/admin", label: t("nav.dashboard"), icon: LayoutDashboard },
+        { to: "/admin/bookings", label: t("nav.bookings"), icon: Calendar },
+        { to: "/admin/housekeeping", label: t("nav.housekeeping"), icon: Sparkles },
+        { to: "/admin/inquiries", label: t("nav.inquiries"), icon: Inbox, badge: unreadCount },
+      ],
+    },
+    {
+      label: t("nav.groupManage"),
+      links: [
+        { to: "/admin/properties", label: t("nav.properties"), icon: Home },
+        { to: "/admin/expenses", label: t("nav.expenses"), icon: Wallet },
+        { to: "/admin/content", label: t("nav.content"), icon: FileEdit },
+      ],
+    },
+    {
+      label: t("nav.groupSettings"),
+      links: [
+        { to: "/admin/settings", label: t("nav.settings"), icon: Settings2 },
+        { to: "/admin/contracts", label: t("nav.contracts"), icon: FileText },
+      ],
+    },
   ] as const;
 
   const navContent = (
