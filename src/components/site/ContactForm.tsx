@@ -14,7 +14,7 @@ function buildFormSchema(kontaktaiForm: ReturnType<typeof useContent>["kontaktai
     message: z
       .string()
       .trim()
-      .min(10, kontaktaiForm.messageError)
+      .min(5, kontaktaiForm.messageError)
       .max(2000, kontaktaiForm.messageError),
   });
 }
@@ -40,8 +40,9 @@ function Field({
   multiline?: boolean;
   onChange: (value: string) => void;
 }) {
-  const className =
-    "w-full rounded-md border border-border bg-linen px-4 py-3 text-sm text-ink outline-none focus:border-sage";
+  const className = `w-full rounded-md border bg-linen px-4 py-3 text-sm text-ink outline-none focus:border-sage ${
+    error ? "border-destructive" : "border-border"
+  }`;
   return (
     <label className="block space-y-2">
       <span className="label-caps text-stone">{label}</span>
@@ -65,7 +66,11 @@ function Field({
           className={className}
         />
       )}
-      {error ? <span className="block text-xs text-stone">{error}</span> : null}
+      {error ? (
+        <span role="alert" className="block text-sm font-medium text-destructive">
+          {error}
+        </span>
+      ) : null}
     </label>
   );
 }
@@ -78,7 +83,7 @@ export function ContactForm() {
   const formSchema = buildFormSchema(kontaktaiForm);
   const [values, setValues] = useState({ name: "", email: "", phone: "", message: "" });
   const [errors, setErrors] = useState<Errors>({});
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "failed" | "invalid">("idle");
 
   const set = (key: keyof typeof values) => (value: string) =>
     setValues((current) => ({ ...current, [key]: value }));
@@ -99,6 +104,7 @@ export function ContactForm() {
         if (key && !next[key]) next[key] = issue.message;
       }
       setErrors(next);
+      setStatus("invalid");
       return;
     }
     setErrors({});
@@ -189,7 +195,15 @@ export function ContactForm() {
             </a>
           </p>
         ) : null}
+        {status === "invalid" ? (
+          <p className="rounded-md bg-warm-white p-4 text-sm text-destructive">
+            {locale === "en"
+              ? "Please check the highlighted fields."
+              : "Patikrinkite pažymėtus laukus."}
+          </p>
+        ) : null}
       </div>
+
 
       <button
         type="submit"
