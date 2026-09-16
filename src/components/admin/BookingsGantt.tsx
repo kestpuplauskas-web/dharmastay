@@ -426,9 +426,13 @@ export function BookingsGantt({
                 })}
 
                 {barDrag && barDrag.propertyId === p.id && (() => {
-                  const startIdx = Math.max(0, daysBetween(startDate, parseISO(barDrag.fromISO)));
-                  const endIdx = Math.min(dayCount - 1, daysBetween(startDate, parseISO(barDrag.toISO)));
+                  const rawStart = daysBetween(startDate, parseISO(barDrag.fromISO));
+                  const rawEnd = daysBetween(startDate, parseISO(barDrag.toISO));
+                  const startIdx = Math.max(0, rawStart);
+                  const endIdx = Math.min(dayCount - 1, rawEnd);
                   if (endIdx < startIdx) return null;
+                  const nCells = endIdx - startIdx + 1;
+                  const halfPct = 50 / nCells;
                   return (
                     <div
                       className={`m-1 px-2 py-1 rounded text-xs font-medium truncate border-2 border-dashed z-30 pointer-events-none ${
@@ -436,7 +440,12 @@ export function BookingsGantt({
                           ? "bg-red-500/30 border-red-600 text-red-900"
                           : "bg-primary/30 border-primary text-foreground"
                       }`}
-                      style={{ gridColumn: `${2 + startIdx} / ${2 + endIdx + 1}`, gridRow: 1 }}
+                      style={{
+                        gridColumn: `${2 + startIdx} / ${2 + endIdx + 1}`,
+                        gridRow: 1,
+                        marginLeft: rawStart < 0 ? undefined : `${halfPct}%`,
+                        marginRight: rawEnd > dayCount - 1 ? undefined : `${halfPct}%`,
+                      }}
                     >
                       {barDrag.fromISO} → {barDrag.toISO}
                     </div>
