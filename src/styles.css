@@ -361,6 +361,37 @@
   border-radius: 0.5rem;
 }
 
+/* Pusė langelio: atvykimo diena (dešinė pusė) ir išvykimo diena (kairė pusė).
+   Kai tą pačią dieną vienas svečias išvyksta, o kitas atvyksta, abi pusės
+   susijungia į pilnai užpildytą langelį. */
+[data-slot="calendar"] .day-occ-start button,
+[data-slot="calendar"] button.day-occ-start {
+  background-image: linear-gradient(
+    to left,
+    color-mix(in oklab, var(--color-stone) 22%, transparent) 50%,
+    transparent 50%
+  );
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+[data-slot="calendar"] .day-occ-end button,
+[data-slot="calendar"] button.day-occ-end {
+  background-image: linear-gradient(
+    to right,
+    color-mix(in oklab, var(--color-stone) 22%, transparent) 50%,
+    transparent 50%
+  );
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+[data-slot="calendar"] .day-occ-start.day-occ-end button,
+[data-slot="calendar"] button.day-occ-start.day-occ-end {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--color-stone) 22%, transparent) 50%, transparent 50%),
+    linear-gradient(to left, color-mix(in oklab, var(--color-stone) 22%, transparent) 50%, transparent 50%);
+  border-radius: 0.5rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
