@@ -198,7 +198,8 @@
     "notFound": "Nerasta.",
     "save": "Išsaugoti",
     "saving": "Saugoma…",
-    "search": "Ieškoti"
+    "search": "Ieškoti",
+    "error": "Įvyko klaida"
   },
   "content": {
     "fields": {

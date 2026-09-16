@@ -196,7 +196,8 @@
     "notFound": "Not found.",
     "save": "Save",
     "saving": "Saving…",
-    "search": "Search"
+    "search": "Search",
+    "error": "Something went wrong"
   },
   "content": {
     "fields": {
