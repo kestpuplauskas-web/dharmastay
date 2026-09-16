@@ -93,12 +93,9 @@ export function BookingDateRange({
         weekStartsOn={1}
         numberOfMonths={1}
         selected={selected}
-        onSelect={(range) =>
-          onChange(range?.from ? toApiDate(range.from) : "", range?.to ? toApiDate(range.to) : "")
-        }
-        excludeDisabled
+        onSelect={handleSelect}
         min={1}
-        disabled={[{ before: today }, isNight]}
+        disabled={[{ before: today }, disabledDay]}
         modifiers={{ occupied: isNight }}
         modifiersClassNames={{
           occupied: "day-occupied",
