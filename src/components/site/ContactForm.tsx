@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { z } from "zod";
 
-import { useContent } from "@/content";
+import { useContent, useLocale } from "@/content";
 import { contact } from "@/data/contact";
+import { submitInquiry } from "@/lib/inquiries.functions";
 import { sendContactMessageFn } from "@/lib/rentivo.functions";
 
 function buildFormSchema(kontaktaiForm: ReturnType<typeof useContent>["kontaktaiForm"]) {
