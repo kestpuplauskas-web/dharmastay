@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { z } from "zod";
 
-import { useContent } from "@/content";
+import { useContent, useLocale } from "@/content";
 import { contact } from "@/data/contact";
+import { submitInquiry } from "@/lib/inquiries.functions";
 import { sendContactMessageFn } from "@/lib/rentivo.functions";
 
 function buildFormSchema(kontaktaiForm: ReturnType<typeof useContent>["kontaktaiForm"]) {
@@ -73,6 +74,7 @@ function Field({
  *  failure it offers the plain e-mail route instead of losing the message. */
 export function ContactForm() {
   const { kontaktaiForm } = useContent();
+  const locale = useLocale();
   const formSchema = buildFormSchema(kontaktaiForm);
   const [values, setValues] = useState({ name: "", email: "", phone: "", message: "" });
   const [errors, setErrors] = useState<Errors>({});
@@ -102,22 +104,35 @@ export function ContactForm() {
     setErrors({});
     setStatus("sending");
 
+    // Žinutė pirmiausia įrašoma į administravimo dėžutę; el. laiškas — papildomas
+    // kanalas. Užtenka, kad pavyktų bent vienas kelias.
+    const payload = {
+      name: parsed.data.name,
+      email: parsed.data.email,
+      ...(parsed.data.phone ? { phone: parsed.data.phone } : {}),
+      message: parsed.data.message,
+    };
+
+    let stored = false;
     try {
-      const result = await sendContactMessageFn({
-        data: {
-          name: parsed.data.name,
-          email: parsed.data.email,
-          ...(parsed.data.phone ? { phone: parsed.data.phone } : {}),
-          message: parsed.data.message,
-        },
-      });
-      if (result.delivered) {
-        setStatus("sent");
-        setValues({ name: "", email: "", phone: "", message: "" });
-      } else {
-        setStatus("failed");
-      }
-    } catch {
+      await submitInquiry({ data: { ...payload, lang: locale } });
+      stored = true;
+    } catch (error) {
+      console.error("submitInquiry failed", error);
+    }
+
+    let mailed = false;
+    try {
+      const result = await sendContactMessageFn({ data: payload });
+      mailed = result?.delivered === true;
+    } catch (error) {
+      console.error("sendContactMessage failed", error);
+    }
+
+    if (stored || mailed) {
+      setStatus("sent");
+      setValues({ name: "", email: "", phone: "", message: "" });
+    } else {
       setStatus("failed");
     }
   };

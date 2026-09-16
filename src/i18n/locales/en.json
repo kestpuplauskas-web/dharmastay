@@ -196,7 +196,8 @@
     "notFound": "Not found.",
     "save": "Save",
     "saving": "Saving…",
-    "search": "Search"
+    "search": "Search",
+    "error": "Something went wrong"
   },
   "content": {
     "fields": {
@@ -651,7 +652,11 @@
     "properties": "Properties",
     "settings": "General settings",
     "signOut": "Sign out",
-    "website": "Website"
+    "website": "Website",
+    "inquiries": "Inquiries",
+    "groupWorkspace": "Workspace",
+    "groupManage": "Manage",
+    "groupSettings": "Settings"
   },
   "properties": {
     "active": "Active",
@@ -1275,5 +1280,19 @@
       "title": "Translations",
       "unsaved": "There are unsaved translations."
     }
+  },
+  "inquiries": {
+    "title": "Inquiries",
+    "subtitle": "Messages from the website contact form.",
+    "filterAll": "All",
+    "filterUnread": "Unread",
+    "filterArchived": "Archived",
+    "searchPlaceholder": "Search by name, e-mail or message",
+    "empty": "No inquiries yet.",
+    "markRead": "Mark as read",
+    "markUnread": "Mark as unread",
+    "archive": "Archive",
+    "unarchive": "Restore",
+    "selectHint": "Select an inquiry to read it."
   }
 }
