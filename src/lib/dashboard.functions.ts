@@ -129,6 +129,43 @@ export const getDashboardStats = createServerFn({ method: "POST" })
     ).length;
     const missingDescription = properties.filter((p: any) => !p.description).length;
 
+    // kiekvieno objekto rodikliai
+    const rangeDays = rangeFrom && rangeTo ? daysBetween(rangeFrom, rangeTo) : 0;
+    const perProperty = properties
+      .map((p: any) => {
+        const pb = rangeBookings.filter((b: any) => b.property_id === p.id);
+        const pRevenue = pb
+          .filter((b: any) => b.status === "confirmed" || b.status === "completed")
+          .reduce((s: number, b: any) => s + Number(b.total_amount ?? 0), 0);
+        const nights = pb.reduce((s: number, b: any) => {
+          if (rangeFrom && rangeTo) return s + overlapNights(b.date_from, b.date_to, rangeFrom, rangeTo);
+          return s + daysBetween(b.date_from, b.date_to);
+        }, 0);
+        const pExpenses = expenses
+          .filter((e: any) => {
+            if (e.property_id !== p.id) return false;
+            if (!rangeFrom || !rangeTo) return true;
+            return e.date >= rangeFrom && e.date < rangeTo;
+          })
+          .reduce((s: number, e: any) => s + Number(e.amount ?? 0), 0);
+        return {
+          id: p.id,
+          name: p.name,
+          propertyType: p.property_type || "kita",
+          isActive: Boolean(p.is_active),
+          bookings: pb.length,
+          nights,
+          occupancy: rangeDays > 0 ? nights / rangeDays : null,
+          revenue: pRevenue,
+          adr: nights > 0 ? pRevenue / nights : 0,
+          abv: pb.length > 0 ? pRevenue / pb.length : 0,
+          expenses: pExpenses,
+          net: pRevenue - pExpenses,
+        };
+      })
+      .sort((a: any, b: any) => b.revenue - a.revenue);
+
+
     // verslas
     const rangeExpenses = expenses.filter((e: any) => {
       if (!rangeFrom || !rangeTo) return true;
@@ -168,6 +205,7 @@ export const getDashboardStats = createServerFn({ method: "POST" })
         avgPrice,
         missingPhotos,
         missingDescription,
+        perProperty,
       },
       business: {
         netProfit,
