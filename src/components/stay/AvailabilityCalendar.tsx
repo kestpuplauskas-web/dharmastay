@@ -86,6 +86,17 @@ export function AvailabilityCalendar({
     return false;
   };
 
+  // Renkant išvykimą pirmoji kitos rezervacijos atvykimo diena yra teisėta
+  // apyvartos riba: iki 11:00 išvykstama, nuo 15:00 atvyksta kitas svečias.
+  const isTurnoverCheckout = (d: Date) =>
+    Boolean(
+      selectingEnd &&
+        range?.from &&
+        isNight(d) &&
+        d > range.from &&
+        !hasConflict(range.from, d),
+    );
+
   const handleSelect = (next: DateRange | undefined) => {
     if (next?.from && next?.to && hasConflict(next.from, next.to)) {
       onRangeChange({ from: next.to, to: undefined });
@@ -127,9 +138,13 @@ export function AvailabilityCalendar({
           onSelect={handleSelect}
           min={1}
           disabled={[{ before: today }, disabledDay]}
-          modifiers={{ occupied: isNight }}
+          modifiers={{
+            occupied: (d) => isNight(d) && !isTurnoverCheckout(d),
+            turnoverCheckout: isTurnoverCheckout,
+          }}
           modifiersClassNames={{
             occupied: "day-occupied",
+            turnoverCheckout: "day-turnover-checkout",
           }}
           startMonth={today}
           className={cn(
