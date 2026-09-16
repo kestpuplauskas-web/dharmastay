@@ -73,7 +73,7 @@ export function BookingDateRange({
           onChange(range?.from ? toApiDate(range.from) : "", range?.to ? toApiDate(range.to) : "")
         }
         excludeDisabled
-        min={2}
+        min={1}
         disabled={[{ before: today }, ...occupiedMatchers]}
         modifiers={{ occupied: occupiedMatchers }}
         modifiersClassNames={{ occupied: "day-occupied" }}

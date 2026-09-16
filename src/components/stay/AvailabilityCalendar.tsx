@@ -100,7 +100,7 @@ export function AvailabilityCalendar({
           selected={range}
           onSelect={onRangeChange}
           excludeDisabled
-          min={2}
+          min={1}
           disabled={[{ before: today }, ...occupiedMatchers]}
           modifiers={{ occupied: occupiedMatchers }}
           modifiersClassNames={{ occupied: "day-occupied" }}
