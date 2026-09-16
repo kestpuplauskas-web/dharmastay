@@ -34,6 +34,13 @@ function AdminLayout() {
     queryFn: () => fetchSettings(),
   });
   const brandName = settingsData?.settings.displayName?.trim() || "Revoo";
+  const fetchUnread = useServerFn(getUnreadInquiryCount);
+  const { data: unread } = useQuery({
+    queryKey: ["inquiries-unread"],
+    queryFn: () => fetchUnread(),
+    refetchInterval: 60_000,
+  });
+  const unreadCount = unread?.count ?? 0;
   const { location } = useRouterState();
 
   if (isLoading) {
