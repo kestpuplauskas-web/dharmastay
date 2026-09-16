@@ -364,6 +364,27 @@
 /* Pusė langelio: atvykimo diena (dešinė pusė) ir išvykimo diena (kairė pusė).
    Kai tą pačią dieną vienas svečias išvyksta, o kitas atvyksta, abi pusės
    susijungia į pilnai užpildytą langelį. */
+
+/* Išvykimo diena klientinėje dalyje: kairė pusė aktyvi (laisva, galima spausti),
+   dešinė pusė užimta — tą dieną nuo 15:00 gali atvykti kitas svečias. */
+[data-slot="calendar"] .day-depart button,
+[data-slot="calendar"] button.day-depart {
+  background-image: linear-gradient(
+    to left,
+    color-mix(in oklab, var(--color-stone) 22%, transparent) 50%,
+    transparent 50%
+  );
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+/* Išvykimo diena kaip atvykimas išjungta (disabled), bet vizualiai kairė
+   pusė turi atrodyti aktyvi — todėl slopiname numatytą išjungtų dienų
+   blankinimą. */
+[data-slot="calendar"] .day-depart button[disabled],
+[data-slot="calendar"] button.day-depart[disabled] {
+  opacity: 1;
+  color: var(--color-ink);
+}
 [data-slot="calendar"] .day-occ-start button,
 [data-slot="calendar"] button.day-occ-start {
   background-image: linear-gradient(

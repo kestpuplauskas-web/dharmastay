@@ -69,15 +69,19 @@ export function AvailabilityCalendar({
   );
 
   // Pusiau atviras intervalas [from, to): nakvynės nuo atvykimo dienos iki
-  // paskutinės nakties. Išvykimo diena (to) klientui rodoma kaip visiškai
-  // laisva, o atvykimo diena — kaip pilnai užimta (check-in nuo 15:00),
-  // todėl klientinėje dalyje puslangelių žymėjimo nenaudojame.
+  // paskutinės nakties. Išvykimo diena (to) žymima puslangeliu: kairė pusė
+  // aktyvi (galima pasirinkti kaip išvykimo datą), dešinė — užimta, nes
+  // tą dieną gali atvykti kitas svečias (atvykimas nuo 15:00).
   const isNight = (d: Date) => occupiedMatchers.some((r) => d >= r.from && d < r.to);
+  const isDepartureDay = (d: Date) =>
+    !isNight(d) && occupiedMatchers.some((r) => d.getTime() === r.to.getTime());
 
   const selectingEnd = Boolean(range?.from && !range?.to);
   // Renkant išvykimo datą leidžiame pasirinkti užimtos rezervacijos atvykimo
-  // dieną (išvykimas iki 11:00, naujas atvykimas nuo 15:00).
-  const disabledDay = (d: Date) => (selectingEnd ? false : isNight(d));
+  // dieną (išvykimas iki 11:00, naujas atvykimas nuo 15:00). Kito svečio
+  // išvykimo diena kaip atvykimas neleidžiama — tik kaip išvykimas.
+  const disabledDay = (d: Date) =>
+    selectingEnd ? false : isNight(d) || isDepartureDay(d);
 
   const hasConflict = (from: Date, to: Date) => {
     for (let d = new Date(from); d < to; d.setDate(d.getDate() + 1)) {
@@ -127,9 +131,10 @@ export function AvailabilityCalendar({
           onSelect={handleSelect}
           min={1}
           disabled={[{ before: today }, disabledDay]}
-          modifiers={{ occupied: isNight }}
+          modifiers={{ occupied: isNight, depart: isDepartureDay }}
           modifiersClassNames={{
             occupied: "day-occupied",
+            depart: "day-depart",
           }}
           startMonth={today}
           className={cn(
