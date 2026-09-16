@@ -376,6 +376,15 @@
   );
   border-radius: 0 0.5rem 0.5rem 0;
 }
+
+/* Išvykimo diena kaip atvykimas išjungta (disabled), bet vizualiai kairė
+   pusė turi atrodyti aktyvi — todėl slopiname numatytą išjungtų dienų
+   blankinimą. */
+[data-slot="calendar"] .day-depart button[disabled],
+[data-slot="calendar"] button.day-depart[disabled] {
+  opacity: 1;
+  color: var(--color-ink);
+}
 [data-slot="calendar"] .day-occ-start button,
 [data-slot="calendar"] button.day-occ-start {
   background-image: linear-gradient(
