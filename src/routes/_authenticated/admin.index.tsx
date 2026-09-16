@@ -109,6 +109,52 @@ function AdminDashboard() {
               ) : null}
             </div>
           </div>
+
+          <div className="mt-4 rounded-lg border bg-card p-4">
+            <h3 className="text-sm font-medium">{t("dashboard.fleet.perProperty")}</h3>
+            <p className="mt-1 text-xs text-muted-foreground">{t("dashboard.fleet.perPropertyHint")}</p>
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full min-w-[720px] text-sm">
+                <thead>
+                  <tr className="border-b text-left text-xs text-muted-foreground">
+                    <th className="py-2 pr-3 font-medium">{t("dashboard.fleet.colProperty")}</th>
+                    <th className="py-2 pr-3 text-right font-medium">{t("dashboard.fleet.colOccupancy")}</th>
+                    <th className="py-2 pr-3 text-right font-medium">{t("dashboard.fleet.colNights")}</th>
+                    <th className="py-2 pr-3 text-right font-medium">{t("dashboard.fleet.colBookings")}</th>
+                    <th className="py-2 pr-3 text-right font-medium">{t("dashboard.biz.revenue")}</th>
+                    <th className="py-2 pr-3 text-right font-medium">ADR</th>
+                    <th className="py-2 pr-3 text-right font-medium">ABV</th>
+                    <th className="py-2 pr-3 text-right font-medium">{t("dashboard.biz.expenses")}</th>
+                    <th className="py-2 text-right font-medium">{t("dashboard.fleet.colNet")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(data?.fleet.perProperty ?? []).map((p: any) => (
+                    <tr key={p.id} className="border-b last:border-none">
+                      <td className="py-2 pr-3">
+                        <div className="font-medium">{p.name}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {t(propertyTypeLabelKey(p.propertyType))}
+                          {!p.isActive ? ` · ${t("dashboard.fleet.inactive")}` : ""}
+                        </div>
+                      </td>
+                      <td className="py-2 pr-3 text-right">{p.occupancy === null ? "—" : `${Math.round(p.occupancy * 100)}%`}</td>
+                      <td className="py-2 pr-3 text-right">{p.nights}</td>
+                      <td className="py-2 pr-3 text-right">{p.bookings}</td>
+                      <td className="py-2 pr-3 text-right font-medium">{p.revenue.toFixed(0)} €</td>
+                      <td className="py-2 pr-3 text-right">{p.adr.toFixed(0)} €</td>
+                      <td className="py-2 pr-3 text-right">{p.abv.toFixed(0)} €</td>
+                      <td className="py-2 pr-3 text-right">{p.expenses.toFixed(0)} €</td>
+                      <td className={`py-2 text-right font-medium ${p.net < 0 ? "text-destructive" : ""}`}>{p.net.toFixed(0)} €</td>
+                    </tr>
+                  ))}
+                  {(data?.fleet.perProperty ?? []).length === 0 ? (
+                    <tr><td colSpan={9} className="py-4 text-center text-muted-foreground">{isLoading ? t("common.loading") : t("dashboard.fleet.empty")}</td></tr>
+                  ) : null}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="biz" className="mt-4">
