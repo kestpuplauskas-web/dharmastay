@@ -51,7 +51,7 @@ export function distributeGuests(
 ): RoomGuests[] {
   let adultsLeft = adults;
   let childrenLeft = children;
-  return rooms.map((room, index) => {
+  const result = rooms.map((room, index) => {
     const isLast = index === rooms.length - 1;
     const a = isLast ? adultsLeft : Math.min(room.capacity, adultsLeft);
     adultsLeft -= a;
@@ -65,6 +65,11 @@ export function distributeGuests(
       infants: index === 0 ? infants : 0,
     };
   });
+  // Jei svečių mažiau nei kambarių — tuščiam kambariui priskiriamas tas pats
+  // pagrindinis svečias (1 suaugęs), kad rezervacija būtų galiojanti.
+  return result.map((r) =>
+    r.adults + r.children + r.infants === 0 ? { ...r, adults: 1 } : r,
+  );
 }
 
 export type RoomAllocation = RoomGuests & { total_amount: number };
