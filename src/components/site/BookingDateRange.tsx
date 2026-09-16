@@ -59,8 +59,10 @@ export function BookingDateRange({
     !isNight(d) && occupiedMatchers.some((r) => d.getTime() === r.to.getTime());
 
   const selectingEnd = Boolean(checkin && !checkout);
-  // Renkant išvykimo datą leidžiame pasirinkti užimtos rezervacijos atvykimo dieną.
-  const disabledDay = (d: Date) => (selectingEnd ? false : isNight(d));
+  // Renkant išvykimo datą leidžiame pasirinkti užimtos rezervacijos atvykimo
+  // dieną. Kito svečio išvykimo diena kaip atvykimas neleidžiama.
+  const disabledDay = (d: Date) =>
+    selectingEnd ? false : isNight(d) || isDepartureDay(d);
 
   const hasConflict = (from: Date, to: Date) => {
     for (let d = new Date(from); d < to; d.setDate(d.getDate() + 1)) {

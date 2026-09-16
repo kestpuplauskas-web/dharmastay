@@ -78,8 +78,10 @@ export function AvailabilityCalendar({
 
   const selectingEnd = Boolean(range?.from && !range?.to);
   // Renkant išvykimo datą leidžiame pasirinkti užimtos rezervacijos atvykimo
-  // dieną (išvykimas iki 11:00, naujas atvykimas nuo 15:00).
-  const disabledDay = (d: Date) => (selectingEnd ? false : isNight(d));
+  // dieną (išvykimas iki 11:00, naujas atvykimas nuo 15:00). Kito svečio
+  // išvykimo diena kaip atvykimas neleidžiama — tik kaip išvykimas.
+  const disabledDay = (d: Date) =>
+    selectingEnd ? false : isNight(d) || isDepartureDay(d);
 
   const hasConflict = (from: Date, to: Date) => {
     for (let d = new Date(from); d < to; d.setDate(d.getDate() + 1)) {
