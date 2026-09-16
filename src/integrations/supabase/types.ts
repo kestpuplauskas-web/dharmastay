@@ -542,6 +542,48 @@ export type Database = {
           },
         ]
       }
+      inquiries: {
+        Row: {
+          archived_at: string | null
+          created_at: string
+          email: string
+          id: string
+          lang: string
+          message: string
+          name: string
+          phone: string | null
+          read_at: string | null
+          source: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          archived_at?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          lang?: string
+          message: string
+          name: string
+          phone?: string | null
+          read_at?: string | null
+          source?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          archived_at?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          lang?: string
+          message?: string
+          name?: string
+          phone?: string | null
+          read_at?: string | null
+          source?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       invoices: {
         Row: {
           booking_id: string
