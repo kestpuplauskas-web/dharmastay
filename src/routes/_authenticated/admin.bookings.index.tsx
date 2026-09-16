@@ -139,12 +139,12 @@ type Row = any;
 const COLUMNS: { key: ColKey; labelKey: string; align?: "left" | "right"; type: "set" | "text" | "date" | "number" }[] = [
   { key: "status", labelKey: "bookings.cols.status", type: "set" },
   { key: "booking_number", labelKey: "bookings.cols.booking_number", type: "set" },
+  { key: "date_from", labelKey: "bookings.cols.date_from", type: "date" },
+  { key: "date_to", labelKey: "bookings.cols.date_to", type: "date" },
   { key: "property", labelKey: "bookings.cols.property", type: "set" },
   { key: "customer_name", labelKey: "bookings.cols.customer_name", type: "set" },
   { key: "customer_phone", labelKey: "bookings.cols.customer_phone", type: "text" },
   { key: "customer_email", labelKey: "bookings.cols.customer_email", type: "text" },
-  { key: "date_from", labelKey: "bookings.cols.date_from", type: "date" },
-  { key: "date_to", labelKey: "bookings.cols.date_to", type: "date" },
   { key: "duration", labelKey: "bookings.cols.duration", type: "number", align: "right" },
   { key: "total_amount", labelKey: "bookings.cols.total_amount", type: "number", align: "right" },
 ];
