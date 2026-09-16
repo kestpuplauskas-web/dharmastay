@@ -653,7 +653,11 @@
     "properties": "Objektai",
     "settings": "Bendrieji nustatymai",
     "signOut": "Atsijungti",
-    "website": "Svetainė"
+    "website": "Svetainė",
+    "inquiries": "Užklausos",
+    "groupWorkspace": "Darbo sritis",
+    "groupManage": "Valdymas",
+    "groupSettings": "Nustatymai"
   },
   "properties": {
     "active": "Aktyvus",
@@ -1277,5 +1281,19 @@
       "title": "Vertimai",
       "unsaved": "Yra neišsaugotų vertimų."
     }
+  },
+  "inquiries": {
+    "title": "Užklausos",
+    "subtitle": "Žinutės iš svetainės kontaktų formos.",
+    "filterAll": "Visos",
+    "filterUnread": "Neperskaitytos",
+    "filterArchived": "Archyvas",
+    "searchPlaceholder": "Ieškoti pagal vardą, el. paštą ar žinutę",
+    "empty": "Užklausų nėra.",
+    "markRead": "Pažymėti perskaityta",
+    "markUnread": "Žymėti neperskaityta",
+    "archive": "Archyvuoti",
+    "unarchive": "Grąžinti",
+    "selectHint": "Pasirinkite užklausą, kad ją perskaitytumėte."
   }
 }
