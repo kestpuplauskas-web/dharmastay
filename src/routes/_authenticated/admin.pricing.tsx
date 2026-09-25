@@ -26,6 +26,7 @@ import {
   listRateCalendarMulti,
   saveRateCalendarBulk,
 } from "@/lib/pricing-rules.functions";
+import { DynamicPricingPanel } from "@/components/admin/DynamicPricingPanel";
 
 export const Route = createFileRoute("/_authenticated/admin/pricing")({
   component: PricingPage,
@@ -76,7 +77,9 @@ const emptyRule = {
   multiplier: "1.30",
   fixed_price: "",
   priority: "0",
+  color: "#f59e0b",
 };
+const PALETTE = ["#f59e0b", "#ef4444", "#ec4899", "#8b5cf6", "#3b82f6", "#06b6d4", "#10b981", "#84cc16", "#64748b"];
 
 function PricingPage() {
   const qc = useQueryClient();
@@ -112,6 +115,26 @@ function PricingPage() {
     return m;
   }, [heatQ.data]);
 
+  /* Taisyklė, taikoma dienai (aukščiausias prioritetas) — spalvai kalendoriuje */
+  const ruleForDate = (date: string) => {
+    let best: any = null;
+    for (const r of rules) {
+      if (r.date_from <= date && r.date_to >= date && (!best || r.priority > best.priority)) best = r;
+    }
+    return best;
+  };
+  const [pickStart, setPickStart] = useState<string | null>(null);
+  const onDayClick = (date: string) => {
+    if (!pickStart) {
+      setPickStart(date);
+      setForm((f) => ({ ...f, date_from: date, date_to: date }));
+    } else {
+      const [a, b] = pickStart <= date ? [pickStart, date] : [date, pickStart];
+      setForm((f) => ({ ...f, date_from: a, date_to: b }));
+      setPickStart(null);
+    }
+  };
+
   const propName = (id: string) => properties.find((p) => p.id === id)?.name ?? "—";
 
   /* ── Nauja taisyklė ── */
@@ -139,6 +162,7 @@ function PricingPage() {
           multiplier: form.mode === "multiplier" ? Number(form.multiplier) : null,
           fixed_price: form.mode === "fixed" ? Number(form.fixed_price) : null,
           priority: Number(form.priority) || 0,
+          color: form.color,
         },
       }),
     onSuccess: (r) => {
@@ -219,7 +243,14 @@ function PricingPage() {
       {/* Šilumos kalendorius */}
       <section className="space-y-3 rounded-xl border bg-card p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-lg font-semibold">Kainų kalendorius {year}</h2>
+          <div>
+            <h2 className="text-lg font-semibold">Kainų kalendorius {year}</h2>
+            <p className="text-xs text-muted-foreground">
+              {pickStart
+                ? `Pradžia: ${pickStart}. Paspauskite pabaigos dieną.`
+                : "Paspauskite pradžios ir pabaigos dieną — datos įsirašys į naują taisyklę. Dienos su taisykle rodomos jos spalva."}
+            </p>
+          </div>
           <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
             {[
               ["Pigiau", 0.85],
@@ -253,19 +284,31 @@ function PricingPage() {
                   {Array.from({ length: daysInMonth(year, m) }).map((_, i) => {
                     const date = iso(year, m, i + 1);
                     const cell = byDate[date];
+                    const rule = ruleForDate(date);
+                    const selected = form.date_from && form.date_to && date >= form.date_from && date <= form.date_to;
                     return (
-                      <span
+                      <button
+                        type="button"
                         key={date}
+                        onClick={() => onDayClick(date)}
                         title={
-                          cell
+                          (cell
                             ? `${date} · ${cell.price.toFixed(2)} € · užimtumas ${cell.occupancy} %`
-                            : date
+                            : date) + (rule ? ` · ${rule.label}` : "")
                         }
-                        className="flex h-6 items-center justify-center rounded-sm border text-[10px] text-foreground"
-                        style={cell ? { backgroundColor: heatColor(cell.ratio) } : undefined}
+                        className={`relative flex h-6 items-center justify-center overflow-hidden rounded-sm border text-[10px] text-foreground ${
+                          selected ? "ring-2 ring-primary ring-offset-1" : ""
+                        }`}
+                        style={
+                          rule
+                            ? { backgroundColor: rule.color ?? "#f59e0b" }
+                            : cell
+                              ? { backgroundColor: heatColor(cell.ratio) }
+                              : undefined
+                        }
                       >
                         {i + 1}
-                      </span>
+                      </button>
                     );
                   })}
                 </div>
@@ -331,6 +374,22 @@ function PricingPage() {
             </div>
           )}
           <div className="space-y-1">
+            <Label>Spalva</Label>
+            <div className="flex items-center gap-1">
+              {PALETTE.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  aria-label={`Spalva ${c}`}
+                  onClick={() => setForm({ ...form, color: c })}
+                  className={`h-7 w-7 rounded-full border-2 ${form.color === c ? "border-foreground" : "border-transparent"}`}
+                  style={{ backgroundColor: c }}
+                />
+              ))}
+              <input type="color" aria-label="Kita spalva" value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} className="h-7 w-9 cursor-pointer rounded border bg-background" />
+            </div>
+          </div>
+          <div className="space-y-1">
             <Label htmlFor="pr-prio">Prioritetas</Label>
             <Input id="pr-prio" className="w-24" type="number" value={form.priority} onChange={(e) => setForm({ ...form, priority: e.target.value })} />
           </div>
@@ -390,7 +449,12 @@ function PricingPage() {
               <tbody>
                 {rules.map((r) => (
                   <tr key={r.id} className="border-t">
-                    <td className="p-2 font-medium">{r.label}</td>
+                    <td className="p-2 font-medium">
+                      <span className="flex items-center gap-2">
+                        <span className="h-3 w-3 shrink-0 rounded-full border" style={{ backgroundColor: r.color ?? "#f59e0b" }} />
+                        {r.label}
+                      </span>
+                    </td>
                     <td className="p-2">{propName(r.property_id)}</td>
                     <td className="p-2">{KIND_LABEL[r.kind as Kind]}</td>
                     <td className="p-2 whitespace-nowrap">{r.date_from} – {r.date_to}</td>
@@ -468,9 +532,16 @@ function PricingPage() {
           </table>
         </div>
         <p className="text-xs text-muted-foreground">
-          Kainų ribas ir užimtumo taisykles kiekvienam objektui galite koreguoti objekto redagavimo lange.
+          Norėdami keisti objekto kainų ribas ir užimtumo taisykles, viršuje pasirinkite objektą.
         </p>
       </section>
+
+      {propertyId && (
+        <section className="rounded-xl border bg-card p-6">
+          <h2 className="mb-2 text-lg font-semibold">Objekto nustatymai — {propName(propertyId)}</h2>
+          <DynamicPricingPanel key={propertyId} propertyId={propertyId} />
+        </section>
+      )}
 
       <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
         <AlertDialogContent>

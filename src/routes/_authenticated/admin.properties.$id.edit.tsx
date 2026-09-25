@@ -6,7 +6,6 @@ import { getPropertyForEdit, updateProperty } from "@/lib/properties.functions";
 import { syncPropertyIcal } from "@/lib/ical.functions";
 import { PropertyForm, propertyToForm, type PropertyFormValues } from "@/components/admin/PropertyForm";
 import { TranslationPanel } from "@/components/admin/TranslationPanel";
-import { DynamicPricingPanel } from "@/components/admin/DynamicPricingPanel";
 import {
   PROPERTY_TRANSLATABLE_FIELDS,
   extraServiceField,
@@ -89,7 +88,6 @@ function EditPropertyPage() {
           syncing: sync.isPending,
         }}
       />
-      <DynamicPricingPanel propertyId={id} />
       <p className="mt-6 text-sm text-muted-foreground">
         {t("properties.translationsNote")}
       </p>
