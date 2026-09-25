@@ -35,8 +35,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EXTRA_CALC_LABEL_KEYS, priceForNights } from "@/lib/properties";
+import { EXTRA_CALC_LABEL_KEYS } from "@/lib/properties";
 import { extraLineTotal, nightsBetweenDates, type ExtraCalcKind } from "@/lib/booking-extras";
+import { computeQuote, type DynamicPricingInput } from "@/lib/booking-pricing";
+import { getDynamicPricingInputs } from "@/lib/pricing-rules.functions";
 import {
   distributeGuests,
   suggestRooms,
@@ -86,36 +88,31 @@ export function defaultBookingForm(props: Property[] = []): BookingFormValues {
   };
 }
 
-function computeTotalsFor(state: BookingFormValues, properties: Property[]) {
+function computeTotalsFor(
+  state: BookingFormValues,
+  properties: Property[],
+  dynMap: Record<string, DynamicPricingInput> = {},
+) {
   const prop = properties.find((p) => p.id === state.property_id);
-  const defined = prop?.extraServices ?? [];
   const days = nightsBetweenDates(state.date_from, state.date_to);
-  const ctx = {
+  // Tas pats skaičiavimas kaip viešame API (computeQuote).
+  const q = computeQuote({
+    pricePerNight: prop?.pricePerNight ?? 0,
+    priceTiers: prop?.priceTiers ?? [],
+    extraServices: (prop?.extraServices ?? []) as never,
+    dateFrom: state.date_from,
+    dateTo: state.date_to,
     adults: state.adults_count,
     children: state.children_count,
     infants: state.infants_count,
-    days,
-  };
-  const extras = state.extras
-    .map((e) => {
-      const match = defined.find((d) => d.name === e.name);
-      if (!match) return null;
-      return {
-        name: match.name,
-        calc: match.calc as ExtraCalcKind,
-        pricePerDay: Number(match.pricePerDay) || 0,
-        amount: extraLineTotal(match.calc as ExtraCalcKind, Number(match.pricePerDay) || 0, ctx),
-      };
-    })
-    .filter(Boolean) as BookingFormValues["extras"];
-  const extras_total = extras.reduce((s, e) => s + e.amount, 0);
-  const stay =
-    prop && days > 0
-      ? priceForNights({ pricePerNight: prop.pricePerNight, priceTiers: prop.priceTiers ?? [] }, days)
-      : { total: 0, pricePerNight: prop?.pricePerNight ?? 0, tier: null };
-  const stayTotal = Number((stay.total || 0).toFixed(2));
+    selectedExtras: state.extras,
+    dynamicPricing: dynMap[state.property_id],
+  });
+  const extras = q.extras as BookingFormValues["extras"];
+  const extras_total = Number(q.extras_total.toFixed(2));
+  const stayTotal = prop && days > 0 ? Number(q.stay_total.toFixed(2)) : 0;
   const computed = Number((stayTotal + extras_total).toFixed(2));
-  return { extras, extras_total, days, stayTotal, nightly: stay.pricePerNight, computed };
+  return { extras, extras_total, days, stayTotal, nightly: q.nightly_rate, computed };
 }
 
 export function BookingForm({
@@ -272,7 +269,16 @@ export function BookingForm({
   const lineAmount = (svc: { calc: ExtraCalcKind | string; pricePerDay: number }) =>
     extraLineTotal(svc.calc as ExtraCalcKind, Number(svc.pricePerDay) || 0, extrasCtx);
 
-  const computeTotals = (state: BookingFormValues) => computeTotalsFor(state, properties);
+  const fetchDyn = useServerFn(getDynamicPricingInputs);
+  const dynIds = Array.from(new Set([v.property_id, ...roomIds].filter(Boolean))).sort();
+  const { data: dynMap = {} } = useQuery({
+    queryKey: ["dyn-pricing", dynIds.join(","), v.date_from, v.date_to],
+    enabled: datesValid && dynIds.length > 0,
+    queryFn: () =>
+      fetchDyn({ data: { property_ids: dynIds, date_from: v.date_from, date_to: v.date_to } }),
+  });
+
+  const computeTotals = (state: BookingFormValues) => computeTotalsFor(state, properties, dynMap);
 
   const recalc = (state: BookingFormValues, forceTotal = false): BookingFormValues => {
     const { extras, extras_total, computed } = computeTotals(state);
@@ -288,16 +294,30 @@ export function BookingForm({
   const recalcRef = useRef(recalc);
   recalcRef.current = recalc;
 
+  // Atėjus dinaminės kainos duomenims — perskaičiuoti sumą.
+  const dynKey = JSON.stringify(dynMap);
+  useEffect(() => {
+    setV((s) => recalcRef.current(s));
+  }, [dynKey]);
+
   const totals = computeTotals(v);
 
   const stayTotalFor = (propertyId: string) => {
     const p = properties.find((x) => x.id === propertyId);
     if (!p || nights <= 0) return 0;
-    const r = priceForNights(
-      { pricePerNight: p.pricePerNight, priceTiers: p.priceTiers ?? [] },
-      nights,
-    );
-    return Number((r.total || 0).toFixed(2));
+    const q = computeQuote({
+      pricePerNight: p.pricePerNight,
+      priceTiers: p.priceTiers ?? [],
+      extraServices: [],
+      dateFrom: v.date_from,
+      dateTo: v.date_to,
+      adults: 1,
+      children: 0,
+      infants: 0,
+      selectedExtras: [],
+      dynamicPricing: dynMap[propertyId],
+    });
+    return Number((q.stay_total || 0).toFixed(2));
   };
 
   const allocation = distributeGuests(
