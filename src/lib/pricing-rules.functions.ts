@@ -43,6 +43,7 @@ const rowInput = z
     multiplier: z.number().positive().max(10).nullable(),
     fixed_price: z.number().min(0).max(100000).nullable(),
     priority: z.number().int().min(-100).max(100).default(0),
+    color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
   })
   .refine((v) => (v.multiplier == null) !== (v.fixed_price == null), {
     message: "Pasirinkite arba procentinį pakeitimą, arba tikslią kainą — ne abu.",
@@ -331,7 +332,8 @@ export const saveRateCalendarBulk = createServerFn({ method: "POST" })
         label: z.string().trim().min(1, "Įveskite pavadinimą").max(100),
         multiplier: z.number().positive().max(10).nullable(),
         fixed_price: z.number().min(0).max(100000).nullable(),
-        priority: z.number().int().min(-100).max(100).default(0),
+            priority: z.number().int().min(-100).max(100).default(0),
+        color: z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#f59e0b"),
       })
       .refine((v) => (v.multiplier == null) !== (v.fixed_price == null), {
         message: "Pasirinkite arba procentinį pakeitimą, arba tikslią kainą — ne abu.",
