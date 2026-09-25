@@ -21,6 +21,7 @@ import {
 import {
   bulkSetDynamicPricing,
   deleteRateCalendarRow,
+  deleteRateCalendarRows,
   getPricingHeatmap,
   listPricingOverview,
   listRateCalendarMulti,
@@ -88,9 +89,18 @@ function PricingPage() {
   const fetchHeatmap = useServerFn(getPricingHeatmap);
   const saveBulkFn = useServerFn(saveRateCalendarBulk);
   const deleteRowFn = useServerFn(deleteRateCalendarRow);
+  const deleteRowsFn = useServerFn(deleteRateCalendarRows);
   const bulkToggleFn = useServerFn(bulkSetDynamicPricing);
 
-  const [year, setYear] = useState(new Date().getFullYear());
+  const now = new Date();
+  const todayIso = iso(now.getFullYear(), now.getMonth(), now.getDate());
+  /* 12 mėnesių į priekį nuo einamojo mėnesio */
+  const months = Array.from({ length: 12 }, (_, k) => {
+    const d = new Date(now.getFullYear(), now.getMonth() + k, 1);
+    return { y: d.getFullYear(), m: d.getMonth() };
+  });
+  const rangeEnd = iso(months[11].y, months[11].m, daysInMonth(months[11].y, months[11].m));
+  const rangeEndExcl = (() => { const d = new Date(months[11].y, months[11].m + 1, 1); return iso(d.getFullYear(), d.getMonth(), 1); })();
   const [propertyId, setPropertyId] = useState<string | null>(null);
 
   const overviewQ = useQuery({ queryKey: ["pricing-overview"], queryFn: () => fetchOverview() });
@@ -100,13 +110,13 @@ function PricingPage() {
     queryKey: ["pricing-rules", propertyId],
     queryFn: () => fetchRules({ data: { property_id: propertyId } }),
   });
-  const rules = (rulesQ.data ?? []) as any[];
+  const rules = ((rulesQ.data ?? []) as any[]).filter((r) => r.date_to >= todayIso);
 
   const heatQ = useQuery({
-    queryKey: ["pricing-heatmap", propertyId, year],
+    queryKey: ["pricing-heatmap", propertyId, todayIso],
     queryFn: () =>
       fetchHeatmap({
-        data: { property_id: propertyId, date_from: `${year}-01-01`, date_to: `${year + 1}-01-01` },
+        data: { property_id: propertyId, date_from: todayIso, date_to: rangeEndExcl },
       }),
   });
   const byDate = useMemo(() => {
@@ -176,6 +186,17 @@ function PricingPage() {
   });
 
   const [toDelete, setToDelete] = useState<any | null>(null);
+  const [confirmAll, setConfirmAll] = useState(false);
+  const delAll = useMutation({
+    mutationFn: (ids: string[]) => deleteRowsFn({ data: { ids } }),
+    onSuccess: (r) => {
+      toast.success(`Ištrinta taisyklių: ${r.count}`);
+      qc.invalidateQueries({ queryKey: ["pricing-rules"] });
+      qc.invalidateQueries({ queryKey: ["pricing-heatmap"] });
+      qc.invalidateQueries({ queryKey: ["rate-calendar"] });
+    },
+    onError: (e) => toast.error(errText(e)),
+  });
   const delRow = useMutation({
     mutationFn: (id: string) => deleteRowFn({ data: { id } }),
     onSuccess: () => {
@@ -225,18 +246,6 @@ function PricingPage() {
               ))}
             </select>
           </div>
-          <div className="space-y-1">
-            <Label htmlFor="pr-year">Metai</Label>
-            <div className="flex items-center gap-1">
-              <Button variant="outline" size="sm" onClick={() => setYear((y) => y - 1)} aria-label="Ankstesni metai">
-                ‹
-              </Button>
-              <Input id="pr-year" className="w-24 text-center" type="number" value={year} onChange={(e) => setYear(Number(e.target.value) || year)} />
-              <Button variant="outline" size="sm" onClick={() => setYear((y) => y + 1)} aria-label="Kiti metai">
-                ›
-              </Button>
-            </div>
-          </div>
         </div>
       </header>
 
@@ -244,7 +253,7 @@ function PricingPage() {
       <section className="space-y-3 rounded-xl border bg-card p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold">Kainų kalendorius {year}</h2>
+            <h2 className="text-lg font-semibold">Kainų kalendorius {months[0].y}-{String(months[0].m+1).padStart(2,"0")} – {rangeEnd.slice(0,7)}</h2>
             <p className="text-xs text-muted-foreground">
               {pickStart
                 ? `Pradžia: ${pickStart}. Paspauskite pabaigos dieną.`
@@ -271,9 +280,9 @@ function PricingPage() {
           <p className="text-sm text-muted-foreground">Kraunama…</p>
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-            {MONTHS.map((mLabel, m) => (
-              <div key={m} className="space-y-1">
-                <p className="text-sm font-medium">{mLabel}</p>
+            {months.map(({ y: year, m }) => (
+              <div key={`${year}-${m}`} className="space-y-1">
+                <p className="text-sm font-medium">{MONTHS[m]} {year}</p>
                 <div className="grid grid-cols-7 gap-[2px] text-[10px] text-muted-foreground">
                   {WEEKDAYS.map((w, i) => (
                     <span key={i} className="text-center">{w}</span>
@@ -283,6 +292,7 @@ function PricingPage() {
                   ))}
                   {Array.from({ length: daysInMonth(year, m) }).map((_, i) => {
                     const date = iso(year, m, i + 1);
+                    const past = date < todayIso;
                     const cell = byDate[date];
                     const rule = ruleForDate(date);
                     const selected = form.date_from && form.date_to && date >= form.date_from && date <= form.date_to;
@@ -290,13 +300,14 @@ function PricingPage() {
                       <button
                         type="button"
                         key={date}
+                        disabled={past}
                         onClick={() => onDayClick(date)}
                         title={
                           (cell
                             ? `${date} · ${cell.price.toFixed(2)} € · užimtumas ${cell.occupancy} %`
                             : date) + (rule ? ` · ${rule.label}` : "")
                         }
-                        className={`relative flex h-6 items-center justify-center overflow-hidden rounded-sm border text-[10px] text-foreground ${
+                        className={`relative flex h-6 items-center justify-center overflow-hidden rounded-sm border text-[10px] text-foreground disabled:cursor-not-allowed disabled:opacity-30 ${
                           selected ? "ring-2 ring-primary ring-offset-1" : ""
                         }`}
                         style={
@@ -425,9 +436,17 @@ function PricingPage() {
 
       {/* Taisyklių sąrašas */}
       <section className="space-y-3 rounded-xl border bg-card p-6">
-        <h2 className="text-lg font-semibold">
-          Taisyklės {propertyId ? `— ${propName(propertyId)}` : "— visi objektai"}
-        </h2>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold">
+            Taisyklės {propertyId ? `— ${propName(propertyId)}` : "— visi objektai"}
+          </h2>
+          {rules.length > 0 && (
+            <Button variant="outline" size="sm" className="text-destructive" disabled={delAll.isPending} onClick={() => setConfirmAll(true)}>
+              <Trash2 className="mr-1 h-4 w-4" />
+              {delAll.isPending ? "Trinama…" : `Ištrinti visas (${rules.length})`}
+            </Button>
+          )}
+        </div>
         {rulesQ.isLoading ? (
           <p className="text-sm text-muted-foreground">Kraunama…</p>
         ) : rules.length === 0 ? (
@@ -560,6 +579,27 @@ function PricingPage() {
               }}
             >
               Ištrinti
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog open={confirmAll} onOpenChange={setConfirmAll}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Ištrinti visas taisykles?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Bus pašalinta {rules.length} taisyklių {propertyId ? `objektui „${propName(propertyId)}"` : "visiems objektams"}. Šio veiksmo atšaukti negalima.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Atšaukti</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                delAll.mutate(rules.map((r) => r.id));
+                setConfirmAll(false);
+              }}
+            >
+              Ištrinti visas
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
