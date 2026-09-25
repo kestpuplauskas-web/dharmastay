@@ -130,6 +130,7 @@ export const previewDynamicPrice = createServerFn({ method: "GET" })
       ]);
     const err = pErr ?? cErr ?? aErr ?? bErr;
     if (err) throw new Error(err.message);
+    if (!prop) throw new Error("Objektas nerastas.");
     const ids = (active ?? []).map((r: { id: string }) => r.id);
     const occupancyByDate: Record<string, number> = {};
     for (const d of stayNightDates(data.date_from, data.date_to)) {
