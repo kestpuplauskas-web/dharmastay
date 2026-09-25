@@ -44,9 +44,9 @@ const rowInput = z
     priority: z.number().int().min(-100).max(100).default(0),
   })
   .refine((v) => (v.multiplier == null) !== (v.fixed_price == null), {
-    message: "Nurodykite arba daugiklį, arba tikslią kainą (tik vieną).",
+    message: "Pasirinkite arba procentinį pakeitimą, arba tikslią kainą — ne abu.",
   })
-  .refine((v) => v.date_to >= v.date_from, { message: "Pabaigos data negali būti ankstesnė už pradžios." });
+  .refine((v) => v.date_to >= v.date_from, { message: "Pabaigos data negali būti ankstesnė už pradžios datą." });
 
 export const saveRateCalendarRow = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -85,8 +85,16 @@ export const saveOccupancyPricing = createServerFn({ method: "POST" })
         max_nightly_rate: z.number().min(0).nullable(),
         dynamic_pricing_enabled: z.boolean(),
       })
-      .refine((v) => v.tiers.every((t, i) => i === 0 || t.minOccupancyPct > v.tiers[i - 1].minOccupancyPct), {
-        message: "Užimtumo ribos turi didėti ir nesikartoti.",
+      .superRefine((v, ctx) => {
+        for (let i = 1; i < v.tiers.length; i++) {
+          if (v.tiers[i].minOccupancyPct <= v.tiers[i - 1].minOccupancyPct) {
+            ctx.addIssue({
+              code: "custom",
+              message: `Užimtumo ribos turi didėti iš eilės — riba ${v.tiers[i].minOccupancyPct} % pakartota arba mažesnė už ankstesnę.`,
+            });
+            return;
+          }
+        }
       })
       .refine((v) => v.min_nightly_rate == null || v.max_nightly_rate == null || v.max_nightly_rate >= v.min_nightly_rate, {
         message: "Maksimali kaina negali būti mažesnė už minimalią.",
@@ -170,4 +178,25 @@ export const getDynamicPricingInputs = createServerFn({ method: "POST" })
     await ensureAdmin(context);
     const { loadDynamicPricingMap } = await import("@/lib/dynamic-pricing.server");
     return loadDynamicPricingMap(data.property_ids, data.date_from, data.date_to);
+  });
+
+/** Objekto dinaminės kainodaros nustatymai (jungiklis, ribos, užimtumo pakopos). */
+export const getPricingSettings = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ property_id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await ensureAdmin(context);
+    const { data: row, error } = await context.supabase
+      .from("properties")
+      .select("dynamic_pricing_enabled, min_nightly_rate, max_nightly_rate, occupancy_pricing, price_per_night")
+      .eq("id", data.property_id)
+      .single();
+    if (error) throw new Error(error.message);
+    return {
+      enabled: Boolean(row.dynamic_pricing_enabled),
+      min: row.min_nightly_rate != null ? Number(row.min_nightly_rate) : null,
+      max: row.max_nightly_rate != null ? Number(row.max_nightly_rate) : null,
+      tiers: ((row.occupancy_pricing as unknown as OccupancyTier[]) ?? []),
+      base: Number(row.price_per_night),
+    };
   });
