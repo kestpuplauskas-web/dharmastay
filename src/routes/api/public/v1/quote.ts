@@ -83,6 +83,13 @@ export const Route = createFileRoute("/api/public/v1/quote")({
               children: d.children,
               infants: d.infants,
               selectedExtras,
+              dynamicPricing: (
+                await (await import("@/lib/dynamic-pricing.server")).loadDynamicPricingMap(
+                  [d.property_id],
+                  d.date_from,
+                  d.date_to,
+                )
+              )[d.property_id],
             });
 
             const { occupiedRangesFor, rangesOverlap } = await import("@/lib/api-public.server");
