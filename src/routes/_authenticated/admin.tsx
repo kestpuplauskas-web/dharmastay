@@ -73,6 +73,7 @@ function AdminLayout() {
       label: t("nav.groupManage"),
       links: [
         { to: "/admin/properties", label: t("nav.properties"), icon: Home },
+        { to: "/admin/pricing", label: t("nav.pricing"), icon: Tag },
         { to: "/admin/expenses", label: t("nav.expenses"), icon: Wallet },
         { to: "/admin/content", label: t("nav.content"), icon: FileEdit },
       ],
