@@ -109,6 +109,13 @@ export const Route = createFileRoute("/api/public/v1/bookings")({
               children: d.children,
               infants: d.infants,
               selectedExtras,
+              dynamicPricing: (
+                await (await import("@/lib/dynamic-pricing.server")).loadDynamicPricingMap(
+                  [d.property_id],
+                  d.date_from,
+                  d.date_to,
+                )
+              )[d.property_id],
             });
 
             const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
