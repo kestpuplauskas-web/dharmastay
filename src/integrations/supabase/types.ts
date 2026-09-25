@@ -760,6 +760,7 @@ export type Database = {
           created_at: string
           description: string
           door_code: string | null
+          dynamic_pricing_enabled: boolean
           extra_services: Json
           features: Json
           ical_import_url: string | null
@@ -772,7 +773,10 @@ export type Database = {
           lng: number | null
           location_note: string
           max_guests: number
+          max_nightly_rate: number | null
+          min_nightly_rate: number | null
           name: string
+          occupancy_pricing: Json
           price_per_night: number
           price_tiers: Json
           property_type: string
@@ -794,6 +798,7 @@ export type Database = {
           created_at?: string
           description?: string
           door_code?: string | null
+          dynamic_pricing_enabled?: boolean
           extra_services?: Json
           features?: Json
           ical_import_url?: string | null
@@ -806,7 +811,10 @@ export type Database = {
           lng?: number | null
           location_note?: string
           max_guests?: number
+          max_nightly_rate?: number | null
+          min_nightly_rate?: number | null
           name: string
+          occupancy_pricing?: Json
           price_per_night: number
           price_tiers?: Json
           property_type?: string
@@ -828,6 +836,7 @@ export type Database = {
           created_at?: string
           description?: string
           door_code?: string | null
+          dynamic_pricing_enabled?: boolean
           extra_services?: Json
           features?: Json
           ical_import_url?: string | null
@@ -840,7 +849,10 @@ export type Database = {
           lng?: number | null
           location_note?: string
           max_guests?: number
+          max_nightly_rate?: number | null
+          min_nightly_rate?: number | null
           name?: string
+          occupancy_pricing?: Json
           price_per_night?: number
           price_tiers?: Json
           property_type?: string
@@ -1030,6 +1042,59 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "property_maintenance_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      property_rate_calendar: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          date_from: string
+          date_to: string
+          fixed_price: number | null
+          id: string
+          kind: string
+          label: string
+          multiplier: number | null
+          priority: number
+          property_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          date_from: string
+          date_to: string
+          fixed_price?: number | null
+          id?: string
+          kind: string
+          label: string
+          multiplier?: number | null
+          priority?: number
+          property_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          date_from?: string
+          date_to?: string
+          fixed_price?: number | null
+          id?: string
+          kind?: string
+          label?: string
+          multiplier?: number | null
+          priority?: number
+          property_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_rate_calendar_property_id_fkey"
             columns: ["property_id"]
             isOneToOne: false
             referencedRelation: "properties"
