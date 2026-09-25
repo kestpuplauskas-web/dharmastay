@@ -378,3 +378,27 @@ export const deleteRateCalendarRows = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true, count: data.ids.length };
   });
+
+/** Objekto bazinė, min. ir maks. kaina (iš Kainodaros lentelės). */
+export const updatePropertyPrices = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) =>
+    z
+      .object({
+        property_id: z.string().uuid(),
+        price_per_night: z.number().min(0).max(100000),
+        min_nightly_rate: z.number().min(0).max(100000).nullable(),
+        max_nightly_rate: z.number().min(0).max(100000).nullable(),
+      })
+      .refine((v) => v.min_nightly_rate == null || v.max_nightly_rate == null || v.max_nightly_rate >= v.min_nightly_rate, {
+        message: "Maksimali kaina negali būti mažesnė už minimalią.",
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await ensureAdmin(context);
+    const { property_id, ...rest } = data;
+    const { error } = await context.supabase.from("properties").update(rest).eq("id", property_id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });

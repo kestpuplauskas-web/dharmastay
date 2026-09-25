@@ -22,6 +22,7 @@ import {
   bulkSetDynamicPricing,
   deleteRateCalendarRow,
   deleteRateCalendarRows,
+  updatePropertyPrices,
   getPricingHeatmap,
   listPricingOverview,
   listRateCalendarMulti,
@@ -91,6 +92,30 @@ function PricingPage() {
   const deleteRowFn = useServerFn(deleteRateCalendarRow);
   const deleteRowsFn = useServerFn(deleteRateCalendarRows);
   const bulkToggleFn = useServerFn(bulkSetDynamicPricing);
+  const updPricesFn = useServerFn(updatePropertyPrices);
+  const updPrices = useMutation({
+    mutationFn: (v: { property_id: string; price_per_night: number; min_nightly_rate: number | null; max_nightly_rate: number | null }) =>
+      updPricesFn({ data: v }),
+    onSuccess: () => {
+      toast.success("Kaina išsaugota");
+      qc.invalidateQueries({ queryKey: ["pricing-overview"] });
+      qc.invalidateQueries({ queryKey: ["pricing-heatmap"] });
+      qc.invalidateQueries({ queryKey: ["dyn-pricing"] });
+    },
+    onError: (e) => {
+      toast.error(errText(e));
+      qc.invalidateQueries({ queryKey: ["pricing-overview"] });
+    },
+  });
+  const savePrice = (p: { id: string; base: number; min: number | null; max: number | null }, field: "base" | "min" | "max", raw: string) => {
+    const t = raw.trim().replace(",", ".");
+    const val = t === "" ? null : Number(t);
+    if (val != null && (!Number.isFinite(val) || val < 0)) return toast.error("Įveskite teigiamą skaičių.");
+    if (field === "base" && val == null) return toast.error("Bazinė kaina privaloma.");
+    const next = { base: p.base, min: p.min, max: p.max, [field]: val };
+    if (next[field] === p[field]) return;
+    updPrices.mutate({ property_id: p.id, price_per_night: next.base as number, min_nightly_rate: next.min, max_nightly_rate: next.max });
+  };
 
   const now = new Date();
   const todayIso = iso(now.getFullYear(), now.getMonth(), now.getDate());
@@ -533,9 +558,45 @@ function PricingPage() {
               {properties.map((p) => (
                 <tr key={p.id} className="border-t">
                   <td className="p-2 font-medium">{p.name}</td>
-                  <td className="p-2">{p.base.toFixed(2)} €</td>
-                  <td className="p-2">{p.min != null ? `${p.min.toFixed(2)} €` : "—"}</td>
-                  <td className="p-2">{p.max != null ? `${p.max.toFixed(2)} €` : "—"}</td>
+                  <td className="p-2">
+                    <Input
+                      key={`base-${p.id}-${p.base}`}
+                      type="text"
+                      inputMode="decimal"
+                      className="h-8 w-24"
+                      defaultValue={p.base != null ? String(p.base) : ""}
+                      placeholder="—"
+                      aria-label={`Bazinė kaina: ${p.name}`}
+                      onBlur={(e) => savePrice(p, "base", e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && (e.target as HTMLInputElement).blur()}
+                    />
+                  </td>
+                  <td className="p-2">
+                    <Input
+                      key={`min-${p.id}-${p.min}`}
+                      type="text"
+                      inputMode="decimal"
+                      className="h-8 w-24"
+                      defaultValue={p.min != null ? String(p.min) : ""}
+                      placeholder="—"
+                      aria-label={`Min. kaina: ${p.name}`}
+                      onBlur={(e) => savePrice(p, "min", e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && (e.target as HTMLInputElement).blur()}
+                    />
+                  </td>
+                  <td className="p-2">
+                    <Input
+                      key={`max-${p.id}-${p.max}`}
+                      type="text"
+                      inputMode="decimal"
+                      className="h-8 w-24"
+                      defaultValue={p.max != null ? String(p.max) : ""}
+                      placeholder="—"
+                      aria-label={`Maks. kaina: ${p.name}`}
+                      onBlur={(e) => savePrice(p, "max", e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && (e.target as HTMLInputElement).blur()}
+                    />
+                  </td>
                   <td className="p-2">{p.tiers.length || "—"}</td>
                   <td className="p-2">
                     <Switch
@@ -551,7 +612,7 @@ function PricingPage() {
           </table>
         </div>
         <p className="text-xs text-muted-foreground">
-          Norėdami keisti objekto kainų ribas ir užimtumo taisykles, viršuje pasirinkite objektą.
+          Kainas (€ už naktį) galite keisti tiesiog lentelėje — išsaugoma išėjus iš laukelio arba paspaudus Enter. Tuščias min./maks. laukas reiškia „be ribos“. Užimtumo taisyklėms viršuje pasirinkite objektą.
         </p>
       </section>
 
