@@ -1,0 +1,1 @@
+ALTER TABLE public.property_rate_calendar ADD COLUMN IF NOT EXISTS color text NOT NULL DEFAULT '#f59e0b';
