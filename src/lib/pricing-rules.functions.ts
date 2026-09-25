@@ -157,3 +157,17 @@ export const previewDynamicPrice = createServerFn({ method: "GET" })
     });
     return { ...q, occupancyByDate };
   });
+
+/** Admin rezervacijos formai: dinaminės kainodaros duomenys pasirinktiems objektams. */
+export const getDynamicPricingInputs = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) =>
+    z
+      .object({ property_ids: z.array(z.string().uuid()).max(50), date_from: isoDate, date_to: isoDate })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await ensureAdmin(context);
+    const { loadDynamicPricingMap } = await import("@/lib/dynamic-pricing.server");
+    return loadDynamicPricingMap(data.property_ids, data.date_from, data.date_to);
+  });
