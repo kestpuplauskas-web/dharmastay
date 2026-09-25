@@ -4,6 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
   computeQuote,
   occupancyForDate,
+  priceForNight,
   stayNightDates,
   type OccupancyTier,
   type RateCalendarRow,
