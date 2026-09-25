@@ -29,9 +29,21 @@ const PROPERTY_ANON_COLUMNS =
   "id, name, category, year, price_per_night, cover_image_url, image_urls, price_tiers, is_active, sort_order, created_at, updated_at, status, property_type, description, address, city, country, lat, lng, area_m2, max_guests, beds, rooms, amenities, extra_services";
 /** Authenticated admin reads: internal fields included (still no door_code). */
 const PROPERTY_PUBLIC_COLUMNS = `${PROPERTY_ANON_COLUMNS}, location_note, ical_import_url, ical_last_sync_at, ical_last_status`;
-type PublicPropertyRow = Omit<PropertyRow, "door_code" | "features"> & {
+type PublicPropertyRow = Omit<
+  PropertyRow,
+  | "door_code"
+  | "features"
+  | "dynamic_pricing_enabled"
+  | "min_nightly_rate"
+  | "max_nightly_rate"
+  | "occupancy_pricing"
+> & {
   door_code?: string | null;
   features?: PropertyRow["features"];
+  dynamic_pricing_enabled?: PropertyRow["dynamic_pricing_enabled"];
+  min_nightly_rate?: PropertyRow["min_nightly_rate"];
+  max_nightly_rate?: PropertyRow["max_nightly_rate"];
+  occupancy_pricing?: PropertyRow["occupancy_pricing"];
 };
 type BookingRow = Pick<
   Database["public"]["Tables"]["bookings"]["Row"],
