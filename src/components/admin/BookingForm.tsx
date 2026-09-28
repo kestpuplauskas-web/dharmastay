@@ -13,6 +13,7 @@ import {
   BOOKING_SOURCE_VALUES,
   checkBookingConflicts,
   listOccupiedRanges,
+  listAllOccupiedRanges,
   listFreePropertyIds,
   type BookingInput,
 } from "@/lib/bookings.functions";
@@ -165,10 +166,12 @@ export function BookingForm({
   });
   const hasConflict = canCheck && conflicts.length > 0;
 
+  const isNewBooking = !bookingId;
+
   const fetchOccupied = useServerFn(listOccupiedRanges);
   const { data: occupiedRows = [] } = useQuery({
     queryKey: ["booking-occupied", v.property_id, bookingId ?? ""],
-    enabled: Boolean(v.property_id),
+    enabled: !isNewBooking && Boolean(v.property_id),
     queryFn: () =>
       fetchOccupied({
         data: {
@@ -177,16 +180,42 @@ export function BookingForm({
         },
       }),
   });
-  // Užimtos naktys: nuo atvykimo iki išvykimo dienos (išvykimo diena laisva)
-  const occupiedDates = (occupiedRows as any[]).flatMap((r) => {
-    const start = parse(r.date_from, "yyyy-MM-dd", new Date());
-    const end = parse(r.date_to, "yyyy-MM-dd", new Date());
-    const out: Date[] = [];
-    for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
-      out.push(new Date(d));
-    }
-    return out;
+
+  // Naujai rezervacijai kalendorius neribojamas vieno kambario: blokuojamos tik
+  // tos naktys, kai užimti VISI aktyvūs objektai.
+  const fetchAllOccupied = useServerFn(listAllOccupiedRanges);
+  const { data: allOccupied } = useQuery({
+    queryKey: ["booking-occupied-all", bookingId ?? ""],
+    enabled: isNewBooking,
+    queryFn: () => fetchAllOccupied({ data: bookingId ? { excludeId: bookingId } : {} }),
   });
+
+  const nightsOf = (from: string, to: string) => {
+    const start = parse(from, "yyyy-MM-dd", new Date());
+    const end = parse(to, "yyyy-MM-dd", new Date());
+    const out: Date[] = [];
+    for (const d = new Date(start); d < end; d.setDate(d.getDate() + 1)) out.push(new Date(d));
+    return out;
+  };
+
+  // Užimtos naktys: nuo atvykimo iki išvykimo dienos (išvykimo diena laisva)
+  const occupiedDates = isNewBooking
+    ? (() => {
+        const counts = new Map<string, Set<string>>();
+        for (const r of allOccupied?.rows ?? []) {
+          for (const d of nightsOf(r.date_from, r.date_to)) {
+            const key = format(d, "yyyy-MM-dd");
+            const set = counts.get(key) ?? new Set<string>();
+            set.add(r.property_id);
+            counts.set(key, set);
+          }
+        }
+        const total = allOccupied?.activeCount ?? 0;
+        return [...counts.entries()]
+          .filter(([, set]) => total > 0 && set.size >= total)
+          .map(([key]) => parse(key, "yyyy-MM-dd", new Date()));
+      })()
+    : (occupiedRows as any[]).flatMap((r) => nightsOf(r.date_from, r.date_to));
 
   // --- Kambarių parinkimas pagal svečių skaičių (tik naujai rezervacijai) ---
   const isNew = !bookingId;
