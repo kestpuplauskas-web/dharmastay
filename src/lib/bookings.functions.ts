@@ -252,6 +252,39 @@ export const listFreePropertyIds = createServerFn({ method: "POST" })
     return (props ?? []).map((p) => String(p.id)).filter((id) => !busy.has(id));
   });
 
+// Visų aktyvių objektų užimtos datos — naujos rezervacijos kalendoriui.
+export const listAllOccupiedRanges = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) =>
+    z.object({ excludeId: z.string().uuid().optional() }).parse(d ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    await ensureAdmin(context);
+    const { data: props, error: propsError } = await context.supabase
+      .from("properties")
+      .select("id")
+      .eq("is_active", true);
+    if (propsError) throw new Error(propsError.message);
+    const activeIds = (props ?? []).map((p) => String(p.id));
+    let q = context.supabase
+      .from("bookings")
+      .select("id, property_id, date_from, date_to")
+      .neq("status", "cancelled");
+    if (data.excludeId) q = q.neq("id", data.excludeId);
+    const { data: rows, error } = await q;
+    if (error) throw new Error(error.message);
+    return {
+      activeCount: activeIds.length,
+      rows: (rows ?? [])
+        .filter((r) => activeIds.includes(String(r.property_id)))
+        .map((r) => ({
+          property_id: String(r.property_id),
+          date_from: String(r.date_from),
+          date_to: String(r.date_to),
+        })),
+    };
+  });
+
 export const listOccupiedRanges = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) =>
