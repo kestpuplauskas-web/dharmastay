@@ -13,6 +13,7 @@ import {
   BOOKING_SOURCE_VALUES,
   checkBookingConflicts,
   listOccupiedRanges,
+  listAllOccupiedRanges,
   listFreePropertyIds,
   type BookingInput,
 } from "@/lib/bookings.functions";
