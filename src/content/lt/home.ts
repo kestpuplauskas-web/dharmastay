@@ -4,28 +4,30 @@ export const home = {
     "Boutique apgyvendinimas Telšių senamiestyje: apartamentai, apartamentai su terasa ir namelis su pirtimi bei kubilu. Rezervuokite tiesiogiai.",
   hero: {
     eyebrow: "Telšiai · Žemaitija",
-    title: "Apartamentai Telšių senamiestyje",
+    title: "Apartamentai ir namai Telšiuose",
     lead: "Šalia pagrindinės aikštės, keli žingsniai nuo Masčio ežero. Vieta trumpam sustoti Žemaitijos širdyje.",
     imageAlt: "Telšių senamiesčio gatvė su istoriniais pastatais vasaros popietę",
     secondaryCta: "Apžiūrėti apartamentus",
   },
   intro: {
     title: "Iš namų į namus.",
-    text: "Dharma Stay apartamentai įsikūrę pačioje Telšių širdyje, Birutės gatvėje, šalia pagrindinės aikštės. Juos kūrėme taip, kad atvykę svečiai pasijustų lyg namuose — ramiai, jaukiai ir be rūpesčių.",
+    text: "Dharma Stay — jaukus apgyvendinimas Telšiuose. Siūlome standartinius apartamentus, apartamentus su terasa, namelį su pirtimi, erdvią vilą ir papildomas vietas centre. Kiekvienas objektas sukurtas taip, kad jaustumėtės lyg namuose — ramiai, švariai ir be rūpesčių.",
   },
   stays: {
     eyebrow: "Apgyvendinimas",
     title: "Kur apsistoti",
-    lead: "Standartiniai apartamentai, apartamentai su terasa ir atskiras namelis su pirtimi. Kiekviename rasite viską, ko reikia geram poilsiui.",
+    lead: "Standartiniai apartamentai, apartamentai su terasa, namelis ir vila bei papildomi apartamentai centre. Viskas paruošta taip, kad nieko papildomai pasiimti nereikėtų.",
   },
   location: {
     eyebrow: "Vieta",
-    title: "Telšiuose, prie pat aikštės",
+    title: "Telšiuose — jūsų poilsiui",
     body: [
-      "Apartamentai — Birutės gatvėje, vos keli žingsniai nuo pagrindinės Turgaus aikštės, Švč. Mergelės Marijos bažnyčios ir turizmo informacijos centro.",
-      "Iki Masčio ežero — keli šimtai metrų. Šalia netrūksta kavinių ir restoranų.",
-      "Aplinkui — Žemaitija: ramesnis miestas, artima gamta ir neskubantis laikas.",
+      "Mūsų apartamentai įsikūrę skirtingose, bet patogiose Telšių vietose — senamiestyje, prie aikštės ir centre.",
+      "Namelis ir vila — ramesnėje vietoje su erdve ir gamta.",
+      "Visi objektai yra netoli pagrindinių lankytinų vietų, kavinių ir Masčio ežero.",
+      "Aplinkui — rami Žemaitija, artima gamta ir neskubantis laikas.",
     ],
+    addresses: ["Birutės g. 1", "Gražinos g. 1", "Laisvės g. 10", "Turgaus a. (17-2 ir 24/1)"],
     imageAlt:
       "Telšių senamiestis iš paukščio skrydžio: bažnyčia, pagrindinė aikštė ir raudoni stogai",
   },

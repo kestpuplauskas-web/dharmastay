@@ -4,28 +4,30 @@ export const home = {
     "Boutique accommodation in the Telšiai old town: apartments, apartments with a terrace, and a cottage with a sauna and hot tub. Book directly.",
   hero: {
     eyebrow: "Telšiai · Žemaitija",
-    title: "Apartments in the Telšiai old town",
+    title: "Apartments and Homes in Telšiai",
     lead: "Next to the main square, a few steps from Lake Mastis. A place to stop for a while in the heart of Žemaitija.",
     imageAlt: "A street in the Telšiai old town with historic buildings on a summer afternoon",
     secondaryCta: "View apartments",
   },
   intro: {
     title: "From home to home.",
-    text: "Dharma Stay apartments are located in the very heart of Telšiai, on Birutės street, next to the main square. We built them so that arriving guests would feel at home — calm, cosy, and worry-free.",
+    text: "Dharma Stay — comfortable accommodation in Telšiai. We offer standard apartments, apartments with a terrace, a cottage with a sauna, a spacious villa, and additional apartments in the city center. Every place is designed so you feel at home — calm, clean, and carefree.",
   },
   stays: {
     eyebrow: "Accommodation",
     title: "Where to stay",
-    lead: "Standard apartments, apartments with a terrace, and a separate cottage with a sauna. Each one has everything you need for a good rest.",
+    lead: "Standard apartments, apartments with a terrace, a cottage and a villa, plus additional apartments in the center. Everything is prepared so you don’t need to bring anything extra.",
   },
   location: {
     eyebrow: "Location",
     title: "In Telšiai, right by the square",
     body: [
-      "The apartments are on Birutės street, just a few steps from the main Turgaus square, the Church of the Blessed Virgin Mary, and the tourist information centre.",
-      "Lake Mastis is a few hundred metres away. There's no shortage of cafés and restaurants nearby.",
-      "All around — Žemaitija: a quieter town, nature close by, and unhurried time.",
+      "Our apartments are located in different but convenient places in Telšiai — in the old town, by the main square, and in the city center.",
+      "The cottage and villa are in a quieter area with more space and nature.",
+      "All properties are close to the main attractions, cafés, and Lake Mastis.",
+      "Around you — peaceful Žemaitija, nearby nature, and a slower pace of life.",
     ],
+    addresses: ["Birutės g. 1", "Gražinos g. 1", "Laisvės g. 10", "Turgaus a. (17-2 & 24/1)"],
     imageAlt:
       "A bird's-eye view of the Telšiai old town: the church, the main square, and red rooftops",
   },

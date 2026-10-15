@@ -36,7 +36,11 @@ export function LocationSection() {
 
             <div className="mt-8 flex items-start gap-3 text-sm text-stone">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-sage" aria-hidden />
-              <span>{contact.address}</span>
+              <ul className="space-y-1">
+                {home.location.addresses.map((a) => (
+                  <li key={a}>{a}</li>
+                ))}
+              </ul>
             </div>
             <a
               href={contact.mapUrl}
