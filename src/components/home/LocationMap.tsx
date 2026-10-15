@@ -38,23 +38,7 @@ export default function LocationMap() {
         center: mapCenter,
         zoom: 14,
         attributionControl: { compact: true },
-        style: {
-          version: 8,
-          sources: {
-            carto: {
-              type: "raster",
-              tiles: [
-                "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png",
-                "https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png",
-                "https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png",
-              ],
-              tileSize: 256,
-              attribution:
-                '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · © <a href="https://carto.com/attributions">CARTO</a>',
-            },
-          },
-          layers: [{ id: "carto", type: "raster", source: "carto" }],
-        },
+        style: "https://tiles.openfreemap.org/styles/positron",
       });
       map = instance;
 
