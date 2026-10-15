@@ -30,8 +30,18 @@ export default function LocationMap() {
 
     let map: MapLibreMap | null = null;
 
-    const init = () => {
+    const init = async () => {
       if (map) return;
+
+      let style: unknown;
+      try {
+        const response = await fetch("https://tiles.openfreemap.org/styles/positron");
+        if (!response.ok) throw new Error(`style ${response.status}`);
+        style = await response.json();
+      } catch (error) {
+        console.error("maplibre style fetch failed", error);
+        return;
+      }
 
       const instance = new MapLibreMap({
         container: node,
