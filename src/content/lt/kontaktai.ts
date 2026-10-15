@@ -8,7 +8,7 @@ export const kontaktai = {
   phonesLabel: "Telefonai",
   emailLabel: "El. paštas",
   addressLabel: "Adresas",
-  cottageNote: "Namelis su pirtimi ir kubilu: Gražinos g. 1, Telšiai.",
+  cottageNote: "Namelis ir Vila: Gražinos g. 1, Telšiai.",
 };
 
 export const kontaktaiForm = {

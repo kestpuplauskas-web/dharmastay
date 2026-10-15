@@ -65,7 +65,7 @@ export const common = {
     stays: "Apartments",
     standard: "Standard apartments",
     terrace: "Apartments with a terrace and city-centre view",
-    cottage: "Cottage with sauna and hot tub",
+    cottage: "Cottage and Villa",
     restobar: "Restobar",
     banquet: "Banquet hall",
     sauna: "Sauna",
@@ -196,7 +196,7 @@ export const common = {
   categories: {
     standard: "Standard apartments",
     terrace: "Apartments with a terrace",
-    cottage: "Cottage with sauna and hot tub",
+    cottage: "Cottage and Villa",
   },
   categoryCard: {
     viewOptions: "View options",

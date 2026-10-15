@@ -9,5 +9,5 @@ export const sauna = {
     "Kol kas šiluma pasiekiama namelyje Gražinos gatvėje: pirtis (40 €) ir lauko kubilas (50 €) užsakomi kartu su nakvyne.",
     "Kai sauna atsidarys, apie tai parašysime čia. Jei norite sužinoti pirmieji – parašykite mums.",
   ],
-  cottageLink: "Namelis su pirtimi ir kubilu",
+  cottageLink: "Namelis ir Vila",
 };
