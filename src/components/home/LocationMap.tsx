@@ -4,6 +4,7 @@ import {
   Map as MapLibreMap,
   Marker,
   NavigationControl,
+  type StyleSpecification,
 } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
