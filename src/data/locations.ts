@@ -45,10 +45,7 @@ export const stayLocations: StayLocation[] = [
 ];
 
 /** Žemėlapio centras – visų objektų vidurkis. */
-export const mapCenter: [number, number] = (() => {
-  const total = stayLocations.reduce(
-    (acc, l) => [acc[0] + l.coords[0] / stayLocations.length, acc[1] + l.coords[1] / stayLocations.length],
-    [0, 0] as [number, number],
-  );
-  return total;
-})();
+export const mapCenter: [number, number] = [
+  stayLocations.reduce((sum, l) => sum + l.coords[0], 0) / stayLocations.length,
+  stayLocations.reduce((sum, l) => sum + l.coords[1], 0) / stayLocations.length,
+];
