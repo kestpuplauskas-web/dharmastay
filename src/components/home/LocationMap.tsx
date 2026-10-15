@@ -30,9 +30,11 @@ export default function LocationMap() {
     if (!node) return;
 
     let map: MapLibreMap | null = null;
+    let started = false;
 
     const init = async () => {
-      if (map) return;
+      if (started) return;
+      started = true;
 
       let style: unknown;
       try {
