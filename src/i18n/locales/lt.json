@@ -560,7 +560,10 @@
     "propertyType": {
       "cottage": "Namelis ir Vila",
       "standard": "Standartiniai apartamentai",
-      "terrace": "Apartamentai su terasa"
+      "terrace": "Apartamentai su terasa",
+      "economy_center": "Economy center Apartamentai",
+      "notaro": "Notaro Apartamentai",
+      "city_center": "Miesto Centro Apartamentai"
     },
     "roomKind": {
       "bedroom_1": "Miegamasis 1",

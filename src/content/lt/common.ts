@@ -178,6 +178,9 @@ export const common = {
     standard: "Standartiniai apartamentai",
     terrace: "Apartamentai su terasa",
     cottage: "Namelis ir Vila",
+    economy_center: "Economy center Apartamentai",
+    notaro: "Notaro Apartamentai",
+    city_center: "Miesto Centro Apartamentai",
   },
   categoryCard: {
     viewOptions: "Žiūrėti variantus",

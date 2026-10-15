@@ -21,7 +21,14 @@ export type CategoryGroup = {
   maxGuests: number | null;
 };
 
-const KNOWN_ORDER = ["standard", "terrace", "cottage"] as const;
+const KNOWN_ORDER = [
+  "standard",
+  "terrace",
+  "cottage",
+  "economy_center",
+  "notaro",
+  "city_center",
+] as const;
 
 export function normalizeCategory(value: string | null | undefined): string {
   return (value ?? "").trim().toLowerCase();
