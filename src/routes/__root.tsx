@@ -8,6 +8,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import type { ErrorRouteComponent } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
 import "@/i18n";
@@ -105,7 +106,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
-  errorComponent: ErrorComponent,
+  // Router versija tipu lygmenyje reikalauja „lazy" klaidų rodinio, bet vykdymo
+  // metu priima ir paprastą komponentą — rodinys lieka tas pats.
+  errorComponent: ErrorComponent as unknown as ErrorRouteComponent,
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
