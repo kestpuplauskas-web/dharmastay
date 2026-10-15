@@ -46,7 +46,7 @@ export const common = {
     stays: "Apartamentai",
     standard: "Standartiniai apartamentai",
     terrace: "Apartamentai su terasa ir vaizdu į miesto centrą",
-    cottage: "Namelis su pirtimi ir kubilu",
+    cottage: "Namelis ir Vila",
     restobar: "Restobaras",
     banquet: "Banketinė salė",
     sauna: "Sauna",
@@ -177,7 +177,7 @@ export const common = {
   categories: {
     standard: "Standartiniai apartamentai",
     terrace: "Apartamentai su terasa",
-    cottage: "Namelis su pirtimi ir kubilu",
+    cottage: "Namelis ir Vila",
   },
   categoryCard: {
     viewOptions: "Žiūrėti variantus",

@@ -9,5 +9,5 @@ export const sauna = {
     "For now, warmth is available at the cottage on Gražinos street: the sauna (40 €) and outdoor hot tub (50 €) are booked together with a stay.",
     "When the sauna opens, we'll announce it here. If you'd like to be among the first to know — write to us.",
   ],
-  cottageLink: "Cottage with sauna and hot tub",
+  cottageLink: "Cottage and Villa",
 };
