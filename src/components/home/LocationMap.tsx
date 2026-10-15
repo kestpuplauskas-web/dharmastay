@@ -48,7 +48,7 @@ export default function LocationMap() {
         center: mapCenter,
         zoom: 14,
         attributionControl: { compact: true },
-        style: "https://tiles.openfreemap.org/styles/positron",
+        style: style as Parameters<typeof MapLibreMap>[0] extends never ? never : NonNullable<ConstructorParameters<typeof MapLibreMap>[0]["style"]>,
       });
       map = instance;
 
