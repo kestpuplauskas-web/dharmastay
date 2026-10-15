@@ -506,3 +506,45 @@
 [data-slot="calendar"] td {
   display: block;
 }
+
+/* Žemėlapio žymekliai – vienas ant kiekvieno objekto adreso */
+.stay-map-marker {
+  display: flex;
+  width: max-content;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  text-decoration: none;
+}
+
+.stay-map-marker__pin {
+  display: block;
+  transform-origin: 50% 50%;
+  transition: transform 0.15s ease;
+}
+
+.stay-map-marker:hover .stay-map-marker__pin,
+.stay-map-marker:focus-visible .stay-map-marker__pin {
+  transform: scale(1.5);
+}
+
+.stay-map-marker__label {
+  padding: 2px 7px;
+  border: 1px solid var(--color-sage);
+  border-radius: 999px;
+  background: var(--color-warm-white);
+  color: var(--color-sage-deep);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.stay-map-marker:hover .stay-map-marker__label,
+.stay-map-marker:focus-visible .stay-map-marker__label,
+.stay-map--labels .stay-map-marker__label {
+  opacity: 1;
+}
