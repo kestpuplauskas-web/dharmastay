@@ -1,10 +1,22 @@
 import { useEffect, useRef } from "react";
-import { Map as MapLibreMap, Marker, NavigationControl } from "maplibre-gl";
+import {
+  LngLatBounds,
+  Map as MapLibreMap,
+  Marker,
+  NavigationControl,
+} from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-const COORDS: [number, number] = [22.248996, 55.983649];
+import { mapCenter, stayLocations } from "@/data/locations";
 
-/** Client-only monochrome Carto map with a sage ensō marker. */
+const MARKER_SVG = `
+  <svg viewBox="0 0 44 44" width="44" height="44" aria-hidden="true">
+    <circle cx="22" cy="22" r="16" fill="none" stroke="var(--color-sage)" stroke-width="1"
+      stroke-linecap="round" stroke-dasharray="88 12" transform="rotate(-35 22 22)" />
+    <circle cx="22" cy="22" r="5" fill="var(--color-sage)" />
+  </svg>`;
+
+/** Client-only monochrome Carto map with a sage ensō marker for every apartment. */
 export default function LocationMap() {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -16,10 +28,11 @@ export default function LocationMap() {
 
     const init = () => {
       if (map) return;
-      map = new MapLibreMap({
+
+      const instance = new MapLibreMap({
         container: node,
-        center: COORDS,
-        zoom: 15.5,
+        center: mapCenter,
+        zoom: 14,
         attributionControl: { compact: true },
         style: {
           version: 8,
@@ -39,21 +52,29 @@ export default function LocationMap() {
           layers: [{ id: "carto", type: "raster", source: "carto" }],
         },
       });
+      map = instance;
 
-      map.scrollZoom.disable();
-      map.addControl(new NavigationControl({ showCompass: false }), "bottom-right");
+      instance.scrollZoom.disable();
+      instance.addControl(new NavigationControl({ showCompass: false }), "bottom-right");
 
-      const el = document.createElement("div");
-      el.setAttribute("aria-label", "Dharma Stay – Birutės g. 1, Telšiai");
-      el.style.width = "44px";
-      el.style.height = "44px";
-      el.innerHTML = `
-        <svg viewBox="0 0 44 44" width="44" height="44" aria-hidden="true">
-          <circle cx="22" cy="22" r="16" fill="none" stroke="#5A6B5D" stroke-width="1"
-            stroke-linecap="round" stroke-dasharray="88 12" transform="rotate(-35 22 22)" />
-          <circle cx="22" cy="22" r="5" fill="#5A6B5D" />
-        </svg>`;
-      new Marker({ element: el }).setLngLat(COORDS).addTo(map);
+      const bounds = new LngLatBounds();
+      for (const location of stayLocations) {
+        const el = document.createElement("div");
+        el.className = "stay-map-marker";
+        el.setAttribute("aria-label", location.address);
+        el.title = location.address;
+        el.innerHTML = `${MARKER_SVG}<span class="stay-map-marker__label">${location.label}</span>`;
+        new Marker({ element: el, anchor: "center" })
+          .setLngLat(location.coords)
+          .addTo(instance);
+        bounds.extend(location.coords);
+      }
+
+      instance.fitBounds(bounds, {
+        padding: { top: 80, bottom: 80, left: 70, right: 70 },
+        maxZoom: 16,
+        duration: 0,
+      });
     };
 
     if (typeof IntersectionObserver === "undefined") {
