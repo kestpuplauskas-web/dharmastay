@@ -42,6 +42,9 @@ export default function LocationMap() {
       });
       map = instance;
 
+      instance.on("error", (e) => console.error("maplibre error", e?.error?.message));
+      instance.on("idle", () => console.log("maplibre idle"));
+      (node as unknown as Record<string, unknown>)._map = instance;
       instance.scrollZoom.disable();
       instance.addControl(new NavigationControl({ showCompass: false }), "bottom-right");
 
