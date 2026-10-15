@@ -4,7 +4,6 @@ import {
   Map as MapLibreMap,
   Marker,
   NavigationControl,
-  type StyleSpecification,
 } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
@@ -21,7 +20,7 @@ const PIN_SVG = `
 /** Kai priartinta pakankamai, etiketės rodomos prie visų žymeklių. */
 const LABEL_ZOOM = 16;
 
-/** Client-only monochrome Carto map with a sage ensō marker for every apartment. */
+/** Client-only monochrome map (Esri light gray, no API key) with a sage ensō marker for every apartment. */
 export default function LocationMap() {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -30,34 +29,44 @@ export default function LocationMap() {
     if (!node) return;
 
     let map: MapLibreMap | null = null;
-    let started = false;
 
-    const init = async () => {
-      if (started) return;
-      started = true;
-
-      let style: unknown;
-      try {
-        const response = await fetch("https://tiles.openfreemap.org/styles/positron");
-        if (!response.ok) throw new Error(`style ${response.status}`);
-        style = await response.json();
-      } catch (error) {
-        console.error("maplibre style fetch failed", error);
-        return;
-      }
+    const init = () => {
+      if (map) return;
 
       const instance = new MapLibreMap({
         container: node,
         center: mapCenter,
         zoom: 14,
         attributionControl: { compact: true },
-        style: style as StyleSpecification,
+        style: {
+          version: 8,
+          sources: {
+            base: {
+              type: "raster",
+              tiles: [
+                "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+              ],
+              tileSize: 256,
+              attribution:
+                '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors · Tiles © Esri — Esri, DeLorme, NAVTEQ',
+            },
+            reference: {
+              type: "raster",
+              tiles: [
+                "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
+              ],
+              tileSize: 256,
+              attribution: "",
+            },
+          },
+          layers: [
+            { id: "base", type: "raster", source: "base" },
+            { id: "reference", type: "raster", source: "reference" },
+          ],
+        },
       });
       map = instance;
 
-      instance.on("error", (e) => console.error("maplibre error", e?.error?.message));
-      instance.on("idle", () => console.log("maplibre idle"));
-      (node as unknown as Record<string, unknown>)._map = instance;
       instance.scrollZoom.disable();
       instance.addControl(new NavigationControl({ showCompass: false }), "bottom-right");
 
