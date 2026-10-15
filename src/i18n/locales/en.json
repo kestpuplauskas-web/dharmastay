@@ -558,7 +558,10 @@
     "propertyType": {
       "cottage": "Cottage and Villa",
       "standard": "Standard apartments",
-      "terrace": "Apartments with terrace"
+      "terrace": "Apartments with terrace",
+      "economy_center": "Economy Center Apartments",
+      "notaro": "Notaro Apartments",
+      "city_center": "City Centre Apartments"
     },
     "roomKind": {
       "bedroom_1": "Bedroom 1",

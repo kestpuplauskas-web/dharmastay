@@ -2,6 +2,9 @@ export const PROPERTY_TYPES = [
   { value: "standard", labelKey: "enums.propertyType.standard" },
   { value: "terrace", labelKey: "enums.propertyType.terrace" },
   { value: "cottage", labelKey: "enums.propertyType.cottage" },
+  { value: "economy_center", labelKey: "enums.propertyType.economy_center" },
+  { value: "notaro", labelKey: "enums.propertyType.notaro" },
+  { value: "city_center", labelKey: "enums.propertyType.city_center" },
 ] as const;
 
 export type PropertyTypeValue = (typeof PROPERTY_TYPES)[number]["value"];

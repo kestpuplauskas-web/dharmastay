@@ -197,6 +197,9 @@ export const common = {
     standard: "Standard apartments",
     terrace: "Apartments with a terrace",
     cottage: "Cottage and Villa",
+    economy_center: "Economy Center Apartments",
+    notaro: "Notaro Apartments",
+    city_center: "City Centre Apartments",
   },
   categoryCard: {
     viewOptions: "View options",
