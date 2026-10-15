@@ -20,7 +20,7 @@ const PIN_SVG = `
 /** Kai priartinta pakankamai, etiketės rodomos prie visų žymeklių. */
 const LABEL_ZOOM = 16;
 
-/** Client-only monochrome Carto map with a sage ensō marker for every apartment. */
+/** Client-only monochrome map (Esri light gray, no API key) with a sage ensō marker for every apartment. */
 export default function LocationMap() {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -41,19 +41,28 @@ export default function LocationMap() {
         style: {
           version: 8,
           sources: {
-            carto: {
+            base: {
               type: "raster",
               tiles: [
-                "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png",
-                "https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png",
-                "https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png",
+                "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
               ],
               tileSize: 256,
               attribution:
-                '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · © <a href="https://carto.com/attributions">CARTO</a>',
+                '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors · Tiles © Esri — Esri, DeLorme, NAVTEQ',
+            },
+            reference: {
+              type: "raster",
+              tiles: [
+                "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
+              ],
+              tileSize: 256,
+              attribution: "",
             },
           },
-          layers: [{ id: "carto", type: "raster", source: "carto" }],
+          layers: [
+            { id: "base", type: "raster", source: "base" },
+            { id: "reference", type: "raster", source: "reference" },
+          ],
         },
       });
       map = instance;
